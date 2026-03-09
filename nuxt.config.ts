@@ -4,11 +4,4 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ["@bitrix24/b24ui-nuxt"],
   css: ["~/assets/css/tailwind.css"],
-  postcss: {
-    plugins: {
-      tailwindcss: {},
-      autoprefixer: {},
-    },
-  },
 });
-
