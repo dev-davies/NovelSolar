@@ -5,8 +5,10 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16 items-center">
           <!-- Logo -->
-          <div class="flex-shrink-0 flex items-center">
-            <NuxtLink to="/" class="text-2xl font-bold text-primary">NovelSolar</NuxtLink>
+          <div class="flex-shrink-0 flex items-center -ml-2">
+            <NuxtLink to="/" class="flex items-center">
+              <img src="/images/logo.png" alt="NovelSolar" class="h-10 w-auto" />
+            </NuxtLink>
           </div>
           
           <!-- Navigation Links -->
@@ -60,7 +62,9 @@
           
           <!-- Column 1: Brand Info -->
           <div>
-            <h3 class="text-lg font-bold text-primary mb-4">NovelSolar</h3>
+            <div class="mb-4">
+              <img src="/images/logo.png" alt="NovelSolar" class="h-8 w-auto" />
+            </div>
             <p class="text-sm text-gray-500 mb-4">
               Providing top-tier solar solutions for a sustainable future. Empowering communities with clean energy.
             </p>
