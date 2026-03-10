@@ -45,13 +45,12 @@
               <textarea rows="5" class="w-full px-5 py-4 rounded-2xl border border-gray-100 focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all bg-gray-50/50 hover:bg-white resize-none" placeholder="How can we help you?"></textarea>
             </div>
 
-            <B24Button 
-              color="primary" 
-              size="lg" 
-              class="w-full py-6 text-lg font-bold shadow-xl shadow-primary/20 hover:shadow-primary/30 rounded-2xl active:scale-[0.98] transition-all"
+            <button 
+              type="submit"
+              class="bg-[#002888] text-white w-full py-6 rounded-2xl text-lg font-bold shadow-xl shadow-primary/20 hover:shadow-primary/30 hover:bg-blue-900 transition-all active:scale-[0.98]"
             >
               Send Message
-            </B24Button>
+            </button>
           </form>
         </div>
 

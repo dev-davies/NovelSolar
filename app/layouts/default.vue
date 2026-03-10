@@ -205,9 +205,9 @@
 
         <!-- CTA -->
         <div class="p-6 bg-gray-50/50">
-          <B24Button color="primary" class="w-full py-4 text-sm font-bold rounded-lg shadow-md">
+          <button class="bg-[#002888] text-white w-full py-4 rounded-lg text-sm font-bold hover:bg-blue-900 transition-colors shadow-md">
             Request a Quote
-          </B24Button>
+          </button>
         </div>
       </div>
     </header>
@@ -262,9 +262,9 @@
               <label for="newsletter-email" class="sr-only">Email address</label>
               <input id="newsletter-email" type="email" required class="appearance-none min-w-0 w-full bg-white border border-gray-300 rounded-l-md py-2 px-4 text-base text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm" placeholder="Enter your email">
               <div class="rounded-md sm:mt-0 sm:ml-3 sm:flex-shrink-0">
-                <B24Button color="primary" type="submit" class="w-full flex items-center justify-center -ml-3 rounded-l-none">
+                <button type="submit" class="bg-[#002888] text-white px-5 py-2.5 rounded-md text-sm font-bold hover:bg-blue-900 transition-colors shadow-sm w-full flex items-center justify-center -ml-3 rounded-l-none">
                   Subscribe
-                </B24Button>
+                </button>
               </div>
             </form>
           </div>

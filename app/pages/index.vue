@@ -12,12 +12,12 @@
             Sourcing the world's best solar components for residential and commercial projects. Instant quotes and same-day logistics.
           </p>
           <div class="mt-10 flex flex-wrap gap-4">
-            <B24Button color="white" size="lg" class="shadow-lg hover:bg-gray-100 text-primary">
+            <button class="bg-white text-primary px-8 py-3 rounded-md text-lg font-bold hover:bg-gray-100 transition-colors shadow-lg">
               Browse Stock
-            </B24Button>
-            <B24Button variant="outline" size="lg" class="border-white text-white hover:bg-white/10">
+            </button>
+            <button class="border-2 border-white text-white px-8 py-3 rounded-md text-lg font-bold hover:bg-white/10 transition-colors">
               Spec Sheets
-            </B24Button>
+            </button>
           </div>
         </div>
         <!-- Decorative background element -->
@@ -83,17 +83,15 @@
               </div>
               
               <div class="grid grid-cols-2 gap-2 mt-4">
-                <B24Button 
-                  color="primary" 
-                  size="sm" 
-                  class="w-full text-[11px] font-bold py-2 rounded-lg"
+                <button 
+                  class="bg-[#002888] text-white px-4 py-2 rounded-lg text-[11px] font-bold hover:bg-blue-900 transition-colors shadow-sm w-full"
                   @click="buyNow(product)"
                 >
                   Buy Now
-                </B24Button>
-                <B24Button variant="outline" size="sm" class="w-full text-[11px] font-bold py-2 rounded-lg border-gray-200 text-gray-600 hover:bg-gray-50">
+                </button>
+                <button class="border border-gray-200 text-gray-600 px-4 py-2 rounded-lg text-[11px] font-bold hover:bg-gray-50 transition-colors w-full">
                   Specs
-                </B24Button>
+                </button>
               </div>
             </div>
           </div>

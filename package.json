@@ -15,7 +15,6 @@
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
-    "@bitrix24/b24ui-nuxt": "^2.4.1",
     "@tailwindcss/vite": "^4.2.1",
     "tailwindcss": "^4.2.1"
   }

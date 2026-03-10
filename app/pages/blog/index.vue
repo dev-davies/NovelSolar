@@ -19,13 +19,11 @@
           <p class="text-xl text-gray-300 mb-10 leading-relaxed">
             Leading experts analyze how the next generation of perovskite technology and smart grid integration is accelerating our transition to a 100% renewable future.
           </p>
-          <B24Button 
-            color="white" 
-            size="lg" 
-            class="px-10 py-5 text-lg font-extrabold rounded-2xl shadow-2xl hover:bg-gray-100 transition-all text-primary"
+          <button 
+            class="bg-white text-primary px-10 py-5 text-lg font-extrabold rounded-2xl shadow-2xl hover:bg-gray-100 transition-all"
           >
             Read the Full Report
-          </B24Button>
+          </button>
         </div>
       </div>
     </section>
@@ -40,25 +38,23 @@
           <p class="text-gray-500 mt-2 text-lg">Curated insights from the frontlines of energy innovation.</p>
         </div>
         <div class="flex gap-4">
-          <B24Button variant="outline" size="sm" class="rounded-xl font-bold bg-white">All Topics</B24Button>
-          <B24Button variant="outline" size="sm" class="rounded-xl font-bold bg-white opacity-40">Technology</B24Button>
-          <B24Button variant="outline" size="sm" class="rounded-xl font-bold bg-white opacity-40">Logistics</B24Button>
+          <button class="bg-white border border-gray-200 text-gray-900 px-4 py-2 rounded-xl text-sm font-bold hover:bg-gray-50 transition-colors">All Topics</button>
+          <button class="bg-white border border-gray-200 text-gray-900 px-4 py-2 rounded-xl text-sm font-bold hover:bg-gray-50 transition-colors opacity-40">Technology</button>
+          <button class="bg-white border border-gray-200 text-gray-900 px-4 py-2 rounded-xl text-sm font-bold hover:bg-gray-50 transition-colors opacity-40">Logistics</button>
         </div>
       </div>
 
       <!-- Blog Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-        <B24Card v-for="post in posts" :key="post.id" class="group h-full border-none shadow-sm hover:shadow-2xl transition-all duration-500 rounded-3xl overflow-hidden bg-white flex flex-col">
-          <template #header>
-            <div class="aspect-[16/10] overflow-hidden relative">
-              <img :src="post.image" :alt="post.title" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
-              <div class="absolute bottom-4 left-4">
-                <span class="px-3 py-1 bg-white/90 backdrop-blur-sm rounded-lg text-[10px] font-extrabold text-gray-900 uppercase tracking-widest shadow-lg">
-                  {{ post.category }}
-                </span>
-              </div>
+        <div v-for="post in posts" :key="post.id" class="group h-full bg-white shadow-sm hover:shadow-2xl transition-all duration-500 rounded-3xl overflow-hidden border border-gray-100 flex flex-col">
+          <div class="aspect-[16/10] overflow-hidden relative">
+            <img :src="post.image" :alt="post.title" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+            <div class="absolute bottom-4 left-4">
+              <span class="px-3 py-1 bg-white/90 backdrop-blur-sm rounded-lg text-[10px] font-extrabold text-gray-900 uppercase tracking-widest shadow-lg">
+                {{ post.category }}
+              </span>
             </div>
-          </template>
+          </div>
           
           <div class="p-8 flex flex-col flex-grow">
             <div class="flex items-center gap-3 mb-4 text-xs font-semibold text-gray-400">
@@ -84,23 +80,23 @@
               </NuxtLink>
             </div>
           </div>
-        </B24Card>
+        </div>
       </div>
 
       <!-- Pagination -->
       <div class="mt-20 flex justify-center">
         <div class="inline-flex items-center p-1.5 bg-white rounded-2xl shadow-sm border border-gray-100 gap-1">
-          <B24Button variant="outline" size="sm" class="w-10 h-10 p-0 rounded-xl border-none hover:bg-gray-50">
+          <button class="w-10 h-10 p-2 rounded-xl border border-transparent hover:bg-gray-50 transition-colors flex items-center justify-center">
             <svg class="w-4 h-4 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
-          </B24Button>
-          <B24Button size="sm" color="primary" class="w-10 h-10 p-0 rounded-xl font-bold">1</B24Button>
-          <B24Button variant="outline" size="sm" class="w-10 h-10 p-0 rounded-xl border-none hover:bg-gray-50 font-bold text-gray-400">2</B24Button>
-          <B24Button variant="outline" size="sm" class="w-10 h-10 p-0 rounded-xl border-none hover:bg-gray-50 font-bold text-gray-400">3</B24Button>
+          </button>
+          <button class="w-10 h-10 rounded-xl font-bold bg-[#002888] text-white flex items-center justify-center text-sm shadow-sm">1</button>
+          <button class="w-10 h-10 rounded-xl font-bold text-gray-400 border border-transparent hover:bg-gray-50 transition-colors flex items-center justify-center text-sm">2</button>
+          <button class="w-10 h-10 rounded-xl font-bold text-gray-400 border border-transparent hover:bg-gray-50 transition-colors flex items-center justify-center text-sm">3</button>
           <span class="px-2 text-gray-300">...</span>
-          <B24Button variant="outline" size="sm" class="w-10 h-10 p-0 rounded-xl border-none hover:bg-gray-50 font-bold text-gray-400">12</B24Button>
-          <B24Button variant="outline" size="sm" class="w-10 h-10 p-0 rounded-xl border-none hover:bg-gray-50">
+          <button class="w-10 h-10 rounded-xl font-bold text-gray-400 border border-transparent hover:bg-gray-50 transition-colors flex items-center justify-center text-sm">12</button>
+          <button class="w-10 h-10 p-2 rounded-xl border border-transparent hover:bg-gray-50 transition-colors flex items-center justify-center">
             <svg class="w-4 h-4 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-          </B24Button>
+          </button>
         </div>
       </div>
     </main>
