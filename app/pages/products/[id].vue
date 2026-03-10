@@ -67,7 +67,7 @@
             <span class="text-sm font-medium text-gray-500">4.9 (86 Reviews)</span>
           </div>
           <div class="mb-8">
-            <span class="text-4xl font-extrabold text-primary">${{ Number(product?.PRICE || 0).toLocaleString() }}</span>
+            <span class="text-4xl font-extrabold text-primary">{{ new Intl.NumberFormat('en-NG', { style: 'currency', currency: product?.CURRENCY_ID || 'NGN' }).format(product?.PRICE || 0) }}</span>
           </div>
           <p class="text-gray-600 text-lg leading-relaxed mb-8">
             {{ product?.DESCRIPTION || 'Engineered for maximum power harvesting even in low-light environments. Guaranteed quality and performance for your energy needs.' }}
@@ -194,6 +194,7 @@
   </div>
 </template>
 
+<script setup>
 import { ref } from 'vue';
 
 const route = useRoute();
@@ -204,6 +205,7 @@ const { data: product, pending } = useFetch(`/api/product`, {
 });
 
 const activeTab = ref('Technical Specifications');
+</script>
 
 <style scoped>
 .no-scrollbar::-webkit-scrollbar {

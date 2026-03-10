@@ -100,14 +100,14 @@
                 <h4 class="text-sm font-bold text-gray-800 line-clamp-1">{{ item.NAME }}</h4>
                 <p class="text-xs text-gray-400">Qty: 1</p>
               </div>
-              <div class="text-sm font-bold text-gray-900">${{ Number(item.PRICE).toLocaleString() }}</div>
+              <div class="text-sm font-bold text-gray-900">{{ new Intl.NumberFormat('en-NG', { style: 'currency', currency: item.CURRENCY_ID || 'NGN' }).format(item.PRICE) }}</div>
             </div>
           </div>
 
           <div class="space-y-4 pt-6 border-t border-gray-50 mb-8">
             <div class="flex justify-between text-sm text-gray-500">
               <span>Subtotal</span>
-              <span class="font-bold text-gray-900">${{ subtotal.toLocaleString() }}</span>
+              <span class="font-bold text-gray-900">{{ new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(subtotal) }}</span>
             </div>
             <div class="flex justify-between text-sm text-gray-500">
               <span>Professional Installation</span>
@@ -122,7 +122,7 @@
             </div>
             <div class="flex justify-between text-lg font-extrabold text-gray-900 pt-4 border-t border-gray-50">
               <span>Total Due Today</span>
-              <span class="text-primary">${{ finalTotal.toLocaleString() }}</span>
+              <span class="text-primary">{{ new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(finalTotal) }}</span>
             </div>
           </div>
 
