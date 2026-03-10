@@ -25,6 +25,35 @@
       </div>
     </section>
 
+    <!-- Our Ecosystem Selection -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-16">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Card 1 - Novel Academy -->
+        <a href="https://novel-academy.com" target="_blank" rel="noopener noreferrer" class="group relative block overflow-hidden rounded-xl bg-[#2C75D8] p-8 text-white shadow-md transition-transform hover:-translate-y-1">
+          <h3 class="text-2xl font-bold mb-2 text-white">Novel Academy</h3>
+          <p class="text-white mb-6 max-w-sm">Launch your career with our hands-on technical training courses. Learn professional solar installation, maintenance, and system design.</p>
+          <span class="inline-flex items-center gap-2 font-semibold text-white group-hover:underline">
+            Explore Courses 
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </span>
+        </a>
+
+        <!-- Card 2 - Solar Product Exchange -->
+        <a href="https://solarproductexchange.com" target="_blank" rel="noopener noreferrer" class="group relative block overflow-hidden rounded-xl bg-white border border-gray-200 p-8 shadow-md transition-transform hover:-translate-y-1">
+          <h3 class="text-2xl font-bold text-[#057223] mb-2">Tokunbo & Open-Box Store</h3>
+          <p class="text-gray-600 mb-6 max-w-sm">Looking for budget-friendly options? Shop our certified pre-owned, tokunbo, and open-box solar panels and inverters at unbeatable prices.</p>
+          <span class="inline-flex items-center gap-2 text-[#057223] font-semibold group-hover:underline">
+            Shop Used Inventory 
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </span>
+        </a>
+      </div>
+    </section>
+
     <!-- All Inventory Product Grid -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
       <div class="flex justify-between items-end mb-10">
