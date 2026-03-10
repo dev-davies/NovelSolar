@@ -1,51 +1,88 @@
 <template>
   <div class="min-h-screen flex flex-col bg-background font-sans text-gray-800">
     <!-- Navbar -->
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16 items-center">
-          <!-- Logo -->
-          <div class="flex-shrink-0 flex items-center -ml-2">
-            <NuxtLink to="/" class="flex items-center">
-              <img src="/images/logo.png" alt="NovelSolar" class="h-10 w-auto" />
-            </NuxtLink>
-          </div>
-          
-          <!-- Navigation Links -->
-          <nav class="hidden md:flex space-x-8">
-            <NuxtLink to="/categories" class="text-gray-600 hover:text-primary transition-colors">Product Categories</NuxtLink>
-            <NuxtLink to="/partners" class="text-gray-600 hover:text-primary transition-colors">Partners</NuxtLink>
-          </nav>
-
-          <!-- Search Bar -->
-          <div class="flex-1 flex px-8 justify-center hidden lg:flex">
-            <div class="w-full max-w-lg">
-              <label for="search" class="sr-only">Search</label>
-              <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-                  </svg>
-                </div>
-                <input id="search" name="search" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-gray-50 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm transition duration-150 ease-in-out" placeholder="Search for products..." type="search">
-              </div>
+    <header class="flex items-center justify-between px-8 py-4 bg-white border-b border-gray-200 h-20 sticky top-0 z-50">
+      <!-- Left Section: Logo & Links -->
+      <div class="flex items-center gap-8">
+        <NuxtLink to="/" class="flex items-center">
+          <img src="/images/logo.png" alt="NovelSolar" class="h-8 w-auto" />
+        </NuxtLink>
+        <nav class="hidden lg:flex items-center gap-2">
+          <!-- Product Categories Dropdown -->
+          <div class="relative group py-6 cursor-pointer">
+            <div class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 group-hover:text-[#002888] transition-colors">
+              Product Categories
+              <svg class="w-4 h-4 text-gray-400 group-hover:text-[#002888] group-hover:rotate-180 transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+            
+            <div class="absolute top-full left-0 w-56 bg-white border border-gray-100 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden">
+              <ul class="py-1">
+                <li><NuxtLink to="/category/solar-panels" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Solar Panels</NuxtLink></li>
+                <li><NuxtLink to="/category/inverters" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Hybrid Inverters</NuxtLink></li>
+                <li><NuxtLink to="/category/batteries" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Lithium Batteries</NuxtLink></li>
+                <li><NuxtLink to="/category/mounting" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Mounting Systems</NuxtLink></li>
+                <li><NuxtLink to="/category/accessories" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Accessories</NuxtLink></li>
+              </ul>
             </div>
           </div>
 
-          <!-- Right side actions -->
-          <div class="flex items-center space-x-6">
-            <!-- Cart Icon -->
-            <button class="text-gray-500 hover:text-primary transition-colors relative">
-              <span class="sr-only">Cart</span>
-              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+          <div class="w-4"></div>
+
+          <!-- Partners Dropdown -->
+          <div class="relative group py-6 cursor-pointer">
+            <div class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 group-hover:text-[#002888] transition-colors">
+              Partners
+              <svg class="w-4 h-4 text-gray-400 group-hover:text-[#002888] group-hover:rotate-180 transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
-              <!-- Badge could go right here -->
-            </button>
-            <B24Button color="primary" class="hidden md:inline-flex shadow-sm hover:shadow transition-shadow">
-              Request a Quote
-            </B24Button>
+            </div>
+
+            <div class="absolute top-full left-0 w-56 bg-white border border-gray-100 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden">
+              <ul class="py-1">
+                <li><NuxtLink to="/partners/installers" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Installer Network</NuxtLink></li>
+                <li><NuxtLink to="/partners/distributors" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Distributors</NuxtLink></li>
+                <li><NuxtLink to="/partners/corporate" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Corporate Partners</NuxtLink></li>
+                <li><NuxtLink to="/partners/government" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Government Tenders</NuxtLink></li>
+                <li><NuxtLink to="/partners/become" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors font-bold">Become a Partner</NuxtLink></li>
+              </ul>
+            </div>
           </div>
+        </nav>
+      </div>
+
+      <!-- Center Section: Search Bar -->
+      <div class="w-64 lg:w-80 ml-auto mr-8 relative hidden md:block">
+        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+          <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+        <input 
+          type="text" 
+          placeholder="Search inventory..." 
+          class="w-full bg-gray-50 border border-gray-300 rounded-md py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#002288] transition-all"
+        />
+      </div>
+
+      <!-- Right Section: Actions -->
+      <div class="flex items-center gap-6">
+        <!-- Cart -->
+        <button class="text-gray-600 hover:text-black transition-colors relative">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+        </button>
+
+        <!-- Button -->
+        <button class="bg-[#002888] text-white px-5 py-2.5 rounded-md text-sm font-bold hover:bg-blue-900 transition-colors shadow-sm hidden sm:block">
+          Request a Quote
+        </button>
+
+        <!-- Profile Icon -->
+        <div class="h-9 w-9 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity">
+          <span class="text-xs font-bold uppercase">NS</span>
         </div>
       </div>
     </header>
