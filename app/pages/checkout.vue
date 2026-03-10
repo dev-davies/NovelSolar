@@ -16,15 +16,15 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-2">
               <label class="text-sm font-bold text-gray-700">First Name</label>
-              <input type="text" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-gray-50/50" placeholder="John">
+              <input v-model="checkoutForm.firstName" type="text" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-gray-50/50" placeholder="John">
             </div>
             <div class="space-y-2">
               <label class="text-sm font-bold text-gray-700">Last Name</label>
-              <input type="text" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-gray-50/50" placeholder="Doe">
+              <input v-model="checkoutForm.lastName" type="text" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-gray-50/50" placeholder="Doe">
             </div>
             <div class="md:col-span-2 space-y-2">
               <label class="text-sm font-bold text-gray-700">Shipping Address</label>
-              <input type="text" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-gray-50/50" placeholder="123 Solar Way, Sunnyville, CA">
+              <input v-model="checkoutForm.address" type="text" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-gray-50/50" placeholder="123 Solar Way, Sunnyville, CA">
             </div>
           </div>
         </section>
@@ -71,6 +71,7 @@
             color="primary" 
             size="lg" 
             class="w-full py-6 text-lg font-bold shadow-xl shadow-primary/20 hover:shadow-primary/30 rounded-2xl active:scale-[0.98] transition-all"
+            @click.prevent="processCheckout"
           >
             Complete Secure Purchase
           </B24Button>
@@ -88,15 +89,18 @@
           <h2 class="text-xl font-bold text-gray-900 mb-8 pb-4 border-b border-gray-50">Order Summary</h2>
           
           <div class="space-y-4 mb-8">
-            <div v-for="item in cartItems" :key="item.id" class="flex items-center gap-4">
-              <div class="w-16 h-16 rounded-xl bg-gray-50 border border-gray-100 p-2 overflow-hidden flex-shrink-0">
-                <img :src="item.image" :alt="item.title" class="w-full h-full object-contain" />
+            <div v-for="item in cart" :key="item.ID" class="flex items-center gap-4">
+              <div class="w-16 h-16 rounded-xl bg-gray-50 border border-gray-100 p-2 overflow-hidden flex-shrink-0 flex items-center justify-center">
+                <!-- Fallback icon if no image -->
+                <svg class="w-8 h-8 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
               </div>
               <div class="flex-grow">
-                <h4 class="text-sm font-bold text-gray-800 line-clamp-1">{{ item.title }}</h4>
-                <p class="text-xs text-gray-400">Qty: {{ item.qty }}</p>
+                <h4 class="text-sm font-bold text-gray-800 line-clamp-1">{{ item.NAME }}</h4>
+                <p class="text-xs text-gray-400">Qty: 1</p>
               </div>
-              <div class="text-sm font-bold text-gray-900">${{ (item.price * item.qty).toLocaleString() }}</div>
+              <div class="text-sm font-bold text-gray-900">${{ Number(item.PRICE).toLocaleString() }}</div>
             </div>
           </div>
 
@@ -138,30 +142,13 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, reactive } from 'vue';
 
-const paymentMethod = ref('card');
-
-const cartItems = [
-  {
-    id: 1,
-    title: 'Ultra-Efficiency 450W Panel',
-    price: 499,
-    qty: 12,
-    image: '/images/pdp_solar_panel_main_1773068744361.png'
-  },
-  {
-    id: 2,
-    title: 'NovaCore Hybrid Inverter',
-    price: 1450,
-    qty: 1,
-    image: '/images/solar_inverter_inventory_1773068280393.png'
-  }
-];
+const cart = useState('cart', () => [])
 
 const subtotal = computed(() => {
-  return cartItems.reduce((acc, item) => acc + (item.price * item.qty), 0);
-});
+  return cart.value.reduce((sum, item) => sum + Number(item.PRICE || 0), 0)
+})
 
 const taxCredit = computed(() => {
   return Math.round(subtotal.value * 0.3); // 30% Federal credit approximation
@@ -170,4 +157,26 @@ const taxCredit = computed(() => {
 const finalTotal = computed(() => {
   return subtotal.value - taxCredit.value;
 });
+
+// Create reactive form state for the user inputs
+const checkoutForm = reactive({
+  firstName: '',
+  lastName: '',
+  address: '',
+  city: '',
+  state: '',
+  zip: '',
+  paymentMethod: 'credit_card'
+})
+
+const paymentMethod = computed({
+  get: () => checkoutForm.paymentMethod,
+  set: (val) => checkoutForm.paymentMethod = val
+})
+
+// Placeholder function for the final button
+const processCheckout = async () => {
+  console.log('Order Ready:', { user: checkoutForm, items: cart.value })
+  // We will add the Bitrix API call here next
+}
 </script>
