@@ -75,20 +75,16 @@
         </div>
 
         <div class="mt-auto space-y-4">
-          <B24Button 
-            color="primary" 
-            size="lg" 
-            class="w-full py-6 text-lg font-bold shadow-xl shadow-primary/20 hover:shadow-primary/30 rounded-2xl transition-all active:scale-[0.98]"
+          <button 
+            class="bg-[#002888] text-white w-full py-5 rounded-2xl text-lg font-bold shadow-xl shadow-primary/20 hover:shadow-primary/30 hover:bg-blue-900 transition-all active:scale-[0.98]"
           >
             Buy Now - Free Express Shipping
-          </B24Button>
-          <B24Button 
-            variant="outline" 
-            size="lg" 
-            class="w-full py-6 text-lg font-bold border-2 rounded-2xl transition-all active:scale-[0.98]"
+          </button>
+          <button 
+            class="border-2 border-gray-200 text-gray-800 w-full py-5 rounded-2xl text-lg font-bold hover:bg-gray-50 transition-all active:scale-[0.98]"
           >
             Add to Cart
-          </B24Button>
+          </button>
         </div>
 
         <div class="mt-8 grid grid-cols-2 gap-4">
@@ -183,9 +179,9 @@
         <p class="text-blue-100 text-lg mb-8">
           Planning a large-scale project? Get a personalized quote for bulk orders, custom logistics, and technical consulting.
         </p>
-        <B24Button color="white" size="lg" class="px-10 py-4 font-bold rounded-2xl shadow-xl hover:scale-105 transition-transform active:scale-95 text-primary">
+        <button class="bg-white text-primary px-10 py-4 font-bold rounded-2xl shadow-xl hover:scale-105 transition-transform active:scale-95">
           Contact Sales Team
-        </B24Button>
+        </button>
       </div>
       <!-- Decorative circles -->
       <div class="absolute -right-20 -top-20 w-80 h-80 bg-blue-500 rounded-full blur-3xl opacity-20 transition-transform duration-700 group-hover:scale-110"></div>

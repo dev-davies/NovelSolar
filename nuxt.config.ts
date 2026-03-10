@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
-  modules: ["@bitrix24/b24ui-nuxt"],
+  modules: [],
   css: ["~/assets/css/tailwind.css"],
   runtimeConfig: {
     bitrixWebhook: process.env.BITRIX_WEBHOOK_URL,

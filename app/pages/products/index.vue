@@ -15,11 +15,11 @@
             <h3 class="text-sm font-semibold text-gray-800 uppercase tracking-wider mb-4">Availability</h3>
             <div class="space-y-3">
               <label class="flex items-center gap-3 cursor-pointer group">
-                <B24Checkbox v-model="filters.inStock" />
+                <input type="checkbox" v-model="filters.inStock" class="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary">
                 <span class="text-sm text-gray-600 group-hover:text-primary transition-colors">In Stock</span>
               </label>
               <label class="flex items-center gap-3 cursor-pointer group">
-                <B24Checkbox v-model="filters.onBackorder" />
+                <input type="checkbox" v-model="filters.onBackorder" class="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary">
                 <span class="text-sm text-gray-600 group-hover:text-primary transition-colors">On Backorder</span>
               </label>
             </div>
@@ -29,7 +29,7 @@
           <div class="mb-8">
             <h3 class="text-sm font-semibold text-gray-800 uppercase tracking-wider mb-4">Price Range</h3>
             <div class="px-2">
-              <B24Range v-model="filters.priceRange" :min="0" :max="5000" :step="100" />
+              <input type="range" v-model="filters.priceRange" :min="0" :max="5000" :step="100" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary">
               <div class="flex justify-between mt-3 text-xs text-gray-500 font-medium">
                 <span>$0</span>
                 <span>${{ filters.priceRange }}</span>
@@ -42,7 +42,7 @@
           <div class="mb-8">
             <h3 class="text-sm font-semibold text-gray-800 uppercase tracking-wider mb-4">Wattage (W)</h3>
              <div class="px-2">
-              <B24Range v-model="filters.wattage" :min="100" :max="700" :step="10" />
+              <input type="range" v-model="filters.wattage" :min="100" :max="700" :step="10" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary">
               <div class="flex justify-between mt-3 text-xs text-gray-500 font-medium">
                 <span>100W</span>
                 <span>{{ filters.wattage }}W</span>
@@ -55,7 +55,7 @@
           <div class="mb-4">
             <h3 class="text-sm font-semibold text-gray-800 uppercase tracking-wider mb-4">Panel Efficiency</h3>
             <div class="px-2">
-              <B24Range v-model="filters.efficiency" :min="15" :max="25" :step="0.5" />
+              <input type="range" v-model="filters.efficiency" :min="15" :max="25" :step="0.5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary">
               <div class="flex justify-between mt-3 text-xs text-gray-500 font-medium">
                 <span>15%</span>
                 <span>{{ filters.efficiency }}%</span>
@@ -64,9 +64,9 @@
             </div>
           </div>
 
-          <B24Button variant="outline" class="w-full mt-6 text-xs font-bold uppercase tracking-widest border-gray-200" @click="resetFilters">
+          <button class="bg-white border border-gray-200 text-gray-600 w-full mt-6 py-2 px-4 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-gray-50 transition-colors" @click="resetFilters">
             Clear All
-          </B24Button>
+          </button>
         </div>
       </aside>
 
@@ -91,15 +91,13 @@
 
         <!-- Product Grid -->
         <div v-if="filteredProducts.length > 0" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-          <B24Card v-for="product in filteredProducts" :key="product.id" class="group flex flex-col h-full border-none shadow-sm hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden">
-            <template #header>
-              <div class="relative aspect-[5/4] bg-gray-50 overflow-hidden">
-                <img :src="product.image" :alt="product.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div class="absolute top-4 left-4 bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm z-10">
-                  In Stock
-                </div>
+          <div v-for="product in filteredProducts" :key="product.id" class="group flex flex-col h-full bg-white shadow-sm hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden border border-gray-100">
+            <div class="relative aspect-[5/4] bg-gray-50 overflow-hidden">
+              <img :src="product.image" :alt="product.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <div class="absolute top-4 left-4 bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm z-10">
+                In Stock
               </div>
-            </template>
+            </div>
             <div class="p-5 flex flex-col flex-grow">
               <div class="flex-grow">
                 <div class="text-xs font-semibold text-primary uppercase tracking-widest mb-1">{{ product.category }}</div>
@@ -118,12 +116,12 @@
                   <span class="text-sm text-gray-400 line-through block leading-none mb-1" v-if="product.originalPrice">${{ product.originalPrice }}</span>
                   <span class="text-xl font-bold text-gray-900">${{ product.price }}</span>
                 </div>
-                <B24Button color="primary" size="sm" class="px-5 rounded-lg font-bold">
+                <button class="bg-[#002888] text-white px-5 py-2 rounded-lg text-xs font-bold hover:bg-blue-900 transition-colors shadow-sm">
                   Quick Buy
-                </B24Button>
+                </button>
               </div>
             </div>
-          </B24Card>
+          </div>
         </div>
         
         <!-- Empty State -->
@@ -134,7 +132,9 @@
           <h3 class="mt-2 text-sm font-medium text-gray-900">No products found</h3>
           <p class="mt-1 text-sm text-gray-500">Try adjusting your filters to find what you're looking for.</p>
           <div class="mt-6">
-            <B24Button @click="resetFilters">Reset all filters</B24Button>
+            <button @click="resetFilters" class="bg-[#002888] text-white px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-blue-900 transition-colors shadow-sm">
+              Reset all filters
+            </button>
           </div>
         </div>
       </main>
@@ -233,5 +233,5 @@ function resetFilters() {
 </script>
 
 <style scoped>
-/* Custom styling for the range sliders if needed, though B24UI should handle it */
+/* Custom styling for the range sliders if needed */
 </style>
