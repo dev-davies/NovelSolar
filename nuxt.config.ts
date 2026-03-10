@@ -6,5 +6,8 @@ export default defineNuxtConfig({
   css: ["~/assets/css/main.css"],
   runtimeConfig: {
     bitrixWebhook: process.env.BITRIX_WEBHOOK_URL,
+    public: {
+      // any public keys go here
+    }
   },
 });

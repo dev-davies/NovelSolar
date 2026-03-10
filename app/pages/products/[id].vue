@@ -77,11 +77,13 @@
         <div class="mt-auto space-y-4">
           <button 
             class="bg-[#002888] text-white w-full py-5 rounded-2xl text-lg font-bold shadow-xl shadow-primary/20 hover:shadow-primary/30 hover:bg-blue-900 transition-all active:scale-[0.98]"
+            @click="buyNow"
           >
             Buy Now - Free Express Shipping
           </button>
           <button 
             class="border-2 border-gray-200 text-gray-800 w-full py-5 rounded-2xl text-lg font-bold hover:bg-gray-50 transition-all active:scale-[0.98]"
+            @click="addToCart"
           >
             Add to Cart
           </button>
@@ -191,14 +193,21 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+const cart = useState('cart', () => [])
 
-const route = useRoute();
-const id = route.params.id;
+const addToCart = () => {
+  if (product.value) {
+    cart.value.push(product.value)
+    alert('Added to cart!')
+  }
+}
 
-const { data: product, pending } = useFetch(`/api/product`, {
-  params: { id }
-});
+const buyNow = () => {
+  if (product.value) {
+    cart.value = [product.value]
+    navigateTo('/checkout')
+  }
+}
 
 const activeTab = ref('Technical Specifications');
 </script>

@@ -140,7 +140,7 @@
             class="bg-[#002888] text-white w-full py-6 rounded-2xl text-lg font-bold shadow-xl shadow-primary/20 hover:shadow-primary/30 hover:bg-blue-900 transition-all active:scale-[0.98]"
             @click.prevent="processCheckout"
           >
-            Complete Secure Purchase
+            Complete Order
           </button>
           
           <p class="text-center text-xs text-gray-400 mt-6 flex items-center justify-center gap-2">
@@ -167,7 +167,7 @@
                 <h4 class="text-sm font-bold text-gray-800 line-clamp-1">{{ item.NAME }}</h4>
                 <p class="text-xs text-gray-400">Qty: 1</p>
               </div>
-              <div class="text-sm font-bold text-gray-900">{{ new Intl.NumberFormat('en-NG', { style: 'currency', currency: item.CURRENCY_ID || 'NGN' }).format(item.PRICE) }}</div>
+              <div class="text-sm font-bold text-gray-900">{{ new Intl.NumberFormat('en-NG', { style: 'currency', currency: item.CURRENCY_ID || 'NGN' }).format(Number(item.PRICE)) }}</div>
             </div>
           </div>
 
@@ -175,10 +175,6 @@
             <div class="flex justify-between text-sm text-gray-500">
               <span>Subtotal</span>
               <span class="font-bold text-gray-900">{{ new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(subtotal) }}</span>
-            </div>
-            <div class="flex justify-between text-sm text-gray-500">
-              <span>Professional Installation</span>
-              <span class="font-bold text-green-600">FREE</span>
             </div>
             <div class="flex justify-between text-sm text-gray-500">
               <div class="flex items-center gap-1">
@@ -211,10 +207,17 @@
 <script setup lang="ts">
 import { ref, computed, reactive } from 'vue';
 
-const cart = useState('cart', () => [])
+interface Product {
+  ID: string | number;
+  NAME: string;
+  PRICE: string | number;
+  CURRENCY_ID?: string;
+}
+
+const cart = useState<Product[]>('cart', () => [])
 
 const subtotal = computed(() => {
-  return cart.value.reduce((sum, item) => sum + Number(item.PRICE || 0), 0)
+  return cart.value.reduce((sum, item: Product) => sum + Number(item.PRICE || 0), 0)
 })
 
 const taxCredit = computed(() => {
