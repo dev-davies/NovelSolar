@@ -32,35 +32,60 @@
           <h2 class="text-3xl font-bold text-gray-900">All Inventory</h2>
           <p class="text-gray-500 mt-2">Ready for immediate dispatch from our regional hubs.</p>
         </div>
-        <NuxtLink to="/categories" class="text-primary font-semibold hover:underline flex items-center gap-1">
-          View all categories
+        <NuxtLink to="/products" class="text-primary font-semibold hover:underline flex items-center gap-1">
+          View all products
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="9 5l7 7-7 7" /></svg>
         </NuxtLink>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        <B24Card v-for="product in products" :key="product.id" class="group overflow-hidden border-none shadow-md hover:shadow-xl transition-all duration-300 rounded-2xl flex flex-col">
-          <template #header>
-            <div class="relative aspect-[4/3] overflow-hidden bg-gray-100">
-              <img :src="product.image" :alt="product.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              <div :class="['absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm z-10', product.stockStatus === 'In Stock' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700']">
-                {{ product.stockStatus }}
-              </div>
-            </div>
-          </template>
-          <div class="p-6 flex flex-col flex-grow">
-            <div class="flex justify-between items-start mb-2">
-              <h3 class="text-lg font-bold text-gray-900 leading-tight">{{ product.title }}</h3>
-            </div>
-            <p class="text-sm text-gray-500 mb-4 flex-grow">{{ product.description }}</p>
-            <div class="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
-              <span class="text-2xl font-bold text-primary">${{ product.price }}</span>
-              <B24Button color="primary" size="sm" class="px-6 rounded-xl">
-                Quick Buy
-              </B24Button>
+      <!-- Loading State -->
+      <div v-if="pending" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div v-for="i in 4" :key="i" class="bg-white rounded-2xl border border-gray-100 p-4 space-y-4 animate-pulse">
+          <div class="aspect-square bg-gray-100 rounded-xl"></div>
+          <div class="h-4 bg-gray-100 rounded w-3/4"></div>
+          <div class="h-4 bg-gray-100 rounded w-1/2"></div>
+        </div>
+      </div>
+
+      <!-- Product Grid -->
+      <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div v-for="product in products" :key="product.ID" class="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col relative overflow-hidden">
+          <!-- In Stock Badge -->
+          <div class="absolute top-4 left-4 z-10 px-2.5 py-1 bg-green-50 text-green-700 text-[10px] font-bold uppercase tracking-wider rounded-md border border-green-100 shadow-sm">
+            In Stock
+          </div>
+
+          <!-- Image Placeholder -->
+          <div class="aspect-square bg-gray-50 flex items-center justify-center border-b border-gray-50 overflow-hidden">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+              <svg class="w-8 h-8 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
             </div>
           </div>
-        </B24Card>
+
+          <!-- Content -->
+          <div class="p-5 flex flex-col flex-grow">
+            <h3 class="text-sm font-bold text-gray-900 line-clamp-2 leading-snug mb-2 group-hover:text-primary transition-colors">
+              {{ product.NAME }}
+            </h3>
+            <div class="mt-auto">
+              <div class="flex items-baseline gap-1 mb-4">
+                <span class="text-lg font-extrabold text-gray-900">{{ product.PRICE }}</span>
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">{{ product.CURRENCY_ID }}</span>
+              </div>
+              
+              <div class="grid grid-cols-2 gap-2 mt-4">
+                <B24Button color="primary" size="sm" class="w-full text-[11px] font-bold py-2 rounded-lg">
+                  Quick Buy
+                </B24Button>
+                <B24Button variant="outline" size="sm" class="w-full text-[11px] font-bold py-2 rounded-lg border-gray-200 text-gray-600 hover:bg-gray-50">
+                  Specs
+                </B24Button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -102,32 +127,7 @@
 </template>
 
 <script setup>
-const products = [
-  {
-    id: 1,
-    title: 'UltraMax 550W Panels',
-    description: 'High-efficiency monocrystalline panels with advanced multi-busbar technology.',
-    price: '289.00',
-    stockStatus: 'In Stock',
-    image: '/images/solar_panel_inventory_1773068259858.png'
-  },
-  {
-    id: 2,
-    title: 'NovaCore Hybrid Inverter',
-    description: 'Smart 10kW hybrid inverter with integrated energy management system.',
-    price: '1450.00',
-    stockStatus: 'Limited',
-    image: '/images/solar_inverter_inventory_1773068280393.png'
-  },
-  {
-    id: 3,
-    title: 'TerraWall Storage (15kWh)',
-    description: 'Stackable high-voltage lithium battery storage for residential power backup.',
-    price: '3800.00',
-    stockStatus: 'In Stock',
-    image: '/images/solar_battery_inventory_1773068296812.png'
-  }
-];
+const { data: products, pending } = useFetch('/api/inventory')
 
 const posts = [
   {

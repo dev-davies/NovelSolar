@@ -4,4 +4,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ["@bitrix24/b24ui-nuxt"],
   css: ["~/assets/css/tailwind.css"],
+  runtimeConfig: {
+    bitrixWebhook: process.env.BITRIX_WEBHOOK_URL,
+  },
 });
