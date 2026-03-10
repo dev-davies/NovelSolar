@@ -10,7 +10,7 @@
         </li>
         <li class="flex items-center gap-2">
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-          <span class="text-gray-900">Ultra-Efficiency 450W Panel</span>
+          <span class="text-gray-900 line-clamp-1">{{ product?.NAME || 'Product Details' }}</span>
         </li>
       </ol>
     </nav>
@@ -21,17 +21,31 @@
       <!-- Left side: Image Gallery -->
       <div class="space-y-4">
         <div class="aspect-square bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100 flex items-center justify-center p-8">
-          <img :src="activeImage" alt="Solar Panel Main" class="w-full h-full object-contain transition-all duration-500 transform hover:scale-105" />
+          <div v-if="pending" class="w-full h-full bg-gray-50 animate-pulse rounded-2xl"></div>
+          <img 
+            v-else
+            :src="product?.DETAIL_PICTURE?.showUrl || product?.PREVIEW_PICTURE?.showUrl || '/placeholder-image.jpg'" 
+            :alt="product?.NAME" 
+            class="w-full h-full object-cover rounded-lg shadow-sm transition-all duration-500 transform hover:scale-105" 
+          />
         </div>
         <div class="grid grid-cols-4 gap-4">
-          <button 
-            v-for="(img, index) in gallery" 
-            :key="index"
-            @click="activeImage = img"
-            :class="['aspect-square rounded-xl overflow-hidden border-2 transition-all p-2 bg-white', activeImage === img ? 'border-primary ring-2 ring-primary/20 shadow-md' : 'border-gray-100 hover:border-blue-200']"
+          <div 
+            v-for="i in 4" 
+            :key="i"
+            class="aspect-square rounded-xl overflow-hidden border-2 transition-all p-2 bg-white border-gray-100 hover:border-blue-200 cursor-pointer"
           >
-            <img :src="img" alt="Gallery thumbnail" class="w-full h-full object-contain" />
-          </button>
+            <img 
+              v-if="i === 1 && product?.PREVIEW_PICTURE?.showUrl" 
+              :src="product.PREVIEW_PICTURE.showUrl" 
+              class="w-full h-full object-contain"
+            />
+            <div v-else class="w-full h-full bg-gray-50 flex items-center justify-center">
+              <svg class="w-6 h-6 text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -39,11 +53,10 @@
       <div class="flex flex-col">
         <div class="mb-6">
           <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-green-100 text-green-700 shadow-sm border border-green-200 mb-4">
-            In Stock: 142 Units
+            In Stock: {{ product?.QUANTITY || 0 }} Units
           </div>
           <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight mb-4">
-            Ultra-Efficiency 450W <br class="hidden sm:block" />
-            Monocrystalline Panel
+            {{ product?.NAME || 'Loading Product...' }}
           </h1>
           <div class="flex items-center gap-4 mb-6">
             <div class="flex text-yellow-400">
@@ -54,11 +67,10 @@
             <span class="text-sm font-medium text-gray-500">4.9 (86 Reviews)</span>
           </div>
           <div class="mb-8">
-            <span class="text-4xl font-extrabold text-primary">$499.00</span>
-            <span class="ml-3 text-lg text-gray-400 line-through tracking-tighter">$580.00</span>
+            <span class="text-4xl font-extrabold text-primary">${{ Number(product?.PRICE || 0).toLocaleString() }}</span>
           </div>
           <p class="text-gray-600 text-lg leading-relaxed mb-8">
-            Engineered for maximum power harvesting even in low-light environments. The NovCore cell architecture ensures a 25-year reliability guarantee with minimal degradation.
+            {{ product?.DESCRIPTION || 'Engineered for maximum power harvesting even in low-light environments. Guaranteed quality and performance for your energy needs.' }}
           </p>
         </div>
 
@@ -182,19 +194,16 @@
   </div>
 </template>
 
-<script setup>
 import { ref } from 'vue';
 
-const gallery = [
-  '/images/pdp_solar_panel_main_1773068744361.png',
-  '/images/pdp_solar_panel_detail_1_1773068761460.png',
-  '/images/pdp_solar_panel_detail_2_1773068777018.png',
-  '/images/solar_panel_inventory_1773068259858.png'
-];
+const route = useRoute();
+const id = route.params.id;
 
-const activeImage = ref(gallery[0]);
+const { data: product, pending } = useFetch(`/api/product`, {
+  params: { id }
+});
+
 const activeTab = ref('Technical Specifications');
-</script>
 
 <style scoped>
 .no-scrollbar::-webkit-scrollbar {
