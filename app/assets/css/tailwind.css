@@ -1,8 +1,0 @@
-@import "tailwindcss";
-
-/* Theme customization for NovelSolar */
-@theme {
-  --color-primary: #1E3A8A;
-  --color-secondary: #EF4444;
-  --color-background: #F9FAFB;
-}
