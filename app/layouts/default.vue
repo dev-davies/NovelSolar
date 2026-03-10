@@ -129,7 +129,7 @@
       </div>
 
       <!-- Center Section: Search Bar -->
-      <div class="w-64 lg:w-80 ml-auto mr-8 relative hidden md:block">
+      <div class="w-64 lg:w-80 ml-auto mr-8 relative hidden lg:block">
         <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
           <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -159,6 +159,55 @@
         <!-- Profile Icon -->
         <div class="h-9 w-9 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity">
           <span class="text-xs font-bold uppercase">NS</span>
+        </div>
+
+        <!-- Mobile Toggle Button -->
+        <button @click="toggleMobileMenu" class="lg:hidden p-2 text-gray-600 hover:text-[#002888] transition-colors" aria-label="Toggle menu">
+          <svg v-if="!isMobileMenuOpen" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <svg v-else class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Mobile Dropdown Drawer -->
+      <div v-show="isMobileMenuOpen" class="lg:hidden absolute top-20 left-0 w-full bg-white border-b border-gray-200 shadow-lg z-50 flex flex-col overflow-y-auto max-h-[calc(100vh-5rem)]">
+        <!-- Search -->
+        <div class="p-6 border-b border-gray-50">
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+              <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <input 
+              type="text" 
+              placeholder="Search inventory..." 
+              class="w-full bg-gray-50 border border-gray-300 rounded-md py-3 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#002288]"
+            />
+          </div>
+        </div>
+
+        <!-- Links -->
+        <nav class="flex flex-col">
+          <NuxtLink 
+            v-for="link in ['Product', 'Services', 'Partners', 'About Us', 'Quote Request', 'Support']" 
+            :key="link"
+            to="#"
+            class="block w-full text-left px-6 py-4 border-b border-gray-50 text-gray-800 font-semibold hover:bg-gray-50 hover:text-[#002888] transition-colors"
+            @click="isMobileMenuOpen = false"
+          >
+            {{ link }}
+          </NuxtLink>
+        </nav>
+
+        <!-- CTA -->
+        <div class="p-6 bg-gray-50/50">
+          <B24Button color="primary" class="w-full py-4 text-sm font-bold rounded-lg shadow-md">
+            Request a Quote
+          </B24Button>
         </div>
       </div>
     </header>
@@ -232,4 +281,6 @@
 </template>
 
 <script setup>
+const isMobileMenuOpen = ref(false)
+const toggleMobileMenu = () => { isMobileMenuOpen.value = !isMobileMenuOpen.value }
 </script>
