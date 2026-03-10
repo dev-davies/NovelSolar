@@ -8,12 +8,12 @@
           <img src="/images/logo.png" alt="NovelSolar" class="h-8 w-auto" />
         </NuxtLink>
         <nav class="hidden lg:flex items-center gap-2">
-          <!-- Product Categories Dropdown -->
+          <!-- Product Dropdown -->
           <div class="relative group py-6 cursor-pointer">
             <div class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 group-hover:text-[#002888] transition-colors">
-              Product Categories
-              <svg class="w-4 h-4 text-gray-400 group-hover:text-[#002888] group-hover:rotate-180 transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              Product
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 ml-0.5 group-hover:text-[#002888] group-hover:rotate-45 transition-all duration-200">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
               </svg>
             </div>
             
@@ -30,12 +30,34 @@
 
           <div class="w-4"></div>
 
+          <!-- Services Dropdown -->
+          <div class="relative group py-6 cursor-pointer">
+            <div class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 group-hover:text-[#002888] transition-colors">
+              Services
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 ml-0.5 group-hover:text-[#002888] group-hover:rotate-45 transition-all duration-200">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+            </div>
+
+            <div class="absolute top-full left-0 w-64 bg-white border border-gray-100 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden">
+              <ul class="py-1">
+                <li><NuxtLink to="/services/residential" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Residential Installation</NuxtLink></li>
+                <li><NuxtLink to="/services/commercial" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Commercial & Industrial Projects</NuxtLink></li>
+                <li><NuxtLink to="/services/maintenance" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Maintenance & Repair</NuxtLink></li>
+                <li><NuxtLink to="/services/consulting" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">System Design & Consulting</NuxtLink></li>
+                <li><NuxtLink to="/services/audits" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Free Energy Audits</NuxtLink></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="w-4"></div>
+
           <!-- Partners Dropdown -->
           <div class="relative group py-6 cursor-pointer">
             <div class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 group-hover:text-[#002888] transition-colors">
               Partners
-              <svg class="w-4 h-4 text-gray-400 group-hover:text-[#002888] group-hover:rotate-180 transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 ml-0.5 group-hover:text-[#002888] group-hover:rotate-45 transition-all duration-200">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
               </svg>
             </div>
 
@@ -46,6 +68,60 @@
                 <li><NuxtLink to="/partners/corporate" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Corporate Partners</NuxtLink></li>
                 <li><NuxtLink to="/partners/government" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Government Tenders</NuxtLink></li>
                 <li><NuxtLink to="/partners/become" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors font-bold">Become a Partner</NuxtLink></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="w-4"></div>
+
+          <!-- About Us Dropdown -->
+          <div class="relative group py-6 cursor-pointer">
+            <div class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 group-hover:text-[#002888] transition-colors">
+              About Us
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 ml-0.5 group-hover:text-[#002888] group-hover:rotate-45 transition-all duration-200">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+            </div>
+
+            <div class="absolute top-full left-0 w-48 bg-white border border-gray-100 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden">
+              <ul class="py-1">
+                <li><NuxtLink to="/about" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">About us</NuxtLink></li>
+                <li><NuxtLink to="/outlets" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Branch outlets</NuxtLink></li>
+                <li><NuxtLink to="/gallery" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Gallery</NuxtLink></li>
+                <li><NuxtLink to="/news" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">News</NuxtLink></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="w-4"></div>
+
+          <!-- Quote Request Dropdown -->
+          <div class="relative group py-6 cursor-pointer text-sm font-semibold text-gray-700 hover:text-[#002888] transition-colors flex items-center gap-1">
+            Quote Request
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 ml-0.5 group-hover:text-[#002888] group-hover:rotate-45 transition-all duration-200">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+
+            <div class="absolute top-full left-0 w-56 bg-white border border-gray-100 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden">
+              <ul class="py-1">
+                <li><NuxtLink to="/quote-request" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors font-normal">Request a quote</NuxtLink></li>
+                <li><NuxtLink to="/calculator" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors font-normal">Load calculator</NuxtLink></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="w-4"></div>
+
+          <!-- Support Dropdown -->
+          <div class="relative group py-6 cursor-pointer text-sm font-semibold text-gray-700 hover:text-[#002888] transition-colors flex items-center gap-1">
+            Support
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 ml-0.5 group-hover:text-[#002888] group-hover:rotate-45 transition-all duration-200">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+
+            <div class="absolute top-full left-0 w-48 bg-white border border-gray-100 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden">
+              <ul class="py-1">
+                <li><NuxtLink to="/contact" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors font-normal">Contact us</NuxtLink></li>
               </ul>
             </div>
           </div>

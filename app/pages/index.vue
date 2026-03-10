@@ -77,7 +77,7 @@
               
               <div class="grid grid-cols-2 gap-2 mt-4">
                 <B24Button color="primary" size="sm" class="w-full text-[11px] font-bold py-2 rounded-lg">
-                  Quick Buy
+                  Buy Now
                 </B24Button>
                 <B24Button variant="outline" size="sm" class="w-full text-[11px] font-bold py-2 rounded-lg border-gray-200 text-gray-600 hover:bg-gray-50">
                   Specs
