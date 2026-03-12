@@ -8,45 +8,53 @@
           <img src="/images/logo.png" alt="NovelSolar" class="h-8 w-auto" />
         </NuxtLink>
         <nav class="hidden lg:flex items-center gap-2">
-          <!-- Product Dropdown -->
+          <!-- Desktop Mega Menu -->
           <div class="relative group py-6 cursor-pointer">
             <div class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 group-hover:text-[#002888] transition-colors">
               Product
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 ml-0.5 group-hover:text-[#002888] group-hover:rotate-45 transition-all duration-200">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-0.5 group-hover:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </div>
             
-            <div class="absolute top-full left-0 w-56 bg-white border border-gray-100 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden">
-              <ul class="py-1">
-                <li><NuxtLink to="/category/solar-panels" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Solar Panels</NuxtLink></li>
-                <li><NuxtLink to="/category/inverters" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Hybrid Inverters</NuxtLink></li>
-                <li><NuxtLink to="/category/batteries" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Lithium Batteries</NuxtLink></li>
-                <li><NuxtLink to="/category/mounting" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Mounting Systems</NuxtLink></li>
-                <li><NuxtLink to="/category/accessories" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Accessories</NuxtLink></li>
-              </ul>
+            <!-- Mega Dropdown -->
+            <div class="absolute left-0 top-full mt-2 w-[600px] bg-white border border-gray-200 shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 p-6">
+              <div class="grid grid-cols-3 gap-6">
+                <div v-for="category in productMenu" :key="category.title">
+                  <h4 class="font-bold text-[#002888] mb-3 border-b pb-1 text-sm uppercase tracking-wider">{{ category.title }}</h4>
+                  <ul v-if="category.items.length > 0" class="space-y-1">
+                    <li v-for="item in category.items" :key="item">
+                      <NuxtLink to="/products" class="text-gray-600 hover:text-[#002888] text-sm block py-1 transition-colors">
+                        {{ item }}
+                      </NuxtLink>
+                    </li>
+                  </ul>
+                  <div v-else class="text-xs text-gray-400 italic">Coming soon</div>
+                </div>
+              </div>
             </div>
           </div>
 
           <div class="w-4"></div>
 
-          <!-- Services Dropdown -->
+          <!-- Desktop Services Dropdown -->
           <div class="relative group py-6 cursor-pointer">
             <div class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 group-hover:text-[#002888] transition-colors">
               Services
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 ml-0.5 group-hover:text-[#002888] group-hover:rotate-45 transition-all duration-200">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-0.5 group-hover:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </div>
 
-            <div class="absolute top-full left-0 w-64 bg-white border border-gray-100 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden">
-              <ul class="py-1">
-                <li><NuxtLink to="/services/residential" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Residential Installation</NuxtLink></li>
-                <li><NuxtLink to="/services/commercial" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Commercial & Industrial Projects</NuxtLink></li>
-                <li><NuxtLink to="/services/maintenance" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Maintenance & Repair</NuxtLink></li>
-                <li><NuxtLink to="/services/consulting" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">System Design & Consulting</NuxtLink></li>
-                <li><NuxtLink to="/services/audits" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Free Energy Audits</NuxtLink></li>
-              </ul>
+            <div class="absolute left-0 top-full mt-2 w-80 bg-white border border-gray-200 shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 py-2">
+              <NuxtLink 
+                v-for="service in servicesMenu" 
+                :key="service.title"
+                :to="service.link" 
+                class="block px-6 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#002888] transition-colors border-b border-gray-100 last:border-0"
+              >
+                {{ service.title }}
+              </NuxtLink>
             </div>
           </div>
 
@@ -195,15 +203,51 @@
 
         <!-- Links -->
         <nav class="flex flex-col">
-          <NuxtLink 
-            v-for="link in ['Product', 'Services', 'Partners', 'About Us', 'Quote Request', 'Support']" 
-            :key="link"
-            to="#"
-            class="block w-full text-left px-6 py-4 border-b border-gray-50 text-gray-800 font-semibold hover:bg-gray-50 hover:text-[#002888] transition-colors"
-            @click="isMobileMenuOpen = false"
-          >
-            {{ link }}
-          </NuxtLink>
+          <template v-for="link in ['Product', 'Services', 'Partners', 'About Us', 'Quote Request', 'Support']" :key="link">
+            <!-- Special Handling for Product in Mobile Menu -->
+            <div v-if="link === 'Product'" class="px-6 py-4 border-b border-gray-50">
+              <div class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-4">Our Products</div>
+              <div v-for="category in productMenu" :key="category.title" class="mb-6 last:mb-2">
+                <div class="text-gray-900 font-bold text-base mb-2">{{ category.title }}</div>
+                <div class="pl-4 border-l-2 border-primary/10 ml-1 space-y-1">
+                  <NuxtLink 
+                    v-for="item in category.items" 
+                    :key="item"
+                    to="/products"
+                    class="block text-gray-600 py-2.5 text-sm hover:text-primary transition-colors"
+                    @click="isMobileMenuOpen = false"
+                  >
+                    {{ item }}
+                  </NuxtLink>
+                  <div v-if="category.items.length === 0" class="text-xs text-gray-400 italic py-2">More coming soon</div>
+                </div>
+              </div>
+            </div>
+            <!-- Special Handling for Services in Mobile Menu -->
+            <div v-else-if="link === 'Services'" class="px-6 py-4 border-b border-gray-50">
+              <h4 class="text-gray-900 font-bold text-base mb-2">Services</h4>
+              <div class="pl-4 border-l-2 border-primary/10 ml-1 space-y-1">
+                <NuxtLink 
+                  v-for="service in servicesMenu" 
+                  :key="service.title"
+                  :to="service.link"
+                  class="block text-gray-600 py-3 text-sm hover:text-primary transition-colors border-b border-gray-50 last:border-0"
+                  @click="isMobileMenuOpen = false"
+                >
+                  {{ service.title }}
+                </NuxtLink>
+              </div>
+            </div>
+            <!-- Standard Links -->
+            <NuxtLink 
+              v-else
+              to="#"
+              class="block w-full text-left px-6 py-4 border-b border-gray-50 text-gray-800 font-semibold hover:bg-gray-50 hover:text-[#002888] transition-colors"
+              @click="isMobileMenuOpen = false"
+            >
+              {{ link }}
+            </NuxtLink>
+          </template>
         </nav>
 
         <!-- CTA -->
@@ -286,6 +330,20 @@
 <script setup>
 const isMobileMenuOpen = ref(false)
 const toggleMobileMenu = () => { isMobileMenuOpen.value = !isMobileMenuOpen.value }
+
+const productMenu = [
+  { title: 'Solar Panels', items: ['Regular', 'Half Cut'] },
+  { title: 'Inverters', items: ['Hybrid', 'Regular', 'Solar Generator'] },
+  { title: 'Batteries', items: ['Lithium', 'Tubular', 'Dry Cell'] },
+  { title: 'Charge Controllers', items: ['MPPT', 'PWM'] },
+  { title: 'Accessories', items: [] }
+]
+
+const servicesMenu = [
+  { title: 'Power & Load Audit Service', link: '/services/audit' },
+  { title: 'Inverter Repair (Solar Panel, Battery etc Repairs)', link: '/services/repair' },
+  { title: 'Solar Panel, Tubular Battery & Inverter Maintenance', link: '/services/maintenance' }
+]
 
 const cart = useState('cart', () => [])
 const cartCount = computed(() => cart.value.length)
