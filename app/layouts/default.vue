@@ -12,9 +12,7 @@
           <div class="relative group py-6 cursor-pointer">
             <div class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 group-hover:text-[#002888] transition-colors">
               Product
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-0.5 group-hover:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-              </svg>
+              <span class="inline-block text-gray-500 font-light ml-1 text-lg leading-none transition-transform duration-300 group-hover:rotate-45">+</span>
             </div>
             
             <!-- Mega Dropdown -->
@@ -41,9 +39,7 @@
           <div class="relative group py-6 cursor-pointer">
             <div class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 group-hover:text-[#002888] transition-colors">
               Services
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-0.5 group-hover:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-              </svg>
+              <span class="inline-block text-gray-500 font-light ml-1 text-lg leading-none transition-transform duration-300 group-hover:rotate-45">+</span>
             </div>
 
             <div class="absolute left-0 top-full mt-2 w-80 bg-white border border-gray-200 shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 py-2">
@@ -64,9 +60,7 @@
           <div class="relative group py-6 cursor-pointer">
             <div class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 group-hover:text-[#002888] transition-colors">
               Partners
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-0.5 group-hover:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-              </svg>
+              <span class="inline-block text-gray-500 font-light ml-1 text-lg leading-none transition-transform duration-300 group-hover:rotate-45">+</span>
             </div>
 
             <div class="absolute left-0 top-full mt-2 w-56 bg-white border border-gray-200 shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 py-2">
@@ -93,14 +87,12 @@
           <div class="relative group py-6 cursor-pointer">
             <div class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 group-hover:text-[#002888] transition-colors">
               About Us
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 ml-0.5 group-hover:text-[#002888] group-hover:rotate-45 transition-all duration-200">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-              </svg>
+              <span class="inline-block text-gray-500 font-light ml-1 text-lg leading-none transition-transform duration-300 group-hover:rotate-45">+</span>
             </div>
 
             <div class="absolute top-full left-0 w-48 bg-white border border-gray-100 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden">
               <ul class="py-1">
-                <li><NuxtLink to="/about" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">About us</NuxtLink></li>
+                <li><NuxtLink to="/about" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors" @click="isMobileMenuOpen = false">About us</NuxtLink></li>
                 <li><NuxtLink to="/outlets" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Branch outlets</NuxtLink></li>
                 <li><NuxtLink to="/gallery" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Gallery</NuxtLink></li>
                 <li><NuxtLink to="/news" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">News</NuxtLink></li>
@@ -113,9 +105,7 @@
           <!-- Quote Request Dropdown -->
           <div class="relative group py-6 cursor-pointer text-sm font-semibold text-gray-700 hover:text-[#002888] transition-colors flex items-center gap-1">
             Quote Request
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 ml-0.5 group-hover:text-[#002888] group-hover:rotate-45 transition-all duration-200">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
+            <span class="inline-block text-gray-500 font-light ml-1 text-lg leading-none transition-transform duration-300 group-hover:rotate-45">+</span>
 
             <div class="absolute top-full left-0 w-56 bg-white border border-gray-100 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden">
               <ul class="py-1">
@@ -130,9 +120,7 @@
           <!-- Desktop Support Dropdown -->
           <div class="relative group py-6 cursor-pointer text-sm font-semibold text-gray-700 hover:text-[#002888] transition-colors flex items-center gap-1">
             Support
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-0.5 group-hover:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
+            <span class="inline-block text-gray-500 font-light ml-1 text-lg leading-none transition-transform duration-300 group-hover:rotate-45">+</span>
 
             <div class="absolute left-0 top-full mt-2 w-48 bg-white border border-gray-200 shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 py-2">
               <NuxtLink 
@@ -238,7 +226,10 @@
             </div>
             <!-- Special Handling for Services in Mobile Menu -->
             <div v-else-if="link === 'Services'" class="px-6 py-4 border-b border-gray-50">
-              <h4 class="text-gray-900 font-bold text-base mb-2">Services</h4>
+              <h4 class="text-gray-900 font-bold text-base mb-2 flex items-center justify-between">
+                Services
+                <span class="text-gray-500 font-light text-lg leading-none">+</span>
+              </h4>
               <div class="pl-4 border-l-2 border-primary/10 ml-1 space-y-1">
                 <NuxtLink 
                   v-for="service in servicesMenu" 
@@ -253,7 +244,10 @@
             </div>
             <!-- Special Handling for Partners in Mobile Menu -->
             <div v-else-if="link === 'Partners'" class="px-6 py-4 border-b border-gray-50">
-              <h4 class="text-gray-900 font-bold text-base mb-2">Partners</h4>
+              <h4 class="text-gray-900 font-bold text-base mb-2 flex items-center justify-between">
+                Partners
+                <span class="text-gray-500 font-light text-lg leading-none">+</span>
+              </h4>
               <div class="pl-4 border-l-2 border-primary/10 ml-1 space-y-1">
                 <NuxtLink 
                   v-for="partner in partnersMenu" 
@@ -275,7 +269,10 @@
             </div>
             <!-- Special Handling for Support in Mobile Menu -->
             <div v-else-if="link === 'Support'" class="px-6 py-4 border-b border-gray-50">
-              <h4 class="text-gray-900 font-bold text-base mb-2">Support</h4>
+              <h4 class="text-gray-900 font-bold text-base mb-2 flex items-center justify-between">
+                Support
+                <span class="text-gray-500 font-light text-lg leading-none">+</span>
+              </h4>
               <div class="pl-4 border-l-2 border-primary/10 ml-1 space-y-1">
                 <NuxtLink 
                   v-for="item in supportMenu" 
@@ -291,7 +288,7 @@
             <!-- Standard Links -->
             <NuxtLink 
               v-else
-              to="#"
+              :to="link === 'About Us' ? '/about' : '#'"
               class="block w-full text-left px-6 py-4 border-b border-gray-50 text-gray-800 font-semibold hover:bg-gray-50 hover:text-[#002888] transition-colors"
               @click="isMobileMenuOpen = false"
             >
