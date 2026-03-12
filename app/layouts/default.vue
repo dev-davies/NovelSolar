@@ -60,23 +60,30 @@
 
           <div class="w-4"></div>
 
-          <!-- Partners Dropdown -->
+          <!-- Desktop Partners Dropdown -->
           <div class="relative group py-6 cursor-pointer">
             <div class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 group-hover:text-[#002888] transition-colors">
               Partners
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 ml-0.5 group-hover:text-[#002888] group-hover:rotate-45 transition-all duration-200">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-0.5 group-hover:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </div>
 
-            <div class="absolute top-full left-0 w-56 bg-white border border-gray-100 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden">
-              <ul class="py-1">
-                <li><NuxtLink to="/partners/installers" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Installer Network</NuxtLink></li>
-                <li><NuxtLink to="/partners/distributors" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Distributors</NuxtLink></li>
-                <li><NuxtLink to="/partners/corporate" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Corporate Partners</NuxtLink></li>
-                <li><NuxtLink to="/partners/government" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Government Tenders</NuxtLink></li>
-                <li><NuxtLink to="/partners/become" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors font-bold">Become a Partner</NuxtLink></li>
-              </ul>
+            <div class="absolute left-0 top-full mt-2 w-56 bg-white border border-gray-200 shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 py-2">
+              <NuxtLink 
+                v-for="partner in partnersMenu" 
+                :key="partner.title"
+                :to="partner.link" 
+                class="block px-6 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#002888] transition-colors"
+                @click="isMobileMenuOpen = false"
+              >
+                {{ partner.title }}
+              </NuxtLink>
+              <div class="border-t border-gray-100 mt-2 pt-2">
+                <NuxtLink to="/partners/become-a-partner" class="block px-6 py-2.5 text-sm font-semibold text-[#002888] hover:bg-blue-50 transition-colors">
+                  Become a Partner &rarr;
+                </NuxtLink>
+              </div>
             </div>
           </div>
 
@@ -120,17 +127,23 @@
 
           <div class="w-4"></div>
 
-          <!-- Support Dropdown -->
+          <!-- Desktop Support Dropdown -->
           <div class="relative group py-6 cursor-pointer text-sm font-semibold text-gray-700 hover:text-[#002888] transition-colors flex items-center gap-1">
             Support
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 ml-0.5 group-hover:text-[#002888] group-hover:rotate-45 transition-all duration-200">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-0.5 group-hover:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
 
-            <div class="absolute top-full left-0 w-48 bg-white border border-gray-100 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden">
-              <ul class="py-1">
-                <li><NuxtLink to="/contact" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors font-normal">Contact us</NuxtLink></li>
-              </ul>
+            <div class="absolute left-0 top-full mt-2 w-48 bg-white border border-gray-200 shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 py-2">
+              <NuxtLink 
+                v-for="item in supportMenu" 
+                :key="item.title"
+                :to="item.link" 
+                class="block px-6 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#002888] transition-colors"
+                @click="isMobileMenuOpen = false"
+              >
+                {{ item.title }}
+              </NuxtLink>
             </div>
           </div>
         </nav>
@@ -235,6 +248,43 @@
                   @click="isMobileMenuOpen = false"
                 >
                   {{ service.title }}
+                </NuxtLink>
+              </div>
+            </div>
+            <!-- Special Handling for Partners in Mobile Menu -->
+            <div v-else-if="link === 'Partners'" class="px-6 py-4 border-b border-gray-50">
+              <h4 class="text-gray-900 font-bold text-base mb-2">Partners</h4>
+              <div class="pl-4 border-l-2 border-primary/10 ml-1 space-y-1">
+                <NuxtLink 
+                  v-for="partner in partnersMenu" 
+                  :key="partner.title"
+                  :to="partner.link"
+                  class="block text-gray-600 py-2.5 text-sm hover:text-primary transition-colors"
+                  @click="isMobileMenuOpen = false"
+                >
+                  {{ partner.title }}
+                </NuxtLink>
+                <NuxtLink 
+                  to="/partners/become-a-partner"
+                  class="block text-primary py-3 text-sm font-bold hover:text-blue-800 transition-colors border-t border-gray-50 mt-2"
+                  @click="isMobileMenuOpen = false"
+                >
+                  Become a Partner &rarr;
+                </NuxtLink>
+              </div>
+            </div>
+            <!-- Special Handling for Support in Mobile Menu -->
+            <div v-else-if="link === 'Support'" class="px-6 py-4 border-b border-gray-50">
+              <h4 class="text-gray-900 font-bold text-base mb-2">Support</h4>
+              <div class="pl-4 border-l-2 border-primary/10 ml-1 space-y-1">
+                <NuxtLink 
+                  v-for="item in supportMenu" 
+                  :key="item.title"
+                  :to="item.link"
+                  class="block text-gray-600 py-3 text-sm hover:text-primary transition-colors border-b border-gray-50 last:border-0"
+                  @click="isMobileMenuOpen = false"
+                >
+                  {{ item.title }}
                 </NuxtLink>
               </div>
             </div>
@@ -343,6 +393,19 @@ const servicesMenu = [
   { title: 'Power & Load Audit Service', link: '/services/audit' },
   { title: 'Inverter Repair (Solar Panel, Battery etc Repairs)', link: '/services/repair' },
   { title: 'Solar Panel, Tubular Battery & Inverter Maintenance', link: '/services/maintenance' }
+]
+
+const partnersMenu = [
+  { title: 'Itel', link: '/partners/itel' },
+  { title: 'Haisic', link: '/partners/haisic' },
+  { title: 'Yinergy', link: '/partners/yinergy' },
+  { title: 'Hithium', link: '/partners/hithium' },
+  { title: 'Livoltek', link: '/partners/livoltek' }
+]
+
+const supportMenu = [
+  { title: 'FAQ', link: '/faq' },
+  { title: 'Contact Us', link: '/contact' }
 ]
 
 const cart = useState('cart', () => [])
