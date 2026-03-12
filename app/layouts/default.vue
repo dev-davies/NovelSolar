@@ -22,7 +22,7 @@
                   <h4 class="font-bold text-[#002888] mb-3 border-b pb-1 text-sm uppercase tracking-wider">{{ category.title }}</h4>
                   <ul v-if="category.items.length > 0" class="space-y-1">
                     <li v-for="item in category.items" :key="item">
-                      <NuxtLink to="/products" class="text-gray-600 hover:text-[#002888] text-sm block py-1 transition-colors">
+                      <NuxtLink :to="'/category/' + item.toLowerCase().replace(' ', '-')" class="text-gray-600 hover:text-[#002888] text-sm block py-1 transition-colors">
                         {{ item }}
                       </NuxtLink>
                     </li>
@@ -214,7 +214,7 @@
                   <NuxtLink 
                     v-for="item in category.items" 
                     :key="item"
-                    to="/products"
+                    :to="'/category/' + item.toLowerCase().replace(' ', '-')"
                     class="block text-gray-600 py-2.5 text-sm hover:text-primary transition-colors"
                     @click="isMobileMenuOpen = false"
                   >
