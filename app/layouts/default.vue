@@ -388,6 +388,7 @@ const productMenu = [
 
 const servicesMenu = [
   { title: 'Power & Load Audit Service', link: '/services/audit' },
+  { title: 'Inverter, Solar Panel & Battery Installation', link: '/services/installation' },
   { title: 'Inverter Repair (Solar Panel, Battery etc Repairs)', link: '/services/repair' },
   { title: 'Solar Panel, Tubular Battery & Inverter Maintenance', link: '/services/maintenance' }
 ]
