@@ -5,7 +5,7 @@
         Partner: {{ route.params.slug.replace('-', ' ') }}
       </h1>
       <p class="text-gray-500 text-lg mb-8">
-        Detailed partner information coming soon.
+        Detailed partner information coming soon
       </p>
       <NuxtLink to="/" class="text-[#002888] font-semibold hover:underline">
         &larr; Back to Home
