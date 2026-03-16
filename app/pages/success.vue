@@ -12,7 +12,7 @@
       <h1 class="text-[#002888] font-bold text-3xl mt-8">Order Confirmed</h1>
       <p class="text-gray-900 font-semibold text-lg mt-2">Thank you for choosing NovelSolar.</p>
       <p class="text-gray-600 mt-4 leading-relaxed">
-        Your order has been successfully pushed to our CRM pipeline. A representative will contact you shortly regarding fulfillment and delivery.
+        Your order is successful. A representative will contact you shortly regarding fulfillment and delivery.
       </p>
 
       <!-- Actions -->
