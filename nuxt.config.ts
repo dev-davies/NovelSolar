@@ -4,6 +4,13 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ["@nuxtjs/tailwindcss"],
   css: ["~/assets/css/main.css"],
+  app: {
+    head: {
+      link: [
+        { rel: 'icon', type: 'image/png', href: '/favicon.png' }
+      ]
+    }
+  },
   runtimeConfig: {
     bitrixWebhook: process.env.BITRIX_WEBHOOK_URL,
     public: {

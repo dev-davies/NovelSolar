@@ -383,7 +383,7 @@ const productMenu = [
   { title: 'Inverters', items: ['Hybrid', 'Regular', 'Solar Generator'] },
   { title: 'Batteries', items: ['Lithium', 'Tubular', 'Dry Cell'] },
   { title: 'Charge Controllers', items: ['MPPT', 'PWM'] },
-  { title: 'Accessories', items: [] }
+  { title: 'Accessories', items: ['Accessories'] }
 ]
 
 const servicesMenu = [

@@ -5,8 +5,8 @@ export default defineEventHandler(async (event) => {
     const response = await $fetch<{ result: any[] }>(`${config.bitrixWebhook}crm.product.list`, {
       method: 'POST',
       body: {
-        limit: 8,
-        select: ["ID", "NAME", "PRICE", "QUANTITY", "CURRENCY_ID"]
+        limit: 50,
+        select: ["ID", "NAME", "PRICE", "QUANTITY", "CURRENCY_ID", "SECTION_ID"]
       }
     });
 

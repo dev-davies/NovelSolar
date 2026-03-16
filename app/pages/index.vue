@@ -12,9 +12,9 @@
             Sourcing the world's best solar components for residential and commercial projects. Instant quotes and same-day logistics.
           </p>
           <div class="mt-10 flex flex-wrap gap-4">
-            <button class="bg-white text-primary px-8 py-3 rounded-md text-lg font-bold hover:bg-gray-100 transition-colors shadow-lg">
+            <NuxtLink to="/products" class="bg-white text-primary px-8 py-3 rounded-md text-lg font-bold hover:bg-gray-100 transition-colors shadow-lg">
               Browse Stock
-            </button>
+            </NuxtLink>
             <button class="border-2 border-white text-white px-8 py-3 rounded-md text-lg font-bold hover:bg-white/10 transition-colors">
               Spec Sheets
             </button>
