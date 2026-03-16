@@ -93,7 +93,7 @@
             <div class="absolute top-full left-0 w-48 bg-white border border-gray-100 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden">
               <ul class="py-1">
                 <li><NuxtLink to="/about" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors" @click="isMobileMenuOpen = false">About us</NuxtLink></li>
-                <li><NuxtLink to="/outlets" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Branch outlets</NuxtLink></li>
+                <li><NuxtLink to="/branch-outlets" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Branch outlets</NuxtLink></li>
                 <li><NuxtLink to="/gallery" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Gallery</NuxtLink></li>
                 <li><NuxtLink to="/news" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">News</NuxtLink></li>
               </ul>
@@ -109,7 +109,7 @@
 
             <div class="absolute top-full left-0 w-56 bg-white border border-gray-100 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden">
               <ul class="py-1">
-                <li><NuxtLink to="/quote-request" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors font-normal">Request a quote</NuxtLink></li>
+                <li><NuxtLink to="/quote" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors font-normal">Request a quote</NuxtLink></li>
                 <li><NuxtLink to="/calculator" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors font-normal">Load calculator</NuxtLink></li>
               </ul>
             </div>
@@ -164,9 +164,9 @@
         </NuxtLink>
 
         <!-- Button -->
-        <button class="bg-[#002888] text-white px-5 py-2.5 rounded-md text-sm font-bold hover:bg-blue-900 transition-colors shadow-sm hidden sm:block">
+        <NuxtLink to="/quote" class="bg-[#002888] text-white px-5 py-2.5 rounded-md text-sm font-bold hover:bg-blue-900 transition-colors shadow-sm hidden sm:block">
           Request a Quote
-        </button>
+        </NuxtLink>
 
         <!-- Profile Icon -->
         <div class="h-9 w-9 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity">
@@ -299,9 +299,9 @@
 
         <!-- CTA -->
         <div class="p-6 bg-gray-50/50">
-          <button class="bg-[#002888] text-white w-full py-4 rounded-lg text-sm font-bold hover:bg-blue-900 transition-colors shadow-md">
+          <NuxtLink to="/quote" class="bg-[#002888] text-white w-full py-4 flex items-center justify-center rounded-lg text-sm font-bold hover:bg-blue-900 transition-colors shadow-md" @click="isMobileMenuOpen = false">
             Request a Quote
-          </button>
+          </NuxtLink>
         </div>
       </div>
     </header>
