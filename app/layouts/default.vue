@@ -145,9 +145,11 @@
           </svg>
         </div>
         <input 
+          v-model="searchQuery"
           type="text" 
           placeholder="Search inventory..." 
           class="w-full bg-gray-50 border border-gray-300 rounded-md py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#002288] transition-all"
+          @keyup.enter="handleSearch"
         />
       </div>
 
@@ -174,7 +176,7 @@
         </div>
 
         <!-- Mobile Toggle Button -->
-        <button @click="toggleMobileMenu" class="lg:hidden p-2 text-gray-600 hover:text-[#002888] transition-colors" aria-label="Toggle menu">
+        <button @click="toggleMobileMenu" class="hidden p-2 text-gray-600 hover:text-[#002888] transition-colors" aria-label="Toggle menu">
           <svg v-if="!isMobileMenuOpen" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
@@ -195,9 +197,11 @@
               </svg>
             </div>
             <input 
+              v-model="searchQuery"
               type="text" 
               placeholder="Search inventory..." 
               class="w-full bg-gray-50 border border-gray-300 rounded-md py-3 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#002288]"
+              @keyup.enter="handleSearch"
             />
           </div>
         </div>
@@ -307,7 +311,7 @@
     </header>
 
     <!-- Main Content -->
-    <main class="flex-grow">
+    <main class="flex-grow pb-24 md:pb-0">
       <slot />
     </main>
 
@@ -371,12 +375,58 @@
         </div>
       </div>
     </footer>
+
+    <!-- Fixed Bottom Navigation (Mobile Only) -->
+    <nav class="fixed bottom-0 left-0 w-full bg-white/90 backdrop-blur-lg border-t border-gray-200 z-[60] md:hidden flex justify-around items-center pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] px-2 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+      <!-- Home -->
+      <NuxtLink to="/" class="flex flex-col items-center p-2 text-gray-500 hover:text-[#002888] active:scale-95 transition-transform" exact-active-class="!text-[#002888]">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        <span class="text-[10px] mt-1 font-medium">Home</span>
+      </NuxtLink>
+
+      <!-- Shop -->
+      <NuxtLink to="/products" class="flex flex-col items-center p-2 text-gray-500 hover:text-[#002888] active:scale-95 transition-transform" active-class="!text-[#002888]">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+        </svg>
+        <span class="text-[10px] mt-1 font-medium">Shop</span>
+      </NuxtLink>
+
+      <!-- Calculator -->
+      <NuxtLink to="/calculator" class="flex flex-col items-center p-2 text-gray-500 hover:text-[#002888] active:scale-95 transition-transform" active-class="!text-[#002888]">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="16" y1="14" x2="16" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/>
+        </svg>
+        <span class="text-[10px] mt-1 font-medium">Load Calc</span>
+      </NuxtLink>
+
+      <!-- Menu -->
+      <button @click="toggleMobileMenu" class="flex flex-col items-center p-2 text-gray-500 hover:text-[#002888] active:scale-95 transition-transform" :class="{ 'text-[#002888]': isMobileMenuOpen }">
+        <svg v-if="!isMobileMenuOpen" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="18" x2="20" y2="18"/>
+        </svg>
+        <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="12"/>
+        </svg>
+        <span class="text-[10px] mt-1 font-medium">{{ isMobileMenuOpen ? 'Close' : 'Menu' }}</span>
+      </button>
+    </nav>
   </div>
 </template>
 
 <script setup>
 const isMobileMenuOpen = ref(false)
 const toggleMobileMenu = () => { isMobileMenuOpen.value = !isMobileMenuOpen.value }
+
+const searchQuery = ref('')
+const handleSearch = () => {
+  if (!searchQuery.value.trim()) return
+  navigateTo(`/products?q=${encodeURIComponent(searchQuery.value.trim())}`)
+  isMobileMenuOpen.value = false
+  searchQuery.value = ''
+}
 
 const productMenu = [
   { title: 'Solar Panels', items: ['Regular', 'Half Cut'] },

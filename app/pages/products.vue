@@ -13,8 +13,8 @@
       </div>
 
       <!-- Product Grid -->
-      <div v-else-if="products && products.length > 0" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        <div v-for="product in products" :key="product.ID" class="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col relative overflow-hidden">
+      <div v-else-if="filteredProducts && filteredProducts.length > 0" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div v-for="product in filteredProducts" :key="product.ID" class="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col relative overflow-hidden">
           <!-- In Stock Badge -->
           <div class="absolute top-4 left-4 z-10 px-2.5 py-1 bg-green-50 text-green-700 text-[10px] font-bold uppercase tracking-wider rounded-md border border-green-100 shadow-sm">
             In Stock
@@ -70,7 +70,9 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
           </svg>
         </div>
-        <p class="text-xl text-gray-500 font-medium">No products currently available.</p>
+        <p class="text-xl text-gray-500 font-medium">
+          {{ $route.query.q ? `No results found for "${$route.query.q}"` : 'No products currently available.' }}
+        </p>
         <p class="text-gray-400 mt-2">Check back later for new arrivals.</p>
       </div>
     </div>
@@ -78,7 +80,19 @@
 </template>
 
 <script setup>
+const route = useRoute()
 const { data: products, pending } = useFetch('/api/inventory')
+
+const filteredProducts = computed(() => {
+  if (!products.value) return []
+  const searchQuery = route.query.q
+  if (!searchQuery) return products.value
+  
+  const query = searchQuery.toString().toLowerCase()
+  return products.value.filter(p => 
+    p.NAME.toLowerCase().includes(query)
+  )
+})
 
 const cart = useState('cart', () => [])
 
