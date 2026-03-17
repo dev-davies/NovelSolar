@@ -187,7 +187,7 @@ const branches = [
   { name: 'Oshogbo Branch', city: 'Oshogbo', state: 'Osun', address: 'Hammed Raji Filling station, opposite Mobil filling station, Ogo Oluwa, Osogbo, Osun State.', contactPerson: 'Branch Manager', phone: '+234 000 000 0000', coords: [7.7827, 4.5418], coordinates: [7.7827, 4.5418] },
   { name: 'Ile-ife Branch', city: 'Ile-Ife', state: 'Osun', address: 'Shop A4, Obasewa shopping pavilion, beside Gtbank, Lagere, Ile-Ife, Osun State.', contactPerson: 'Branch Manager', phone: '+234 000 000 0000', coords: [7.4815, 4.5626], coordinates: [7.4815, 4.5626] },
   { name: 'Ondo Branch', city: 'Ondo', state: 'Ondo', address: 'Beside FCMB, Yaba, Ondo, Ondo State.', contactPerson: 'Branch Manager', phone: '+234 000 000 0000', coords: [7.0933, 4.8344], coordinates: [7.0933, 4.8344] },
-  { name: 'Ibadan Tipper Garage', city: 'Ibadan', state: 'Oyo', address: 'Amazing Grace plaza, Tipper Garage, Elebu Express, Ibadan.', contactPerson: 'Branch Manager', phone: '+234 000 000 0000', coords: [7.3775, 3.8964] },
+  { name: 'Ibadan Tipper Garage', city: 'Ibadan', state: 'Oyo', address: 'Amazing Grace plaza, Tipper Garage, Elebu Express, Ibadan.', contactPerson: 'Branch Manager', phone: '+234 000 000 0000', coords: [7.3775, 3.8964], coordinates: [7.3775, 3.8964] },
   { name: 'Abuja Kubwa', city: 'Kubwa', state: 'FCT', address: 'Shop 5, Asad Plaza, opposite AJ Boutique, Alaba International, Gado-Nasko Road, Kubwa, Abuja.', contactPerson: 'Branch Manager', phone: '+234 000 000 0000', coords: [9.1538, 7.3220], coordinates: [9.1538, 7.3220] },
   { name: 'Minna Branch', city: 'Minna', state: 'Niger', address: '204, Kpakungu road, HG plaza, off Kpakungu round about, Minna, Niger State.', contactPerson: 'Branch Manager', phone: '+234 000 000 0000', coords: [9.6139, 6.5569], coordinates: [9.6139, 6.5569] },
   { name: 'Obantoko Branch', city: 'Obantoko', state: 'Ogun', address: 'KM 3, Abeokuta-Ibadan Expressway, opposite CAC Agbala Itura, Somorin Obantoko, Abeokuta, Ogun State.', contactPerson: 'Branch Manager', phone: '+234 000 000 0000', coords: [7.1706, 3.4243], coordinates: [7.1706, 3.4243] },
@@ -200,17 +200,41 @@ const branches = [
   { name: 'Ikota Branch', city: 'Ikota', state: 'Lagos', address: 'Suite C17, Road 2, Ikota shopping Complex, VGC Lekki, Lagos State.', contactPerson: 'Branch Manager', phone: '+234 000 000 0000', coords: [6.4380, 3.5350], coordinates: [6.4380, 3.5350] },
   { name: 'Oke-ilewo Branch', city: 'Abeokuta', state: 'Ogun', address: '9, Alaso shopping complex, Oke-Ilewo, Abeokuta, Ogun State.', contactPerson: 'Branch Manager', phone: '+234 000 000 0000', coords: [7.1475, 3.3619], coordinates: [7.1475, 3.3619] },
   { name: 'Ogbomosho Branch', city: 'Ogbomosho', state: 'Oyo', address: 'Apake near WEMA bank, Ogbomoso, Oyo State.', contactPerson: 'Branch Manager', phone: '+234 000 000 0000', coords: [8.1365, 4.2560], coordinates: [8.1365, 4.2560] },
-  { name: 'Ado 1 Branch', city: 'Ado-Ekiti', state: 'Ekiti', address: 'Specific street address coming soon...', contactPerson: 'Branch Manager', phone: '+234 000 000 0000', coords: [7.6200, 5.2100] },
+  { name: 'Ado 1 Branch', city: 'Ado-Ekiti', state: 'Ekiti', address: 'Adebayo Street, Ado-Ekiti, Ekiti State.', contactPerson: 'Branch Manager', phone: '+234 000 000 0000', coords: [7.6200, 5.2100], coordinates: [7.6200, 5.2100] },
   { name: 'Ore Branch', city: 'Ore', state: 'Ondo', address: 'Okitipupa Road, New LGA store, Ore, Ondo State.', contactPerson: 'Branch Manager', phone: '+234 000 000 0000', coords: [6.7441, 4.8778], coordinates: [6.7441, 4.8778] },
-  { name: 'Iwo-road Branch', city: 'Ibadan', state: 'Oyo', address: '100, Beside Conoil, Iwo Road, Ibadan.', contactPerson: 'Branch Manager', phone: '+234 000 000 0000', coords: [7.4000, 3.9300] },
+  { name: 'Iwo-road Branch', city: 'Ibadan', state: 'Oyo', address: '100, Beside Conoil, Iwo Road, Ibadan.', contactPerson: 'Branch Manager', phone: '+234 000 000 0000', coords: [7.4000, 3.9300], coordinates: [7.4000, 3.9300] },
   { name: 'Mararaba Branch', city: 'Mararaba', state: 'Nasarawa', address: '5 NAOWA shopping complex, Mararaba, Karu Local Govt, Nasarawa State.', contactPerson: 'Branch Manager', phone: '+234 000 000 0000', coords: [9.0344, 7.5921], coordinates: [9.0344, 7.5921] },
   { name: 'Kano Branch', city: 'Kano', state: 'Kano', address: '3, Gwanmaja Housing Estate, opposite National Orthopaedic Hospital, Dala, Kano State.', contactPerson: 'Branch Manager', phone: '+234 000 000 0000', coords: [12.0083, 8.5100], coordinates: [12.0083, 8.5100] },
   { name: 'Isheri Branch', city: 'Isheri', state: 'Lagos', address: 'World Oil filling station, Isheri Road, Ojodu, Ogun State / Kosofe Local Government.', contactPerson: 'Branch Manager', phone: '+234 000 000 0000', coords: [6.6340, 3.3644], coordinates: [6.6340, 3.3644] },
   { name: 'Oyo Branch', city: 'Oyo', state: 'Oyo', address: 'Novel Solar Shop, Owode, along Oyo-Ogbomosho Road, beside NEPA Undertaking, Oyo State.', contactPerson: 'Branch Manager', phone: '+234 000 000 0000', coords: [7.8430, 3.9368], coordinates: [7.8430, 3.9368] },
-  { name: 'Bodija Branch', city: 'Ibadan', state: 'Oyo', address: 'Osuntokun Junction, Opposite Zenith Bank, UI-Secretariat Road,Bodija Ibadan North Local Government, Ibadan.', contactPerson: 'Branch Manager', phone: '+234 000 000 0000', coords: [7.4333, 3.9167] },
+  { name: 'Bodija Branch', city: 'Ibadan', state: 'Oyo', address: 'Osuntokun Junction, Opposite Zenith Bank, UI-Secretariat Road,Bodija Ibadan North Local Government, Ibadan.', contactPerson: 'Branch Manager', phone: '+234 000 000 0000', coords: [7.4333, 3.9167], coordinates: [7.4333, 3.9167] },
   { name: 'Akure Branch', city: 'Akure', state: 'Ondo', address: '39B Oba Adesida Road, opposite First Baptist Church, Akure 340283, Ondo State.', contactPerson: 'Branch Manager', phone: '+234 000 000 0000', coords: [7.2525, 5.1931], coordinates: [7.2525, 5.1931] },
   { name: 'Benni 1 Branch', city: 'Benin City', state: 'Edo', address: '75, Uselu Lagos Road, Benin City, Egor Local Government Council, Edo State, 300103.', contactPerson: 'Branch Manager', phone: '+234 000 000 0000', coords: [6.3685, 5.6120], coordinates: [6.3685, 5.6120] }
 ]
+
+function getDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Earth's radius in kilometers
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon/2) * Math.sin(dLon/2);
+  return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+}
+
+// 1. Remove Head Office from the array to keep it safe
+const headOffice = branches.shift();
+const [hqLat, hqLon] = headOffice.coordinates;
+
+// 2. Sort the remaining branches by distance to HQ
+branches.sort((a, b) => {
+  const distA = getDistance(hqLat, hqLon, a.coordinates[0], a.coordinates[1]);
+  const distB = getDistance(hqLat, hqLon, b.coordinates[0], b.coordinates[1]);
+  return distA - distB;
+});
+
+// 3. Put Head Office securely back at the number one spot
+branches.unshift(headOffice);
 
 const searchQuery = ref('')
 const selectedBranch = ref(branches[0])
