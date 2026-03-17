@@ -10,13 +10,13 @@
       <div class="grid md:grid-cols-2 gap-12 items-center">
         <div v-reveal>
           <h1 class="text-5xl font-extrabold text-[#002888] mb-6 leading-tight">
-            NovelSolar x itel: Powering Your Home with Smart Solar
+            24/7 Uninterrupted Power for Your Home
           </h1>
           <p class="text-xl text-gray-700 max-w-2xl mb-12 leading-relaxed">
-            Bringing world-class energy reliability and smart storage innovations to modern Nigerian homes.
+            Say goodbye to grid blackouts and noisy generators. The itel solar ecosystem keeps your appliances running silently and safely.
           </p>
-          <NuxtLink to="/quote" class="inline-block bg-[#002888] text-white px-8 py-4 rounded-full font-semibold hover:bg-blue-900 transition-all shadow-lg hover:shadow-[#002888]/20">
-            Get an Instant Home Quote &rarr;
+          <NuxtLink to="/partners/itel/shop" class="inline-block bg-[#002888] text-white px-8 py-4 rounded-full font-semibold hover:bg-blue-900 transition-all shadow-lg hover:shadow-[#002888]/20">
+            Shop the itel Collection &rarr;
           </NuxtLink>
         </div>
         <div class="relative" v-reveal>
@@ -37,9 +37,9 @@
             <img src="/images/itel.jpg" alt="itel Reliable Power" class="rounded-2xl shadow-lg w-full" />
           </div>
           <div v-reveal>
-            <h2 class="text-4xl font-bold text-gray-900 mb-6">Powering Your Household</h2>
+            <h2 class="text-4xl font-bold text-gray-900 mb-6">Silent, Safe, and Smart Home Energy</h2>
             <p class="text-lg text-gray-600 mb-6 leading-relaxed">
-              Our partnership combines NovelSolar’s local installation expertise with itel’s global leadership in smart energy storage. Together, we are eliminating power cuts for Nigerian families through smart, easy-to-use technology.
+              Experience true comfort without the stress of fuel costs or maintenance of old generators. Our itel systems are built to keep your AC, deep freezer, and essential electronics running smoothly through any outage.
             </p>
             <div class="space-y-4">
               <div v-for="(item, i) in ['Silent Operation', 'Family Safety Design', '24/7 Remote Monitoring']" :key="i" class="flex items-center gap-3">
@@ -77,8 +77,8 @@
                 <span class="text-lg font-medium text-gray-800">Built-in Overload Protection</span>
               </li>
             </ul>
-            <NuxtLink to="/quote" class="inline-block border border-[#002888] text-[#002888] px-8 py-3 rounded-full font-bold hover:bg-blue-50 transition-colors">
-              Get Free Installation Guide
+            <NuxtLink to="/partners/itel/shop" class="inline-block border border-[#002888] text-[#002888] px-8 py-3 rounded-full font-bold hover:bg-blue-50 transition-colors">
+              Buy itel Products Now
             </NuxtLink>
           </div>
         </div>
@@ -120,12 +120,12 @@
       <div class="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full -ml-32 -mb-32"></div>
       
       <div class="relative z-10 max-w-3xl mx-auto" v-reveal>
-        <h2 class="text-4xl md:text-5xl font-extrabold mb-8">Ready for a Brighter, Better Home?</h2>
+        <h2 class="text-4xl md:text-5xl font-extrabold mb-8">Ready to upgrade your home's power?</h2>
         <p class="text-lg mb-12 opacity-90 max-w-xl mx-auto leading-relaxed">
-          Contact our residential experts for special homeowner offers, professional installation, and lifelong support.
+          Browse our collection of reliable itel inverters and batteries.
         </p>
-        <NuxtLink to="/quote" class="inline-block bg-white text-[#002888] px-12 py-5 rounded-full text-xl font-bold hover:bg-gray-100 transition-all shadow-2xl active:scale-95">
-          Start Your Home Project &rarr;
+        <NuxtLink to="/partners/itel/shop" class="inline-block bg-white text-[#002888] px-12 py-5 rounded-full text-xl font-bold hover:bg-gray-100 transition-all shadow-2xl active:scale-95">
+          Browse itel Products &rarr;
         </NuxtLink>
       </div>
     </section>
@@ -134,9 +134,9 @@
 
 <script setup>
 useHead({
-  title: 'NovelSolar x itel | Strategic Energy Partnership',
+  title: 'itel Home Solar Solutions | 24/7 Energy Independence',
   meta: [
-    { name: 'description', content: 'Specialist B2B energy partnership between NovelSolar and itel providing smart storage and reliable solar solutions for Nigerian businesses.' }
+    { name: 'description', content: 'Explore itel smart solar collections for your home. Reliable inverters and batteries designed for Nigerian households.' }
   ]
 })
 </script>
