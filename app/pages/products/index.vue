@@ -91,37 +91,7 @@
 
         <!-- Product Grid -->
         <div v-if="filteredProducts.length > 0" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-          <div v-for="product in filteredProducts" :key="product.id" class="group flex flex-col h-full bg-white shadow-sm hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden border border-gray-100">
-            <div class="relative aspect-[5/4] bg-gray-50 overflow-hidden">
-              <img :src="product.image" :alt="product.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              <div class="absolute top-4 left-4 bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm z-10">
-                In Stock
-              </div>
-            </div>
-            <div class="p-5 flex flex-col flex-grow">
-              <div class="flex-grow">
-                <div class="text-xs font-semibold text-primary uppercase tracking-widest mb-1">{{ product.category }}</div>
-                <h3 class="text-lg font-bold text-gray-900 mb-2 leading-tight group-hover:text-primary transition-colors">{{ product.title }}</h3>
-                <div class="flex flex-wrap gap-2 mb-4">
-                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-600">
-                    {{ product.wattage }}W
-                  </span>
-                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-600">
-                    {{ product.efficiency }}% Eff.
-                  </span>
-                </div>
-              </div>
-              <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
-                <div>
-                  <span class="text-sm text-gray-400 line-through block leading-none mb-1" v-if="product.originalPrice">${{ product.originalPrice }}</span>
-                  <span class="text-xl font-bold text-gray-900">${{ product.price }}</span>
-                </div>
-                <button class="bg-[#002888] text-white px-5 py-2 rounded-lg text-xs font-bold hover:bg-blue-900 transition-colors shadow-sm">
-                  Quick Buy
-                </button>
-              </div>
-            </div>
-          </div>
+          <ProductCard v-for="product in filteredProducts" :key="product.id" :product="product" />
         </div>
         
         <!-- Empty State -->
