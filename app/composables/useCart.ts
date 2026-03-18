@@ -29,19 +29,19 @@ export const useCart = () => {
     isCartOpen.value = !isCartOpen.value;
   };
 
-  const addToCart = (product: any) => {
+  const addToCart = (product: any, qty = 1) => {
     const productId = product.ID || product.id;
     const existingItem = cart.value.find(item => item.id === productId);
     
     if (existingItem) {
-      existingItem.quantity += 1;
+      existingItem.quantity += qty;
     } else {
       cart.value.push({
         id: productId,
         name: product.NAME || product.name || product.title,
         price: Number(product.PRICE || product.price || 0),
         image: product.image || null,
-        quantity: 1
+        quantity: qty
       });
     }
     saveCart();

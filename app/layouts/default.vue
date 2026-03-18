@@ -385,7 +385,7 @@
       </NuxtLink>
 
       <!-- Shop -->
-      <NuxtLink to="/products" class="flex flex-col items-center p-2 text-gray-500 hover:text-[#002888] active:scale-95 transition-transform" active-class="!text-[#002888]">
+      <NuxtLink to="/shop" class="flex flex-col items-center p-2 text-gray-500 hover:text-[#002888] active:scale-95 transition-transform" active-class="!text-[#002888]">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
         </svg>
