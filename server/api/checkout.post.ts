@@ -52,10 +52,17 @@ export default defineEventHandler(async (event) => {
   if (process.env.SMTP_USER && process.env.SMTP_PASS) {
     try {
       const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST || 'smtp.gmail.com',
-        port: 465,
-        secure: true,
-        auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+        host: process.env.SMTP_HOST || 'mail.novelsolar.com',
+        port: Number(process.env.SMTP_PORT) || 465,
+        secure: true, // Use true for port 465 (SSL)
+        auth: { 
+          user: process.env.SMTP_USER, 
+          pass: process.env.SMTP_PASS 
+        },
+        tls: {
+          // Do not fail on invalid certs if cPanel is using a self-signed mail certificate
+          rejectUnauthorized: false 
+        }
       });
 
       const mailOptions = {
