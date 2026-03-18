@@ -8,13 +8,12 @@ const selectedBranch = ref(null);
 const suggestedBranches = computed(() => {
   if (!selectedState.value) return [];
   
-  // 1. Check if we have branches directly in the selected state
-  const exactMatches = branches.filter(b => b.state && b.state.toLowerCase() === selectedState.value.toLowerCase());
-  if (exactMatches.length > 0) {
-    return exactMatches;
+  // 1. If we have exact matches, return them immediately
+  if (exactMatches.value.length > 0) {
+    return exactMatches.value;
   }
   
-  // 2. If no exact match, find the closest branches using state coordinates
+  // 2. Otherwise, find the closest branches via coordinates
   const stateData = nigerianStates.find(s => s.name === selectedState.value);
   if (!stateData) return [];
   
@@ -24,7 +23,14 @@ const suggestedBranches = computed(() => {
     return distA - distB;
   });
   
-  return sorted.slice(0, 3); // Return the top 3 closest branches
+  return sorted.slice(0, 3);
+});
+
+const exactMatches = computed(() => {
+  if (!selectedState.value) return [];
+  // Clean the string: If it's 'FCT - Abuja', just search for 'abuja'
+  const searchState = selectedState.value.replace('FCT - ', '').toLowerCase();
+  return branches.filter(b => b.address && b.address.toLowerCase().includes(searchState));
 });
 
 // Form state
@@ -193,11 +199,9 @@ const handleCompleteOrder = async () => {
           <div v-if="suggestedBranches.length > 0" class="space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
             <div class="flex items-center gap-2 px-1">
               <span class="material-symbols-outlined text-[#002888] text-lg">hub</span>
-              <p class="text-xs font-bold text-slate-600 uppercase tracking-wider">
-                {{ suggestedBranches[0].state.toLowerCase() === selectedState.toLowerCase() 
-                  ? 'Expert branches available in your state:' 
-                  : 'No branches in your state. Here are the closest options:' }}
-              </p>
+              <h4 class="font-bold text-slate-800 text-sm">
+                {{ exactMatches.length > 0 ? 'Expert branches available in your state:' : 'No branches in your state. Here are the closest options:' }}
+              </h4>
             </div>
             
             <div class="grid gap-3">
@@ -211,7 +215,7 @@ const handleCompleteOrder = async () => {
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center gap-2 mb-0.5">
                     <p class="font-bold text-slate-900 truncate uppercase text-sm">{{ branch.name }}</p>
-                    <span v-if="branch.state.toLowerCase() === selectedState.toLowerCase()" class="bg-green-100 text-green-700 text-[8px] font-black px-1.5 py-0.5 rounded uppercase">In State</span>
+                    <span v-if="exactMatches.some(e => e.name === branch.name)" class="bg-green-100 text-green-700 text-[8px] font-black px-1.5 py-0.5 rounded uppercase">In State</span>
                   </div>
                   <p class="text-xs text-slate-500 line-clamp-1 italic">{{ branch.address }}</p>
                 </div>
