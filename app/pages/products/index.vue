@@ -90,7 +90,7 @@
         </div>
 
         <!-- Product Grid -->
-        <div v-if="filteredProducts.length > 0" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div v-if="filteredProducts.length > 0" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
           <ProductCard v-for="product in filteredProducts" :key="product.id" :product="product" />
         </div>
         

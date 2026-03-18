@@ -1,55 +1,85 @@
+import nodemailer from 'nodemailer';
+
 export default defineEventHandler(async (event) => {
-  const config = useRuntimeConfig();
   const body = await readBody(event);
+  const config = useRuntimeConfig();
+  const bitrixUrl = config.bitrixWebhookUrl || config.public.bitrixWebhookUrl;
   
-  // body expected: { user: { firstName, lastName, address, city, state, zip }, items: [], total: number }
+  const { customer, cart, total, branch, paymentMethod } = body;
 
-  try {
-    // Step 1: Create the Deal in Bitrix24
-    const dealResponse = await $fetch<{ result: any }>(`${config.bitrixWebhook}crm.deal.add`, {
-      method: 'POST',
-      body: {
-        fields: {
-          TITLE: `New Web Order: ${body.user.firstName} ${body.user.lastName}`,
-          NAME: body.user.firstName,
-          LAST_NAME: body.user.lastName,
-          OPPORTUNITY: body.total,
-          CURRENCY_ID: 'NGN',
-          COMMENTS: `Shipping Address: ${body.user.address}, ${body.user.city}, ${body.user.state} ${body.user.zip}`
+  // 1. FORMAT CART FOR CRM & EMAIL
+  const orderDetailsList = cart.map((item: any) => `- ${item.quantity}x ${item.name} (₦${item.price.toLocaleString()})`).join('\n');
+  
+  const crmComments = `
+    NEW WEB ORDER
+    Fulfillment: ${paymentMethod === 'pickup' ? 'Store Pickup' : 'Delivery'}
+    Branch: ${branch?.address || 'N/A'}
+    Payment: ${paymentMethod}
+    Notes: ${customer.note || 'None'}
+    
+    ITEMS:
+    ${orderDetailsList}
+  `;
+
+  // 2. SEND TO BITRIX CRM (Create a Lead)
+  if (bitrixUrl) {
+    try {
+      await $fetch(`${bitrixUrl}crm.lead.add`, {
+        method: 'POST',
+        body: {
+          fields: {
+            TITLE: `Web Order: ${customer.firstName} ${customer.lastName}`,
+            NAME: customer.firstName,
+            LAST_NAME: customer.lastName,
+            EMAIL: [{ VALUE: customer.email, VALUE_TYPE: "WORK" }],
+            PHONE: [{ VALUE: customer.phone, VALUE_TYPE: "WORK" }],
+            ADDRESS: customer.address,
+            OPPORTUNITY: total,
+            CURRENCY_ID: "NGN",
+            COMMENTS: crmComments,
+            SOURCE_ID: "WEB"
+          }
         }
-      }
-    });
-
-    const dealId = dealResponse.result;
-
-    if (!dealId) {
-      throw createError({
-        statusCode: 500,
-        statusMessage: 'Failed to create deal in Bitrix24',
       });
+    } catch (error) {
+      console.error('Bitrix Error:', error);
+      // We don't throw here so the customer still gets their email even if CRM hiccups
     }
-
-    // Step 2: Attach Product Rows to the Deal
-    const mappedItems = body.items.map((item: any) => ({
-      PRODUCT_ID: item.ID,
-      PRICE: item.PRICE,
-      QUANTITY: 1
-    }));
-
-    await $fetch(`${config.bitrixWebhook}crm.deal.productrows.set`, {
-      method: 'POST',
-      body: {
-        id: dealId,
-        rows: mappedItems
-      }
-    });
-
-    return { success: true, dealId };
-  } catch (error) {
-    console.error('Checkout execution error:', error);
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Checkout process failed',
-    });
   }
+
+  // 3. SEND CONFIRMATION EMAIL
+  // NOTE: Requires SMTP credentials in .env (SMTP_HOST, SMTP_USER, SMTP_PASS)
+  if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+    try {
+      const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST || 'smtp.gmail.com',
+        port: 465,
+        secure: true,
+        auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+      });
+
+      const mailOptions = {
+        from: `"Novel Solar" <${process.env.SMTP_USER}>`,
+        to: customer.email,
+        subject: "Your Novel Solar Order Confirmation",
+        html: `
+          <div style="font-family: sans-serif; color: #333; max-w-2xl; margin: 0 auto;">
+            <h2 style="color: #002888;">Thank you for your order, ${customer.firstName}!</h2>
+            <p>We have received your order and our team is processing it now.</p>
+            <h3>Order Summary:</h3>
+            <pre style="background: #f8f6f6; padding: 15px; border-radius: 8px;">${orderDetailsList}</pre>
+            <p><strong>Total:</strong> ₦${total.toLocaleString()}</p>
+            <p><strong>Fulfillment Branch:</strong> ${branch?.address || 'N/A'}</p>
+            <br/>
+            <p>If you have any questions, reply to this email or contact us on WhatsApp.</p>
+          </div>
+        `
+      };
+      await transporter.sendMail(mailOptions);
+    } catch (error) {
+      console.error('Email Error:', error);
+    }
+  }
+
+  return { success: true, message: 'Order processed successfully' };
 });

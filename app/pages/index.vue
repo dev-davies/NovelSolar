@@ -85,7 +85,7 @@
       </div>
 
       <!-- Loading State -->
-      <div v-if="pending" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 mt-8">
+      <div v-if="pending" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
         <div v-for="i in 4" :key="i" class="bg-white rounded-2xl border border-gray-100 p-4 space-y-4 animate-pulse">
           <div class="aspect-square bg-gray-100 rounded-xl"></div>
           <div class="h-4 bg-gray-100 rounded w-3/4"></div>
@@ -94,7 +94,7 @@
       </div>
 
       <!-- Product Grid -->
-      <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 mt-8">
+      <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
         <ProductCard v-for="product in products?.slice(0, 8)" :key="product.ID" :product="product" />
       </div>
 

@@ -34,28 +34,41 @@ const exactMatches = computed(() => {
 });
 
 // Form state
-const form = ref({
-  email: '',
-  firstName: '',
-  lastName: '',
-  address: '',
-  phone: '',
-  orderNote: '',
-  paymentMethod: 'cod'
-});
-
 const isSubmitting = ref(false);
+const form = reactive({
+  firstName: '', lastName: '', email: '', phone: '', address: '', note: ''
+});
+const paymentMethod = ref('Cash on Delivery');
 
-const handleCompleteOrder = async () => {
-  if (cart.value.length === 0) return;
-  
+const submitOrder = async () => {
+  if (!form.firstName || !form.email || cart.value.length === 0) {
+    alert('Please fill out your details and ensure your cart is not empty.');
+    return;
+  }
+
   isSubmitting.value = true;
-  // Simulate API call
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  
-  // Clear cart and navigate to success
-  // cart.value = []; // This should be handled by a clearCart function in useCart if needed
-  navigateTo('/success');
+  try {
+    await $fetch('/api/checkout', {
+      method: 'POST',
+      body: {
+        customer: form,
+        cart: cart.value,
+        total: cartTotalAmount.value,
+        branch: selectedBranch.value,
+        paymentMethod: paymentMethod.value
+      }
+    });
+    
+    // Clear cart and redirect
+    cart.value = [];
+    if (import.meta.client) localStorage.removeItem('novel-cart-data');
+    navigateTo('/thank-you'); // Assuming you'll make a quick thank-you page next!
+    
+  } catch (error) {
+    alert('There was an issue processing your order. Please try again.');
+  } finally {
+    isSubmitting.value = false;
+  }
 };
 </script>
 
@@ -237,7 +250,7 @@ const handleCompleteOrder = async () => {
           </div>
           <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
             <label class="flex items-center gap-4 p-6 cursor-pointer hover:bg-gray-50 transition-colors border-b border-gray-100">
-              <input type="radio" v-model="form.paymentMethod" value="cod" class="w-5 h-5 text-[#002888] border-gray-300 focus:ring-[#002888]">
+              <input type="radio" v-model="paymentMethod" value="Cash on Delivery" class="w-5 h-5 text-[#002888] border-gray-300 focus:ring-[#002888]">
               <div class="flex-1">
                 <p class="font-bold text-slate-900 uppercase text-sm tracking-wide">Cash on Delivery</p>
                 <p class="text-xs text-slate-500">Pay when your items arrive</p>
@@ -245,7 +258,7 @@ const handleCompleteOrder = async () => {
               <span class="material-symbols-outlined text-gray-400">payments</span>
             </label>
             <label class="flex items-center gap-4 p-6 cursor-pointer hover:bg-gray-50 transition-colors">
-              <input type="radio" v-model="form.paymentMethod" value="financing" class="w-5 h-5 text-[#002888] border-gray-300 focus:ring-[#002888]">
+              <input type="radio" v-model="paymentMethod" value="Financing / Installment" class="w-5 h-5 text-[#002888] border-gray-300 focus:ring-[#002888]">
               <div class="flex-1">
                 <p class="font-bold text-slate-900 uppercase text-sm tracking-wide">Financing / Installment</p>
                 <p class="text-xs text-slate-500">Flexible payment plans available</p>
@@ -263,7 +276,7 @@ const handleCompleteOrder = async () => {
           </div>
           <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
             <textarea 
-              v-model="form.orderNote"
+              v-model="form.note"
               rows="3" 
               placeholder="Any additional notes for delivery..."
               class="rounded-lg border-slate-200 bg-slate-50 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888] p-3 w-full transition-all outline-none resize-none"
@@ -273,13 +286,14 @@ const handleCompleteOrder = async () => {
 
         <!-- Submit Button -->
         <button 
-          @click="handleCompleteOrder"
+          @click="submitOrder"
           :disabled="isSubmitting"
           class="w-full bg-[#002888] text-white font-bold py-5 rounded-2xl shadow-xl hover:bg-blue-900 transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-[0.98]"
         >
           <span v-if="isSubmitting" class="animate-spin border-2 border-white/30 border-t-white w-5 h-5 rounded-full"></span>
           {{ isSubmitting ? 'Processing Order...' : 'Complete Order' }}
           <span v-if="!isSubmitting" class="material-symbols-outlined">arrow_forward</span>
+          <span v-else class="material-symbols-outlined animate-spin">sync</span>
         </button>
       </div>
 
