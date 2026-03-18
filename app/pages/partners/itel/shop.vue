@@ -25,47 +25,7 @@
 
       <!-- Product Grid -->
       <div v-else-if="itelProducts && itelProducts.length > 0" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        <NuxtLink v-for="product in itelProducts" :key="product.ID" :to="'/shop/' + product.ID" class="group block bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow flex flex-col relative overflow-hidden border border-gray-100">
-          <!-- Official Badge -->
-          <div class="absolute top-4 left-4 z-10 px-2.5 py-1 bg-blue-50 text-[#002888] text-[10px] font-bold uppercase tracking-wider rounded-md border border-blue-100 shadow-sm">
-            itel Original
-          </div>
-
-          <!-- Product Image -->
-          <div class="aspect-square bg-gray-50 flex items-center justify-center border-b border-gray-50 overflow-hidden relative">
-            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-              <svg class="w-8 h-8 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-            </div>
-            <!-- Quick View Overlay -->
-            <div class="absolute inset-0 bg-[#002888]/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-              <span class="bg-white text-[#002888] px-4 py-2 rounded-lg text-xs font-bold shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform">
-                View Specs
-              </span>
-            </div>
-          </div>
-
-          <!-- Content -->
-          <div class="pt-5 flex flex-col flex-grow">
-            <h3 class="text-sm font-bold text-gray-900 line-clamp-2 leading-snug mb-4 min-h-[2.5rem]">
-              {{ product.NAME }}
-            </h3>
-            
-            <div class="mt-auto">
-              <div class="flex items-baseline gap-1 mb-4">
-                <span class="font-bold text-lg text-gray-900">₦{{ Number(product.PRICE).toLocaleString() }}</span>
-              </div>
-              
-              <button 
-                class="w-full bg-[#002888] text-white py-3 rounded-xl text-xs font-bold hover:bg-blue-900 transition-all shadow-md active:scale-[0.98]"
-                @click.stop.prevent="addToCart(product)"
-              >
-                Add to Cart
-              </button>
-            </div>
-          </div>
-        </NuxtLink>
+        <ProductCard v-for="product in itelProducts" :key="product.ID" :product="product" />
       </div>
 
       <!-- Empty State -->

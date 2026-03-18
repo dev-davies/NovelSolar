@@ -1,6 +1,14 @@
 <script setup>
 const route = useRoute();
 const { data: product, pending, error } = await useFetch(`/api/product/${route.params.id}`);
+const { addToCart } = useCart();
+const added = ref(false);
+
+const handleAddToCart = () => {
+  addToCart(product.value);
+  added.value = true;
+  setTimeout(() => (added.value = false), 2000);
+};
 </script>
 
 <template>
@@ -49,11 +57,15 @@ const { data: product, pending, error } = await useFetch(`/api/product/${route.p
           <div class="text-3xl font-black text-[#002888] mb-6">₦{{ Number(product.PRICE).toLocaleString() }}</div>
           
           <!-- Real Bitrix Description -->
-          <div class="prose max-w-none text-slate-600 mb-8 leading-relaxed text-sm md:text-base" v-html="product.DETAIL_TEXT || product.PREVIEW_TEXT || 'Full product description coming soon.'"></div>
+          <div class="prose max-w-none text-slate-600 mb-8 leading-relaxed text-sm md:text-base" v-html="product.DESCRIPTION || product.DETAIL_TEXT || product.PREVIEW_TEXT || 'Full product description coming soon.'"></div>
 
-          <button class="w-full bg-[#002888] text-white py-4 rounded-xl font-bold text-lg hover:bg-blue-900 transition-all shadow-lg flex items-center justify-center gap-2 mb-6">
-            <span class="material-symbols-outlined">shopping_cart</span>
-            Add to Cart
+          <button 
+            @click="handleAddToCart" 
+            class="w-full bg-[#002888] text-white py-4 rounded-xl font-bold text-lg hover:bg-blue-900 transition-all shadow-lg flex items-center justify-center gap-2 mb-6 active:scale-[0.98]"
+            :disabled="added"
+          >
+            <span class="material-symbols-outlined">{{ added ? 'check_circle' : 'shopping_cart' }}</span>
+            {{ added ? 'Added to Cart!' : 'Add to Cart' }}
           </button>
 
           <!-- Trust Badges -->
