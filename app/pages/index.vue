@@ -12,7 +12,7 @@
             Sourcing the world's best solar components for residential and commercial projects. Instant quotes and same-day logistics.
           </p>
           <div class="mt-10 flex flex-wrap gap-4">
-            <NuxtLink to="/products" class="bg-white text-primary px-8 py-3 rounded-md text-lg font-bold hover:bg-gray-100 transition-colors shadow-lg">
+            <NuxtLink to="/shop" class="bg-white text-primary px-8 py-3 rounded-md text-lg font-bold hover:bg-gray-100 transition-colors shadow-lg">
               Browse Stock
             </NuxtLink>
             <button class="border-2 border-white text-white px-8 py-3 rounded-md text-lg font-bold hover:bg-white/10 transition-colors">
@@ -72,19 +72,20 @@
 
     <!-- All Inventory Product Grid -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-      <div class="flex justify-between items-end mb-10">
-        <div>
-          <h2 class="text-3xl font-bold text-gray-900">All Inventory</h2>
-          <p class="text-gray-500 mt-2">Ready for immediate dispatch from our regional hubs.</p>
+      <div class="mb-6 md:mb-8">
+        <div class="flex items-end justify-between mb-2 gap-4">
+          <h2 class="text-2xl md:text-3xl font-bold text-slate-900 leading-none">Featured Products</h2>
+          
+          <NuxtLink to="/shop" class="text-sm font-bold text-[#002888] flex items-center gap-1 hover:text-blue-700 transition-colors whitespace-nowrap pb-1">
+            See All <span class="material-symbols-outlined text-sm md:text-base">chevron_right</span>
+          </NuxtLink>
         </div>
-        <NuxtLink to="/products" class="text-primary font-semibold hover:underline flex items-center gap-1">
-          View all products
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="9 5l7 7-7 7" /></svg>
-        </NuxtLink>
+        
+        <p class="text-slate-500 text-sm md:text-base">Ready for immediate dispatch from our regional hubs.</p>
       </div>
 
       <!-- Loading State -->
-      <div v-if="pending" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div v-if="pending" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 mt-8">
         <div v-for="i in 4" :key="i" class="bg-white rounded-2xl border border-gray-100 p-4 space-y-4 animate-pulse">
           <div class="aspect-square bg-gray-100 rounded-xl"></div>
           <div class="h-4 bg-gray-100 rounded w-3/4"></div>
@@ -93,14 +94,14 @@
       </div>
 
       <!-- Product Grid -->
-      <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 mt-8">
         <ProductCard v-for="product in products?.slice(0, 8)" :key="product.ID" :product="product" />
       </div>
 
       <!-- View All Button -->
       <div class="mt-12 text-center">
         <NuxtLink 
-          to="/products" 
+          to="/shop" 
           class="inline-flex items-center gap-2 bg-[#002888] text-white px-10 py-4 rounded-xl font-bold hover:bg-blue-900 transition-all shadow-lg hover:shadow-blue-900/20 active:scale-95"
         >
           View All Products
