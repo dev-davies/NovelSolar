@@ -156,12 +156,12 @@
       <!-- Right Section: Actions -->
       <div class="flex items-center gap-6">
         <!-- Cart -->
-        <NuxtLink to="/checkout" class="text-gray-600 hover:text-black transition-colors relative group/cart">
+        <div @click="toggleCart" class="text-gray-600 hover:text-black transition-colors relative group/cart cursor-pointer">
           <span class="material-symbols-outlined text-2xl">shopping_cart</span>
           <span v-if="cartItemCount > 0" class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
             {{ cartItemCount }}
           </span>
-        </NuxtLink>
+        </div>
 
         <!-- Button -->
         <NuxtLink to="/quote" class="bg-[#002888] text-white px-5 py-2.5 rounded-md text-sm font-bold hover:bg-blue-900 transition-colors shadow-sm hidden sm:block">
@@ -411,6 +411,8 @@
         <span class="text-[10px] mt-1 font-medium">{{ isMobileMenuOpen ? 'Close' : 'Menu' }}</span>
       </button>
     </nav>
+    <!-- Global Cart Drawer -->
+    <CartDrawer />
   </div>
 </template>
 
@@ -454,7 +456,7 @@ const supportMenu = [
   { title: 'Contact Us', link: '/contact' }
 ]
 
-const { cartItemCount, loadCart } = useCart();
+const { cartItemCount, loadCart, toggleCart } = useCart();
 onMounted(() => {
   loadCart();
 });

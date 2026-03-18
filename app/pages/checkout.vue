@@ -1,270 +1,366 @@
-<template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="flex flex-col lg:flex-row gap-8">
-      
-      <!-- Left Column: Checkout Steps -->
-      <div class="lg:w-2/3 space-y-6">
-        <h1 class="text-3xl font-extrabold text-gray-900 mb-8">Secure Checkout</h1>
+<script setup>
+const { cart, cartTotalAmount } = useCart();
 
-        <!-- Step 1: Shipping & Delivery -->
-        <section class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
-          <div class="flex items-center gap-4 mb-8">
-            <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold">1</div>
-            <h2 class="text-xl font-bold text-gray-900">Shipping & Delivery</h2>
-          </div>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="space-y-2">
-              <label class="text-sm font-bold text-gray-700">First Name</label>
-              <input v-model="checkoutForm.firstName" type="text" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-gray-50/50" placeholder="John">
-            </div>
-            <div class="space-y-2">
-              <label class="text-sm font-bold text-gray-700">Last Name</label>
-              <input v-model="checkoutForm.lastName" type="text" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-gray-50/50" placeholder="Doe">
-            </div>
-            <div class="md:col-span-2 space-y-2">
-              <label class="text-sm font-bold text-gray-700">Shipping Address</label>
-              <input v-model="checkoutForm.address" type="text" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-gray-50/50" placeholder="123 Solar Way, Sunnyville, CA">
-            </div>
-          </div>
-        </section>
+const selectedFulfillment = ref('delivery'); // 'delivery' or 'pickup'
+const selectedState = ref('');
+const selectedBranch = ref(null);
 
-        <!-- Step 2: Payment Method -->
-        <section class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
-          <div class="flex items-center gap-4 mb-8">
-            <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold">2</div>
-            <h2 class="text-xl font-bold text-gray-900">Payment Method</h2>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <!-- Debit Card -->
-            <label 
-              @click="paymentMethod = 'debit_card'"
-              :class="['flex items-center justify-between p-6 rounded-2xl border-2 cursor-pointer transition-all', paymentMethod === 'debit_card' ? 'border-primary bg-blue-50/50' : 'border-gray-100 hover:border-blue-200']"
-            >
-              <div class="flex items-center gap-4">
-                <div class="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center" :class="{'border-primary': paymentMethod === 'debit_card'}">
-                  <div v-show="paymentMethod === 'debit_card'" class="w-2.5 h-2.5 rounded-full bg-primary"></div>
-                </div>
-                <span class="font-bold text-gray-800">Debit Card</span>
-              </div>
-            </label>
-
-            <!-- Bank Transfer -->
-            <label 
-              @click="paymentMethod = 'transfer'"
-              :class="['flex items-center justify-between p-6 rounded-2xl border-2 cursor-pointer transition-all', paymentMethod === 'transfer' ? 'border-primary bg-blue-50/50' : 'border-gray-100 hover:border-blue-200']"
-            >
-              <div class="flex items-center gap-4">
-                <div class="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center" :class="{'border-primary': paymentMethod === 'transfer'}">
-                  <div v-show="paymentMethod === 'transfer'" class="w-2.5 h-2.5 rounded-full bg-primary"></div>
-                </div>
-                <span class="font-bold text-gray-800">Bank Transfer</span>
-              </div>
-            </label>
-
-            <!-- Pay at Pickup -->
-            <label 
-              @click="paymentMethod = 'pay_at_pickup'"
-              :class="['flex items-center justify-between p-6 rounded-2xl border-2 cursor-pointer transition-all', paymentMethod === 'pay_at_pickup' ? 'border-primary bg-blue-50/50' : 'border-gray-100 hover:border-blue-200']"
-            >
-              <div class="flex items-center gap-4">
-                <div class="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center" :class="{'border-primary': paymentMethod === 'pay_at_pickup'}">
-                  <div v-show="paymentMethod === 'pay_at_pickup'" class="w-2.5 h-2.5 rounded-full bg-primary"></div>
-                </div>
-                <span class="font-bold text-gray-800">Pay at Pickup</span>
-              </div>
-            </label>
-
-            <!-- Financing -->
-            <label 
-              @click="paymentMethod = 'financing'"
-              :class="['flex items-center justify-between p-6 rounded-2xl border-2 cursor-pointer transition-all', paymentMethod === 'financing' ? 'border-primary bg-blue-50/50' : 'border-gray-100 hover:border-blue-200']"
-            >
-              <div class="flex items-center gap-4">
-                <div class="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center" :class="{'border-primary': paymentMethod === 'financing'}">
-                  <div v-show="paymentMethod === 'financing'" class="w-2.5 h-2.5 rounded-full bg-primary"></div>
-                </div>
-                <div class="flex flex-col">
-                  <span class="font-bold text-gray-800">Financing</span>
-                  <span class="text-[10px] font-extrabold text-primary uppercase tracking-widest">As low as 0% APR</span>
-                </div>
-              </div>
-            </label>
-          </div>
-
-          <!-- Conditional Payment Info -->
-          <div class="mb-8">
-            <!-- Debit Card Details -->
-            <div v-if="checkoutForm.paymentMethod === 'debit_card'" class="space-y-4">
-              <div class="space-y-2">
-                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Cardholder Name</label>
-                <input type="text" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-gray-50/50" placeholder="John Doe">
-              </div>
-              <div class="space-y-2">
-                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Card Number</label>
-                <input type="text" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-gray-50/50" placeholder="0000 0000 0000 0000">
-              </div>
-              <div class="grid grid-cols-2 gap-4">
-                <div class="space-y-2">
-                  <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Expiry Date</label>
-                  <input type="text" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-gray-50/50" placeholder="MM/YY">
-                </div>
-                <div class="space-y-2">
-                  <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">CVC</label>
-                  <input type="text" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-gray-50/50" placeholder="123">
-                </div>
-              </div>
-            </div>
-
-            <!-- Bank Transfer Helper -->
-            <div v-if="checkoutForm.paymentMethod === 'transfer'" class="p-4 bg-blue-50 text-blue-800 rounded-md text-sm border border-blue-100 flex items-start gap-3">
-              <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              <span>Please transfer the total amount to NovelSolar GTBank Account: <strong>0123456789</strong>. Your order will be processed upon confirmation.</span>
-            </div>
-
-            <!-- Pay at Pickup Helper -->
-            <div v-if="checkoutForm.paymentMethod === 'pay_at_pickup'" class="p-4 bg-gray-50 text-gray-800 rounded-md text-sm border border-gray-200 flex items-start gap-3">
-              <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-              <span>You can pay via POS or Cash at our main warehouse during pickup.</span>
-            </div>
-
-            <!-- Financing Helper -->
-            <div v-if="checkoutForm.paymentMethod === 'financing'" class="p-4 bg-green-50 text-green-800 rounded-md text-sm border border-green-100 flex items-start gap-3">
-              <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-              <span>A representative will contact you to set up your 12-month installment plan.</span>
-            </div>
-          </div>
-
-          <button 
-            class="bg-[#002888] text-white w-full py-6 rounded-2xl text-lg font-bold shadow-xl shadow-primary/20 hover:shadow-primary/30 hover:bg-blue-900 transition-all active:scale-[0.98]"
-            @click.prevent="processCheckout"
-          >
-            Complete Order
-          </button>
-          
-          <p class="text-center text-xs text-gray-400 mt-6 flex items-center justify-center gap-2">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-            SSL Encrypted & PCI Compliant Payment
-          </p>
-        </section>
-      </div>
-
-      <!-- Right Column: Sticky Order Summary -->
-      <aside class="lg:w-1/3">
-        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 sticky top-24">
-          <h2 class="text-xl font-bold text-gray-900 mb-8 pb-4 border-b border-gray-50">Order Summary</h2>
-          
-          <div class="space-y-4 mb-8">
-            <div v-for="item in cart" :key="item.ID" class="flex items-center gap-4">
-              <div class="w-16 h-16 rounded-xl bg-gray-50 border border-gray-100 p-2 overflow-hidden flex-shrink-0 flex items-center justify-center">
-                <!-- Fallback icon if no image -->
-                <svg class="w-8 h-8 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <div class="flex-grow">
-                <h4 class="text-sm font-bold text-gray-800 line-clamp-1">{{ item.NAME }}</h4>
-                <p class="text-xs text-gray-400">Qty: 1</p>
-              </div>
-              <div class="text-sm font-bold text-gray-900">{{ new Intl.NumberFormat('en-NG', { style: 'currency', currency: item.CURRENCY_ID || 'NGN' }).format(Number(item.PRICE)) }}</div>
-            </div>
-          </div>
-
-          <div class="space-y-4 pt-6 border-t border-gray-50 mb-8">
-            <div class="flex justify-between text-sm text-gray-500">
-              <span>Subtotal</span>
-              <span class="font-bold text-gray-900">{{ new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(subtotal) }}</span>
-            </div>
-            <div class="flex justify-between text-sm text-gray-500">
-              <div class="flex items-center gap-1">
-                <span>Federal Tax Credit</span>
-                <svg class="w-4 h-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              </div>
-              <span class="font-bold text-primary">-${{ taxCredit.toLocaleString() }}</span>
-            </div>
-            <div class="flex justify-between text-lg font-extrabold text-gray-900 pt-4 border-t border-gray-50">
-              <span>Total Due Today</span>
-              <span class="text-primary">{{ new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(finalTotal) }}</span>
-            </div>
-          </div>
-
-          <div class="bg-green-50 rounded-2xl p-4 border border-green-100 flex items-center gap-3">
-            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-green-600 shadow-sm">
-              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
-            </div>
-            <div>
-              <div class="text-xs font-extrabold text-green-800 uppercase tracking-widest leading-none mb-1">Guaranteed Savings</div>
-              <div class="text-[10px] text-green-700">Protected by our price match and performance guarantee.</div>
-            </div>
-          </div>
-        </div>
-      </aside>
-    </div>
-  </div>
-</template>
-
-<script setup lang="ts">
-import { ref, computed, reactive } from 'vue';
-
-interface Product {
-  ID: string | number;
-  NAME: string;
-  PRICE: string | number;
-  CURRENCY_ID?: string;
-}
-
-const cart = useState<Product[]>('cart', () => [])
-
-const subtotal = computed(() => {
-  return cart.value.reduce((sum, item: Product) => sum + Number(item.PRICE || 0), 0)
-})
-
-const taxCredit = computed(() => {
-  return Math.round(subtotal.value * 0.3); // 30% Federal credit approximation
+const suggestedBranches = computed(() => {
+  if (!selectedState.value) return [];
+  
+  // 1. Check if we have branches directly in the selected state
+  const exactMatches = branches.filter(b => b.state && b.state.toLowerCase() === selectedState.value.toLowerCase());
+  if (exactMatches.length > 0) {
+    return exactMatches;
+  }
+  
+  // 2. If no exact match, find the closest branches using state coordinates
+  const stateData = nigerianStates.find(s => s.name === selectedState.value);
+  if (!stateData) return [];
+  
+  const sorted = [...branches].sort((a, b) => {
+    const distA = getDistance(stateData.coords[0], stateData.coords[1], a.coordinates[0], a.coordinates[1]);
+    const distB = getDistance(stateData.coords[0], stateData.coords[1], b.coordinates[0], b.coordinates[1]);
+    return distA - distB;
+  });
+  
+  return sorted.slice(0, 3); // Return the top 3 closest branches
 });
 
-const finalTotal = computed(() => {
-  return subtotal.value - taxCredit.value;
-});
-
-// Create reactive form state for the user inputs
-const checkoutForm = reactive({
+// Form state
+const form = ref({
+  email: '',
   firstName: '',
   lastName: '',
   address: '',
-  city: '',
-  state: '',
-  zip: '',
-  paymentMethod: 'debit_card'
-})
+  phone: '',
+  orderNote: '',
+  paymentMethod: 'cod'
+});
 
-const paymentMethod = computed({
-  get: () => checkoutForm.paymentMethod,
-  set: (val) => checkoutForm.paymentMethod = val
-})
+const isSubmitting = ref(false);
 
-// Placeholder function for the final button
-const processCheckout = async () => {
-  try {
-    const response = await $fetch<{ success: boolean; dealId: string }>('/api/checkout', {
-      method: 'POST',
-      body: {
-        user: checkoutForm,
-        items: cart.value,
-        total: finalTotal.value
-      }
-    })
-    
-    if (response.success) {
-      // Clear the cart
-      cart.value = []
-      // Redirect to a simple success page
-      navigateTo('/success')
-    }
-  } catch (error) {
-    console.error('Checkout failed', error)
-    alert('There was an issue processing your order. Please try again.')
-  }
-}
+const handleCompleteOrder = async () => {
+  if (cart.value.length === 0) return;
+  
+  isSubmitting.value = true;
+  // Simulate API call
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  
+  // Clear cart and navigate to success
+  // cart.value = []; // This should be handled by a clearCart function in useCart if needed
+  navigateTo('/success');
+};
 </script>
+
+<template>
+  <main class="max-w-6xl mx-auto w-full px-4 md:px-6 py-8 md:py-12">
+    <div v-if="cart.length === 0" class="text-center py-20 bg-white rounded-2xl shadow-sm border border-gray-100">
+      <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+        <span class="material-symbols-outlined text-4xl text-gray-300">shopping_cart</span>
+      </div>
+      <h2 class="text-2xl font-bold text-slate-900 mb-2">Your cart is empty</h2>
+      <p class="text-gray-500 mb-8">Add some solar equipment to your cart before checking out.</p>
+      <NuxtLink to="/products" class="bg-[#002888] text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-900 transition-all shadow-lg inline-block">
+        Return to Shop
+      </NuxtLink>
+    </div>
+
+    <div v-else class="flex flex-col lg:flex-row gap-12">
+      <!-- Left Column: Forms -->
+      <div class="flex-1 space-y-10">
+        <!-- Contact Information -->
+        <section class="space-y-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-8 h-8 rounded-full bg-[#002888] text-white flex items-center justify-center text-sm font-bold">1</span>
+            <h2 class="text-xl font-bold text-slate-900">Contact Information</h2>
+          </div>
+          <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-1.5">Email Address</label>
+              <input 
+                v-model="form.email"
+                type="email" 
+                placeholder="you@example.com"
+                class="rounded-lg border-slate-200 bg-slate-50 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888] p-3 w-full transition-all outline-none"
+              >
+            </div>
+          </div>
+        </section>
+
+        <!-- Shipping Address -->
+        <section class="space-y-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-8 h-8 rounded-full bg-[#002888] text-white flex items-center justify-center text-sm font-bold">2</span>
+            <h2 class="text-xl font-bold text-slate-900">Shipping Address</h2>
+          </div>
+          <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5">First Name</label>
+                <input 
+                  v-model="form.firstName"
+                  type="text" 
+                  placeholder="John"
+                  class="rounded-lg border-slate-200 bg-slate-50 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888] p-3 w-full transition-all outline-none"
+                >
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5">Last Name</label>
+                <input 
+                  v-model="form.lastName"
+                  type="text" 
+                  placeholder="Doe"
+                  class="rounded-lg border-slate-200 bg-slate-50 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888] p-3 w-full transition-all outline-none"
+                >
+              </div>
+            </div>
+            <div class="mb-4">
+              <label class="block text-sm font-semibold text-slate-700 mb-1.5">Street Address</label>
+              <input 
+                v-model="form.address"
+                type="text" 
+                placeholder="123 Solar Street, Phase 1"
+                class="rounded-lg border-slate-200 bg-slate-50 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888] p-3 w-full transition-all outline-none"
+              >
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-1.5">Phone Number</label>
+              <input 
+                v-model="form.phone"
+                type="tel" 
+                placeholder="+234..."
+                class="rounded-lg border-slate-200 bg-slate-50 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888] p-3 w-full transition-all outline-none"
+              >
+            </div>
+          </div>
+        </section>
+
+        <!-- Fulfillment Setup (Smart Router) -->
+        <section class="space-y-6">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-8 h-8 rounded-full bg-[#002888] text-white flex items-center justify-center text-sm font-bold">3</span>
+            <h2 class="text-xl font-bold text-slate-900">Fulfillment Options</h2>
+          </div>
+
+          <!-- Fulfillment Toggle -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <button 
+              @click="selectedFulfillment = 'delivery'"
+              class="p-6 rounded-2xl border-2 transition-all flex items-center gap-4 text-left"
+              :class="selectedFulfillment === 'delivery' ? 'border-[#002888] bg-blue-50/30' : 'border-gray-100 bg-white hover:border-gray-200'"
+            >
+              <div class="w-12 h-12 rounded-xl bg-[#002888] text-white flex items-center justify-center">
+                <span class="material-symbols-outlined">local_shipping</span>
+              </div>
+              <div>
+                <p class="font-bold text-slate-900">Local Delivery</p>
+                <p class="text-xs text-slate-500">Doorstep delivery within Nigeria</p>
+              </div>
+            </button>
+            <button 
+              @click="selectedFulfillment = 'pickup'"
+              class="p-6 rounded-2xl border-2 transition-all flex items-center gap-4 text-left"
+              :class="selectedFulfillment === 'pickup' ? 'border-[#002888] bg-blue-50/30' : 'border-gray-100 bg-white hover:border-gray-200'"
+            >
+              <div class="w-12 h-12 rounded-xl bg-orange-500 text-white flex items-center justify-center">
+                <span class="material-symbols-outlined">storefront</span>
+              </div>
+              <div>
+                <p class="font-bold text-slate-900">Store Pickup</p>
+                <p class="text-xs text-slate-500">Free pickup from closest branch</p>
+              </div>
+            </button>
+          </div>
+
+          <!-- State Selector -->
+          <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-2">Select your shipping state:</label>
+              <select 
+                v-model="selectedState"
+                class="rounded-lg border-slate-200 bg-slate-50 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888] p-3 w-full transition-all outline-none"
+              >
+                <option value="" disabled>Choose a state...</option>
+                <option v-for="state in nigerianStates" :key="state.name" :value="state.name">
+                  {{ state.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Branch Suggestions Section -->
+          <div v-if="suggestedBranches.length > 0" class="space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
+            <div class="flex items-center gap-2 px-1">
+              <span class="material-symbols-outlined text-[#002888] text-lg">hub</span>
+              <p class="text-xs font-bold text-slate-600 uppercase tracking-wider">
+                {{ suggestedBranches[0].state.toLowerCase() === selectedState.toLowerCase() 
+                  ? 'Expert branches available in your state:' 
+                  : 'No branches in your state. Here are the closest options:' }}
+              </p>
+            </div>
+            
+            <div class="grid gap-3">
+              <label 
+                v-for="branch in suggestedBranches" 
+                :key="branch.name"
+                class="flex items-center gap-4 p-5 rounded-xl border cursor-pointer transition-all hover:shadow-md"
+                :class="selectedBranch?.name === branch.name ? 'border-[#002888] bg-blue-50/30 ring-1 ring-[#002888]' : 'border-gray-100 bg-white'"
+              >
+                <input type="radio" v-model="selectedBranch" :value="branch" class="w-5 h-5 text-[#002888] border-gray-300 focus:ring-[#002888]">
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 mb-0.5">
+                    <p class="font-bold text-slate-900 truncate uppercase text-sm">{{ branch.name }}</p>
+                    <span v-if="branch.state.toLowerCase() === selectedState.toLowerCase()" class="bg-green-100 text-green-700 text-[8px] font-black px-1.5 py-0.5 rounded uppercase">In State</span>
+                  </div>
+                  <p class="text-xs text-slate-500 line-clamp-1 italic">{{ branch.address }}</p>
+                </div>
+                <div class="text-right shrink-0">
+                  <p class="text-[10px] font-black text-[#002888] uppercase tracking-tighter">
+                    {{ branch.city }}
+                  </p>
+                </div>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- Payment Options -->
+        <section class="space-y-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-8 h-8 rounded-full bg-[#002888] text-white flex items-center justify-center text-sm font-bold">4</span>
+            <h2 class="text-xl font-bold text-slate-900">Payment Options</h2>
+          </div>
+          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+            <label class="flex items-center gap-4 p-6 cursor-pointer hover:bg-gray-50 transition-colors border-b border-gray-100">
+              <input type="radio" v-model="form.paymentMethod" value="cod" class="w-5 h-5 text-[#002888] border-gray-300 focus:ring-[#002888]">
+              <div class="flex-1">
+                <p class="font-bold text-slate-900 uppercase text-sm tracking-wide">Cash on Delivery</p>
+                <p class="text-xs text-slate-500">Pay when your items arrive</p>
+              </div>
+              <span class="material-symbols-outlined text-gray-400">payments</span>
+            </label>
+            <label class="flex items-center gap-4 p-6 cursor-pointer hover:bg-gray-50 transition-colors">
+              <input type="radio" v-model="form.paymentMethod" value="financing" class="w-5 h-5 text-[#002888] border-gray-300 focus:ring-[#002888]">
+              <div class="flex-1">
+                <p class="font-bold text-slate-900 uppercase text-sm tracking-wide">Financing / Installment</p>
+                <p class="text-xs text-slate-500">Flexible payment plans available</p>
+              </div>
+              <span class="material-symbols-outlined text-gray-400">account_balance</span>
+            </label>
+          </div>
+        </section>
+
+        <!-- Order Note -->
+        <section class="space-y-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-8 h-8 rounded-full bg-[#002888] text-white flex items-center justify-center text-sm font-bold">5</span>
+            <h2 class="text-xl font-bold text-slate-900">Special Instructions</h2>
+          </div>
+          <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+            <textarea 
+              v-model="form.orderNote"
+              rows="3" 
+              placeholder="Any additional notes for delivery..."
+              class="rounded-lg border-slate-200 bg-slate-50 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888] p-3 w-full transition-all outline-none resize-none"
+            ></textarea>
+          </div>
+        </section>
+
+        <!-- Submit Button -->
+        <button 
+          @click="handleCompleteOrder"
+          :disabled="isSubmitting"
+          class="w-full bg-[#002888] text-white font-bold py-5 rounded-2xl shadow-xl hover:bg-blue-900 transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-[0.98]"
+        >
+          <span v-if="isSubmitting" class="animate-spin border-2 border-white/30 border-t-white w-5 h-5 rounded-full"></span>
+          {{ isSubmitting ? 'Processing Order...' : 'Complete Order' }}
+          <span v-if="!isSubmitting" class="material-symbols-outlined">arrow_forward</span>
+        </button>
+      </div>
+
+      <!-- Right Column: Sticky Order Summary -->
+      <div class="w-full lg:w-[400px]">
+        <div class="sticky top-24 space-y-6">
+          <div class="bg-white p-8 rounded-2xl border border-gray-100 shadow-xl">
+            <h2 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#002888]">receipt_long</span>
+              Order Summary
+            </h2>
+
+            <!-- Dynamic Cart Loop -->
+            <div class="space-y-6 mb-8 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+              <div v-for="item in cart" :key="item.id" class="flex gap-4">
+                <div class="relative w-16 h-16 shrink-0">
+                  <div class="w-full h-full bg-slate-50 rounded-xl flex items-center justify-center border border-slate-100 overflow-hidden">
+                    <span class="material-symbols-outlined text-gray-300 text-2xl">solar_power</span>
+                  </div>
+                  <span class="absolute -top-2 -right-2 bg-[#002888] text-white text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full border-2 border-white z-10">
+                    {{ item.quantity }}
+                  </span>
+                </div>
+                <div class="flex-1 flex flex-col justify-center min-w-0">
+                  <h3 class="text-sm font-bold text-slate-900 line-clamp-1 uppercase tracking-tight">{{ item.name }}</h3>
+                  <p class="text-xs text-slate-500 font-medium">₦{{ Number(item.price).toLocaleString() }} each</p>
+                </div>
+                <div class="flex flex-col items-end justify-center">
+                  <span class="text-sm font-black text-slate-900 italic">₦{{ Number(item.price * item.quantity).toLocaleString() }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Totals Section -->
+            <div class="space-y-4 pt-6 border-t border-dashed border-gray-200">
+              <div class="flex justify-between text-sm text-slate-600 font-medium">
+                <span>Subtotal</span>
+                <span>₦{{ Number(cartTotalAmount).toLocaleString() }}</span>
+              </div>
+              <div class="flex justify-between text-sm text-slate-600 font-medium">
+                <span>Shipping</span>
+                <span class="text-green-600 font-bold uppercase text-[10px] bg-green-50 px-2 py-0.5 rounded">Calculated at next step</span>
+              </div>
+              <div class="flex justify-between items-end pt-4 border-t border-gray-100">
+                <span class="text-sm font-bold text-slate-900">Total Due</span>
+                <div class="flex flex-col items-end">
+                  <span class="text-3xl font-black text-[#002888]">₦{{ Number(cartTotalAmount).toLocaleString() }}</span>
+                  <span class="text-[10px] text-slate-400 font-bold uppercase mt-1">Inclusive of all taxes</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Trust Badges -->
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-blue-50/50 p-4 rounded-xl border border-blue-100 flex flex-col items-center text-center">
+              <span class="material-symbols-outlined text-[#002888] mb-2">verified_user</span>
+              <p class="text-[10px] font-bold text-slate-900 uppercase tracking-wider mb-1">Secure Payment</p>
+              <p class="text-[9px] text-slate-500 leading-tight">SSL encrypted checkout process</p>
+            </div>
+            <div class="bg-blue-50/50 p-4 rounded-xl border border-blue-100 flex flex-col items-center text-center">
+              <span class="material-symbols-outlined text-[#002888] mb-2">support_agent</span>
+              <p class="text-[10px] font-bold text-slate-900 uppercase tracking-wider mb-1">24/7 Support</p>
+              <p class="text-[9px] text-slate-500 leading-tight">Expert help for solar systems</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</template>
+
+<style scoped>
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+</style>
