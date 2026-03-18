@@ -13,7 +13,7 @@
       </div>
 
       <!-- Product Grid -->
-      <div v-else-if="filteredProducts && filteredProducts.length > 0" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div v-else-if="filteredProducts && filteredProducts.length > 0" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
         <ProductCard v-for="product in filteredProducts" :key="product.ID" :product="product" />
       </div>
 

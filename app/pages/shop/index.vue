@@ -65,7 +65,7 @@ useHead({
         </div>
 
         <!-- 2-Column Grid -->
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
           <ProductCard 
             v-for="product in getProductsForCategory(category.id)" 
             :key="product.ID" 
@@ -148,7 +148,7 @@ useHead({
         </div>
 
         <!-- Desktop Grid -->
-        <div v-else class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
           <ProductCard 
             v-for="product in filteredProducts" 
             :key="product.ID" 
