@@ -5,7 +5,7 @@
       <!-- Left Section: Logo & Links -->
       <div class="flex items-center gap-8">
         <NuxtLink to="/" class="flex items-center">
-          <img src="/images/logo.png" alt="NovelSolar" class="h-8 w-auto" />
+          <NuxtImg src="/images/logo.png" alt="NovelSolar" class="h-8 w-auto" />
         </NuxtLink>
         <nav class="hidden lg:flex items-center gap-2">
           <!-- Desktop Mega Menu -->
@@ -321,7 +321,7 @@
           <!-- Column 1: Brand Info -->
           <div>
             <div class="mb-4">
-              <img src="/images/logo.png" alt="NovelSolar" class="h-8 w-auto" />
+              <NuxtImg src="/images/logo.png" alt="NovelSolar" class="h-8 w-auto" />
             </div>
             <p class="text-sm text-gray-500 mb-4">
               Providing top-tier solar solutions for a sustainable future. Empowering communities with clean energy.
@@ -456,8 +456,8 @@ const supportMenu = [
   { title: 'Contact Us', link: '/contact' }
 ]
 
-const { cartItemCount, loadCart, toggleCart } = useCart();
+const { cartItemCount, toggleCart } = useCart();
 onMounted(() => {
-  loadCart();
+  // Mobile search focus handler
 });
 </script>
