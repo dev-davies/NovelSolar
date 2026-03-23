@@ -53,8 +53,8 @@ export default defineEventHandler(async (event) => {
     try {
       const transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST || 'mail.novelsolar.com',
-        port: Number(process.env.SMTP_PORT) || 465,
-        secure: true, // Use true for port 465 (SSL)
+        port: Number(process.env.SMTP_PORT) || 587, // Changed to 587
+        secure: false, // Must be false for 587 to enable STARTTLS
         auth: { 
           user: process.env.SMTP_USER, 
           pass: process.env.SMTP_PASS 
@@ -62,8 +62,21 @@ export default defineEventHandler(async (event) => {
         tls: {
           // Do not fail on invalid certs if cPanel is using a self-signed mail certificate
           rejectUnauthorized: false 
-        }
+        },
+        debug: true, // Forces Nodemailer to output raw SMTP traffic
+        logger: true // Enables built-in console logging
       });
+
+      // --- DIAGNOSTIC BLOCK ---
+      console.log('Attempting SMTP connection to:', process.env.SMTP_HOST || 'mail.novelsolar.com', 'on port:', Number(process.env.SMTP_PORT) || 587);
+      try {
+        const success = await transporter.verify();
+        console.log('SMTP Connection Successful:', success);
+      } catch (verifyError) {
+        console.error('SMTP VERIFICATION FAILED:', verifyError);
+        return { success: false, message: 'Email server configuration error.' };
+      }
+      // ------------------------
 
       const mailOptions = {
         from: `"Novel Solar" <${process.env.SMTP_USER}>`,
@@ -82,6 +95,11 @@ export default defineEventHandler(async (event) => {
           </div>
         `
       };
+      console.log('--- PRE-FLIGHT CHECK ---');
+      console.log('Sending FROM:', process.env.SMTP_USER);
+      console.log('Sending TO:', customer?.email);
+      console.log('------------------------');
+
       await transporter.sendMail(mailOptions);
     } catch (error) {
       console.error('Email Error:', error);
