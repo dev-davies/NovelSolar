@@ -2,7 +2,10 @@
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
-  modules: ["@nuxtjs/tailwindcss"],
+  modules: ["@nuxtjs/tailwindcss", "@nuxt/image", "@vueuse/nuxt"],
+  image: {
+    domains: ["nisl.bitrix24.com"]
+  },
   css: ["~/assets/css/main.css"],
   app: {
     head: {

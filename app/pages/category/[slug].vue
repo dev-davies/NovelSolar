@@ -112,9 +112,9 @@ const filteredProducts = computed(() => {
   })
 })
 
-const cart = useState('cart', () => [])
+const { addToCart } = useCart()
 const buyNow = (product) => {
-  cart.value = [product]
+  addToCart(product)
   navigateTo('/checkout')
 }
 

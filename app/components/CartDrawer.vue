@@ -55,7 +55,7 @@ const { cart, isCartOpen, toggleCart, removeFromCart, updateQuantity, cartTotalA
         <div v-for="item in cart" :key="item.id" class="group flex gap-4 p-4 border border-transparent hover:border-gray-100 hover:bg-gray-50/50 rounded-2xl transition-all">
           <!-- Item Preview -->
           <div class="w-20 h-20 bg-gray-100 rounded-xl flex items-center justify-center shrink-0 overflow-hidden">
-            <img v-if="item.image" :src="item.image" :alt="item.name" class="w-full h-full object-cover">
+            <NuxtImg v-if="item.image" :src="item.image" :alt="item.name" class="w-full h-full object-cover" />
             <span v-else class="material-symbols-outlined text-gray-300 text-3xl">image</span>
           </div>
 

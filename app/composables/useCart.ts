@@ -1,29 +1,19 @@
 import { useState } from '#app';
 import { computed } from 'vue';
+import { useLocalStorage } from '@vueuse/core';
+
+export interface CartItem {
+  id: string | number;
+  name: string;
+  price: number;
+  image: string | null;
+  quantity: number;
+}
 
 export const useCart = () => {
-  const cart = useState<any[]>('novel-cart', () => []);
+  // useLocalStorage safely synchronizes with the browser natively
+  const cart = useLocalStorage<CartItem[]>('novel-cart-data', []);
   const isCartOpen = useState<boolean>('novel-cart-open', () => false);
-
-  const saveCart = () => {
-    if (import.meta.client) {
-      localStorage.setItem('novel-cart-data', JSON.stringify(cart.value));
-    }
-  };
-
-  const loadCart = () => {
-    if (import.meta.client) {
-      const savedCart = localStorage.getItem('novel-cart-data');
-      if (savedCart) {
-        try {
-          cart.value = JSON.parse(savedCart);
-        } catch (e) {
-          console.error('Failed to parse cart data:', e);
-          cart.value = [];
-        }
-      }
-    }
-  };
 
   const toggleCart = () => {
     isCartOpen.value = !isCartOpen.value;
@@ -31,7 +21,7 @@ export const useCart = () => {
 
   const addToCart = (product: any, qty = 1) => {
     const productId = product.ID || product.id;
-    const existingItem = cart.value.find(item => item.id === productId);
+    const existingItem = cart.value.find((item: CartItem) => item.id === productId);
     
     if (existingItem) {
       existingItem.quantity += qty;
@@ -44,39 +34,34 @@ export const useCart = () => {
         quantity: qty
       });
     }
-    saveCart();
     isCartOpen.value = true; // Auto-open drawer when adding an item
   };
 
   const removeFromCart = (productId: string | number) => {
-    cart.value = cart.value.filter(item => item.id !== productId);
-    saveCart();
+    cart.value = cart.value.filter((item: CartItem) => item.id !== productId);
   };
 
   const updateQuantity = (productId: string | number, amount: number) => {
-    const item = cart.value.find(item => item.id === productId);
+    const item = cart.value.find((item: CartItem) => item.id === productId);
     if (item) {
       item.quantity += amount;
       if (item.quantity <= 0) {
         removeFromCart(productId);
-      } else {
-        saveCart();
       }
     }
   };
 
   const cartItemCount = computed(() => {
-    return cart.value.reduce((total, item) => total + item.quantity, 0);
+    return cart.value.reduce((total: number, item: CartItem) => total + item.quantity, 0);
   });
 
   const cartTotalAmount = computed(() => {
-    return cart.value.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return cart.value.reduce((total: number, item: CartItem) => total + (item.price * item.quantity), 0);
   });
 
   return { 
     cart, 
     isCartOpen, 
-    loadCart, 
     toggleCart, 
     addToCart, 
     removeFromCart, 

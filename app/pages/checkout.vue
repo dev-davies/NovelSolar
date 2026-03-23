@@ -1,5 +1,7 @@
 <script setup>
+import { z } from 'zod';
 const { cart, cartTotalAmount } = useCart();
+const { addToast } = useToast();
 
 const selectedFulfillment = ref('delivery'); // 'delivery' or 'pickup'
 const selectedState = ref('');
@@ -40,9 +42,37 @@ const form = reactive({
 });
 const paymentMethod = ref('Cash on Delivery');
 
+const formErrors = reactive({
+  firstName: '', lastName: '', email: '', phone: '', address: ''
+});
+
+const checkoutSchema = z.object({
+  firstName: z.string().min(2, 'First name must be at least 2 characters'),
+  lastName: z.string().min(2, 'Last name must be at least 2 characters'),
+  email: z.string().email('Please enter a valid email address'),
+  phone: z.string().regex(/^(\+234|0)[789][01]\d{8}$/, 'Must be a valid 11-digit Nigerian phone number'),
+  address: z.string().min(5, 'Please provide a full delivery address'),
+  note: z.string().optional()
+});
+
 const submitOrder = async () => {
-  if (!form.firstName || !form.email || cart.value.length === 0) {
-    alert('Please fill out your details and ensure your cart is not empty.');
+  if (cart.value.length === 0) {
+    addToast('Empty Cart', 'Please add some solar equipment to your cart.', 'error');
+    return;
+  }
+
+  // Clear previous errors
+  Object.keys(formErrors).forEach(key => formErrors[key] = '');
+
+  // Validate form payload
+  const result = checkoutSchema.safeParse(form);
+  if (!result.success) {
+    result.error.issues.forEach(issue => {
+      if (issue.path[0]) {
+        formErrors[issue.path[0]] = issue.message;
+      }
+    });
+    addToast('Validation Error', 'Please correct the highlighted fields.', 'error');
     return;
   }
 
@@ -61,11 +91,11 @@ const submitOrder = async () => {
     
     // Clear cart and redirect
     cart.value = [];
-    if (import.meta.client) localStorage.removeItem('novel-cart-data');
+    addToast('Order Placed', 'Your order was successfully sent to NovelSolar!', 'success');
     navigateTo('/thank-you'); // Assuming you'll make a quick thank-you page next!
     
   } catch (error) {
-    alert('There was an issue processing your order. Please try again.');
+    addToast('Order Error', 'There was an issue processing your order. Please try again.', 'error');
   } finally {
     isSubmitting.value = false;
   }
@@ -96,13 +126,14 @@ const submitOrder = async () => {
           </div>
           <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
             <div>
-              <label class="block text-sm font-semibold text-slate-700 mb-1.5">Email Address</label>
+              <label class="block text-sm font-semibold text-slate-700 mb-1.5">Email Address <span class="text-red-500">*</span></label>
               <input 
                 v-model="form.email"
                 type="email" 
                 placeholder="you@example.com"
-                class="rounded-lg border-slate-200 bg-slate-50 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888] p-3 w-full transition-all outline-none"
+                :class="['rounded-lg bg-slate-50 p-3 w-full transition-all outline-none', formErrors.email ? 'border-2 border-red-500 focus:ring-2 focus:ring-red-500/20 bg-red-50/50' : 'border border-slate-200 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888]']"
               >
+              <p v-if="formErrors.email" class="text-red-500 text-xs mt-1.5 font-bold">{{ formErrors.email }}</p>
             </div>
           </div>
         </section>
@@ -116,41 +147,45 @@ const submitOrder = async () => {
           <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-1.5">First Name</label>
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5">First Name <span class="text-red-500">*</span></label>
                 <input 
                   v-model="form.firstName"
                   type="text" 
                   placeholder="John"
-                  class="rounded-lg border-slate-200 bg-slate-50 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888] p-3 w-full transition-all outline-none"
+                  :class="['rounded-lg bg-slate-50 p-3 w-full transition-all outline-none', formErrors.firstName ? 'border-2 border-red-500 focus:ring-2 focus:ring-red-500/20 bg-red-50/50' : 'border border-slate-200 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888]']"
                 >
+                <p v-if="formErrors.firstName" class="text-red-500 text-xs mt-1.5 font-bold">{{ formErrors.firstName }}</p>
               </div>
               <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-1.5">Last Name</label>
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5">Last Name <span class="text-red-500">*</span></label>
                 <input 
                   v-model="form.lastName"
                   type="text" 
                   placeholder="Doe"
-                  class="rounded-lg border-slate-200 bg-slate-50 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888] p-3 w-full transition-all outline-none"
+                  :class="['rounded-lg bg-slate-50 p-3 w-full transition-all outline-none', formErrors.lastName ? 'border-2 border-red-500 focus:ring-2 focus:ring-red-500/20 bg-red-50/50' : 'border border-slate-200 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888]']"
                 >
+                <p v-if="formErrors.lastName" class="text-red-500 text-xs mt-1.5 font-bold">{{ formErrors.lastName }}</p>
               </div>
             </div>
             <div class="mb-4">
-              <label class="block text-sm font-semibold text-slate-700 mb-1.5">Street Address</label>
+              <label class="block text-sm font-semibold text-slate-700 mb-1.5">Street Address <span class="text-red-500">*</span></label>
               <input 
                 v-model="form.address"
                 type="text" 
                 placeholder="123 Solar Street, Phase 1"
-                class="rounded-lg border-slate-200 bg-slate-50 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888] p-3 w-full transition-all outline-none"
+                :class="['rounded-lg bg-slate-50 p-3 w-full transition-all outline-none', formErrors.address ? 'border-2 border-red-500 focus:ring-2 focus:ring-red-500/20 bg-red-50/50' : 'border border-slate-200 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888]']"
               >
+              <p v-if="formErrors.address" class="text-red-500 text-xs mt-1.5 font-bold">{{ formErrors.address }}</p>
             </div>
             <div>
-              <label class="block text-sm font-semibold text-slate-700 mb-1.5">Phone Number</label>
+              <label class="block text-sm font-semibold text-slate-700 mb-1.5">Phone Number <span class="text-red-500">*</span></label>
               <input 
                 v-model="form.phone"
                 type="tel" 
-                placeholder="+234..."
-                class="rounded-lg border-slate-200 bg-slate-50 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888] p-3 w-full transition-all outline-none"
+                placeholder="080..."
+                :class="['rounded-lg bg-slate-50 p-3 w-full transition-all outline-none', formErrors.phone ? 'border-2 border-red-500 focus:ring-2 focus:ring-red-500/20 bg-red-50/50' : 'border border-slate-200 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888]']"
               >
+              <p v-if="formErrors.phone" class="text-red-500 text-xs mt-1.5 font-bold">{{ formErrors.phone }}</p>
             </div>
           </div>
         </section>

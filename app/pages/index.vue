@@ -31,7 +31,7 @@
         <!-- Card 1 - Novel Academy -->
         <a href="https://novel-academy.com" target="_blank" rel="noopener noreferrer" class="group relative block overflow-hidden rounded-xl bg-[#2C75D8] p-8 text-white shadow-md transition-transform hover:-translate-y-1 min-h-[280px] flex flex-col justify-end">
           <!-- Background Image -->
-          <img src="/images/novel academy.png" alt="Novel Academy" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+          <NuxtImg src="/images/novel academy.png" alt="Novel Academy" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
           <!-- Overlay Gradient for Readability -->
           <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
           
@@ -51,7 +51,7 @@
         <!-- Card 2 - Solar Product Exchange -->
         <a href="https://solarproductexchange.com" target="_blank" rel="noopener noreferrer" class="group relative block overflow-hidden rounded-xl bg-white border border-gray-200 p-8 shadow-md transition-transform hover:-translate-y-1 min-h-[280px] flex flex-col justify-end">
           <!-- Background Image -->
-          <img src="/images/solarexchange.png" alt="Solar Product Exchange" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+          <NuxtImg src="/images/solarexchange.png" alt="Solar Product Exchange" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
           <!-- Overlay Gradient for Readability -->
           <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
 
@@ -123,7 +123,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
           <article v-for="post in posts" :key="post.id" class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
             <div class="aspect-video relative overflow-hidden">
-              <img :src="post.image" :alt="post.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+              <NuxtImg :src="post.image" :alt="post.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
             </div>
             <div class="p-8">
               <div class="flex items-center gap-2 mb-4 text-xs font-medium text-gray-400">
@@ -152,12 +152,10 @@
 <script setup>
 const { data: products, pending } = useFetch('/api/inventory')
 
-const cart = useState('cart', () => [])
+const { addToCart } = useCart()
 
 const buyNow = (product) => {
-  // Set the cart to contains only this product for a direct checkout experience
-  cart.value = [product]
-  // Redirect to checkout
+  addToCart(product)
   navigateTo('/checkout')
 }
 

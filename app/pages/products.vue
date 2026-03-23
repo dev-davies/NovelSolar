@@ -48,12 +48,10 @@ const filteredProducts = computed(() => {
   )
 })
 
-const cart = useState('cart', () => [])
+const { addToCart } = useCart()
 
 const buyNow = (product) => {
-  // Set the cart to contains only this product for a direct checkout experience
-  cart.value = [product]
-  // Redirect to checkout
+  addToCart(product)
   navigateTo('/checkout')
 }
 

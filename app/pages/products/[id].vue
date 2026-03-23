@@ -22,7 +22,7 @@
       <div class="space-y-4">
         <div class="aspect-square bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100 flex items-center justify-center p-8">
           <div v-if="pending" class="w-full h-full bg-gray-50 animate-pulse rounded-2xl"></div>
-          <img 
+          <NuxtImg 
             v-else
             :src="product?.DETAIL_PICTURE?.showUrl || product?.PREVIEW_PICTURE?.showUrl || '/placeholder-image.jpg'" 
             :alt="product?.NAME" 
@@ -35,7 +35,7 @@
             :key="i"
             class="aspect-square rounded-xl overflow-hidden border-2 transition-all p-2 bg-white border-gray-100 hover:border-blue-200 cursor-pointer"
           >
-            <img 
+            <NuxtImg 
               v-if="i === 1 && product?.PREVIEW_PICTURE?.showUrl" 
               :src="product.PREVIEW_PICTURE.showUrl" 
               class="w-full h-full object-contain"
@@ -193,18 +193,19 @@
 </template>
 
 <script setup>
-const cart = useState('cart', () => [])
+const { addToCart: doAddToCart } = useCart()
+const { addToast } = useToast()
 
 const addToCart = () => {
   if (product.value) {
-    cart.value.push(product.value)
-    alert('Added to cart!')
+    doAddToCart(product.value)
+    addToast('Success', 'Item added to your cart.', 'success')
   }
 }
 
 const buyNow = () => {
   if (product.value) {
-    cart.value = [product.value]
+    doAddToCart(product.value)
     navigateTo('/checkout')
   }
 }
