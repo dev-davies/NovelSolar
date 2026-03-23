@@ -1,40 +1,73 @@
 <script setup>
 const categories = [
-  { id: 'batteries', name: 'Batteries' },
-  { id: 'solar-panel', name: 'Solar Panel' },
-  { id: 'inverters', name: 'Inverters' },
-  { id: 'accessories', name: 'Lightening & Accessories' },
-  { id: 'services', name: 'Services' }
+  { id: 'batteries', name: 'Batteries', SECTION_ID: null },
+  { id: 'solar-panel', name: 'Solar Panel', SECTION_ID: null },
+  { id: 'inverters', name: 'Inverters', SECTION_ID: null },
+  { id: 'accessories', name: 'Lightening & Accessories', SECTION_ID: null },
+  { id: 'services', name: 'Services', SECTION_ID: null }
 ];
 
-// Unified mock data array
-const allProducts = ref(categories.flatMap(cat => 
-  [1, 2, 3, 4, 5, 6].map(i => ({
-    ID: `${cat.id}-${i}`,
-    categoryId: cat.id,
-    NAME: `NovelSolar ${cat.name} ${i}`,
-    PRICE: Math.floor(Math.random() * 500000) + 50000
-  }))
-));
+// Fetch live products
+const { data: apiProducts, pending } = useFetch('/api/inventory');
+// Helper to safely get the products array whether it's direct or nested
+const getProductsArray = () => {
+  if (!apiProducts.value) return [];
+  // If the API returns { data: [...] } or { result: [...] }
+  if (Array.isArray(apiProducts.value.data)) return apiProducts.value.data;
+  if (Array.isArray(apiProducts.value.result)) return apiProducts.value.result;
+  // If it's already an array
+  if (Array.isArray(apiProducts.value)) return apiProducts.value;
+  return [];
+};
 
 // Filter States for Desktop
 const searchQuery = ref('');
 const selectedCategory = ref('all');
 const maxPrice = ref(2000000); // Default max price
 
-// Desktop Computed Filter
-const filteredProducts = computed(() => {
-  return allProducts.value.filter(product => {
-    const matchesSearch = product.NAME.toLowerCase().includes(searchQuery.value.toLowerCase());
-    const matchesCategory = selectedCategory.value === 'all' || product.categoryId === selectedCategory.value;
-    const matchesPrice = product.PRICE <= maxPrice.value;
+import { watch } from 'vue';
+
+const displayLimit = ref(50);
+
+// Step 1: Find ALL products that match the current filters
+const matchingProducts = computed(() => {
+  const products = getProductsArray();
+  if (products.length === 0) return [];
+  
+  return products.filter(product => {
+    // 1. Safe Search
+    const productName = product.NAME || product.name || '';
+    const matchesSearch = productName.toLowerCase().includes(searchQuery.value.toLowerCase());
+    
+    // 2. Safe Category
+    const matchesCategory = selectedCategory.value === 'all' || 
+                            product.SECTION_ID === categories.find(c => c.id === selectedCategory.value)?.SECTION_ID;
+    
+    // 3. Safe Price (Fall back to 0 if missing so they don't disappear)
+    const rawPrice = product.PRICE || product.price || 0;
+    const matchesPrice = Number(rawPrice) <= maxPrice.value;
+    
     return matchesSearch && matchesCategory && matchesPrice;
   });
 });
 
+// Step 2: Slice the matches based on our current display limit
+const displayedProducts = computed(() => {
+  return matchingProducts.value.slice(0, displayLimit.value);
+});
+
+// Step 3: Reset the pagination if the user searches or changes a filter
+watch([searchQuery, selectedCategory, maxPrice], () => {
+  displayLimit.value = 50;
+});
+
 // Mobile Helper
 const getProductsForCategory = (categoryId) => {
-  return allProducts.value.filter(p => p.categoryId === categoryId).slice(0, 4);
+  const products = getProductsArray();
+  if (products.length === 0) return [];
+  
+  const targetSectionId = categories.find(c => c.id === categoryId)?.SECTION_ID;
+  return products.filter(p => p.SECTION_ID === targetSectionId).slice(0, 4);
 };
 
 useHead({
@@ -54,7 +87,11 @@ useHead({
     </header>
 
     <!-- MOBILE VIEW: Categorized Blocks (Hidden on Desktop) -->
-    <div class="block md:hidden max-w-6xl mx-auto px-4 py-6">
+    <div v-if="pending" class="block md:hidden max-w-6xl mx-auto px-4 py-8 text-center bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 mt-6">
+      <span class="material-symbols-outlined text-4xl text-[#002888] mb-2 animate-pulse">package_2</span>
+      <h3 class="text-base font-bold text-slate-900 mb-1">Loading inventory...</h3>
+    </div>
+    <div v-else class="block md:hidden max-w-6xl mx-auto px-4 py-6">
       <div v-for="category in categories" :key="category.id" class="mb-10">
         <!-- Category Header Pill -->
         <div class="bg-[#002888] text-white px-5 py-3.5 rounded-xl flex items-center justify-between mb-5 shadow-sm">
@@ -130,12 +167,19 @@ useHead({
             {{ selectedCategory === 'all' ? 'All Inventory' : categories.find(c => c.id === selectedCategory)?.name }}
           </h2>
           <span class="bg-blue-50 text-[#002888] px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider">
-            {{ filteredProducts.length }} Results
+            {{ matchingProducts.length }} Results
           </span>
         </div>
         
+        <!-- Loading State -->
+        <div v-if="pending" class="text-center py-24 bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-200">
+          <span class="material-symbols-outlined text-6xl text-[#002888] mb-4 animate-pulse">package_2</span>
+          <h3 class="text-lg font-bold text-slate-900 mb-1">Loading inventory...</h3>
+          <p class="text-slate-500 mb-6">Retrieving live data.</p>
+        </div>
+
         <!-- Empty State -->
-        <div v-if="filteredProducts.length === 0" class="text-center py-24 bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-200">
+        <div v-else-if="matchingProducts.length === 0" class="text-center py-24 bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-200">
           <span class="material-symbols-outlined text-6xl text-slate-200 mb-4">inventory_2</span>
           <h3 class="text-lg font-bold text-slate-900 mb-1">No products found</h3>
           <p class="text-slate-500 mb-6">Try adjusting your filters to find what you're looking for.</p>
@@ -148,12 +192,19 @@ useHead({
         </div>
 
         <!-- Desktop Grid -->
-        <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
+        <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
           <ProductCard 
-            v-for="product in filteredProducts" 
+            v-for="product in displayedProducts" 
             :key="product.ID" 
             :product="product" 
           />
+        </div>
+        
+        <div v-if="matchingProducts.length > displayedProducts.length" class="mt-12 flex justify-center">
+          <button @click="displayLimit += 50" class="px-8 py-3 bg-white border-2 border-[#002888] text-[#002888] font-bold rounded-xl hover:bg-slate-50 transition-colors flex items-center gap-2">
+            Load More Products
+            <span class="material-symbols-outlined text-sm">expand_more</span>
+          </button>
         </div>
       </main>
     </div>
