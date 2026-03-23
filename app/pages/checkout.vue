@@ -30,9 +30,18 @@ const suggestedBranches = computed(() => {
 
 const exactMatches = computed(() => {
   if (!selectedState.value) return [];
-  // Clean the string: If it's 'FCT - Abuja', just search for 'abuja'
-  const searchState = selectedState.value.replace('FCT - ', '').toLowerCase();
-  return branches.filter(b => b.address && b.address.toLowerCase().includes(searchState));
+  
+  // Handle the FCT edge case where the state dropdown says 'FCT - Abuja' but the branch state is 'FCT'
+  if (selectedState.value === 'FCT - Abuja') {
+    return branches.filter(b => b.state === 'FCT' || (b.address && b.address.toLowerCase().includes('abuja')));
+  }
+  
+  const searchState = selectedState.value.toLowerCase();
+  
+  return branches.filter(b => 
+    (b.state && b.state.toLowerCase() === searchState) || 
+    (b.address && b.address.toLowerCase().includes(searchState))
+  );
 });
 
 // Form state
