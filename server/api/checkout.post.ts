@@ -49,37 +49,25 @@ export default defineEventHandler(async (event) => {
 
   // 3. SEND CONFIRMATION EMAIL
   // NOTE: Requires SMTP credentials in .env (SMTP_HOST, SMTP_USER, SMTP_PASS)
-  if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+  if (config.smtpUser && config.smtpPass) {
     try {
       const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST || 'mail.novelsolar.com',
-        port: Number(process.env.SMTP_PORT) || 587, // Changed to 587
-        secure: false, // Must be false for 587 to enable STARTTLS
+        pool: true,
+        host: config.smtpHost,
+        port: Number(config.smtpPort) || 587,
+        secure: false, // Must be false for port 587
         auth: { 
-          user: process.env.SMTP_USER, 
-          pass: process.env.SMTP_PASS 
+          user: config.smtpUser, 
+          pass: config.smtpPass 
         },
         tls: {
-          // Do not fail on invalid certs if cPanel is using a self-signed mail certificate
           rejectUnauthorized: false 
-        },
-        debug: true, // Forces Nodemailer to output raw SMTP traffic
-        logger: true // Enables built-in console logging
+        }
       });
 
-      // --- DIAGNOSTIC BLOCK ---
-      console.log('Attempting SMTP connection to:', process.env.SMTP_HOST || 'mail.novelsolar.com', 'on port:', Number(process.env.SMTP_PORT) || 587);
-      try {
-        const success = await transporter.verify();
-        console.log('SMTP Connection Successful:', success);
-      } catch (verifyError) {
-        console.error('SMTP VERIFICATION FAILED:', verifyError);
-        return { success: false, message: 'Email server configuration error.' };
-      }
-      // ------------------------
 
       const mailOptions = {
-        from: `"Novel Solar" <${process.env.SMTP_USER}>`,
+        from: config.smtpFrom,
         to: customer.email,
         subject: "Your Novel Solar Order Confirmation",
         html: `
@@ -95,10 +83,6 @@ export default defineEventHandler(async (event) => {
           </div>
         `
       };
-      console.log('--- PRE-FLIGHT CHECK ---');
-      console.log('Sending FROM:', process.env.SMTP_USER);
-      console.log('Sending TO:', customer?.email);
-      console.log('------------------------');
 
       await transporter.sendMail(mailOptions);
     } catch (error) {
