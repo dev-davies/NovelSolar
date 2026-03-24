@@ -50,6 +50,11 @@ const filteredProducts = computed(() => {
 
 const { addToCart } = useCart()
 
+const getSecureImage = (bitrixUrl) => {
+  if (!bitrixUrl) return '/images/placeholder.png'
+  return `/api/bitrix-image?url=${encodeURIComponent(bitrixUrl)}`
+}
+
 const buyNow = (product) => {
   addToCart(product)
   navigateTo('/checkout')

@@ -4,6 +4,21 @@ const { addToCart } = useCart();
 const { data: product, pending, error } = await useFetch(`/api/product/${route.params.id}`);
 const quantity = ref(1);
 
+const getSecureImage = (bitrixUrl) => {
+  if (!bitrixUrl) return '/images/placeholder.png'
+  return `/api/bitrix-image?url=${encodeURIComponent(bitrixUrl)}`
+}
+
+// Resolve the main product image to an absolute URL
+// PROPERTY_44 is the actual "More Photo" property used for product images in this Bitrix instance
+const imageUrl = computed(() => {
+  const rawUrl = getBitrixImageUrl(product.value?.PROPERTY_44) ||
+                 getBitrixImageUrl(product.value?.PREVIEW_PICTURE) ||
+                 getBitrixImageUrl(product.value?.DETAIL_PICTURE);
+
+  return rawUrl;
+})
+
 useHead({
   title: product.value ? `${product.value.NAME} | NovelSolar` : 'Loading Product...',
   meta: [
@@ -18,7 +33,7 @@ useHead({
       <div class="w-12 h-12 border-4 border-blue-100 border-t-[#002888] rounded-full animate-spin"></div>
       <p class="font-bold text-lg">Loading amazing products...</p>
     </div>
-    
+
     <div v-else-if="error || !product" class="py-20 text-center flex flex-col items-center gap-6 bg-white rounded-3xl border border-slate-100 shadow-sm">
       <span class="material-symbols-outlined text-7xl text-red-200">sentiment_very_dissatisfied</span>
       <div>
@@ -29,12 +44,12 @@ useHead({
         Back to Shop
       </button>
     </div>
-    
+
     <div v-else>
       <!-- Breadcrumb / Back -->
       <nav class="flex text-sm text-slate-500 mb-8 items-center gap-2">
         <button @click="$router.back()" class="hover:text-[#002888] flex items-center gap-1 font-medium transition-colors group">
-          <span class="material-symbols-outlined text-sm transition-transform group-hover:-translate-x-1">arrow_back</span> 
+          <span class="material-symbols-outlined text-sm transition-transform group-hover:-translate-x-1">arrow_back</span>
           Back to Shop
         </button>
       </nav>
@@ -44,7 +59,12 @@ useHead({
         <!-- Left: Image Gallery -->
         <div class="space-y-4">
           <div class="aspect-square bg-white rounded-2xl overflow-hidden border border-slate-200 flex items-center justify-center shadow-sm relative group">
-            <span class="material-symbols-outlined text-8xl text-gray-100 transition-transform group-hover:scale-110 duration-500">image</span>
+            <img
+              :src="getSecureImage(imageUrl)"
+              :alt="product.NAME"
+              class="w-full h-full object-contain p-4"
+              loading="lazy"
+            />
             <div class="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-2 rounded-full shadow-sm text-[#002888]">
               <span class="material-symbols-outlined">zoom_in</span>
             </div>
@@ -173,11 +193,13 @@ useHead({
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
+  appearance: none;
   margin: 0;
 }
 
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 </style>

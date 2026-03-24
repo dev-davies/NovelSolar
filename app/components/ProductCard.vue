@@ -5,6 +5,19 @@ const props = defineProps({
     required: true
   }
 })
+
+// PROPERTY_44 is the actual "More Photo" property used for product images in this Bitrix instance
+// DETAIL_PICTURE / PREVIEW_PICTURE are kept as fallbacks (both are null on most CRM products)
+// Resolve Bitrix picture object (which has restricted URLs) to our local authorized proxy
+const imageUrl = computed(() => {
+  return getBitrixImageUrl(props.product.PROPERTY_44) ||
+         getBitrixImageUrl(props.product.PREVIEW_PICTURE) ||
+         getBitrixImageUrl(props.product.DETAIL_PICTURE);
+})
+const getSecureImage = (bitrixUrl) => {
+  if (!bitrixUrl) return '/images/placeholder.png'
+  return `/api/bitrix-image?url=${encodeURIComponent(bitrixUrl)}`
+}
 </script>
 
 <template>
@@ -12,15 +25,14 @@ const props = defineProps({
     <!-- Image Container -->
     <div class="relative aspect-square bg-gray-50 flex items-center justify-center p-6 border-b border-gray-50">
       <span class="absolute top-4 left-4 bg-green-50 text-green-600 text-xs font-extrabold px-3 py-1 rounded-md tracking-wide z-10">IN STOCK</span>
-      
+
       <div class="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-500 overflow-hidden">
-        <NuxtImg 
-          v-if="product.PREVIEW_PICTURE?.showUrl || product.DETAIL_PICTURE?.showUrl" 
-          :src="product.PREVIEW_PICTURE?.showUrl || product.DETAIL_PICTURE?.showUrl" 
-          :alt="product.NAME || 'Product Component'" 
-          class="w-full h-full object-cover" 
+        <img
+          :src="getSecureImage(imageUrl)"
+          :alt="product.NAME"
+          class="w-full h-full object-contain p-4"
+          loading="lazy"
         />
-        <span v-else class="material-symbols-outlined text-gray-300 text-5xl">image</span>
       </div>
     </div>
 
