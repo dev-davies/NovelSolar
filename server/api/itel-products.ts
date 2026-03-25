@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
     const listResponse = await $fetch<{ result?: any[] }>(`${baseUrl}crm.product.list`, {
       query: {
         'filter[%NAME]': 'itel',
-        'select[]': ['ID', 'NAME', 'PRICE', 'QUANTITY', 'CURRENCY_ID', 'SECTION_ID']
+        'select[]': ['ID', 'NAME', 'PRICE', 'QUANTITY', 'CURRENCY_ID', 'SECTION_ID', 'PROPERTY_102', 'PROPERTY_104', 'PROPERTY_112']
       }
     });
     
@@ -35,7 +35,7 @@ export default defineEventHandler(async (event) => {
 
   // ─── PHASE 2: Batch-fetch full product detail (with images) in chunks of 50 ───
   const BATCH_SIZE = 50;
-  const imageMap: Record<string, { DETAIL_PICTURE?: any; PREVIEW_PICTURE?: any; PROPERTY_44?: any }> = {};
+  const imageMap: Record<string, { DETAIL_PICTURE?: any; PREVIEW_PICTURE?: any; PROPERTY_44?: any; PROPERTY_102?: any; PROPERTY_104?: any; PROPERTY_112?: any }> = {};
 
   try {
     for (let i = 0; i < itelProducts.length; i += BATCH_SIZE) {
@@ -69,6 +69,9 @@ export default defineEventHandler(async (event) => {
           DETAIL_PICTURE: productDetail?.DETAIL_PICTURE ?? null,
           PREVIEW_PICTURE: productDetail?.PREVIEW_PICTURE ?? null,
           PROPERTY_44: productDetail?.PROPERTY_44 ?? null,
+          PROPERTY_102: productDetail?.PROPERTY_102 ?? null,
+          PROPERTY_104: productDetail?.PROPERTY_104 ?? null,
+          PROPERTY_112: productDetail?.PROPERTY_112 ?? null,
         };
       }
     }
@@ -84,6 +87,9 @@ export default defineEventHandler(async (event) => {
       DETAIL_PICTURE: imageMap[product.ID]?.DETAIL_PICTURE ?? null,
       PREVIEW_PICTURE: imageMap[product.ID]?.PREVIEW_PICTURE ?? null,
       PROPERTY_44: imageMap[product.ID]?.PROPERTY_44 ?? null,
+      PROPERTY_102: imageMap[product.ID]?.PROPERTY_102 ?? product.PROPERTY_102 ?? null,
+      PROPERTY_104: imageMap[product.ID]?.PROPERTY_104 ?? product.PROPERTY_104 ?? null,
+      PROPERTY_112: imageMap[product.ID]?.PROPERTY_112 ?? product.PROPERTY_112 ?? null,
     };
     console.log(p);
     return p;

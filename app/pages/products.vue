@@ -48,45 +48,6 @@ const filteredProducts = computed(() => {
   )
 })
 
-const { addToCart } = useCart()
-
-const getProductImage = (productData) => {
-  if (!productData) return '/images/placeholder.png';
-
-  // 1. Look for our new Cloudinary slot
-  const cloudinaryField = productData.PROPERTY_102;
-
-  if (cloudinaryField) {
-    if (Array.isArray(cloudinaryField) && cloudinaryField.length > 0) {
-      return cloudinaryField[0].value;
-    }
-    if (typeof cloudinaryField === 'string') {
-      return cloudinaryField;
-    }
-  }
-
-  // 2. Fallback to older Bitrix image proxy logic
-  const legacyField = productData.PROPERTY_44 || productData.PREVIEW_PICTURE || productData.DETAIL_PICTURE;
-  if (legacyField) {
-    const relativeUrl = legacyField.showUrl || legacyField.downloadUrl;
-    if (relativeUrl) {
-      const fullBitrixUrl = `https://nisl.bitrix24.com${relativeUrl}`;
-      return `/api/bitrix-image?url=${encodeURIComponent(fullBitrixUrl)}`;
-    }
-    if (typeof legacyField === 'string' && legacyField.startsWith('http')) {
-      return legacyField;
-    }
-  }
-
-  // 3. Fallback if no picture is available
-  return '/images/placeholder.png';
-}
-
-const buyNow = (product) => {
-  addToCart(product)
-  navigateTo('/checkout')
-}
-
 // SEO
 useHead({
   title: 'All Solar Inventory | NovelSolar',
