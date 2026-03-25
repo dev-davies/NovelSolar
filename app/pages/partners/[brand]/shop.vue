@@ -12,10 +12,10 @@
           </h1>
           <p class="text-gray-500 mt-2 font-medium">Premium energy solutions curated for you.</p>
         </div>
-        <div v-if="brand === 'itel'" class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
-          <img src="/images/logo-new-novel.-itel.png" alt="itel Logo" class="h-8 w-auto object-contain" />
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+          <img :src="brandBanner" :alt="brand.toUpperCase() + ' Logo'" class="h-8 w-auto object-contain" />
           <div class="h-8 w-px bg-gray-200"></div>
-          <span class="text-xs font-black text-gray-400 uppercase tracking-widest">Official Store</span>
+          <span class="text-xs font-black text-gray-400 uppercase tracking-widest">{{ brand.toUpperCase() }} Official Store</span>
         </div>
       </header>
 
@@ -53,7 +53,20 @@ const brand = computed(() => route.params.brand as string || 'itel')
 
 // We still use itel-products as the base, but we filter or adapt if needed
 // For now, it stays pointed to itel-products unless we make the API generic
-const { data: partnerProducts, pending } = await useFetch('/api/itel-products')
+const { data: partnerProducts, pending } = await useFetch('/api/itel-products', {
+  query: { brand: brand.value }
+})
+
+// Dynamic banner logo based on landing page assets
+const brandBanner = computed(() => {
+  const b = brand.value.toLowerCase()
+  if (b === 'itel') return '/images/logo-new-novel.-itel.png'
+  if (['haisic', 'hithium', 'livlotec', 'yinergy'].includes(b)) {
+    // Assets are named like 'Haisic partner.png'
+    return `/images/${brand.value.charAt(0).toUpperCase() + brand.value.slice(1)} partner.png`
+  }
+  return '/images/logo.png' // Default fallback
+})
 
 // Filter products based on the brand in the URL
 const filteredProducts = computed(() => {
