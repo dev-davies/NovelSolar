@@ -78,10 +78,14 @@ export default defineEventHandler(async (event) => {
   }
 
   // ─── PHASE 3: Merge image data back onto itel product list ───
-  return itelProducts.map(product => ({
-    ...product,
-    DETAIL_PICTURE: imageMap[product.ID]?.DETAIL_PICTURE ?? null,
-    PREVIEW_PICTURE: imageMap[product.ID]?.PREVIEW_PICTURE ?? null,
-    PROPERTY_44: imageMap[product.ID]?.PROPERTY_44 ?? null,
-  }));
+  return itelProducts.map(product => {
+    const p = {
+      ...product,
+      DETAIL_PICTURE: imageMap[product.ID]?.DETAIL_PICTURE ?? null,
+      PREVIEW_PICTURE: imageMap[product.ID]?.PREVIEW_PICTURE ?? null,
+      PROPERTY_44: imageMap[product.ID]?.PROPERTY_44 ?? null,
+    };
+    console.log(p);
+    return p;
+  });
 });

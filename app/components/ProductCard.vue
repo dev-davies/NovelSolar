@@ -6,17 +6,38 @@ const props = defineProps({
   }
 })
 
-// PROPERTY_44 is the actual "More Photo" property used for product images in this Bitrix instance
-// DETAIL_PICTURE / PREVIEW_PICTURE are kept as fallbacks (both are null on most CRM products)
-// Resolve Bitrix picture object (which has restricted URLs) to our local authorized proxy
-const imageUrl = computed(() => {
-  return getBitrixImageUrl(props.product.PROPERTY_44) ||
-         getBitrixImageUrl(props.product.PREVIEW_PICTURE) ||
-         getBitrixImageUrl(props.product.DETAIL_PICTURE);
-})
-const getSecureImage = (bitrixUrl) => {
-  if (!bitrixUrl) return '/images/placeholder.png'
-  return `/api/bitrix-image?url=${encodeURIComponent(bitrixUrl)}`
+const getProductImage = (product) => {
+  if (!product) return '/images/placeholder.png';
+
+  // 1. Look for our new Cloudinary slot
+  const cloudinaryField = product.PROPERTY_102;
+
+  if (cloudinaryField) {
+    // Bitrix often returns custom strings inside an array of objects
+    if (Array.isArray(cloudinaryField) && cloudinaryField.length > 0) {
+      return cloudinaryField[0].value;
+    }
+    // Just in case it returns it as a direct string
+    if (typeof cloudinaryField === 'string') {
+      return cloudinaryField;
+    }
+  }
+
+  // 2. Fallback to older Bitrix image proxy logic
+  const legacyField = product.PROPERTY_44 || product.PREVIEW_PICTURE || product.DETAIL_PICTURE;
+  if (legacyField) {
+    const relativeUrl = legacyField.showUrl || legacyField.downloadUrl;
+    if (relativeUrl) {
+      const fullBitrixUrl = `https://nisl.bitrix24.com${relativeUrl}`;
+      return `/api/bitrix-image?url=${encodeURIComponent(fullBitrixUrl)}`;
+    }
+    if (typeof legacyField === 'string' && legacyField.startsWith('http')) {
+      return legacyField;
+    }
+  }
+
+  // 3. Fallback if no picture is available
+  return '/images/placeholder.png';
 }
 </script>
 
@@ -28,7 +49,7 @@ const getSecureImage = (bitrixUrl) => {
 
       <div class="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-500 overflow-hidden">
         <img
-          :src="getSecureImage(imageUrl)"
+          :src="getProductImage(product)"
           :alt="product.NAME"
           class="w-full h-full object-contain p-4"
           loading="lazy"

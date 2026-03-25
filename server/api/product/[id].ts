@@ -8,8 +8,10 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const response = await $fetch(`${baseUrl}crm.product.get?id=${id}`);
-    return response.result || null;
+    const response = await $fetch<{ result?: any }>(`${baseUrl}crm.product.get?id=${id}`);
+    const product = response.result || null;
+    console.log(product);
+    return product;
   } catch (error) {
     console.error('Bitrix API Error:', error);
     throw createError({ statusCode: 404, statusMessage: 'Product not found' });

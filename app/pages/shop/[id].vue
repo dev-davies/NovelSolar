@@ -4,19 +4,47 @@ const { addToCart } = useCart();
 const { data: product, pending, error } = await useFetch(`/api/product/${route.params.id}`);
 const quantity = ref(1);
 
-const getSecureImage = (bitrixUrl) => {
-  if (!bitrixUrl) return '/images/placeholder.png'
-  return `/api/bitrix-image?url=${encodeURIComponent(bitrixUrl)}`
+const getProductImage = (productData) => {
+  if (!productData) return '/images/placeholder.png';
+
+  // 1. Look for our new Cloudinary slot
+  const cloudinaryField = productData.PROPERTY_102;
+
+  if (cloudinaryField) {
+    if (Array.isArray(cloudinaryField) && cloudinaryField.length > 0) {
+      return cloudinaryField[0].value;
+    }
+    if (typeof cloudinaryField === 'string') {
+      return cloudinaryField;
+    }
+  }
+
+  // 2. Fallback to older Bitrix image proxy logic
+  const legacyField = productData.PROPERTY_44 || productData.PREVIEW_PICTURE || productData.DETAIL_PICTURE;
+  if (legacyField) {
+    const relativeUrl = legacyField.showUrl || legacyField.downloadUrl;
+    if (relativeUrl) {
+      const fullBitrixUrl = `https://nisl.bitrix24.com${relativeUrl}`;
+      return `/api/bitrix-image?url=${encodeURIComponent(fullBitrixUrl)}`;
+    }
+    if (typeof legacyField === 'string' && legacyField.startsWith('http')) {
+      return legacyField;
+    }
+  }
+
+  // 3. Fallback if no picture is available
+  return '/images/placeholder.png';
 }
 
-// Resolve the main product image to an absolute URL
-// PROPERTY_44 is the actual "More Photo" property used for product images in this Bitrix instance
-const imageUrl = computed(() => {
-  const rawUrl = getBitrixImageUrl(product.value?.PROPERTY_44) ||
-                 getBitrixImageUrl(product.value?.PREVIEW_PICTURE) ||
-                 getBitrixImageUrl(product.value?.DETAIL_PICTURE);
-
-  return rawUrl;
+const parsedSpecs = computed(() => {
+  try {
+    // Safely dig into the Bitrix object structure
+    const rawString = product.value?.PROPERTY_104?.value?.TEXT || product.value?.PROPERTY_104;
+    if (!rawString) return [];
+    return JSON.parse(rawString);
+  } catch (e) {
+    return [];
+  }
 })
 
 useHead({
@@ -60,7 +88,7 @@ useHead({
         <div class="space-y-4">
           <div class="aspect-square bg-white rounded-2xl overflow-hidden border border-slate-200 flex items-center justify-center shadow-sm relative group">
             <img
-              :src="getSecureImage(imageUrl)"
+              :src="getProductImage(product)"
               :alt="product.NAME"
               class="w-full h-full object-contain p-4"
               loading="lazy"
@@ -130,7 +158,21 @@ useHead({
               <button class="pb-4 text-sm font-bold text-slate-400 uppercase hover:text-slate-600 transition-colors">Downloads</button>
             </div>
             
-            <div class="prose max-w-none text-slate-600 text-sm md:text-base leading-relaxed" v-html="product?.DESCRIPTION || product?.DETAIL_TEXT || 'Full product description coming soon.'"></div>
+            <div class="prose max-w-none text-slate-600 text-sm md:text-base leading-relaxed mb-8" v-html="product?.DESCRIPTION || product?.DETAIL_TEXT || 'Full product description coming soon.'"></div>
+
+            <div v-if="parsedSpecs && parsedSpecs.length > 0">
+              <h3 class="text-lg font-bold text-slate-900 mb-4">Product Specifications</h3>
+              <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                <table class="w-full text-left border-collapse">
+                  <tbody>
+                    <tr v-for="(spec, index) in parsedSpecs" :key="index" :class="index !== parsedSpecs.length - 1 ? 'border-b border-slate-200' : ''">
+                      <th class="w-1/3 py-4 px-5 bg-slate-50 font-bold text-sm text-slate-700 border-r border-slate-200">{{ spec.label }}</th>
+                      <td class="py-4 px-5 text-sm text-slate-600 bg-white">{{ spec.value }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       </div>

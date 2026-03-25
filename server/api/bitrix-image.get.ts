@@ -1,81 +1,62 @@
 export default defineEventHandler(async (event) => {
-  const config = useRuntimeConfig();
-  const query = getQuery(event);
-  const rawUrl = query.url as string;
-
-  if (!rawUrl) {
-    throw createError({ statusCode: 400, statusMessage: 'Missing Bitrix URL parameter' });
+  const url = getQuery(event).url as string;
+  if (!url) {
+    throw createError({ statusCode: 400, statusMessage: 'Missing url parameter' });
   }
 
   try {
-    // 1. Parse incoming url to extract IDs
-    const urlParts = new URL(rawUrl);
-    const productIdRaw = urlParts.searchParams.get('productId');
-    const fieldNameRaw = urlParts.searchParams.get('fieldName');
-    const fileIdRaw = urlParts.searchParams.get('fileId');
+    // 1. Parse productId and fieldName from the incoming Bitrix URL
+    // Example URL: .../download.php?productId=640&fieldName=DETAIL_PICTURE...
+    const urlObj = new URL(url);
+    const productId = urlObj.searchParams.get('productId');
+    const rawFieldName = urlObj.searchParams.get('fieldName');
 
-    if (!productIdRaw || !fieldNameRaw || !fileIdRaw) {
-      throw createError({ statusCode: 400, statusMessage: 'Invalid Bitrix URL format' });
+    if (!productId || !rawFieldName) {
+      console.warn('Could not parse productId or fieldName from URL:', url);
+      throw createError({ statusCode: 400, statusMessage: 'Invalid Bitrix image URL' });
     }
 
-    // 2. Transform fieldName to camelCase (DETAIL_PICTURE -> detailPicture, PROPERTY_44 -> morePhoto)
-    let fieldName = fieldNameRaw;
-    if (fieldNameRaw === 'DETAIL_PICTURE') {
-      fieldName = 'detailPicture';
-    } else if (fieldNameRaw === 'PREVIEW_PICTURE') {
-      fieldName = 'previewPicture';
-    } else if (fieldNameRaw === 'PROPERTY_44') {
-      fieldName = 'morePhoto';
-    } else if (fieldNameRaw.includes('_')) {
-      // General fallback for other snake_case fields
-      fieldName = fieldNameRaw.toLowerCase().replace(/_([a-z])/g, (g) => g[1].toUpperCase());
+    // 2. Map Bitrix internal names to REST API field names
+    const fieldMapping: Record<string, string> = {
+      'DETAIL_PICTURE': 'detailPicture',
+      'PREVIEW_PICTURE': 'previewPicture',
+      'PROPERTY_44': 'property44'
+    };
+
+    const fieldName = fieldMapping[rawFieldName] || rawFieldName;
+
+    // 3. Get Webhook URL from environment variables
+    const webhookUrl = process.env.BITRIX_WEBHOOK_URL;
+    if (!webhookUrl) {
+      throw createError({ statusCode: 500, statusMessage: 'Server configuration error: Webhook missing' });
     }
 
-    // 3. Strictly parse as integers (Bitrix rejects strings for these fields)
-    const productId = parseInt(productIdRaw, 10);
-    const fileId = parseInt(fileIdRaw, 10);
+    const formattedWebhookUrl = webhookUrl.endsWith('/') ? webhookUrl : `${webhookUrl}/`;
 
-    // 4. Normalize base webhook URL and append endpoint
-    const baseUrl = config.bitrixWebhook.replace(/\/$/, '') + '/';
-    const bitrixApiUrl = `${baseUrl}catalog.product.download`;
-
-    // 5. POST request with FORM DATA (Bitrix Cloud REST often prefers this for fields)
-    const formData = new URLSearchParams();
-    formData.append('fields[productId]', productId.toString());
-    formData.append('fields[fileId]', fileId.toString());
-    formData.append('fields[fieldName]', fieldName);
-
-    const response = await $fetch(bitrixApiUrl, {
+    // 4. Use the strict catalog.product.download REST API
+    const response = await $fetch(`${formattedWebhookUrl}catalog.product.download`, {
       method: 'POST',
-      body: formData,
+      body: {
+        fields: {
+          productId,
+          fieldName
+        }
+      },
       responseType: 'arrayBuffer'
     });
 
-    // 6. Set proxy headers
+    // 5. Set headers and return the image buffer
     setHeaders(event, {
       'Content-Type': 'image/jpeg',
-      'Cache-Control': 'public, max-age=604800, immutable',
-      'Access-Control-Allow-Origin': '*'
+      'Cache-Control': 'public, max-age=604800, immutable'
     });
 
     return response;
   } catch (error: any) {
-    let errorString = error.message;
-    
-    // Bitrix errors are returned in binary when responseType is arrayBuffer
-    if (error.data) {
-      try {
-        errorString = Buffer.from(error.data).toString('utf-8');
-      } catch (e) {
-        errorString = `Binary error (status ${error.response?.status})`;
-      }
-    }
-    
-    console.error('Detailed Bitrix Rejection:', errorString);
-    
-    throw createError({ 
-      statusCode: 502, 
-      statusMessage: `Failed to fetch image from Bitrix: ${errorString}` 
+    console.error('Bitrix REST Image Download Error:', error.data || error.message || error);
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to download image via Bitrix REST API'
     });
   }
 });
