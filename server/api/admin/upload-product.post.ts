@@ -34,6 +34,7 @@ export default defineEventHandler(async (event) => {
   const productDescription = getField('productDescription');
   const productSpecs = getField('productSpecs');
   const imageFile = formData.find(f => f.name === 'productImage');
+  const galleryImages = formData.filter(f => f.name === 'galleryImages');
 
   if (!productName || !productPrice || !imageFile) {
     throw createError({ statusCode: 400, statusMessage: 'Missing required fields' });
@@ -60,6 +61,11 @@ export default defineEventHandler(async (event) => {
     const cloudinaryResult: any = await uploadToCloudinary(imageFile.data);
     const imageUrl = cloudinaryResult.secure_url;
 
+    // 4.5. Gallery Uploads: Process additional images
+    const galleryUploadPromises = galleryImages.map(img => uploadToCloudinary(img.data));
+    const galleryResults: any = await Promise.all(galleryUploadPromises);
+    const galleryUrls = galleryResults.map((r: any) => r.secure_url);
+
     // 5. Bitrix Upload: Add product with Cloudinary image URL in PROPERTY_44
     const webhookUrl = process.env.BITRIX_WEBHOOK_URL;
     if (!webhookUrl) throw new Error('BITRIX_WEBHOOK_URL not configured');
@@ -79,7 +85,8 @@ export default defineEventHandler(async (event) => {
           DESCRIPTION: productDescription,
           DESCRIPTION_TYPE: 'html',
           PROPERTY_102: imageUrl, // Store Cloudinary URL directly in Custom Field
-          PROPERTY_104: productSpecs // Stringified specs array
+          PROPERTY_104: productSpecs, // Stringified specs array
+          PROPERTY_112: JSON.stringify(galleryUrls) // Stringified gallery URL array
         }
       }
     });
