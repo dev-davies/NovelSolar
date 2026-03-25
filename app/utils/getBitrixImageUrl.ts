@@ -5,21 +5,26 @@
 export function getBitrixImageUrl(imageField: any): string | null {
   if (!imageField) return null;
 
+  // 1. If it's already an absolute URL (like Cloudinary), return it directly
+  if (typeof imageField === 'string' && imageField.startsWith('http')) {
+    return imageField;
+  }
+
   let url = '';
 
-  // 1. Handle Object Format (result.DETAIL_PICTURE = { showUrl: "..." })
-  if (imageField.showUrl) {
+  // 2. Handle Object Format (result.DETAIL_PICTURE = { showUrl: "..." })
+  if (typeof imageField === 'object' && imageField !== null && imageField.showUrl) {
     url = imageField.showUrl;
   } 
-  // 2. Handle Property Format (PROPERTY_44 = [ { value: { showUrl: "..." } } ])
+  // 3. Handle Property Format (PROPERTY_44 = [ { value: { showUrl: "..." } } ])
   else if (Array.isArray(imageField) && imageField[0]?.value?.showUrl) {
     url = imageField[0].value.showUrl;
   }
-  // 3. Handle direct nested value
-  else if (imageField.value?.showUrl) {
+  // 4. Handle direct nested value
+  else if (typeof imageField === 'object' && imageField !== null && imageField.value?.showUrl) {
     url = imageField.value.showUrl;
   }
-  // 4. Handle simple string/number (not common for showUrl)
+  // 5. Handle simple string (relative path)
   else if (typeof imageField === 'string' && imageField.startsWith('/')) {
     url = imageField;
   }

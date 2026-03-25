@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
         method: 'POST',
         body: {
           limit: 50,
-          select: ["ID", "NAME", "PRICE", "QUANTITY", "CURRENCY_ID", "SECTION_ID"]
+          select: ["ID", "NAME", "PRICE", "QUANTITY", "CURRENCY_ID", "SECTION_ID", "PROPERTY_102"]
         }
       });
 
@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
   // ─── PHASE 2: Batch-fetch full product detail (with images) in chunks of 50 ───
   // Bitrix24 batch API allows up to 50 calls per request
   const BATCH_SIZE = 50;
-  const imageMap: Record<string, { DETAIL_PICTURE?: any; PREVIEW_PICTURE?: any; PROPERTY_44?: any }> = {};
+  const imageMap: Record<string, { DETAIL_PICTURE?: any; PREVIEW_PICTURE?: any; PROPERTY_44?: any; PROPERTY_102?: any }> = {};
 
   try {
     for (let i = 0; i < allProducts.length; i += BATCH_SIZE) {
@@ -78,6 +78,7 @@ export default defineEventHandler(async (event) => {
           PREVIEW_PICTURE: productDetail?.PREVIEW_PICTURE ?? null,
           // PROPERTY_44 is the "More Photo" custom property — the actual image store
           PROPERTY_44: productDetail?.PROPERTY_44 ?? null,
+          PROPERTY_102: productDetail?.PROPERTY_102 ?? null,
         };
       }
     }
@@ -88,10 +89,15 @@ export default defineEventHandler(async (event) => {
   }
 
   // ─── PHASE 3: Merge image data back onto product list ───
-  return allProducts.map(product => ({
-    ...product,
-    DETAIL_PICTURE: imageMap[product.ID]?.DETAIL_PICTURE ?? null,
-    PREVIEW_PICTURE: imageMap[product.ID]?.PREVIEW_PICTURE ?? null,
-    PROPERTY_44: imageMap[product.ID]?.PROPERTY_44 ?? null,
-  }));
+  return allProducts.map(product => {
+    const p = {
+      ...product,
+      DETAIL_PICTURE: imageMap[product.ID]?.DETAIL_PICTURE ?? null,
+      PREVIEW_PICTURE: imageMap[product.ID]?.PREVIEW_PICTURE ?? null,
+      PROPERTY_44: imageMap[product.ID]?.PROPERTY_44 ?? null,
+      PROPERTY_102: imageMap[product.ID]?.PROPERTY_102 ?? product.PROPERTY_102 ?? null,
+    };
+    console.log(p);
+    return p;
+  });
 });
