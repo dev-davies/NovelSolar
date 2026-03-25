@@ -62,8 +62,8 @@ const brandBanner = computed(() => {
   const b = brand.value.toLowerCase()
   if (b === 'itel') return '/images/logo-new-novel.-itel.png'
   if (['haisic', 'hithium', 'livlotec', 'yinergy'].includes(b)) {
-    // Assets are named like 'Haisic partner.png'
-    return `/images/${brand.value.charAt(0).toUpperCase() + brand.value.slice(1)} partner.png`
+    // Assets are named like 'Haisic_partner.png'
+    return `/images/${brand.value.charAt(0).toUpperCase() + brand.value.slice(1)}_partner.png`
   }
   return '/images/logo.png' // Default fallback
 })

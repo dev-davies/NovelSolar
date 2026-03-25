@@ -20,7 +20,7 @@
           </NuxtLink>
         </div>
         <div class="relative" v-reveal>
-          <img src="/images/itel 3.png" alt="itel Home Solar" class="rounded-3xl shadow-2xl w-full object-cover aspect-[4/3]" />
+          <img src="/images/itel_3.png" alt="itel Home Solar" class="rounded-3xl shadow-2xl w-full object-cover aspect-[4/3]" />
           <div class="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl hidden lg:block">
             <div class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-1">Energy Independence</div>
             <div class="text-3xl font-black text-[#002888]">100%</div>
@@ -92,7 +92,7 @@
           <!-- Benefit 1 -->
           <div class="flex flex-col gap-8" v-reveal>
             <div class="h-[400px] overflow-hidden rounded-3xl">
-              <img src="/images/itel 2.jpg" alt="Home Integration" class="w-full h-full object-cover" />
+              <img src="/images/itel_2.jpg" alt="Home Integration" class="w-full h-full object-cover" />
             </div>
             <div>
               <h4 class="text-2xl font-bold text-gray-900 mb-4">Seamless Home Integration</h4>
@@ -102,7 +102,7 @@
           <!-- Benefit 2 -->
           <div class="flex flex-col gap-8" v-reveal>
             <div class="h-[400px] overflow-hidden rounded-3xl">
-              <img src="/images/itel 1.jpg" alt="Reliability" class="w-full h-full object-cover" />
+              <img src="/images/itel_1.jpg" alt="Reliability" class="w-full h-full object-cover" />
             </div>
             <div>
               <h4 class="text-2xl font-bold text-gray-900 mb-4">Long-Term Family Security</h4>
