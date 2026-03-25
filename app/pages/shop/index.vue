@@ -96,7 +96,7 @@ useHead({
         <!-- Category Header Pill -->
         <div class="bg-[#002888] text-white px-5 py-3.5 rounded-xl flex items-center justify-between mb-5 shadow-sm">
           <h2 class="text-lg font-bold">{{ category.name }}</h2>
-          <NuxtLink :to="'/shop/category/' + category.id" class="text-xs font-semibold flex items-center gap-1 hover:text-blue-200 transition-colors">
+          <NuxtLink :to="'/category/' + category.id" class="text-xs font-semibold flex items-center gap-1 hover:text-blue-200 transition-colors">
             See All <span class="material-symbols-outlined text-sm">chevron_right</span>
           </NuxtLink>
         </div>
