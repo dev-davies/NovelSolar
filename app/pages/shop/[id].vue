@@ -3,6 +3,8 @@ const route = useRoute();
 const { addToCart } = useCart();
 const { data: product, pending, error } = await useFetch(`/api/product/${route.params.id}`);
 const quantity = ref(1);
+const activeTab = ref('description');
+const selectedImage = ref(null);
 
 const getProductImage = (productData) => {
   if (!productData) return '/images/placeholder.png';
@@ -38,11 +40,61 @@ const getProductImage = (productData) => {
 
 const parsedSpecs = computed(() => {
   try {
-    // Safely dig into the Bitrix object structure
-    const rawString = product.value?.PROPERTY_104?.value?.TEXT || product.value?.PROPERTY_104;
+    // 1. Extract the raw string from different possible Bitrix structures
+    const rawData = product.value?.PROPERTY_104;
+    let rawString = '';
+
+    if (!rawData) return [];
+
+    if (typeof rawData === 'object') {
+      rawString = rawData.value?.TEXT || rawData.value || '';
+    } else {
+      rawString = String(rawData);
+    }
+
     if (!rawString) return [];
-    return JSON.parse(rawString);
+
+    // 2. Decode HTML entities (Bitrix often returns &quot; for quotes in text fields)
+    const decodedString = rawString
+      .replace(/&quot;/g, '"')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&');
+
+    // 3. Parse JSON
+    return JSON.parse(decodedString);
   } catch (e) {
+    console.warn('Failed to parse product specifications:', e);
+    return [];
+  }
+})
+
+const galleryImages = computed(() => {
+  try {
+    const rawData = product.value?.PROPERTY_112;
+    let rawString = '';
+
+    if (!rawData) return [];
+
+    if (typeof rawData === 'object') {
+      rawString = rawData.value?.TEXT || rawData.value || '';
+    } else {
+      rawString = String(rawData);
+    }
+
+    if (!rawString) return [];
+
+    // Decode HTML entities
+    const decodedString = rawString
+      .replace(/&quot;/g, '"')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&');
+
+    const parsed = JSON.parse(decodedString);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (e) {
+    console.warn('Failed to parse gallery images:', e);
     return [];
   }
 })
@@ -88,18 +140,35 @@ useHead({
         <div class="space-y-4">
           <div class="aspect-square bg-white rounded-2xl overflow-hidden border border-slate-200 flex items-center justify-center shadow-sm relative group">
             <img
-              :src="getProductImage(product)"
+              :src="selectedImage || getProductImage(product)"
               :alt="product.NAME"
-              class="w-full h-full object-contain p-4"
+              class="w-full h-full object-contain p-4 transition-all duration-500 animate-fadeIn"
               loading="lazy"
             />
             <div class="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-2 rounded-full shadow-sm text-[#002888]">
               <span class="material-symbols-outlined">zoom_in</span>
             </div>
           </div>
-          <div class="grid grid-cols-4 gap-4">
-            <div v-for="i in 4" :key="i" class="aspect-square rounded-xl bg-white border border-slate-200 flex items-center justify-center cursor-pointer hover:border-[#002888] hover:shadow-md transition-all">
-              <span class="material-symbols-outlined text-gray-300">image</span>
+          <!-- Dynamic Gallery Thumbnails -->
+          <div v-if="galleryImages.length > 0" class="grid grid-cols-4 gap-4">
+            <!-- First thumbnail is the main image -->
+            <div 
+              @click="selectedImage = getProductImage(product)"
+              class="aspect-square rounded-xl bg-white border-2 flex items-center justify-center cursor-pointer overflow-hidden transition-all"
+              :class="(!selectedImage || selectedImage === getProductImage(product)) ? 'border-[#002888] shadow-md' : 'border-slate-200 opacity-60 hover:opacity-100'"
+            >
+              <img :src="getProductImage(product)" class="w-full h-full object-cover" />
+            </div>
+
+            <!-- Loop through extra gallery images -->
+            <div 
+              v-for="(img, index) in galleryImages" 
+              :key="index"
+              @click="selectedImage = img"
+              class="aspect-square rounded-xl bg-white border-2 flex items-center justify-center cursor-pointer overflow-hidden transition-all"
+              :class="selectedImage === img ? 'border-[#002888] shadow-md' : 'border-slate-200 opacity-60 hover:opacity-100'"
+            >
+              <img :src="img" class="w-full h-full object-cover" />
             </div>
           </div>
         </div>
@@ -150,27 +219,63 @@ useHead({
             </a>
           </div>
 
-          <!-- Product Details Tabs Mock -->
+          <!-- Product Details Tabs -->
           <div class="mt-12 border-t border-slate-100 pt-8">
             <div class="flex gap-8 mb-6 border-b border-slate-50">
-              <button class="pb-4 border-b-2 border-[#002888] text-sm font-black text-slate-900 uppercase">Description</button>
-              <button class="pb-4 text-sm font-bold text-slate-400 uppercase hover:text-slate-600 transition-colors">Specifications</button>
-              <button class="pb-4 text-sm font-bold text-slate-400 uppercase hover:text-slate-600 transition-colors">Downloads</button>
+              <button 
+                @click="activeTab = 'description'"
+                class="pb-4 text-sm font-black uppercase transition-all duration-200"
+                :class="activeTab === 'description' ? 'border-b-2 border-[#002888] text-slate-900' : 'text-slate-400 hover:text-slate-600'"
+              >
+                Description
+              </button>
+              <button 
+                @click="activeTab = 'specs'"
+                class="pb-4 text-sm font-black uppercase transition-all duration-200"
+                :class="activeTab === 'specs' ? 'border-b-2 border-[#002888] text-slate-900' : 'text-slate-400 hover:text-slate-600'"
+              >
+                Specifications
+              </button>
+              <button 
+                @click="activeTab = 'downloads'"
+                class="pb-4 text-sm font-black uppercase transition-all duration-200"
+                :class="activeTab === 'downloads' ? 'border-b-2 border-[#002888] text-slate-900' : 'text-slate-400 hover:text-slate-600'"
+              >
+                Downloads
+              </button>
             </div>
             
-            <div class="prose max-w-none text-slate-600 text-sm md:text-base leading-relaxed mb-8" v-html="product?.DESCRIPTION || product?.DETAIL_TEXT || 'Full product description coming soon.'"></div>
+            <!-- Description Tab -->
+            <div v-if="activeTab === 'description'" class="animate-fadeIn">
+              <div class="prose max-w-none text-slate-600 text-sm md:text-base leading-relaxed mb-8" v-html="product?.DESCRIPTION || product?.DETAIL_TEXT || 'Full product description coming soon.'"></div>
+            </div>
 
-            <div v-if="parsedSpecs && parsedSpecs.length > 0">
-              <h3 class="text-lg font-bold text-slate-900 mb-4">Product Specifications</h3>
-              <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
-                <table class="w-full text-left border-collapse">
-                  <tbody>
-                    <tr v-for="(spec, index) in parsedSpecs" :key="index" :class="index !== parsedSpecs.length - 1 ? 'border-b border-slate-200' : ''">
-                      <th class="w-1/3 py-4 px-5 bg-slate-50 font-bold text-sm text-slate-700 border-r border-slate-200">{{ spec.label }}</th>
-                      <td class="py-4 px-5 text-sm text-slate-600 bg-white">{{ spec.value }}</td>
-                    </tr>
-                  </tbody>
-                </table>
+            <!-- Specifications Tab -->
+            <div v-if="activeTab === 'specs'" class="animate-fadeIn">
+              <div v-if="parsedSpecs && parsedSpecs.length > 0">
+                <h3 class="text-lg font-bold text-slate-900 mb-4">Technical Specifications</h3>
+                <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                  <table class="w-full text-left border-collapse">
+                    <tbody>
+                      <tr v-for="(spec, index) in parsedSpecs" :key="index" :class="index !== parsedSpecs.length - 1 ? 'border-b border-slate-200' : ''">
+                        <th class="w-1/3 py-4 px-5 bg-slate-50 font-bold text-sm text-slate-700 border-r border-slate-200">{{ spec.label }}</th>
+                        <td class="py-4 px-5 text-sm text-slate-600 bg-white">{{ spec.value }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div v-else class="py-12 bg-slate-50 rounded-2xl text-center border border-dashed border-slate-200">
+                <span class="material-symbols-outlined text-4xl text-slate-300 mb-2">list_alt</span>
+                <p class="text-slate-500 font-medium">No technical specifications available for this product.</p>
+              </div>
+            </div>
+
+            <!-- Downloads Tab -->
+            <div v-if="activeTab === 'downloads'" class="animate-fadeIn">
+              <div class="py-12 bg-slate-50 rounded-2xl text-center border border-dashed border-slate-200">
+                <span class="material-symbols-outlined text-4xl text-slate-300 mb-2">download</span>
+                <p class="text-slate-500 font-medium">Manuals and data sheets will be available soon.</p>
               </div>
             </div>
           </div>
@@ -243,5 +348,12 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
   appearance: textfield;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out forwards;
 }
 </style>
