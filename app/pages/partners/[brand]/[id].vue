@@ -1,6 +1,11 @@
-<script setup>
+<script setup lang="ts">
 const route = useRoute();
+const brand = computed(() => route.params.brand as string || 'itel')
 const { data: product, pending, error } = await useFetch(`/api/product/${route.params.id}`);
+
+useHead({
+  title: `${product.value?.NAME || 'Product'} | ${brand.value.toUpperCase()} Solar Store`
+})
 </script>
 
 <template>
@@ -24,7 +29,7 @@ const { data: product, pending, error } = await useFetch(`/api/product/${route.p
       <span class="material-symbols-outlined text-6xl text-red-400 mb-4">error</span>
       <h2 class="text-2xl font-bold text-gray-900 mb-2">Product Not Found</h2>
       <p class="text-gray-600 mb-8">The product you are looking for does not exist or has been removed.</p>
-      <NuxtLink to="/partners/itel/shop" class="bg-[#002888] text-white px-8 py-3 rounded-xl font-medium hover:bg-blue-900 transition-all">
+      <NuxtLink :to="'/partners/' + brand + '/shop'" class="bg-[#002888] text-white px-8 py-3 rounded-xl font-medium hover:bg-blue-900 transition-all">
         Back to Shop
       </NuxtLink>
     </div>
@@ -39,8 +44,8 @@ const { data: product, pending, error } = await useFetch(`/api/product/${route.p
 
         <!-- Right Column: Details -->
         <div class="flex flex-col">
-          <NuxtLink to="/partners/itel/shop" class="text-sm text-gray-500 hover:text-[#002888] mb-4 inline-block">
-            &larr; Back to Shop
+          <NuxtLink :to="'/partners/' + brand + '/shop'" class="text-sm text-gray-500 hover:text-[#002888] mb-4 inline-block">
+            &larr; Back to {{ brand.toUpperCase() }} Shop
           </NuxtLink>
           
           <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">{{ product.NAME }}</h1>
