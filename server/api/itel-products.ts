@@ -12,13 +12,16 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  const query = getQuery(event)
+  const brand = (query.brand as string || 'itel').toLowerCase()
+
   const itelProducts: any[] = [];
 
   try {
-    // ─── PHASE 1: Fetch all 'itel' products (IDs and basic metadata) ───
+    // ─── PHASE 1: Fetch products matching the dynamic brand (IDs and basic metadata) ───
     const listResponse = await $fetch<{ result?: any[] }>(`${baseUrl}crm.product.list`, {
       query: {
-        'filter[%NAME]': 'itel',
+        'filter[%NAME]': brand,
         'select[]': ['ID', 'NAME', 'PRICE', 'QUANTITY', 'CURRENCY_ID', 'SECTION_ID', 'PROPERTY_102', 'PROPERTY_104', 'PROPERTY_112']
       }
     });
@@ -91,7 +94,6 @@ export default defineEventHandler(async (event) => {
       PROPERTY_104: imageMap[product.ID]?.PROPERTY_104 ?? product.PROPERTY_104 ?? null,
       PROPERTY_112: imageMap[product.ID]?.PROPERTY_112 ?? product.PROPERTY_112 ?? null,
     };
-    console.log(p);
     return p;
   });
 });

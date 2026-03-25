@@ -101,7 +101,6 @@ export default defineEventHandler(async (event) => {
       PROPERTY_104: imageMap[product.ID]?.PROPERTY_104 ?? product.PROPERTY_104 ?? null,
       PROPERTY_112: imageMap[product.ID]?.PROPERTY_112 ?? product.PROPERTY_112 ?? null,
     };
-    console.log(p);
     return p;
   });
 });
