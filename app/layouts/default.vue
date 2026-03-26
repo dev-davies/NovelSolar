@@ -169,9 +169,19 @@
         </NuxtLink>
 
         <!-- Profile Icon -->
-        <div class="h-9 w-9 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity">
-          <span class="text-xs font-bold uppercase">NS</span>
-        </div>
+        <NuxtLink 
+          :to="user ? '/account' : '/login'" 
+          class="h-9 w-9 rounded-full flex items-center justify-center cursor-pointer transition-all border shrink-0 overflow-hidden"
+          :class="user ? 'bg-orange-100 text-orange-600 border-orange-200 hover:bg-orange-200' : 'bg-slate-50 text-slate-400 border-slate-200 hover:bg-slate-100'"
+          title="My Account"
+        >
+          <template v-if="user">
+            <span class="text-[10px] font-black uppercase tracking-tighter">{{ userInitials }}</span>
+          </template>
+          <template v-else>
+            <span class="material-symbols-outlined text-[20px]">person</span>
+          </template>
+        </NuxtLink>
 
         <!-- Mobile Toggle Button -->
         <button @click="toggleMobileMenu" class="hidden p-2 text-gray-600 hover:text-[#002888] transition-colors" aria-label="Toggle menu">
@@ -457,6 +467,18 @@ const supportMenu = [
 ]
 
 const { cartItemCount, toggleCart } = useCart();
+
+// Fetch user profile. It will silently return null if the auth cookie is missing or invalid.
+const { data: user } = await useFetch('/api/user/profile');
+
+// Compute initials if the user exists
+const userInitials = computed(() => {
+  if (!user.value) return '';
+  const first = user.value.firstName ? user.value.firstName.charAt(0).toUpperCase() : '';
+  const last = user.value.lastName ? user.value.lastName.charAt(0).toUpperCase() : '';
+  return (first + last) || 'U'; // Fallback to 'U' if they haven't set a name yet
+});
+
 onMounted(() => {
   // Mobile search focus handler
 });

@@ -109,6 +109,23 @@ const submitOrder = async () => {
     isSubmitting.value = false;
   }
 };
+
+onMounted(async () => {
+  try {
+    const profile = await $fetch('/api/user/profile');
+    if (profile) {
+      // Auto-fill form fields if data exists
+      if (profile.firstName) form.firstName = profile.firstName;
+      if (profile.lastName) form.lastName = profile.lastName;
+      if (profile.email) form.email = profile.email;
+      if (profile.phone) form.phone = profile.phone;
+      if (profile.address) form.address = profile.address;
+    }
+  } catch (error) {
+    // Silent fail for guest checkout
+    console.log('Guest checkout initiated - profile fetch skipped');
+  }
+});
 </script>
 
 <template>
@@ -353,11 +370,15 @@ const submitOrder = async () => {
             <!-- Dynamic Cart Loop -->
             <div class="space-y-6 mb-8 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
               <div v-for="item in cart" :key="item.id" class="flex gap-4">
-                <div class="relative w-16 h-16 shrink-0">
+                <div class="relative w-16 h-16 shrink-0 mt-2 mr-2">
                   <div class="w-full h-full bg-slate-50 rounded-xl flex items-center justify-center border border-slate-100 overflow-hidden">
-                    <span class="material-symbols-outlined text-gray-300 text-2xl">solar_power</span>
+                    <img 
+                      :src="item.PROPERTY_102 || item.image || item.PREVIEW_PICTURE || '/images/placeholder.png'" 
+                      :alt="item.name"
+                      class="w-full h-full object-cover"
+                    />
                   </div>
-                  <span class="absolute -top-2 -right-2 bg-[#002888] text-white text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full border-2 border-white z-10">
+                  <span class="absolute -top-1 -right-1 bg-[#002888] text-white text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full border-2 border-white z-10">
                     {{ item.quantity }}
                   </span>
                 </div>
