@@ -15,6 +15,17 @@ export const useCart = () => {
   const cart = useLocalStorage<CartItem[]>('novel-cart-data', []);
   const isCartOpen = useState<boolean>('novel-cart-open', () => false);
 
+  // Auto-sanitize any corrupted cart items from older sessions where image was saved as an array
+  if (cart.value && Array.isArray(cart.value)) {
+    cart.value.forEach((item: any) => {
+      if (Array.isArray(item.image) && item.image.length > 0) {
+        item.image = item.image[0].value || '/images/placeholder.png';
+      } else if (typeof item.image === 'object' && item.image !== null) {
+        item.image = item.image.value || item.image.showUrl || '/images/placeholder.png';
+      }
+    });
+  }
+
   const toggleCart = () => {
     isCartOpen.value = !isCartOpen.value;
   };
@@ -26,11 +37,18 @@ export const useCart = () => {
     if (existingItem) {
       existingItem.quantity += qty;
     } else {
+      let finalImage = product.PROPERTY_102 || product.PREVIEW_PICTURE || product.image || '/images/placeholder.png';
+      if (Array.isArray(finalImage) && finalImage.length > 0 && finalImage[0].value) {
+        finalImage = finalImage[0].value;
+      } else if (typeof finalImage === 'object' && finalImage !== null && finalImage.value) {
+        finalImage = finalImage.value;
+      }
+      
       cart.value.push({
         id: productId,
         name: product.NAME || product.name || product.title,
         price: Number(product.PRICE || product.price || 0),
-        image: product.image || null,
+        image: finalImage,
         quantity: qty
       });
     }

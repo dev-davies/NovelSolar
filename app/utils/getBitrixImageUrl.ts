@@ -17,17 +17,30 @@ export function getBitrixImageUrl(imageField: any): string | null {
     url = imageField.showUrl;
   } 
   // 3. Handle Property Format (PROPERTY_44 = [ { value: { showUrl: "..." } } ])
-  else if (Array.isArray(imageField) && imageField[0]?.value?.showUrl) {
-    url = imageField[0].value.showUrl;
+  // 3a. Handle direct value (PROPERTY_102 = [ { value: "https://..." } ])
+  else if (Array.isArray(imageField) && imageField.length > 0) {
+    const first = imageField[0];
+    if (first?.value?.showUrl) {
+      url = first.value.showUrl;
+    } else if (typeof first?.value === 'string') {
+      url = first.value;
+    } else if (typeof first === 'string') {
+      url = first;
+    }
   }
   // 4. Handle direct nested value
   else if (typeof imageField === 'object' && imageField !== null && imageField.value?.showUrl) {
     url = imageField.value.showUrl;
   }
-  // 5. Handle simple string (relative path)
-  else if (typeof imageField === 'string' && imageField.startsWith('/')) {
+  // 5. Case for direct string from Cloudinary stored in an object
+  else if (typeof imageField === 'object' && imageField !== null && typeof imageField.value === 'string') {
+    url = imageField.value;
+  }
+  // 6. Handle simple string (relative path or direct URL)
+  else if (typeof imageField === 'string') {
     url = imageField;
   }
+
 
   if (!url) return null;
 

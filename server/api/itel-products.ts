@@ -85,14 +85,22 @@ export default defineEventHandler(async (event) => {
 
   // ─── PHASE 3: Merge image data back onto itel product list ───
   return itelProducts.map(product => {
+    const normalizeProperty = (val: any) => {
+      if (!val) return null;
+      if (Array.isArray(val) && val.length > 0) {
+        return val[0].value || val[0];
+      }
+      return val;
+    };
+
     const p = {
       ...product,
       DETAIL_PICTURE: imageMap[product.ID]?.DETAIL_PICTURE ?? null,
       PREVIEW_PICTURE: imageMap[product.ID]?.PREVIEW_PICTURE ?? null,
       PROPERTY_44: imageMap[product.ID]?.PROPERTY_44 ?? null,
-      PROPERTY_102: imageMap[product.ID]?.PROPERTY_102 ?? product.PROPERTY_102 ?? null,
-      PROPERTY_104: imageMap[product.ID]?.PROPERTY_104 ?? product.PROPERTY_104 ?? null,
-      PROPERTY_112: imageMap[product.ID]?.PROPERTY_112 ?? product.PROPERTY_112 ?? null,
+      PROPERTY_102: normalizeProperty(imageMap[product.ID]?.PROPERTY_102 ?? product.PROPERTY_102),
+      PROPERTY_104: normalizeProperty(imageMap[product.ID]?.PROPERTY_104 ?? product.PROPERTY_104),
+      PROPERTY_112: normalizeProperty(imageMap[product.ID]?.PROPERTY_112 ?? product.PROPERTY_112),
     };
     return p;
   });
