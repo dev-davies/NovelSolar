@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { generateOrderReceiptHtml } from '../utils/emailTemplate';
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
@@ -51,6 +52,39 @@ export default defineEventHandler(async (event) => {
   // NOTE: Requires SMTP credentials in .env (SMTP_HOST, SMTP_USER, SMTP_PASS)
   if (config.smtpUser && config.smtpPass) {
     try {
+      // Generate Order Number
+      const generatedOrderNumber = 'NS-' + Math.floor(100000 + Math.random() * 900000);
+
+      // Package the data for the template
+      const orderData = {
+        orderNumber: generatedOrderNumber,
+        orderDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        paymentMethod: paymentMethod === 'pickup' ? 'Store Pickup' : 'Bank Transfer',
+        branchName: branch?.address || 'N/A',
+        subtotal: total,
+        shipping: 0,
+        total: total,
+        products: cart.map((item: any) => {
+          // Fallback chain for the image
+          let finalImage = item.image || item.PROPERTY_102 || item.PREVIEW_PICTURE || 'https://novelsolar.ng/images/placeholder.png';
+          
+          // IMPORTANT: Ensure relative local placeholders become absolute URLs for the email client
+          if (typeof finalImage === 'string' && finalImage.startsWith('/')) {
+            finalImage = `https://novelsolar.ng${finalImage}`;
+          }
+          
+          return {
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price,
+            image: finalImage
+          };
+        })
+      };
+
+      // Generate the HTML
+      const premiumHtmlEmail = generateOrderReceiptHtml(orderData);
+
       const transporter = nodemailer.createTransport({
         pool: true,
         host: config.smtpHost,
@@ -69,19 +103,8 @@ export default defineEventHandler(async (event) => {
       const mailOptions = {
         from: config.smtpFrom,
         to: customer.email,
-        subject: "Your Novel Solar Order Confirmation",
-        html: `
-          <div style="font-family: sans-serif; color: #333; max-w-2xl; margin: 0 auto;">
-            <h2 style="color: #002888;">Thank you for your order, ${customer.firstName}!</h2>
-            <p>We have received your order and our team is processing it now.</p>
-            <h3>Order Summary:</h3>
-            <pre style="background: #f8f6f6; padding: 15px; border-radius: 8px;">${orderDetailsList}</pre>
-            <p><strong>Total:</strong> ₦${total.toLocaleString()}</p>
-            <p><strong>Fulfillment Branch:</strong> ${branch?.address || 'N/A'}</p>
-            <br/>
-            <p>If you have any questions, reply to this email or contact us on WhatsApp.</p>
-          </div>
-        `
+        subject: "Your Novel Solar Order Confirmed: #" + generatedOrderNumber,
+        html: premiumHtmlEmail
       };
 
       await transporter.sendMail(mailOptions);
