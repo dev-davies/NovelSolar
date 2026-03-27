@@ -103,7 +103,24 @@ const filteredProducts = computed(() => {
   // Apply sub-category filter
   if (activeSubCategory.value !== 'All') {
     const subQuery = activeSubCategory.value.toLowerCase()
-    result = result.filter(p => p.NAME.toLowerCase().includes(subQuery))
+    
+    // Helper to identify half-cut panels
+    const isHalfCut = (name) => {
+      const n = name.toLowerCase()
+      return n.includes('half cut') || n.includes('half-cut') || n.includes('halfcut')
+    }
+
+    if (slug === 'solar-panels') {
+      if (subQuery === 'regular') {
+        result = result.filter(p => !isHalfCut(p.NAME))
+      } else if (subQuery === 'half cut') {
+        result = result.filter(p => isHalfCut(p.NAME))
+      } else {
+        result = result.filter(p => p.NAME.toLowerCase().includes(subQuery))
+      }
+    } else {
+      result = result.filter(p => p.NAME.toLowerCase().includes(subQuery))
+    }
   }
 
   return result
