@@ -8,28 +8,24 @@
           <NuxtImg src="/images/logo.png" alt="NovelSolar" class="h-8 w-auto" />
         </NuxtLink>
         <nav class="hidden lg:flex items-center gap-2">
-          <!-- Desktop Mega Menu -->
+          <!-- Desktop Product Dropdown -->
           <div class="relative group py-6 cursor-pointer">
-            <NuxtLink to="/shop" class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 group-hover:text-[#002888] transition-colors">
+            <div class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 group-hover:text-[#002888] transition-colors">
               Product
               <span class="inline-block text-gray-500 font-light ml-1 text-lg leading-none transition-transform duration-300 group-hover:rotate-45">+</span>
-            </NuxtLink>
+            </div>
             
-            <!-- Mega Dropdown -->
-            <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[600px] bg-white border border-gray-200 shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 p-6">
-              <div class="grid grid-cols-3 gap-6">
-                <div v-for="category in productMenu" :key="category.title">
-                  <h4 class="font-bold text-[#002888] mb-3 border-b pb-1 text-sm uppercase tracking-wider">{{ category.title }}</h4>
-                  <ul v-if="category.items.length > 0" class="space-y-1">
-                    <li v-for="item in category.items" :key="item">
-                      <NuxtLink :to="'/category/' + item.toLowerCase().replace(' ', '-')" class="text-gray-600 hover:text-[#002888] text-sm block py-1 transition-colors">
-                        {{ item }}
-                      </NuxtLink>
-                    </li>
-                  </ul>
-                  <div v-else class="text-xs text-gray-400 italic">Coming soon</div>
-                </div>
-              </div>
+            <!-- Simplified Product Dropdown -->
+            <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-64 bg-white border border-gray-200 shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 py-2">
+              <NuxtLink 
+                v-for="category in productMenu" 
+                :key="category.title"
+                :to="'/category/' + category.title.toLowerCase().replace(' ', '-')" 
+                class="block px-6 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#002888] transition-colors"
+                @click="isMobileMenuOpen = false"
+              >
+                {{ category.title }}
+              </NuxtLink>
             </div>
           </div>
 
@@ -168,20 +164,38 @@
           Request a Quote
         </NuxtLink>
 
-        <!-- Profile Icon -->
-        <NuxtLink 
-          :to="user ? '/account' : '/login'" 
-          class="h-9 w-9 rounded-full flex items-center justify-center cursor-pointer transition-all border shrink-0 overflow-hidden"
-          :class="user ? 'bg-orange-100 text-orange-600 border-orange-200 hover:bg-orange-200' : 'bg-slate-50 text-slate-400 border-slate-200 hover:bg-slate-100'"
-          title="My Account"
-        >
-          <template v-if="user">
-            <span class="text-[10px] font-black uppercase tracking-tighter">{{ userInitials }}</span>
-          </template>
-          <template v-else>
-            <span class="material-symbols-outlined text-[20px]">person</span>
-          </template>
-        </NuxtLink>
+        <!-- Profile Icon / Dropdown -->
+        <div class="relative group/profile">
+          <NuxtLink 
+            :to="user ? '#' : '/login'" 
+            class="h-9 w-9 rounded-full flex items-center justify-center cursor-pointer transition-all border shrink-0 overflow-hidden"
+            :class="user ? 'bg-orange-100 text-orange-600 border-orange-200 hover:bg-orange-200' : 'bg-slate-50 text-slate-400 border-slate-200 hover:bg-slate-100'"
+            title="My Account"
+          >
+            <template v-if="user">
+              <span class="text-[10px] font-black uppercase tracking-tighter">{{ userInitials }}</span>
+            </template>
+            <template v-else>
+              <span class="material-symbols-outlined text-[20px]">person</span>
+            </template>
+          </NuxtLink>
+
+          <!-- User Dropdown Menu -->
+          <div v-if="user" class="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-100 shadow-xl rounded-xl opacity-0 invisible group-hover/profile:opacity-100 group-hover/profile:visible transition-all duration-200 z-[60] py-2 overflow-hidden">
+            <div class="px-4 py-3 border-b border-gray-50 mb-1">
+              <p class="text-xs font-bold text-gray-900 truncate">{{ user.firstName }} {{ user.lastName }}</p>
+              <p class="text-[10px] text-gray-400 truncate">{{ user.email }}</p>
+            </div>
+            <NuxtLink to="/account" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">My Profile</NuxtLink>
+            <NuxtLink to="/orders" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Order History</NuxtLink>
+            <div class="border-t border-gray-50 mt-2 pt-1">
+              <button @click="handleLogout" class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50 transition-colors flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm">logout</span>
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
 
         <!-- Mobile Toggle Button -->
         <button @click="toggleMobileMenu" class="hidden p-2 text-gray-600 hover:text-[#002888] transition-colors" aria-label="Toggle menu">
@@ -217,24 +231,20 @@
         <!-- Links -->
         <nav class="flex flex-col">
           <template v-for="link in ['Product', 'Services', 'Partners', 'About Us', 'Quote Request', 'Support']" :key="link">
-            <!-- Special Handling for Product in Mobile Menu -->
+            <!-- Simplified Product in Mobile Menu -->
             <div v-if="link === 'Product'" class="px-6 py-4 border-b border-gray-50">
               <div class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-4">Our Products</div>
-              <div v-for="category in productMenu" :key="category.title" class="mb-6 last:mb-2">
-                <div class="text-gray-900 font-bold text-base mb-2">{{ category.title }}</div>
-                <div class="pl-4 border-l-2 border-primary/10 ml-1 space-y-1">
-                  <NuxtLink 
-                    v-for="item in category.items" 
-                    :key="item"
-                    :to="'/category/' + item.toLowerCase().replace(' ', '-')"
-                    class="block text-gray-600 py-2.5 text-sm hover:text-primary transition-colors"
-                    @click="isMobileMenuOpen = false"
-                  >
-                    {{ item }}
-                  </NuxtLink>
-                  <div v-if="category.items.length === 0" class="text-xs text-gray-400 italic py-2">More coming soon</div>
-                </div>
-              </div>
+              <nav class="space-y-4">
+                <NuxtLink 
+                  v-for="category in productMenu" 
+                  :key="category.title"
+                  :to="'/category/' + category.title.toLowerCase().replace(' ', '-')" 
+                  class="block text-gray-900 hover:text-[#002888] transition-colors font-bold text-base" 
+                  @click="isMobileMenuOpen = false"
+                >
+                  {{ category.title }}
+                </NuxtLink>
+              </nav>
             </div>
             <!-- Special Handling for Services in Mobile Menu -->
             <div v-else-if="link === 'Services'" class="px-6 py-4 border-b border-gray-50">
@@ -439,11 +449,11 @@ const handleSearch = () => {
 }
 
 const productMenu = [
-  { title: 'Solar Panels', items: ['Regular', 'Half Cut'] },
-  { title: 'Inverters', items: ['Hybrid', 'Regular', 'Solar Generator'] },
-  { title: 'Batteries', items: ['Lithium', 'Tubular', 'Dry Cell'] },
-  { title: 'Charge Controllers', items: ['MPPT', 'PWM'] },
-  { title: 'Accessories', items: ['Accessories'] }
+  { title: 'Solar Panels' },
+  { title: 'Inverters' },
+  { title: 'Batteries' },
+  { title: 'Charge Controllers' },
+  { title: 'Accessories' }
 ]
 
 const servicesMenu = [
@@ -474,10 +484,22 @@ const { data: user } = await useFetch('/api/user/profile');
 // Compute initials if the user exists
 const userInitials = computed(() => {
   if (!user.value) return '';
+  if (user.value.isTemporary) return '??';
   const first = user.value.firstName ? user.value.firstName.charAt(0).toUpperCase() : '';
   const last = user.value.lastName ? user.value.lastName.charAt(0).toUpperCase() : '';
   return (first + last) || 'U'; // Fallback to 'U' if they haven't set a name yet
 });
+
+const handleLogout = async () => {
+  try {
+    await $fetch('/api/auth/logout', { method: 'POST' });
+    // Clear user data and redirect
+    user.value = null;
+    navigateTo('/login');
+  } catch (error) {
+    console.error('Logout failed:', error);
+  }
+};
 
 onMounted(() => {
   // Mobile search focus handler

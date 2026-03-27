@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-gray-50 p-8 lg:p-12">
     <div class="max-w-7xl mx-auto">
-      <header class="mb-12">
+      <header class="mb-8">
         <div class="flex items-center gap-2 text-sm text-gray-400 mb-4">
           <NuxtLink to="/" class="hover:text-primary transition-colors">Home</NuxtLink>
           <span>/</span>
@@ -12,6 +12,26 @@
         <h1 class="text-4xl font-bold text-[#002888] capitalize mb-2">{{ categoryName }} Inventory</h1>
         <p class="text-gray-600">Browse our selection of {{ categoryName }} components for your solar projects.</p>
       </header>
+
+      <!-- Sub-category Filters -->
+      <div v-if="subCategories.length > 0" class="flex flex-wrap gap-2 mb-10">
+        <button 
+          @click="activeSubCategory = 'All'"
+          class="px-5 py-2 rounded-full text-sm font-bold transition-all border"
+          :class="activeSubCategory === 'All' ? 'bg-[#002888] text-white border-[#002888]' : 'bg-white text-gray-600 border-gray-200 hover:border-[#002888] hover:text-[#002888]'"
+        >
+          All
+        </button>
+        <button 
+          v-for="sub in subCategories" 
+          :key="sub"
+          @click="activeSubCategory = sub"
+          class="px-5 py-2 rounded-full text-sm font-bold transition-all border"
+          :class="activeSubCategory === sub ? 'bg-[#002888] text-white border-[#002888]' : 'bg-white text-gray-600 border-gray-200 hover:border-[#002888] hover:text-[#002888]'"
+        >
+          {{ sub }}
+        </button>
+      </div>
 
       <!-- Loading State -->
       <div v-if="pending" class="flex flex-col items-center justify-center py-20 text-center">
@@ -42,31 +62,51 @@
 const route = useRoute()
 const categoryName = computed(() => route.params.slug.replace(/-/g, ' '))
 
+const activeSubCategory = ref('All')
+
+const categorySubMap = {
+  'solar-panels': ['Regular', 'Half Cut'],
+  'inverters': ['Hybrid', 'Regular', 'Solar Generator'],
+  'batteries': ['Lithium', 'Tubular', 'Dry Cell'],
+  'charge-controllers': ['MPPT', 'PWM'],
+  'accessories': []
+}
+
+const subCategories = computed(() => categorySubMap[route.params.slug] || [])
+
 const { data: products, pending } = useFetch('/api/inventory')
 
 const filteredProducts = computed(() => {
   if (!products.value) return []
   
   const slug = route.params.slug.toLowerCase()
+  const formattedSlug = slug.replace(/-/g, ' ')
   
-  // Define keywords that belong to other specific categories
+  // Define keywords that belong to other specific categories to isolate 'accessories'
   const mainCategoryKeywords = [
     'regular', 'half cut', 'hybrid', 'solar generator', 
     'lithium', 'tubular', 'dry cell', 'mppt', 'pwm'
   ]
   
-  return products.value.filter(p => {
+  let result = products.value.filter(p => {
     const productName = p.NAME.toLowerCase()
     
     if (slug === 'accessories') {
-      // For accessories, check that the product name doesn't contain any main category keywords
       return !mainCategoryKeywords.some(keyword => productName.includes(keyword))
+    } else if (slug === 'solar-panels') {
+      return productName.includes('panel') || productName.includes('pv')
     } else {
-      // Standard filtering for other categories
-      const formattedSlug = slug.replace(/-/g, ' ')
       return productName.includes(formattedSlug) || productName.includes(slug)
     }
   })
+
+  // Apply sub-category filter
+  if (activeSubCategory.value !== 'All') {
+    const subQuery = activeSubCategory.value.toLowerCase()
+    result = result.filter(p => p.NAME.toLowerCase().includes(subQuery))
+  }
+
+  return result
 })
 
 const { addToCart } = useCart()

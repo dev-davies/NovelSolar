@@ -5,6 +5,26 @@ const step = ref(1); // 1: Email, 2: OTP
 const isLoading = ref(false);
 const errorMessage = ref('');
 
+// Resend OTP Countdown
+const resendTimer = ref(0);
+let timerInterval = null;
+
+const startResendTimer = () => {
+  resendTimer.value = 60;
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    if (resendTimer.value > 0) {
+      resendTimer.value--;
+    } else {
+      clearInterval(timerInterval);
+    }
+  }, 1000);
+};
+
+onUnmounted(() => {
+  if (timerInterval) clearInterval(timerInterval);
+});
+
 const handleSendOtp = async () => {
   if (!email.value) {
     errorMessage.value = 'Please enter your email address.';
@@ -20,6 +40,7 @@ const handleSendOtp = async () => {
       body: { email: email.value }
     });
     step.value = 2;
+    startResendTimer();
   } catch (error) {
     errorMessage.value = error.data?.statusMessage || 'Failed to send code. Please try again.';
   } finally {
@@ -171,10 +192,10 @@ useHead({
               <button 
                 type="button" 
                 @click="handleSendOtp" 
-                class="text-xs font-bold text-[#3c59b0] hover:text-blue-800 uppercase tracking-widest transition-colors"
-                :disabled="isLoading"
+                class="text-xs font-bold text-[#3c59b0] hover:text-blue-800 uppercase tracking-widest transition-colors disabled:text-slate-300"
+                :disabled="isLoading || resendTimer > 0"
               >
-                Resend Code
+                {{ resendTimer > 0 ? `Resend Code in ${resendTimer}s` : 'Resend Code' }}
               </button>
             </div>
           </form>
