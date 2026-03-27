@@ -12,7 +12,7 @@
     <!-- 2. Hero Section -->
     <section 
       class="relative py-24 md:py-32 overflow-hidden text-white"
-      style="background: linear-gradient(135deg, #062414 0%, #0a3a1f 50%, #062414 100%);"
+      style="background: linear-gradient(to right, #062414 0%, #2CA84A 100%);"
     >
       <!-- Background Decor -->
       <div class="absolute top-0 right-0 w-[800px] h-[800px] bg-emerald-500/10 rounded-full blur-[120px] -mr-64 -mt-64"></div>
