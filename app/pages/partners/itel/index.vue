@@ -8,7 +8,7 @@
     <!-- Section 2: The Hero Section -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
       <div class="grid md:grid-cols-2 gap-12 items-center">
-        <div v-reveal>
+        <div>
           <h1 class="text-5xl font-extrabold text-[#002888] mb-6 leading-tight">
             24/7 Uninterrupted Power for Your Home
           </h1>
@@ -19,7 +19,7 @@
             Shop the itel Collection &rarr;
           </NuxtLink>
         </div>
-        <div class="relative" v-reveal>
+        <div class="relative">
           <img src="/images/itel_3.png" alt="itel Home Solar" class="rounded-3xl shadow-2xl w-full object-cover aspect-[4/3]" />
           <div class="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl hidden lg:block">
             <div class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-1">Energy Independence</div>
@@ -33,10 +33,10 @@
     <section class="bg-white py-32">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid md:grid-cols-2 gap-16 items-center">
-          <div v-reveal>
+          <div>
             <img src="/images/itel.jpg" alt="itel Reliable Power" class="rounded-2xl shadow-lg w-full" />
           </div>
-          <div v-reveal>
+          <div>
             <h2 class="text-4xl font-bold text-gray-900 mb-6">Silent, Safe, and Smart Home Energy</h2>
             <p class="text-lg text-gray-600 mb-6 leading-relaxed">
               Experience true comfort without the stress of fuel costs or maintenance of old generators. Our itel systems are built to keep your AC, deep freezer, and essential electronics running smoothly through any outage.
@@ -58,10 +58,10 @@
     <section class="bg-gray-50 py-32">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid md:grid-cols-3 gap-12 items-center">
-          <div class="md:col-span-2" v-reveal>
+          <div class="md:col-span-2">
             <img src="/images/itel-5-600x600.webp" alt="itel Home Inverter" class="max-w-md mx-auto drop-shadow-2xl hover:scale-105 transition-transform duration-700" />
           </div>
-          <div v-reveal>
+          <div>
             <h3 class="text-3xl font-bold text-gray-900 mb-6 font-primary">itel Home Inverter Series</h3>
             <ul class="space-y-4 mb-8">
               <li class="flex flex-col">
@@ -90,7 +90,7 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid md:grid-cols-2 gap-16">
           <!-- Benefit 1 -->
-          <div class="flex flex-col gap-8" v-reveal>
+          <div class="flex flex-col gap-8">
             <div class="h-[400px] overflow-hidden rounded-3xl">
               <img src="/images/itel_2.jpg" alt="Home Integration" class="w-full h-full object-cover" />
             </div>
@@ -100,7 +100,7 @@
             </div>
           </div>
           <!-- Benefit 2 -->
-          <div class="flex flex-col gap-8" v-reveal>
+          <div class="flex flex-col gap-8">
             <div class="h-[400px] overflow-hidden rounded-3xl">
               <img src="/images/itel_1.jpg" alt="Reliability" class="w-full h-full object-cover" />
             </div>
@@ -119,7 +119,7 @@
       <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32"></div>
       <div class="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full -ml-32 -mb-32"></div>
       
-      <div class="relative z-10 max-w-3xl mx-auto" v-reveal>
+      <div class="relative z-10 max-w-3xl mx-auto">
         <h2 class="text-4xl md:text-5xl font-extrabold mb-8">Ready to upgrade your home's power?</h2>
         <p class="text-lg mb-12 opacity-90 max-w-xl mx-auto leading-relaxed">
           Browse our collection of reliable itel inverters and batteries.

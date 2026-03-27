@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-white font-sans selection:bg-emerald-500/30">
+  <div class="min-h-screen bg-white font-sans">
     <!-- 1. Top Partner Banner -->
     <div class="bg-white w-full py-6 flex justify-center items-center border-b border-gray-100">
       <img 
@@ -10,58 +10,94 @@
     </div>
 
     <!-- 2. Hero Section -->
-    <section class="relative bg-slate-950 py-24 md:py-32 overflow-hidden">
-      <!-- Background Glow -->
-      <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-[#2CA84A]/10 rounded-full blur-[120px] -mr-64 -mt-64"></div>
-      <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-emerald-900/10 rounded-full blur-[120px] -ml-64 -mb-64"></div>
-
+    <section 
+      class="relative py-24 md:py-32 overflow-hidden text-white"
+      style="background: linear-gradient(135deg, #062414 0%, #0a3a1f 50%, #062414 100%);"
+    >
+      <!-- Background Decor -->
+      <div class="absolute top-0 right-0 w-[800px] h-[800px] bg-emerald-500/10 rounded-full blur-[120px] -mr-64 -mt-64"></div>
+      
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div class="grid lg:grid-cols-2 gap-16 items-center text-left">
-          <div v-reveal>
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[#2CA84A] text-xs font-bold uppercase tracking-widest mb-8">
-              <span class="w-2 h-2 rounded-full bg-[#2CA84A] animate-pulse"></span>
-              New Partnership
+          <div>
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-3 px-4 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white/60 text-[10px] font-black uppercase tracking-[0.2em] mb-10">
+              <span>Global Partnership</span>
+              <span class="w-px h-3 bg-white/20"></span>
+              <span>Innovation Leader</span>
             </div>
-            <h1 class="text-5xl md:text-7xl font-black text-white mb-6 tracking-tight leading-[1.1]">
-              Intelligent Energy.<br />
-              <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#2CA84A] to-emerald-600 italic">The Yinergy Advantage.</span>
+            
+            <h1 class="text-6xl md:text-8xl font-black text-white mb-8 tracking-tight leading-[0.95]">
+              Novel Solar <span class="text-[#2CA84A]">x</span><br />
+              <span class="text-white">Yinergy</span>
             </h1>
-            <p class="text-xl text-slate-400 max-w-xl mb-12 leading-relaxed font-medium">
-              Novel Solar is proud to partner with Yinergy to bring you scalable, high-performance energy storage and hybrid inverter systems.
+            
+            <h2 class="text-xl md:text-2xl font-bold text-white mb-6 leading-tight max-w-xl">
+              Intelligent Energy Solutions for Residential, Commercial, and Industrial Needs
+            </h2>
+            
+            <p class="text-base text-white/70 max-w-xl mb-12 leading-relaxed font-medium">
+              Delivering advanced energy storage and hybrid inverter systems for sustainable, high-performance energy infrastructure across the globe.
             </p>
-            <NuxtLink 
-              to="/partners/yinergy/shop" 
-              class="inline-flex items-center gap-2 bg-[#2CA84A] text-white px-10 py-5 rounded-2xl font-black text-lg hover:bg-emerald-500 transition-all shadow-2xl shadow-[#2CA84A]/20 active:scale-95 group"
-            >
-              Shop the Yinergy Collection
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </NuxtLink>
+            
+            <div class="flex flex-wrap items-center gap-4">
+              <NuxtLink 
+                to="/partners/yinergy/shop" 
+                class="inline-flex items-center gap-2 text-white px-8 py-4 rounded-lg font-bold text-sm hover:opacity-90 transition-all shadow-xl shadow-red-900/20 active:scale-95 group"
+                style="background-color: #BE121E;"
+              >
+                Explore Products
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </NuxtLink>
+              
+              <NuxtLink 
+                to="/contact" 
+                class="inline-flex items-center justify-center px-8 py-4 rounded-lg bg-white/10 hover:bg-white/20 border border-white/10 text-white font-bold text-sm transition-all"
+              >
+                Contact Us
+              </NuxtLink>
+              
+              <a 
+                href="https://wa.me/your-number" 
+                target="_blank"
+                class="inline-flex items-center gap-2 text-white px-6 py-4 rounded-lg font-bold text-sm hover:opacity-90 transition-all shadow-lg shadow-green-900/10 active:scale-95"
+                style="background-color: #25D366;"
+              >
+                <span class="material-symbols-outlined text-lg">chat</span>
+                WhatsApp
+              </a>
+            </div>
           </div>
-          <div v-reveal class="relative hidden lg:block">
-            <div class="absolute inset-0 bg-[#2CA84A]/20 rounded-full blur-[100px] -z-10 animate-pulse"></div>
-            <img 
-              src="/images/yinergy1.png" 
-              alt="Yinergy Industrial Solution" 
-              class="w-full h-auto drop-shadow-[0_20px_50px_rgba(44,168,74,0.3)] hover:scale-105 transition-transform duration-700"
-            />
+          
+          <div class="relative">
+             <!-- Product Card -->
+            <div class="relative group">
+              <div class="absolute inset-0 bg-emerald-500/20 rounded-[40px] blur-3xl -z-10 animate-pulse"></div>
+              <div class="bg-white/95 backdrop-blur-sm p-4 rounded-[40px] shadow-2xl transform rotate-2 group-hover:rotate-0 transition-transform duration-700 overflow-hidden">
+                <img 
+                  src="/images/yinergy4.png" 
+                  alt="Yinergy Industrial Solution" 
+                  class="w-full h-auto object-contain rounded-[30px]"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </section>
-
     <!-- 3. The 'Why Yinergy?' Section (Tech Specs) -->
     <section class="py-24 bg-white">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-20">
-        <h2 v-reveal class="text-4xl font-black text-slate-900 tracking-tight uppercase italic mb-4">Why Choose Yinergy?</h2>
-        <div v-reveal class="w-20 h-1.5 bg-[#2CA84A] mx-auto rounded-full"></div>
+        <h2 class="text-4xl font-black text-slate-900 tracking-tight uppercase italic mb-4">Why Choose Yinergy?</h2>
+        <div class="w-20 h-1.5 bg-[#2CA84A] mx-auto rounded-full"></div>
       </div>
       
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid md:grid-cols-3 gap-12">
           <!-- Spec 1 -->
-          <div v-reveal class="p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:border-emerald-200 transition-colors group">
+          <div class="p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:border-emerald-200 transition-colors group">
             <div class="w-16 h-16 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
               <span class="material-symbols-outlined text-3xl text-[#2CA84A]">settings_input_component</span>
             </div>
@@ -72,7 +108,7 @@
           </div>
 
           <!-- Spec 2 -->
-          <div v-reveal class="p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:border-emerald-200 transition-colors group">
+          <div class="p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:border-emerald-200 transition-colors group">
             <div class="w-16 h-16 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
               <span class="material-symbols-outlined text-3xl text-[#2CA84A]">cloud_sync</span>
             </div>
@@ -83,7 +119,7 @@
           </div>
 
           <!-- Spec 3 -->
-          <div v-reveal class="p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:border-emerald-200 transition-colors group">
+          <div class="p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:border-emerald-200 transition-colors group">
             <div class="w-16 h-16 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
               <span class="material-symbols-outlined text-3xl text-[#2CA84A]">factory</span>
             </div>
@@ -101,7 +137,7 @@
       <!-- Row 1 -->
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid md:grid-cols-2 gap-16 items-center">
-          <div v-reveal class="order-2 md:order-1">
+          <div class="order-2 md:order-1">
             <div class="inline-block px-3 py-1 rounded bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-widest mb-6 italic">Yi-Hybrid Series</div>
             <h2 class="text-4xl font-black text-slate-900 mb-6 leading-tight">Intelligent <br /><span class="text-[#2CA84A]">Power Conversion.</span></h2>
             <p class="text-lg text-slate-600 font-medium leading-relaxed mb-8">
@@ -119,7 +155,7 @@
               </div>
             </div>
           </div>
-          <div v-reveal class="order-1 md:order-2">
+          <div class="order-1 md:order-2">
             <div class="relative">
               <div class="absolute inset-0 bg-emerald-600/5 translate-x-4 translate-y-4 rounded-3xl"></div>
               <img 
@@ -135,7 +171,7 @@
       <!-- Row 2 -->
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid md:grid-cols-2 gap-16 items-center md:flex-row-reverse">
-          <div v-reveal class="md:order-1">
+          <div class="md:order-1">
             <div class="relative">
               <div class="absolute inset-0 bg-emerald-600/5 -translate-x-4 translate-y-4 rounded-3xl"></div>
               <img 
@@ -145,7 +181,7 @@
               />
             </div>
           </div>
-          <div v-reveal class="md:order-2">
+          <div class="md:order-2">
             <div class="inline-block px-3 py-1 rounded bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-widest mb-6 italic">Yi-Storage Pro</div>
             <h2 class="text-4xl font-black text-slate-900 mb-6 leading-tight">High-Density <br /><span class="text-[#2CA84A]">Energy Storage.</span></h2>
             <p class="text-lg text-slate-600 font-medium leading-relaxed mb-8">
@@ -163,7 +199,6 @@
               </div>
             </div>
             <NuxtLink 
-              v-reveal
               to="/partners/yinergy/shop" 
               class="inline-flex items-center gap-2 bg-[#2CA84A] text-white px-8 py-4 rounded-xl font-bold text-sm hover:bg-emerald-500 transition-all shadow-lg active:scale-95 group"
             >
@@ -180,22 +215,22 @@
     <!-- 5. Technical Precision Gallery -->
     <section class="py-24 bg-slate-50">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16">
-        <h2 v-reveal class="text-3xl font-black text-slate-900 tracking-tight uppercase italic mb-4">Technical Precision</h2>
-        <p v-reveal class="text-slate-500 font-medium italic">Inside the Yinergy ecosystem: Engineered for performance and longevity.</p>
+        <h2 class="text-3xl font-black text-slate-900 tracking-tight uppercase italic mb-4">Technical Precision</h2>
+        <p class="text-slate-500 font-medium italic">Inside the Yinergy ecosystem: Engineered for performance and longevity.</p>
       </div>
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid md:grid-cols-3 gap-8">
-          <div v-reveal class="group cursor-pointer">
+          <div class="group cursor-pointer">
             <div class="overflow-hidden rounded-2xl aspect-square bg-white border border-slate-200">
-              <img src="/images/yinergy4.png" alt="Yinergy Core Technology" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+              <img src="/images/yinergy1.png" alt="Yinergy Core Technology" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
             </div>
           </div>
-          <div v-reveal class="group cursor-pointer">
+          <div class="group cursor-pointer">
             <div class="overflow-hidden rounded-2xl aspect-square bg-white border border-slate-200">
               <img src="/images/yinergy5.png" alt="Yinergy Smart Interface" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
             </div>
           </div>
-          <div v-reveal class="group cursor-pointer">
+          <div class="group cursor-pointer">
             <div class="overflow-hidden rounded-2xl aspect-square bg-white border border-slate-200">
               <img src="/images/yinergy1.png" alt="Yinergy Industrial Scale" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
             </div>
@@ -205,20 +240,23 @@
     </section>
 
     <!-- 6. Bottom CTA -->
-    <section class="py-24 bg-[#2CA84A] relative overflow-hidden">
+    <section 
+      class="py-24 relative overflow-hidden text-white"
+      style="background-color: #2CA84A;"
+    >
       <!-- Decor -->
       <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -mr-48 -mt-48 blur-3xl"></div>
       <div class="absolute bottom-0 left-0 w-96 h-96 bg-white/10 rounded-full -ml-48 -mb-48 blur-3xl"></div>
 
       <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-        <h2 v-reveal class="text-4xl md:text-6xl font-black text-white mb-8 tracking-tighter uppercase italic">Ready to upgrade your power?</h2>
-        <p v-reveal class="text-xl text-emerald-100 mb-12 font-medium opacity-80">
+        <h2 class="text-4xl md:text-6xl font-black text-white mb-8 tracking-tighter uppercase italic">Ready to upgrade your power?</h2>
+        <p class="text-xl text-emerald-100 mb-12 font-medium opacity-80">
           Professional installation and a 5-year replacement warranty come standard with every Yinergy system.
         </p>
         <NuxtLink 
-          v-reveal
           to="/partners/yinergy/shop" 
-          class="inline-block bg-white text-[#2CA84A] px-12 py-5 rounded-2xl font-black text-xl hover:bg-slate-50 transition-all shadow-2xl active:scale-95 uppercase tracking-tight"
+          class="inline-block bg-white px-12 py-5 rounded-2xl font-black text-xl hover:bg-slate-50 transition-all shadow-2xl active:scale-95 uppercase tracking-tight"
+          style="color: #2CA84A !important;"
         >
           Browse Yinergy Inventory
         </NuxtLink>
