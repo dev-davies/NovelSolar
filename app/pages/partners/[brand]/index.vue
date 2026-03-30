@@ -33,6 +33,7 @@ import PartnerItel from '~/components/partners/PartnerItel.vue'
 import PartnerHaisic from '~/components/partners/PartnerHaisic.vue'
 import PartnerYinergy from '~/components/partners/PartnerYinergy.vue'
 import PartnerLivoltek from '~/components/partners/PartnerLivoltek.vue'
+import PartnerHithium from '~/components/partners/PartnerHithium.vue'
 
 const route = useRoute()
 
@@ -45,7 +46,8 @@ const componentMap: Record<string, any> = {
   itel: PartnerItel,
   haisic: PartnerHaisic,
   yinergy: PartnerYinergy,
-  livoltek: PartnerLivoltek
+  livoltek: PartnerLivoltek,
+  hithium: PartnerHithium
 }
 
 const activeComponent = computed(() => {
