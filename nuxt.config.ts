@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
-  modules: ["@nuxtjs/tailwindcss", "@nuxt/image", "@vueuse/nuxt"],
+  modules: ["@nuxtjs/tailwindcss", "@nuxt/image", "@vueuse/nuxt", "@nuxtjs/sanity"],
   image: {
     domains: ["nisl.bitrix24.com"]
   },
@@ -29,5 +29,10 @@ export default defineNuxtConfig({
     public: {
       // any public keys go here
     }
+  },
+  sanity: {
+    projectId: 'YOUR_PROJECT_ID',
+    dataset: 'production',
+    useCdn: true, // `false` if you want to ensure fresh data every time
   },
 });
