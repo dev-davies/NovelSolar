@@ -28,9 +28,10 @@ export default defineEventHandler(async (event) => {
   }
 
   // 3. Extract Product Fields
-  const productName = getField('productName');
+  let productName = getField('productName');
   const productPrice = getField('productPrice');
   const productType = getField('productType');
+  const productBrand = getField('productBrand');
   const productDescription = getField('productDescription');
   const productSpecs = getField('productSpecs');
   const imageFile = formData.find(f => f.name === 'productImage');
@@ -38,6 +39,14 @@ export default defineEventHandler(async (event) => {
 
   if (!productName || !productPrice || !imageFile) {
     throw createError({ statusCode: 400, statusMessage: 'Missing required fields' });
+  }
+
+  // 3.5. Brand Integrity: Ensure the brand name is in the product title for shop filtering
+  if (productBrand && productBrand !== 'general') {
+    const brandLabel = productBrand.charAt(0).toUpperCase() + productBrand.slice(1);
+    if (!productName.toLowerCase().includes(productBrand.toLowerCase())) {
+        productName = `${brandLabel} ${productName}`;
+    }
   }
 
   try {

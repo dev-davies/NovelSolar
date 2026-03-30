@@ -61,7 +61,8 @@ const { data: partnerProducts, pending } = await useFetch('/api/itel-products', 
 const brandBanner = computed(() => {
   const b = brand.value.toLowerCase()
   if (b === 'itel') return '/images/logo-new-novel.-itel.png'
-  if (['haisic', 'hithium', 'livlotec', 'yinergy'].includes(b)) {
+  if (b === 'livoltek') return '/images/livoltekpartner.png'
+  if (['haisic', 'hithium', 'yinergy'].includes(b)) {
     // Assets are named like 'Haisic_partner.png'
     return `/images/${brand.value.charAt(0).toUpperCase() + brand.value.slice(1)}_partner.png`
   }

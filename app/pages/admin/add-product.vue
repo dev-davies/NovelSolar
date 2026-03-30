@@ -2,6 +2,7 @@
 const productName = ref('')
 const productPrice = ref(null)
 const productType = ref('piece')
+const productBrand = ref('general')
 const productDescription = ref('')
 const productSpecs = ref([{ label: '', value: '' }])
 const productImage = ref(null)
@@ -39,6 +40,7 @@ const submitProduct = async () => {
   formData.append('productName', productName.value)
   formData.append('productPrice', productPrice.value)
   formData.append('productType', productType.value)
+  formData.append('productBrand', productBrand.value)
   formData.append('productDescription', productDescription.value)
   formData.append('productSpecs', JSON.stringify(productSpecs.value))
   formData.append('productImage', productImage.value)
@@ -62,6 +64,7 @@ const submitProduct = async () => {
       productName.value = ''
       productPrice.value = null
       productType.value = 'piece'
+      productBrand.value = 'general'
       productDescription.value = ''
       productSpecs.value = [{ label: '', value: '' }]
       productImage.value = null
@@ -159,6 +162,23 @@ const submitProduct = async () => {
                   >
                     <option value="piece">Piece</option>
                     <option value="meter">Meter</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="productBrand" class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Partner/Brand</label>
+                  <select
+                    id="productBrand"
+                    v-model="productBrand"
+                    class="w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:ring-4 focus:ring-yellow-500/10 focus:border-yellow-500 outline-none transition-all appearance-none bg-white font-bold text-slate-700"
+                    required
+                    :disabled="isUploading"
+                  >
+                    <option value="general">General / Mixed</option>
+                    <option value="livoltek">Livoltek</option>
+                    <option value="itel">iTel</option>
+                    <option value="yinergy">Yinergy</option>
+                    <option value="haisic">Haisic</option>
+                    <option value="hithium">Hithium</option>
                   </select>
                 </div>
               </div>

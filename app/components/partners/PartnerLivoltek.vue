@@ -176,7 +176,7 @@ const activeProduct = ref(products[0])
           <h2 class="text-3xl font-black text-slate-900 mb-2">Ready to Upgrade?</h2>
           <p class="text-slate-600 font-medium tracking-tight">Browse our current real-time inventory for Livoltek solutions.</p>
         </div>
-        <NuxtLink to="/shop?brand=livoltek" class="bg-[#002888] text-white px-10 py-5 rounded-2xl font-black text-lg hover:bg-blue-900 transition-all shadow-2xl active:scale-95 uppercase tracking-tight inline-flex items-center gap-3 group">
+        <NuxtLink to="/partners/livoltek/shop" class="bg-[#002888] text-white px-10 py-5 rounded-2xl font-black text-lg hover:bg-blue-900 transition-all shadow-2xl active:scale-95 uppercase tracking-tight inline-flex items-center gap-3 group">
           Check Livoltek Inventory
           <span class="text-xl group-hover:translate-x-2 transition-transform">&rarr;</span>
         </NuxtLink>
