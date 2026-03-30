@@ -4,7 +4,10 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ["@nuxtjs/tailwindcss", "@nuxt/image", "@vueuse/nuxt", "@nuxtjs/sanity"],
   image: {
-    domains: ["nisl.bitrix24.com"]
+    domains: ["nisl.bitrix24.com"],
+    sanity: {
+      projectId: 'u2k0ma15'
+    }
   },
   css: ["~/assets/css/main.css"],
   app: {
@@ -31,8 +34,9 @@ export default defineNuxtConfig({
     }
   },
   sanity: {
-    projectId: 'YOUR_PROJECT_ID',
+    projectId: 'u2k0ma15',
     dataset: 'production',
-    useCdn: true, // `false` if you want to ensure fresh data every time
+    useCdn: false,
+    apiVersion: '2025-01-01',
   },
 });

@@ -16,9 +16,8 @@
     <main class="max-w-7xl mx-auto px-4 py-16">
       
       <!-- Loading State -->
-      <div v-if="pending" class="flex flex-col items-center justify-center py-24 text-center">
-        <div class="w-14 h-14 border-4 border-[#002888]/10 border-t-[#002888] rounded-full animate-spin mb-6"></div>
-        <p class="text-xl text-slate-400 font-black tracking-tight italic uppercase">Loading insights...</p>
+      <div v-if="pending" class="py-20 text-center text-slate-500 font-medium">
+        Loading insights...
       </div>
 
       <!-- Grid -->
@@ -69,13 +68,13 @@
       </div>
 
       <!-- Empty State -->
-      <div v-else class="text-center py-24 bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-200 min-h-[400px] flex flex-col items-center justify-center">
-        <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm">
+      <div v-else class="text-center py-20 border-2 border-dashed border-slate-200 rounded-2xl">
+        <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-6 mx-auto shadow-sm">
           <span class="material-symbols-outlined text-4xl text-slate-200">article</span>
         </div>
         <h3 class="text-2xl font-black text-slate-900 mb-3 uppercase tracking-tighter italic">First Insights Coming Soon</h3>
         <p class="text-slate-500 max-w-sm mx-auto font-medium">We're currently preparing our first batch of high-performance solar insights. Check back shortly!</p>
-        <NuxtLink to="/" class="mt-8 text-[#002888] font-bold text-sm hover:underline">
+        <NuxtLink to="/" class="mt-8 text-[#002888] font-bold text-sm hover:underline block">
           &larr; Back to Home
         </NuxtLink>
       </div>
@@ -84,7 +83,7 @@
 </template>
 
 <script setup>
-const query = groq`*[_type == "post"] | order(publishedAt desc) { _id, title, slug, mainImage, excerpt, publishedAt }`
+const query = groq`*[_type == "post"] | order(publishedAt desc) { _id, title, slug, mainImage, "excerpt": pt::text(body), publishedAt }`
 const { data: posts, pending } = await useSanityQuery(query)
 
 const formatDate = (dateString) => {
