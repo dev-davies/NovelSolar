@@ -32,6 +32,7 @@ import { useRoute } from 'nuxt/app'
 import PartnerItel from '~/components/partners/PartnerItel.vue'
 import PartnerHaisic from '~/components/partners/PartnerHaisic.vue'
 import PartnerYinergy from '~/components/partners/PartnerYinergy.vue'
+import PartnerLivoltek from '~/components/partners/PartnerLivoltek.vue'
 
 const route = useRoute()
 
@@ -43,7 +44,8 @@ const formattedBrand = computed(() => {
 const componentMap: Record<string, any> = {
   itel: PartnerItel,
   haisic: PartnerHaisic,
-  yinergy: PartnerYinergy
+  yinergy: PartnerYinergy,
+  livoltek: PartnerLivoltek
 }
 
 const activeComponent = computed(() => {
