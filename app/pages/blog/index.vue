@@ -1,169 +1,113 @@
 <template>
-  <div>
-    <!-- Featured Article Hero -->
-    <section class="relative h-[600px] flex items-center overflow-hidden">
-      <!-- Background Image -->
-      <div class="absolute inset-0 z-0">
-        <img src="/images/blog_featured_hero_1773069104174.png" alt="Featured Article" class="w-full h-full object-cover brightness-[0.4]" />
-      </div>
-      
-      <!-- Content -->
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
-        <div class="max-w-3xl">
-          <div class="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest bg-primary text-white mb-8 border border-white/20">
-            Featured Article
-          </div>
-          <h1 class="text-4xl sm:text-6xl font-extrabold text-white leading-tight mb-8">
-            The 2026 Global Solar Outlook: <span class="text-blue-400">Paving the Way to Net Zero</span>
-          </h1>
-          <p class="text-xl text-gray-300 mb-10 leading-relaxed">
-            Leading experts analyze how the next generation of perovskite technology and smart grid integration is accelerating our transition to a 100% renewable future.
-          </p>
-          <button 
-            class="bg-white text-primary px-10 py-5 text-lg font-extrabold rounded-2xl shadow-2xl hover:bg-gray-100 transition-all"
-          >
-            Read the Full Report
-          </button>
-        </div>
+  <div class="min-h-screen bg-white">
+    <!-- Hero Header -->
+    <section class="bg-slate-50 py-16">
+      <div class="max-w-7xl mx-auto px-4 text-center sm:text-left">
+        <h1 class="text-4xl font-black text-[#002888] mb-4 tracking-tight">
+          Novel Solar Insights
+        </h1>
+        <p class="text-lg text-slate-600 max-w-2xl leading-relaxed font-medium">
+          Stay informed with the latest in solar technology, industry innovations, and expert advice for a sustainable energy future.
+        </p>
       </div>
     </section>
 
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+    <!-- Post Grid -->
+    <main class="max-w-7xl mx-auto px-4 py-16">
       
-      <!-- Section Header -->
-      <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-        <div>
-          <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight italic">Latest Articles</h2>
-          <p class="text-gray-500 mt-2 text-lg">Curated insights from the frontlines of energy innovation.</p>
-        </div>
-        <div class="flex gap-4">
-          <button class="bg-white border border-gray-200 text-gray-900 px-4 py-2 rounded-xl text-sm font-bold hover:bg-gray-50 transition-colors">All Topics</button>
-          <button class="bg-white border border-gray-200 text-gray-900 px-4 py-2 rounded-xl text-sm font-bold hover:bg-gray-50 transition-colors opacity-40">Technology</button>
-          <button class="bg-white border border-gray-200 text-gray-900 px-4 py-2 rounded-xl text-sm font-bold hover:bg-gray-50 transition-colors opacity-40">Logistics</button>
-        </div>
+      <!-- Loading State -->
+      <div v-if="pending" class="flex flex-col items-center justify-center py-24 text-center">
+        <div class="w-14 h-14 border-4 border-[#002888]/10 border-t-[#002888] rounded-full animate-spin mb-6"></div>
+        <p class="text-xl text-slate-400 font-black tracking-tight italic uppercase">Loading insights...</p>
       </div>
 
-      <!-- Blog Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-        <div v-for="post in posts" :key="post.id" class="group h-full bg-white shadow-sm hover:shadow-2xl transition-all duration-500 rounded-3xl overflow-hidden border border-gray-100 flex flex-col">
-          <div class="aspect-[16/10] overflow-hidden relative">
-            <img :src="post.image" :alt="post.title" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
-            <div class="absolute bottom-4 left-4">
-              <span class="px-3 py-1 bg-white/90 backdrop-blur-sm rounded-lg text-[10px] font-extrabold text-gray-900 uppercase tracking-widest shadow-lg">
-                {{ post.category }}
-              </span>
+      <!-- Grid -->
+      <div v-else-if="posts && posts.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <NuxtLink 
+          v-for="post in posts" 
+          :key="post._id" 
+          :to="'/blog/' + post.slug.current"
+          class="group bg-white rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all flex flex-col h-full overflow-hidden border border-gray-50"
+        >
+          <!-- Image Layer -->
+          <div class="aspect-video bg-slate-100 overflow-hidden relative">
+            <SanityImage 
+              v-if="post.mainImage"
+              :asset-id="post.mainImage.asset._ref"
+              auto="format"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            />
+            <div v-else class="w-full h-full flex items-center justify-center text-slate-300">
+              <span class="material-symbols-outlined text-4xl">energy_savings_leaf</span>
             </div>
           </div>
-          
+
+          <!-- Content Layer -->
           <div class="p-8 flex flex-col flex-grow">
-            <div class="flex items-center gap-3 mb-4 text-xs font-semibold text-gray-400">
-              <time>{{ post.date }}</time>
-              <span class="w-1 h-1 rounded-full bg-gray-200"></span>
-              <span>{{ post.readTime }}</span>
+            <!-- Date Display -->
+            <div class="flex items-center gap-2 mb-4">
+               <span class="text-xs font-bold text-[#002888] uppercase tracking-widest">{{ formatDate(post.publishedAt) }}</span>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-4 leading-tight group-hover:text-primary transition-colors line-clamp-2">
+
+            <!-- Title -->
+            <h3 class="text-xl font-bold text-slate-900 mb-4 group-hover:text-[#002888] transition-colors line-clamp-2 leading-tight">
               {{ post.title }}
             </h3>
-            <p class="text-gray-500 text-sm mb-8 line-clamp-3 leading-relaxed flex-grow">
+
+            <!-- Excerpt -->
+            <p v-if="post.excerpt" class="text-slate-500 text-sm leading-relaxed line-clamp-3 mb-6 font-medium">
               {{ post.excerpt }}
             </p>
-            <div class="pt-6 border-t border-gray-50 flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-full bg-gray-100 border border-gray-100 overflow-hidden flex items-center justify-center font-bold text-[10px] text-primary">
-                  {{ post.author.initials }}
-                </div>
-                <span class="text-xs font-bold text-gray-700">{{ post.author.name }}</span>
-              </div>
-              <NuxtLink :to="`/blog/${post.id}`" class="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center text-primary hover:bg-primary hover:text-white hover:border-primary transition-all group-hover:shadow-lg">
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-              </NuxtLink>
+
+            <!-- Bottom CTA -->
+            <div class="mt-auto flex items-center gap-2 text-[#002888] font-bold text-xs uppercase tracking-widest">
+              Read More
+              <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
             </div>
           </div>
-        </div>
+        </NuxtLink>
       </div>
 
-      <!-- Pagination -->
-      <div class="mt-20 flex justify-center">
-        <div class="inline-flex items-center p-1.5 bg-white rounded-2xl shadow-sm border border-gray-100 gap-1">
-          <button class="w-10 h-10 p-2 rounded-xl border border-transparent hover:bg-gray-50 transition-colors flex items-center justify-center">
-            <svg class="w-4 h-4 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
-          </button>
-          <button class="w-10 h-10 rounded-xl font-bold bg-[#002888] text-white flex items-center justify-center text-sm shadow-sm">1</button>
-          <button class="w-10 h-10 rounded-xl font-bold text-gray-400 border border-transparent hover:bg-gray-50 transition-colors flex items-center justify-center text-sm">2</button>
-          <button class="w-10 h-10 rounded-xl font-bold text-gray-400 border border-transparent hover:bg-gray-50 transition-colors flex items-center justify-center text-sm">3</button>
-          <span class="px-2 text-gray-300">...</span>
-          <button class="w-10 h-10 rounded-xl font-bold text-gray-400 border border-transparent hover:bg-gray-50 transition-colors flex items-center justify-center text-sm">12</button>
-          <button class="w-10 h-10 p-2 rounded-xl border border-transparent hover:bg-gray-50 transition-colors flex items-center justify-center">
-            <svg class="w-4 h-4 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-          </button>
+      <!-- Empty State -->
+      <div v-else class="text-center py-24 bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-200 min-h-[400px] flex flex-col items-center justify-center">
+        <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm">
+          <span class="material-symbols-outlined text-4xl text-slate-200">article</span>
         </div>
+        <h3 class="text-2xl font-black text-slate-900 mb-3 uppercase tracking-tighter italic">First Insights Coming Soon</h3>
+        <p class="text-slate-500 max-w-sm mx-auto font-medium">We're currently preparing our first batch of high-performance solar insights. Check back shortly!</p>
+        <NuxtLink to="/" class="mt-8 text-[#002888] font-bold text-sm hover:underline">
+          &larr; Back to Home
+        </NuxtLink>
       </div>
     </main>
   </div>
 </template>
 
 <script setup>
-const posts = [
-  {
-    id: 1,
-    title: 'Optimizing supply chain for utility-scale solar',
-    excerpt: 'Best practices for managing multi-megawatt components dispatch and local warehousing in the new era of energy demand.',
-    category: 'Logistics',
-    date: 'March 08, 2026',
-    readTime: '8 min read',
-    image: '/images/blog_article_logistic_1773069124505.png',
-    author: { name: 'Sarah Chen', initials: 'SC' }
-  },
-  {
-    id: 2,
-    title: 'The Future of bifacial solar technology',
-    excerpt: 'Exploring how recent breakthroughs in cell architecture are driving down double-sided yields and ROI cycles.',
-    category: 'Technology',
-    date: 'March 05, 2026',
-    readTime: '5 min read',
-    image: '/images/industry_insights_1_1773068313772.png',
-    author: { name: 'Marcus Bell', initials: 'MB' }
-  },
-  {
-    id: 3,
-    title: 'Smart cities: Building integrated PV',
-    excerpt: 'How BIPV is transforming urban energy landscapes and increasing property value through aesthetic innovation.',
-    category: 'Architecture',
-    date: 'Feb 28, 2026',
-    readTime: '4 min read',
-    image: '/images/industry_insights_3_1773068348559.png',
-    author: { name: 'Dr. Elena Rossi', initials: 'ER' }
-  },
-  {
-    id: 4,
-    title: 'Residential storage: The lithium vs sodium debate',
-    excerpt: 'Comparing energy density, cost, and safety for next-gen home backup systems. Is sodium-ion finally ready?',
-    category: 'Technology',
-    date: 'Feb 24, 2026',
-    readTime: '12 min read',
-    image: '/images/solar_battery_inventory_1773068296812.png',
-    author: { name: 'Sarah Chen', initials: 'SC' }
-  },
-  {
-    id: 5,
-    title: 'Navigating federal solar tax credits in 2026',
-    excerpt: 'A comprehensive guide to the latest legislative updates and how to maximize your project ROI.',
-    category: 'Finance',
-    date: 'Feb 20, 2026',
-    readTime: '6 min read',
-    image: '/images/blog_featured_hero_1773069104174.png',
-    author: { name: 'James Miller', initials: 'JM' }
-  },
-  {
-    id: 6,
-    title: 'Automation in large-scale solar O&M',
-    excerpt: 'How drone inspections and automated cleaning robots are drastically reducing long-term maintenance costs.',
-    category: 'Logistics',
-    date: 'Feb 15, 2026',
-    readTime: '9 min read',
-    image: '/images/industry_insights_2_1773068331524.png',
-    author: { name: 'Dr. Elena Rossi', initials: 'ER' }
-  }
-];
+const query = groq`*[_type == "post"] | order(publishedAt desc) { _id, title, slug, mainImage, excerpt, publishedAt }`
+const { data: posts, pending } = await useSanityQuery(query)
+
+const formatDate = (dateString) => {
+  if (!dateString) return 'Latest Release'
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  }).format(new Date(dateString))
+}
+
+useHead({
+  title: 'Blog | Novel Solar Insights & Technology News',
+  meta: [
+    { name: 'description', content: 'Explore latest solar technology insights, maintenance guides, and sustainable energy news from the experts at Novel Solar.' }
+  ]
+})
 </script>
+
+<style scoped>
+/* Optional: Adding custom hover smoothing for the whole card */
+.group {
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+</style>

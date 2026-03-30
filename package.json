@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@nuxt/image": "^2.0.0",
+    "@nuxtjs/sanity": "^2.2.0",
     "@vueuse/core": "^14.2.1",
     "@vueuse/nuxt": "^14.2.1",
     "cloudinary": "^2.9.0",
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.14.0",
+    "@tailwindcss/typography": "^0.5.19",
     "@types/node": "^25.5.0",
     "@types/nodemailer": "^7.0.11",
     "autoprefixer": "^10.4.27",
