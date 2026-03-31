@@ -354,7 +354,8 @@
             <ul class="space-y-3">
               <li><NuxtLink to="/category/solar-panels" class="text-sm text-gray-500 hover:text-primary transition-colors">Solar Panels</NuxtLink></li>
               <li><NuxtLink to="/category/inverters" class="text-sm text-gray-500 hover:text-primary transition-colors">Inverters</NuxtLink></li>
-              <li><NuxtLink to="/category/batteries" class="text-sm text-gray-500 hover:text-primary transition-colors">Batteries</NuxtLink></li>
+              <li><NuxtLink to="/category/lighting" class="text-sm text-gray-500 hover:text-primary transition-colors">Lighting</NuxtLink></li>
+              <li><NuxtLink to="/category/power-banks" class="text-sm text-gray-500 hover:text-primary transition-colors">Power Banks</NuxtLink></li>
               <li><NuxtLink to="/category/accessories" class="text-sm text-gray-500 hover:text-primary transition-colors">Accessories</NuxtLink></li>
             </ul>
           </div>
@@ -453,6 +454,8 @@ const productMenu = [
   { title: 'Inverters' },
   { title: 'Batteries' },
   { title: 'Charge Controllers' },
+  { title: 'Lighting' },
+  { title: 'Power Banks' },
   { title: 'Accessories' }
 ]
 

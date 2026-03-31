@@ -40,12 +40,19 @@ const { data: products, pending } = useFetch('/api/inventory')
 const filteredProducts = computed(() => {
   if (!products.value) return []
   const searchQuery = route.query.q
-  if (!searchQuery) return products.value
+  const query = searchQuery ? searchQuery.toString().toLowerCase() : ''
   
-  const query = searchQuery.toString().toLowerCase()
-  return products.value.filter(p => 
-    p.NAME.toLowerCase().includes(query)
-  )
+  return products.value.filter(p => {
+    const name = p.NAME.toLowerCase()
+    
+    // Always exclude service items from the global products list
+    if (name.includes('audit') || name.includes('installation') || name.includes('repair') || name.includes('maintenance')) return false
+    
+    // If there is a search query, filter by it
+    if (query && !name.includes(query)) return false
+    
+    return true
+  })
 })
 
 // SEO
