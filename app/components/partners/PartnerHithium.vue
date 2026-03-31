@@ -58,7 +58,7 @@
                  EV-Grade LFP Cells (10,000+ Cycle Life)
                </li>
              </ul>
-             <NuxtLink to="/shop/1405" class="inline-flex items-center gap-3 bg-[#00164d] text-white px-10 py-5 rounded-3xl font-black uppercase tracking-widest hover:bg-[#002888] hover:shadow-2xl hover:-translate-y-1 transition-all shadow-xl">
+             <NuxtLink to="/partners/hithium/shop" class="inline-flex items-center gap-3 bg-[#00164d] text-white px-10 py-5 rounded-3xl font-black uppercase tracking-widest hover:bg-[#002888] hover:shadow-2xl hover:-translate-y-1 transition-all shadow-xl">
                 Buy It Now
                 <span class="material-symbols-outlined">shopping_cart</span>
              </NuxtLink>
@@ -95,7 +95,7 @@
                  Uninterruptible Power Supply (UPS) Functionality
                </li>
              </ul>
-             <NuxtLink to="/shop/1406" class="inline-flex items-center gap-3 bg-[#00AEEF] text-[#00164d] px-10 py-5 rounded-3xl font-black uppercase tracking-widest hover:bg-cyan-400 hover:shadow-2xl hover:-translate-y-1 transition-all shadow-xl">
+             <NuxtLink to="/partners/hithium/shop" class="inline-flex items-center gap-3 bg-[#00AEEF] text-[#00164d] px-10 py-5 rounded-3xl font-black uppercase tracking-widest hover:bg-cyan-400 hover:shadow-2xl hover:-translate-y-1 transition-all shadow-xl">
                 Buy It Now
                 <span class="material-symbols-outlined font-black">shopping_cart</span>
              </NuxtLink>
