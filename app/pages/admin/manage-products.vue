@@ -1,5 +1,6 @@
 <script setup>
-const adminPasscode = ref('')
+definePageMeta({ middleware: 'admin' })
+
 const searchQuery = ref('')
 const isSearching = ref(false)
 const searchResults = ref([])
@@ -31,19 +32,13 @@ const performSearch = async () => {
     return
   }
 
-  if (!adminPasscode.value) {
-    alert('Admin passcode required')
-    return
-  }
-
   isSearching.value = true
 
   try {
     const response = await $fetch('/api/admin/search-products', {
       method: 'POST',
       body: {
-        query: searchQuery.value,
-        adminPasscode: adminPasscode.value
+        query: searchQuery.value
       }
     })
 
@@ -97,8 +92,7 @@ const saveChanges = async () => {
         productName: editForm.value.name,
         productPrice: editForm.value.price,
         productDescription: editForm.value.description,
-        productSpecs: editForm.value.specs,
-        adminPasscode: adminPasscode.value
+        productSpecs: editForm.value.specs
       }
     })
 
@@ -125,7 +119,7 @@ const confirmDelete = () => {
 }
 
 const deleteProduct = async () => {
-  if (!editForm.value.id || !adminPasscode.value) {
+  if (!editForm.value.id) {
     alert('Missing required information')
     return
   }
@@ -138,8 +132,7 @@ const deleteProduct = async () => {
       method: 'POST',
       body: {
         productId: editForm.value.id,
-        productName: editForm.value.name,
-        adminPasscode: adminPasscode.value
+        productName: editForm.value.name
       }
     })
 
@@ -159,28 +152,27 @@ useHead({
   title: 'Manage Products | Novel Solar Admin',
   meta: [{ name: 'description', content: 'Search and edit existing products' }]
 })
+
+const handleLogout = async () => {
+  try {
+    await $fetch('/api/admin/auth/logout', { method: 'POST' })
+    navigateTo('/admin/login')
+  } catch (error) {
+    console.error('Logout failed:', error)
+  }
+}
 </script>
 
 <template>
   <div class="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-7xl mx-auto">
-      <div class="mb-10 text-center">
+      <div class="mb-10 text-center relative">
         <h1 class="text-4xl font-black text-slate-900 mb-2 tracking-tight">Manage Products</h1>
         <p class="text-slate-500 font-medium italic">Search and edit existing inventory</p>
-      </div>
-
-      <!-- Admin Passcode -->
-      <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 mb-8">
-        <div class="max-w-md">
-          <label class="block text-sm font-black text-slate-700 uppercase tracking-wider mb-2">Admin Passcode</label>
-          <input
-            v-model="adminPasscode"
-            type="password"
-            placeholder="••••••••"
-            class="w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:ring-4 focus:ring-purple-500/10 focus:border-purple-500 outline-none transition-all font-mono"
-            :disabled="isSearching || isSaving"
-          />
-        </div>
+        <button @click="handleLogout" class="absolute top-0 right-0 px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all">
+          <span class="material-symbols-outlined text-sm">logout</span>
+          Logout
+        </button>
       </div>
 
       <div v-if="!isEditing" class="space-y-8">

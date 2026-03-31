@@ -1,16 +1,9 @@
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
-  const { query, adminPasscode } = body;
+  const { query } = body;
   const config = useRuntimeConfig();
 
-  // Security: Validate Admin Passcode
-  const actualPasscode = process.env.ADMIN_UPLOAD_PASSCODE;
-  if (!adminPasscode || adminPasscode !== actualPasscode) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: 'Unauthorized: Invalid Passcode',
-    });
-  }
+  // Security check handled by admin-auth server middleware
 
   if (!query || query.trim().length < 2) {
     throw createError({
