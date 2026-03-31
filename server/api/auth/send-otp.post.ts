@@ -1,5 +1,11 @@
 import nodemailer from 'nodemailer';
 
+const RATE_LIMIT = {
+  THROTTLE_MS: 2 * 60 * 1000, // 2 minutes between requests
+  MAX_PER_HOUR: 5, // Max 5 OTPs per hour
+  HOUR_WINDOW_MS: 60 * 60 * 1000, // 1 hour
+};
+
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   const { email } = body;
@@ -12,16 +18,84 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // 1. Generate a random 6-digit numeric string
+  // 1. Rate limiting checks
+  const storage = useStorage('cache');
+  const throttleKey = `otp:throttle:${email}`;
+  const attemptsKey = `otp:attempts:${email}`;
+  const failedKey = `otp:failed:${email}`;
+
+  // Check for too many failed verification attempts
+  const failedAttempts = (await storage.getItem(failedKey) as { count: number } | null) || { count: 0 };
+  if (failedAttempts.count >= 5) {
+    throw createError({
+      statusCode: 429,
+      statusMessage: 'Too many failed attempts. Please try again in 1 hour.',
+      data: {
+        type: 'failed_attempts_exceeded',
+        retryAfter: 3600,
+        message: 'Account temporarily locked due to too many failed attempts'
+      }
+    });
+  }
+
+  // Check throttle (minimum time between requests)
+  const lastRequest = await storage.getItem(throttleKey) as { timestamp: number } | null;
+  if (lastRequest && Date.now() - lastRequest.timestamp < RATE_LIMIT.THROTTLE_MS) {
+    const secondsRemaining = Math.ceil((RATE_LIMIT.THROTTLE_MS - (Date.now() - lastRequest.timestamp)) / 1000);
+    throw createError({
+      statusCode: 429,
+      statusMessage: `Please wait ${secondsRemaining} seconds before requesting another code.`,
+      data: {
+        type: 'throttle',
+        retryAfter: secondsRemaining,
+        message: 'Please wait before requesting another code'
+      }
+    });
+  }
+
+  // Check hourly limit
+  const attempts = (await storage.getItem(attemptsKey) as { count: number; resetTime: number } | null) || {
+    count: 0,
+    resetTime: Date.now() + RATE_LIMIT.HOUR_WINDOW_MS
+  };
+
+  // Reset if hour window has passed
+  if (Date.now() > attempts.resetTime) {
+    attempts.count = 0;
+    attempts.resetTime = Date.now() + RATE_LIMIT.HOUR_WINDOW_MS;
+  }
+
+  if (attempts.count >= RATE_LIMIT.MAX_PER_HOUR) {
+    const minutesRemaining = Math.ceil((attempts.resetTime - Date.now()) / 60000);
+    throw createError({
+      statusCode: 429,
+      statusMessage: `Too many OTP requests. Please try again in ${minutesRemaining} minutes.`,
+      data: {
+        type: 'hourly_limit_exceeded',
+        retryAfter: Math.ceil((attempts.resetTime - Date.now()) / 1000),
+        resetTime: attempts.resetTime,
+        message: 'Too many requests in the last hour'
+      }
+    });
+  }
+
+  // 2. Generate a random 6-digit numeric string
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-  // 2. Save OTP in Nitro storage (expires in 10 minutes)
-  await useStorage('cache').setItem(`otp:${email}`, { 
+  // 3. Save OTP in Nitro storage (expires in 10 minutes)
+  await storage.setItem(`otp:${email}`, { 
     code: otp, 
     expires: Date.now() + 10 * 60 * 1000 
   });
 
-  // 3. SMTP configuration (copied from checkout handler)
+  // 4. Update rate limiting trackers
+  await storage.setItem(throttleKey, { timestamp: Date.now() }, { ttl: RATE_LIMIT.THROTTLE_MS / 1000 });
+  await storage.setItem(attemptsKey, { 
+    count: attempts.count + 1, 
+    resetTime: attempts.resetTime 
+  }, { ttl: RATE_LIMIT.HOUR_WINDOW_MS / 1000 });
+
+  // 5. SMTP configuration (copied from checkout handler)
   if (config.smtpUser && config.smtpPass) {
     try {
       const transporter = nodemailer.createTransport({

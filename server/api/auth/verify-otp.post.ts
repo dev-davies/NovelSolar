@@ -11,12 +11,20 @@ export default defineEventHandler(async (event) => {
     });
   }
 
+  const storage = useStorage('cache');
+  const failedKey = `otp:failed:${email}`;
+
   // 1. Fetch stored OTP data
   const storageKey = `otp:${email}`;
-  const stored = await useStorage('cache').getItem(storageKey) as { code: string, expires: number } | null;
+  const stored = await storage.getItem(storageKey) as { code: string, expires: number } | null;
 
   // 2. Validate OTP
   if (!stored || stored.code !== otp || Date.now() > stored.expires) {
+    // Track failed verification attempt
+    const failedAttempts = (await storage.getItem(failedKey) as { count: number } | null) || { count: 0 };
+    failedAttempts.count += 1;
+    await storage.setItem(failedKey, failedAttempts, { ttl: 60 * 60 }); // 1 hour TTL
+
     throw createError({
       statusCode: 401,
       statusMessage: 'Invalid or expired code',
@@ -24,7 +32,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // 3. Immediately delete OTP from storage
-  await useStorage('cache').removeItem(storageKey);
+  await storage.removeItem(storageKey);
 
   // 4. Sync with Bitrix CRM
   let contactId = null;
@@ -86,6 +94,9 @@ export default defineEventHandler(async (event) => {
     sameSite: 'lax',
     maxAge: 60 * 60 * 24 * 7 // 7 days
   });
+
+  // 6. Clear failed attempts on successful login
+  await storage.removeItem(failedKey);
 
   return { 
     success: true, 
