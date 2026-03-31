@@ -1,18 +1,18 @@
-<script setup lang="ts">
+<script setup>
 const email = ref('');
 const otp = ref('');
 const step = ref(1); // 1: Email, 2: OTP
 const isLoading = ref(false);
 const errorMessage = ref('');
-const errorData = ref<any>(null);
+const errorData = ref(null);
 
 // Resend OTP Countdown
 const resendTimer = ref(0);
-let timerInterval: ReturnType<typeof setInterval> | null = null;
+let timerInterval = null;
 
 // Rate limit countdown
 const rateLimitTimer = ref(0);
-let rateLimitInterval: ReturnType<typeof setInterval> | null = null;
+let rateLimitInterval = null;
 
 const startResendTimer = () => {
   resendTimer.value = 60;
@@ -21,19 +21,19 @@ const startResendTimer = () => {
     if (resendTimer.value > 0) {
       resendTimer.value--;
     } else {
-      clearInterval(timerInterval!);
+      clearInterval(timerInterval);
     }
   }, 1000);
 };
 
-const startRateLimitTimer = (seconds: number) => {
+const startRateLimitTimer = (seconds) => {
   rateLimitTimer.value = seconds;
   if (rateLimitInterval) clearInterval(rateLimitInterval);
   rateLimitInterval = setInterval(() => {
     if (rateLimitTimer.value > 0) {
       rateLimitTimer.value--;
     } else {
-      clearInterval(rateLimitInterval!);
+      clearInterval(rateLimitInterval);
     }
   }, 1000);
 };
@@ -80,7 +80,7 @@ const handleSendOtp = async () => {
     });
     step.value = 2;
     startResendTimer();
-  } catch (error: any) {
+  } catch (error) {
     errorMessage.value = error.data?.statusMessage || 'Failed to send code. Please try again.';
     errorData.value = error.data?.data || null;
     
@@ -114,7 +114,7 @@ const handleVerifyOtp = async () => {
     });
     // Redirect to account page on success
     navigateTo('/account');
-  } catch (error: any) {
+  } catch (error) {
     errorMessage.value = error.data?.statusMessage || 'Invalid or expired code.';
     errorData.value = error.data?.data || null;
   } finally {
