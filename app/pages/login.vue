@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 const email = ref('');
 const otp = ref('');
 const step = ref(1); // 1: Email, 2: OTP
