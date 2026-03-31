@@ -4,10 +4,15 @@ const otp = ref('');
 const step = ref(1); // 1: Email, 2: OTP
 const isLoading = ref(false);
 const errorMessage = ref('');
+const errorData = ref<any>(null);
 
 // Resend OTP Countdown
 const resendTimer = ref(0);
-let timerInterval = null;
+let timerInterval: ReturnType<typeof setInterval> | null = null;
+
+// Rate limit countdown
+const rateLimitTimer = ref(0);
+let rateLimitInterval: ReturnType<typeof setInterval> | null = null;
 
 const startResendTimer = () => {
   resendTimer.value = 60;
@@ -16,23 +21,57 @@ const startResendTimer = () => {
     if (resendTimer.value > 0) {
       resendTimer.value--;
     } else {
-      clearInterval(timerInterval);
+      clearInterval(timerInterval!);
     }
   }, 1000);
 };
 
+const startRateLimitTimer = (seconds: number) => {
+  rateLimitTimer.value = seconds;
+  if (rateLimitInterval) clearInterval(rateLimitInterval);
+  rateLimitInterval = setInterval(() => {
+    if (rateLimitTimer.value > 0) {
+      rateLimitTimer.value--;
+    } else {
+      clearInterval(rateLimitInterval!);
+    }
+  }, 1000);
+};
+
+const getErrorDisplay = () => {
+  if (!errorData.value) return errorMessage.value;
+  
+  const { type, retryAfter } = errorData.value;
+  
+  switch (type) {
+    case 'throttle':
+      const secs = rateLimitTimer.value || retryAfter;
+      return `Please wait ${secs} second${secs !== 1 ? 's' : ''} before requesting another code`;
+    case 'hourly_limit_exceeded':
+      const mins = Math.ceil((rateLimitTimer.value || retryAfter) / 60);
+      return `Too many requests. Please try again in ${mins} minute${mins !== 1 ? 's' : ''}`;
+    case 'failed_attempts_exceeded':
+      return 'Account temporarily locked due to too many failed attempts. Please try again later';
+    default:
+      return errorMessage.value;
+  }
+};
+
 onUnmounted(() => {
   if (timerInterval) clearInterval(timerInterval);
+  if (rateLimitInterval) clearInterval(rateLimitInterval);
 });
 
 const handleSendOtp = async () => {
   if (!email.value) {
     errorMessage.value = 'Please enter your email address.';
+    errorData.value = null;
     return;
   }
 
   isLoading.value = true;
   errorMessage.value = '';
+  errorData.value = null;
 
   try {
     await $fetch('/api/auth/send-otp', {
@@ -41,8 +80,14 @@ const handleSendOtp = async () => {
     });
     step.value = 2;
     startResendTimer();
-  } catch (error) {
+  } catch (error: any) {
     errorMessage.value = error.data?.statusMessage || 'Failed to send code. Please try again.';
+    errorData.value = error.data?.data || null;
+    
+    // Start rate limit timer if rate limited
+    if (error.status === 429 && errorData.value?.retryAfter) {
+      startRateLimitTimer(errorData.value.retryAfter);
+    }
   } finally {
     isLoading.value = false;
   }
@@ -51,11 +96,13 @@ const handleSendOtp = async () => {
 const handleVerifyOtp = async () => {
   if (otp.value.length !== 6) {
     errorMessage.value = 'Please enter the 6-digit verification code.';
+    errorData.value = null;
     return;
   }
 
   isLoading.value = true;
   errorMessage.value = '';
+  errorData.value = null;
 
   try {
     await $fetch('/api/auth/verify-otp', {
@@ -67,8 +114,9 @@ const handleVerifyOtp = async () => {
     });
     // Redirect to account page on success
     navigateTo('/account');
-  } catch (error) {
+  } catch (error: any) {
     errorMessage.value = error.data?.statusMessage || 'Invalid or expired code.';
+    errorData.value = error.data?.data || null;
   } finally {
     isLoading.value = false;
   }
@@ -126,14 +174,14 @@ useHead({
               <p class="text-[11px] text-slate-400 mt-2 font-medium">If you don't have an account, we will securely create one for you.</p>
             </div>
 
-            <p v-if="errorMessage" class="text-[#a9001d] text-sm font-bold flex items-center gap-2 bg-red-50 p-3 rounded-xl border border-red-100">
-              <span class="material-symbols-outlined text-base">error</span>
-              {{ errorMessage }}
+            <p v-if="errorMessage" class="text-[#a9001d] text-sm font-bold flex items-start gap-2 bg-red-50 p-3 rounded-xl border border-red-100">
+              <span class="material-symbols-outlined text-base flex-shrink-0 mt-0.5">error</span>
+              <span>{{ getErrorDisplay() }}</span>
             </p>
 
             <button 
               type="submit"
-              :disabled="isLoading"
+              :disabled="isLoading || rateLimitTimer > 0"
               class="w-full bg-[#3c59b0] text-white py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-900 transition-all shadow-lg shadow-blue-900/10 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               <span v-if="isLoading" class="animate-spin border-2 border-white/30 border-t-white w-4 h-4 rounded-full"></span>
@@ -164,9 +212,9 @@ useHead({
               />
             </div>
 
-            <p v-if="errorMessage" class="text-[#a9001d] text-sm font-bold flex items-center gap-2 bg-red-50 p-3 rounded-xl border border-red-100">
-              <span class="material-symbols-outlined text-base">error</span>
-              {{ errorMessage }}
+            <p v-if="errorMessage" class="text-[#a9001d] text-sm font-bold flex items-start gap-2 bg-red-50 p-3 rounded-xl border border-red-100">
+              <span class="material-symbols-outlined text-base flex-shrink-0 mt-0.5">error</span>
+              <span>{{ getErrorDisplay() }}</span>
             </p>
 
             <button 
@@ -182,7 +230,7 @@ useHead({
             <div class="flex flex-col items-center gap-4 mt-6">
               <button 
                 type="button" 
-                @click="step = 1; errorMessage = ''" 
+                @click="step = 1; errorMessage = ''; errorData = null" 
                 class="text-xs font-bold text-slate-400 hover:text-slate-600 uppercase tracking-widest transition-colors flex items-center gap-1"
                 :disabled="isLoading"
               >
@@ -192,10 +240,12 @@ useHead({
               <button 
                 type="button" 
                 @click="handleSendOtp" 
-                class="text-xs font-bold text-[#3c59b0] hover:text-blue-800 uppercase tracking-widest transition-colors disabled:text-slate-300"
-                :disabled="isLoading || resendTimer > 0"
+                :disabled="isLoading || resendTimer > 0 || rateLimitTimer > 0"
+                class="text-xs font-bold uppercase tracking-widest transition-colors flex items-center gap-1"
+                :class="(isLoading || resendTimer > 0 || rateLimitTimer > 0) ? 'text-slate-300 cursor-not-allowed' : 'text-[#3c59b0] hover:text-blue-800'"
               >
-                {{ resendTimer > 0 ? `Resend Code in ${resendTimer}s` : 'Resend Code' }}
+                <span class="material-symbols-outlined text-xs">refresh</span>
+                {{ resendTimer > 0 ? `Resend in ${resendTimer}s` : rateLimitTimer > 0 ? `Try again in ${rateLimitTimer}s` : 'Resend Code' }}
               </button>
             </div>
           </form>
