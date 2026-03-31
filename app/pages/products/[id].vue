@@ -24,7 +24,7 @@
           <div v-if="pending" class="w-full h-full bg-gray-50 animate-pulse rounded-2xl"></div>
           <NuxtImg 
             v-else
-            :src="product?.DETAIL_PICTURE?.showUrl || product?.PREVIEW_PICTURE?.showUrl || '/placeholder-image.jpg'" 
+            :src="getProductImage(product)" 
             :alt="product?.NAME" 
             class="w-full h-full object-cover rounded-lg shadow-sm transition-all duration-500 transform hover:scale-105" 
           />
@@ -195,6 +195,7 @@
 <script setup>
 const { addToCart: doAddToCart } = useCart()
 const { addToast } = useToast()
+const { getProductImage } = useProductImage()
 
 const addToCart = () => {
   if (product.value) {

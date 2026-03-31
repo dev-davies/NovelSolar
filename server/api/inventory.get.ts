@@ -1,3 +1,5 @@
+import { normalizeProperty } from '~/server/utils/normalizeProperty';
+
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
   
@@ -92,15 +94,6 @@ export default defineEventHandler(async (event) => {
 
   // ─── PHASE 3: Merge image data back onto product list ───
   return allProducts.map(product => {
-    // Normalize properties for consistent API output
-    const normalizeProperty = (val: any) => {
-      if (!val) return null;
-      if (Array.isArray(val) && val.length > 0) {
-        return val[0].value || val[0];
-      }
-      return val;
-    };
-
     const p = {
       ...product,
       DETAIL_PICTURE: imageMap[product.ID]?.DETAIL_PICTURE ?? null,

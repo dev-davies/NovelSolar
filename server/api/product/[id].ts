@@ -1,3 +1,5 @@
+import { normalizeProperty } from '~/server/utils/normalizeProperty';
+
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
   const id = getRouterParam(event, 'id');
@@ -12,14 +14,6 @@ export default defineEventHandler(async (event) => {
     const product = response.result || null;
     
     if (product) {
-      const normalizeProperty = (val: any) => {
-        if (!val) return null;
-        if (Array.isArray(val) && val.length > 0) {
-          return val[0].value || val[0];
-        }
-        return val;
-      };
-
       product.PROPERTY_102 = normalizeProperty(product.PROPERTY_102);
       product.PROPERTY_104 = normalizeProperty(product.PROPERTY_104);
       product.PROPERTY_112 = normalizeProperty(product.PROPERTY_112);
