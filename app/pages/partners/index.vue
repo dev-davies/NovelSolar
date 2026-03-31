@@ -21,11 +21,20 @@
           :to="'/partners/' + partner.slug"
           class="group bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col items-center text-center"
         >
-          <!-- Logo Placeholder Area -->
-          <div class="w-full aspect-[3/2] bg-slate-50 rounded-2xl mb-8 flex items-center justify-center border-2 border-dashed border-slate-200 group-hover:bg-blue-50 group-hover:border-[#002888]/20 transition-colors overflow-hidden">
-            <div class="text-[#002888] font-black text-2xl opacity-20 group-hover:opacity-40 tracking-widest uppercase">
-              {{ partner.name }}
-            </div>
+          <div class="w-full aspect-[3/2] bg-slate-50 rounded-2xl mb-8 flex items-center justify-center border-2 border-slate-100 group-hover:bg-blue-50/50 group-hover:border-[#002888]/20 transition-all overflow-hidden p-6 relative">
+            <template v-if="partner.logo">
+              <img 
+                :src="partner.logo" 
+                :alt="partner.name + ' Logo'" 
+                class="w-full h-full object-contain filter group-hover:scale-105 transition-transform duration-500 ease-out z-10 relative"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-100/50 block z-0"></div>
+            </template>
+            <template v-else>
+              <div class="text-[#002888] font-black text-2xl opacity-20 group-hover:opacity-40 tracking-widest uppercase">
+                {{ partner.name }}
+              </div>
+            </template>
           </div>
 
           <h3 class="text-2xl font-black text-slate-900 mb-3 group-hover:text-[#002888] transition-colors">
@@ -72,11 +81,11 @@
 
 <script setup>
 const partners = [
-  { name: 'Itel', slug: 'itel', desc: 'Premium solar panels and energy solutions designed for reliability.' },
-  { name: 'Haisic', slug: 'haisic', desc: 'High-efficiency inverters and battery systems for smart energy management.' },
-  { name: 'Yinergy', slug: 'yinergy', desc: 'Advanced renewable energy storage solutions for residential and commercial use.' },
-  { name: 'Hithium', slug: 'hithium', desc: 'Next-generation lithium battery technology powering long-lasting energy storage.' },
-  { name: 'Livoltek', slug: 'livoltek', desc: 'Smart solar solutions and EV chargers integrating seamlessly into modern homes.' }
+  { name: 'Itel', slug: 'itel', desc: 'Premium solar panels and energy solutions designed for reliability.', logo: '/images/itel_logo.png' },
+  { name: 'Haisic', slug: 'haisic', desc: 'High-efficiency inverters and battery systems for smart energy management.', logo: '/images/haisic_logo.png' },
+  { name: 'Yinergy', slug: 'yinergy', desc: 'Advanced renewable energy storage solutions for residential and commercial use.', logo: '/images/jinergy_logo.png' },
+  { name: 'Hithium', slug: 'hithium', desc: 'Next-generation lithium battery technology powering long-lasting energy storage.', logo: '/images/Hithium_logo.png' },
+  { name: 'Livoltek', slug: 'livoltek', desc: 'Smart solar solutions and EV chargers integrating seamlessly into modern homes.', logo: '/images/livoltek_logo.png' }
 ];
 
 useHead({
