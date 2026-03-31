@@ -1,5 +1,6 @@
 <script setup>
-const adminPasscode = ref('')
+definePageMeta({ middleware: 'admin' })
+
 const isUploading = ref(false)
 const uploadProgress = ref({})
 const uploadResults = ref({})
@@ -42,11 +43,6 @@ const getDuplicatesInBatch = () => {
 }
 
 const checkExistingProducts = async () => {
-  if (!adminPasscode.value) {
-    alert('Enter admin passcode first')
-    return
-  }
-
   checkingDuplicates.value = true
   existingProducts.value = {}
   
@@ -63,8 +59,7 @@ const checkExistingProducts = async () => {
     const response = await $fetch('/api/admin/check-duplicates', {
       method: 'POST',
       body: {
-        productNames,
-        adminPasscode: adminPasscode.value
+        productNames
       }
     })
 
@@ -161,10 +156,6 @@ const validateBatch = () => {
   const errors = []
   const batchDuplicates = getBatchDuplicates()
   
-  if (!adminPasscode.value) {
-    errors.push('Admin passcode is required')
-  }
-  
   products.value.forEach((product, index) => {
     if (!product.name) errors.push(`Product ${index + 1}: Name is required`)
     if (!product.price) errors.push(`Product ${index + 1}: Price is required`)
@@ -227,8 +218,6 @@ const submitBatch = async () => {
         formData.append('galleryImages', file)
       })
 
-      formData.append('adminPasscode', adminPasscode.value)
-
       const response = await $fetch('/api/admin/upload-product', {
         method: 'POST',
         body: formData,
@@ -279,7 +268,6 @@ const submitBatch = async () => {
       image: null,
       gallery: []
     }]
-    adminPasscode.value = ''
     existingProducts.value = {}
   } else {
     alert(summary)
@@ -290,33 +278,30 @@ useHead({
   title: 'Add Products | Novel Solar Admin',
   meta: [{ name: 'description', content: 'Batch upload products to Novel Solar' }]
 })
+
+const handleLogout = async () => {
+  try {
+    await $fetch('/api/admin/auth/logout', { method: 'POST' })
+    navigateTo('/admin/login')
+  } catch (error) {
+    console.error('Logout failed:', error)
+  }
+}
 </script>
 
 <template>
   <div class="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-7xl mx-auto">
-      <div class="mb-10 text-center">
+      <div class="mb-10 text-center relative">
         <h1 class="text-4xl font-black text-slate-900 mb-2 tracking-tight">Batch Upload Products</h1>
         <p class="text-slate-500 font-medium italic">Upload multiple products to Bitrix24 & Cloudinary simultaneously</p>
+        <button @click="handleLogout" class="absolute top-0 right-0 px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all">
+          <span class="material-symbols-outlined text-sm">logout</span>
+          Logout
+        </button>
       </div>
 
       <form @submit.prevent="submitBatch" class="space-y-8">
-        <!-- Admin Passcode Card -->
-        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8">
-          <div class="max-w-md">
-            <label for="adminPasscode" class="block text-sm font-black text-slate-700 uppercase tracking-wider mb-2">Admin Passcode</label>
-            <input
-              id="adminPasscode"
-              v-model="adminPasscode"
-              type="password"
-              placeholder="••••••••"
-              class="w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:ring-4 focus:ring-red-500/10 focus:border-red-500 outline-none transition-all font-mono"
-              required
-              :disabled="isUploading"
-            />
-          </div>
-        </div>
-
         <!-- Products Container -->
         <div class="space-y-6">
           <div class="flex items-center justify-between">
@@ -328,7 +313,7 @@ useHead({
               <button
                 type="button"
                 @click="checkExistingProducts"
-                :disabled="isUploading || checkingDuplicates || !adminPasscode"
+                :disabled="isUploading || checkingDuplicates"
                 class="flex items-center gap-2 px-5 py-3 bg-orange-100 text-orange-700 font-black rounded-2xl hover:bg-orange-200 transition-all disabled:opacity-50"
               >
                 <span v-if="checkingDuplicates" class="animate-spin inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full"></span>

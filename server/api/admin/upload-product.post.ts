@@ -19,13 +19,7 @@ export default defineEventHandler(async (event) => {
     return field ? field.data.toString() : null;
   };
 
-  // 2. Security Check: Validate Admin Passcode
-  const submittedPasscode = getField('adminPasscode');
-  const actualPasscode = process.env.ADMIN_UPLOAD_PASSCODE;
-
-  if (!submittedPasscode || submittedPasscode !== actualPasscode) {
-    throw createError({ statusCode: 401, statusMessage: 'Unauthorized: Invalid Passcode' });
-  }
+  // Removed passcode check - Handled globally by admin-auth server middleware
 
   // 3. Extract Product Fields
   let productName = getField('productName');
