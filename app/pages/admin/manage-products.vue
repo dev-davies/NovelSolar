@@ -10,6 +10,11 @@ const isSaving = ref(false)
 const isDeleting = ref(false)
 const showDeleteConfirm = ref(false)
 
+// Pagination state
+const nextOffset = ref(null)
+const totalProducts = ref(0)
+const isLoadingMore = ref(false)
+
 // Edit form state
 const editForm = ref({
   id: '',
@@ -24,26 +29,38 @@ const resetSearch = () => {
   searchResults.value = []
   selectedProduct.value = null
   isEditing.value = false
+  nextOffset.value = null
+  totalProducts.value = 0
 }
 
-const performSearch = async () => {
-  if (!searchQuery.value.trim()) {
-    alert('Enter a product name to search')
-    return
+const performSearch = async (isLoadMore = false) => {
+  if (isLoadMore) {
+    isLoadingMore.value = true
+  } else {
+    isSearching.value = true
+    searchResults.value = [] // Clear existing results if it's a fresh search
+    nextOffset.value = null
   }
-
-  isSearching.value = true
 
   try {
     const response = await $fetch('/api/admin/search-products', {
       method: 'POST',
       body: {
-        query: searchQuery.value
+        query: searchQuery.value,
+        start: isLoadMore ? nextOffset.value : 0
       }
     })
 
-    searchResults.value = response.products || []
-    if (searchResults.value.length === 0) {
+    if (isLoadMore) {
+      searchResults.value = [...searchResults.value, ...(response.products || [])]
+    } else {
+      searchResults.value = response.products || []
+    }
+
+    nextOffset.value = response.next || null
+    totalProducts.value = response.total || 0
+
+    if (searchResults.value.length === 0 && !isLoadMore) {
       alert('No products found')
     }
   } catch (error) {
@@ -51,6 +68,7 @@ const performSearch = async () => {
     alert(error.data?.statusMessage || 'Search failed')
   } finally {
     isSearching.value = false
+    isLoadingMore.value = false
   }
 }
 
@@ -161,6 +179,10 @@ const handleLogout = async () => {
     console.error('Logout failed:', error)
   }
 }
+
+onMounted(() => {
+  performSearch(true)
+})
 </script>
 
 <template>
@@ -186,18 +208,18 @@ const handleLogout = async () => {
                 type="text"
                 placeholder="Search by product name..."
                 class="w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:ring-4 focus:ring-purple-500/10 focus:border-purple-500 outline-none transition-all"
-                @keyup.enter="performSearch"
+                @keyup.enter="() => performSearch(false)"
                 :disabled="isSearching"
               />
             </div>
             <button
-              @click="performSearch"
-              :disabled="isSearching || !searchQuery"
+              @click="() => performSearch(false)"
+              :disabled="isSearching"
               class="w-full px-5 py-4 bg-purple-600 text-white font-black rounded-2xl hover:bg-purple-700 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
               <span v-if="isSearching" class="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>
-              <span class="material-symbols-outlined">search</span>
-              {{ isSearching ? 'Searching...' : 'Search' }}
+              <span class="material-symbols-outlined">{{ searchQuery ? 'search' : 'sync' }}</span>
+              {{ isSearching ? 'Processing...' : (searchQuery ? 'Filter' : 'Fetch All') }}
             </button>
           </div>
         </div>
@@ -239,6 +261,24 @@ const handleLogout = async () => {
                 <span class="material-symbols-outlined text-slate-400 text-2xl self-center">edit</span>
               </div>
             </div>
+          </div>
+
+          <!-- Pagination UI -->
+          <div v-if="searchResults.length > 0" class="flex flex-col items-center pt-8 pb-4">
+            <p class="text-sm font-bold text-slate-400 mb-4">
+              Showing {{ searchResults.length }} of {{ totalProducts }} products
+            </p>
+            
+            <button
+              v-if="nextOffset !== null"
+              @click="performSearch(true)"
+              :disabled="isLoadingMore"
+              class="px-8 py-3 bg-purple-50 text-purple-700 font-black rounded-2xl hover:bg-purple-100 transition-all disabled:opacity-50 flex items-center gap-2 border border-purple-200 shadow-sm"
+            >
+              <span v-if="isLoadingMore" class="animate-spin inline-block w-4 h-4 border-2 border-purple-700 border-t-transparent rounded-full"></span>
+              <span v-else class="material-symbols-outlined text-lg">expand_more</span>
+              {{ isLoadingMore ? 'Loading...' : 'Load Next 50 Products' }}
+            </button>
           </div>
         </div>
 

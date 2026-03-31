@@ -10,10 +10,10 @@
         <nav class="hidden lg:flex items-center gap-2">
           <!-- Desktop Product Dropdown -->
           <div class="relative group py-6 cursor-pointer">
-            <div class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 group-hover:text-[#002888] transition-colors">
+            <NuxtLink to="/shop" class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 group-hover:text-[#002888] transition-colors">
               Product
               <span class="inline-block text-gray-500 font-light ml-1 text-lg leading-none transition-transform duration-300 group-hover:rotate-45">+</span>
-            </div>
+            </NuxtLink>
             
             <!-- Simplified Product Dropdown -->
             <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-64 bg-white border border-gray-200 shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 py-2">
@@ -233,7 +233,9 @@
           <template v-for="link in ['Product', 'Services', 'Partners', 'About Us', 'Quote Request', 'Support']" :key="link">
             <!-- Simplified Product in Mobile Menu -->
             <div v-if="link === 'Product'" class="px-6 py-4 border-b border-gray-50">
-              <div class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-4">Our Products</div>
+              <NuxtLink to="/shop" class="flex items-center justify-between group/mob-prod" @click="isMobileMenuOpen = false">
+                <div class="text-[#002888] text-[10px] font-black uppercase tracking-widest mb-4 group-hover/mob-prod:underline">Shop All Products &rarr;</div>
+              </NuxtLink>
               <nav class="space-y-4">
                 <NuxtLink 
                   v-for="category in productMenu" 
