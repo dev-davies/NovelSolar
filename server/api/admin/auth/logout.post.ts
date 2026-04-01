@@ -1,27 +1,11 @@
-export default defineEventHandler(async (event) => {
-  const sessionId = getCookie(event, 'admin_session');
-
-  if (sessionId) {
-    // Invalidate session in storage
-    const storage = useStorage('cache');
-    await storage.removeItem(`admin:session:${sessionId}`);
-  }
-
-  // Clear both cookies
-  deleteCookie(event, 'admin_session', {
+export default defineEventHandler((event) => {
+  // Delete the secure cookie by setting its maxAge to 0
+  deleteCookie(event, 'admin_token', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax'
-  });
+    sameSite: 'strict',
+    path: '/'
+  })
 
-  deleteCookie(event, 'admin_auth_status', {
-    httpOnly: false,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax'
-  });
-
-  return { 
-    success: true, 
-    message: 'Admin logged out successfully' 
-  };
-});
+  return { success: true, message: 'Logged out successfully.' }
+})
