@@ -1,100 +1,46 @@
-import nodemailer from 'nodemailer';
-import { generateServiceBookingHtml } from '../utils/emailTemplate';
-
 export default defineEventHandler(async (event) => {
-  const body = await readBody(event);
-  const config = useRuntimeConfig();
-  const bitrixUrl = config.bitrixWebhookUrl || config.public.bitrixWebhookUrl;
+  const body = await readBody(event)
+  const config = useRuntimeConfig()
   
-  // Safely extract data
-  const { customer, serviceName, servicePrice, requestedDate, notes } = body;
-  
-  if (!customer || !customer.email || !requestedDate) {
-    throw createError({ statusCode: 400, message: 'Missing required booking information.' });
+  // Support both possible naming conventions in runtimeConfig
+  const webhookUrl = config.bitrixWebhookUrl || config.bitrixWebhook
+
+  if (!webhookUrl) {
+    throw createError({ statusCode: 500, statusMessage: 'CRM connection not configured.' })
   }
 
-  // 1. FORMAT FOR CRM
-  const crmComments = `
-    NEW SERVICE BOOKING REQUEST
-    Service: ${serviceName}
-    Requested Date: ${requestedDate}
-    Notes: ${notes || 'None'}
-    
-    CUSTOMER INFO:
-    Name: ${customer.firstName} ${customer.lastName}
-    Email: ${customer.email}
-    Phone: ${customer.phone}
-    Address: ${customer.address}
-  `;
+  // Ensure URL ends with a slash for safety
+  const normalizedUrl = webhookUrl.endsWith('/') ? webhookUrl : `${webhookUrl}/`
 
-  // 2. SEND TO BITRIX CRM (Create a Lead)
-  if (bitrixUrl) {
-    try {
-      console.log('Attempting to send service booking to Bitrix...');
-      await $fetch(`${bitrixUrl}crm.lead.add`, {
-        method: 'POST',
-        body: {
-          fields: {
-            TITLE: `Service Booking: ${serviceName} - ${customer.firstName} ${customer.lastName}`,
-            NAME: customer.firstName,
-            LAST_NAME: customer.lastName,
-            EMAIL: [{ VALUE: customer.email, VALUE_TYPE: "WORK" }],
-            PHONE: [{ VALUE: customer.phone, VALUE_TYPE: "WORK" }],
-            ADDRESS: customer.address,
-            OPPORTUNITY: servicePrice || 0,
-            CURRENCY_ID: "NGN",
-            COMMENTS: crmComments,
-            SOURCE_ID: "WEB" 
-          }
-        }
-      });
-      console.log('✅ Successfully created Service Booking Lead in Bitrix!');
-    } catch (error: any) {
-      console.error('❌ Bitrix CRM Error:', error?.data || error);
-      // We don't throw here so the customer still gets their email
-    }
-  } else {
-    console.error('❌ Bitrix Webhook URL is missing from Nuxt config!');
-  }
-
-  // 3. GENERATE EMAIL HTML
-  const bookingData = {
-    serviceName,
-    requestedDate,
-    price: servicePrice,
-    customerName: `${customer.firstName} ${customer.lastName}`,
-    address: customer.address,
-    requestDateStamp: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-  };
-
-  const premiumHtmlEmail = generateServiceBookingHtml(bookingData);
-
-  // 4. SEND CONFIRMATION EMAIL VIA BREVO/SMTP
-  if (config.smtpUser && config.smtpPass) {
-    try {
-      const transporter = nodemailer.createTransport({
-        pool: true,
-        host: config.smtpHost,
-        port: Number(config.smtpPort) || 587,
-        secure: false,
-        auth: { 
-          user: config.smtpUser, 
-          pass: config.smtpPass 
+  try {
+    // Format the data for Bitrix crm.lead.add
+    const response: any = await $fetch(`${normalizedUrl}crm.lead.add`, {
+      method: 'POST',
+      body: {
+        fields: {
+          TITLE: `Service Booking: ${body.serviceType}`,
+          NAME: body.firstName,
+          LAST_NAME: body.lastName,
+          EMAIL: [{ VALUE: body.email, VALUE_TYPE: "WORK" }],
+          PHONE: [{ VALUE: body.phone, VALUE_TYPE: "WORK" }],
+          // Put the crucial service details in the main comment block for the technician
+          COMMENTS: `SERVICE REQUEST DETAILS\n------------------------\nService: ${body.serviceType}\nPreferred Date: ${body.preferredDate}\nService Address: ${body.address}\n\nCustomer Notes:\n${body.details || 'None provided'}`,
+          SOURCE_ID: "WEB" 
         },
-        tls: { rejectUnauthorized: false }
-      });
+        params: { REGISTER_SONET_EVENT: "Y" } // Pings the sales/dispatch team in Bitrix
+      }
+    })
 
-      await transporter.sendMail({
-        from: config.smtpFrom,
-        to: customer.email,
-        subject: `Your Novel Solar Service Request: ${serviceName}`,
-        html: premiumHtmlEmail
-      });
-      console.log('✅ Successfully sent Service Booking Receipt Email!');
-    } catch (error) {
-      console.error('❌ Email Error:', error);
+    if (response.error) {
+      throw new Error(response.error_description)
     }
-  }
 
-  return { success: true, message: 'Booking processed successfully' };
-});
+    return { success: true, leadId: response.result }
+  } catch (error: any) {
+    console.error('Bitrix Booking Error:', error?.data || error)
+    throw createError({ 
+      statusCode: 500, 
+      statusMessage: 'Failed to submit booking request. Please try again later.' 
+    })
+  }
+})

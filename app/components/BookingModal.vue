@@ -1,143 +1,13 @@
-<template>
-  <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-    <!-- Backdrop -->
-    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" @click="closeModal"></div>
-
-    <!-- Modal Content -->
-    <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col transform transition-all">
-      
-      <!-- Header -->
-      <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-        <div>
-          <h2 class="text-2xl font-black text-[#002888]">Book Service</h2>
-          <p class="text-sm text-gray-500 font-medium mt-1">
-            {{ serviceName || 'Novel Solar Professional Service' }}
-          </p>
-        </div>
-        <button @click="closeModal" class="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400 hover:text-gray-600">
-          <span class="material-symbols-outlined">close</span>
-        </button>
-      </div>
-
-      <!-- Scrollable Form Area -->
-      <div class="p-8 overflow-y-auto hidden-scrollbar flex-1">
-        
-        <div v-if="submitSuccess" class="py-12 text-center text-green-600">
-           <span class="material-symbols-outlined text-[80px] mb-4 text-green-500">check_circle</span>
-           <h3 class="text-2xl font-black text-slate-900 mb-2">Request Received!</h3>
-           <p class="text-gray-600 font-medium">Your {{ serviceName }} request has been recorded. Our team will contact you shortly.</p>
-           <button @click="closeModal" class="mt-8 bg-black text-white px-8 py-3 rounded-xl font-bold uppercase tracking-wider hover:bg-gray-800 transition-colors">
-              Done
-           </button>
-        </div>
-
-        <form v-else @submit.prevent="submitBooking" class="space-y-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
-            <!-- Contact Details -->
-            <div class="md:col-span-2">
-              <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 border-b pb-2">Your Information</h3>
-            </div>
-            
-            <div class="space-y-1.5">
-              <label class="text-xs font-bold text-gray-600 uppercase tracking-wider">First Name <span class="text-red-500">*</span></label>
-              <input v-model="form.firstName" type="text" required
-                class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888] transition-all"
-                placeholder="e.g. John" />
-            </div>
-
-            <div class="space-y-1.5">
-              <label class="text-xs font-bold text-gray-600 uppercase tracking-wider">Last Name <span class="text-red-500">*</span></label>
-              <input v-model="form.lastName" type="text" required
-                class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888] transition-all"
-                placeholder="e.g. Doe" />
-            </div>
-
-            <div class="space-y-1.5">
-              <label class="text-xs font-bold text-gray-600 uppercase tracking-wider">Email Address <span class="text-red-500">*</span></label>
-              <input v-model="form.email" type="email" required
-                class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888] transition-all"
-                placeholder="john@example.com" />
-            </div>
-
-            <div class="space-y-1.5">
-              <label class="text-xs font-bold text-gray-600 uppercase tracking-wider">Phone Number <span class="text-red-500">*</span></label>
-              <input v-model="form.phone" type="tel" required
-                class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888] transition-all"
-                placeholder="0800 000 0000" />
-            </div>
-
-            <div class="md:col-span-2 space-y-1.5">
-              <label class="text-xs font-bold text-gray-600 uppercase tracking-wider">Service Location Address <span class="text-red-500">*</span></label>
-              <input v-model="form.address" type="text" required
-                class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888] transition-all"
-                placeholder="Full street address in Nigeria" />
-            </div>
-
-            <!-- Booking Details -->
-            <div class="md:col-span-2 mt-4">
-              <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 border-b pb-2">Scheduling</h3>
-            </div>
-
-            <div class="space-y-1.5 md:col-span-2">
-              <label class="text-xs font-bold text-gray-600 uppercase tracking-wider">Requested Date <span class="text-red-500">*</span></label>
-              <p class="text-xs text-gray-400 mb-2">Same-day booking is unavailable. Sundays are closed for service.</p>
-              <div class="relative">
-                 <input v-model="form.requestedDate" :min="tomorrowDate" type="date" required @input="validateDate"
-                  class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888] transition-all" />
-                 <span v-if="dateError" class="absolute -bottom-6 left-0 text-red-500 text-xs font-semibold">{{ dateError }}</span>
-              </div>
-            </div>
-
-            <div class="space-y-1.5 md:col-span-2 mt-4">
-              <label class="text-xs font-bold text-gray-600 uppercase tracking-wider">Additional Notes (Optional)</label>
-              <textarea v-model="form.notes" rows="3"
-                class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888] transition-all resize-none"
-                placeholder="Tell us about your setup or specific requirements..."></textarea>
-            </div>
-
-          </div>
-          
-          <!-- Submit Action -->
-          <div class="pt-6 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-             <div class="text-sm font-bold text-gray-500 w-full sm:w-auto text-center sm:text-left">
-                Estimated Cost: <span class="text-[#002888] text-lg">{{ formatPrice(servicePrice) }} NGN</span>
-             </div>
-             <button type="submit" :disabled="isSubmitting || !!dateError" class="w-full sm:w-auto bg-[#002888] text-white px-8 py-4 rounded-xl font-bold uppercase tracking-wider hover:bg-blue-900 transition-colors shadow-lg active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
-                <span v-if="isSubmitting" class="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
-                <span v-else>Confirm Request</span>
-             </button>
-          </div>
-
-        </form>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup>
-import { ref, computed } from 'vue'
-
 const props = defineProps({
   isOpen: Boolean,
-  serviceName: String,
-  servicePrice: [String, Number]
+  serviceName: {
+    type: String,
+    default: 'General Service'
+  }
 })
 
 const emit = defineEmits(['close'])
-
-const closeModal = () => {
-  if (!isSubmitting.value) {
-    emit('close')
-    // Reset state after transition
-    setTimeout(resetForm, 300)
-  }
-}
-
-// Ensure min date is tomorrow
-const tomorrow = new Date()
-tomorrow.setDate(tomorrow.getDate() + 1)
-const tomorrowDate = computed(() => tomorrow.toISOString().split('T')[0])
 
 const form = ref({
   firstName: '',
@@ -145,89 +15,123 @@ const form = ref({
   email: '',
   phone: '',
   address: '',
-  requestedDate: '',
-  notes: ''
+  preferredDate: '',
+  serviceType: props.serviceName,
+  details: ''
 })
 
-const dateError = ref('')
+// Watch for changes to the prop to keep the form updated if they click different services
+watch(() => props.serviceName, (newVal) => {
+  form.value.serviceType = newVal
+})
+
 const isSubmitting = ref(false)
-const submitSuccess = ref(false)
-
-const validateDate = () => {
-  dateError.value = ''
-  if (!form.value.requestedDate) return
-
-  const selectedDate = new Date(form.value.requestedDate)
-  // getDay() returns 0 for Sunday
-  if (selectedDate.getDay() === 0) {
-    dateError.value = 'Sundays are not available for service bookings.'
-    form.value.requestedDate = '' // Clear invalid selection
-  }
-}
-
-const formatPrice = (price) => {
-  if (!price) return '0'
-  return Number(price).toLocaleString()
-}
-
-const resetForm = () => {
-  form.value = {
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    address: '',
-    requestedDate: '',
-    notes: ''
-  }
-  submitSuccess.value = false
-  dateError.value = ''
-}
+const isSuccess = ref(false)
+const errorMessage = ref('')
 
 const submitBooking = async () => {
-  if (dateError.value) return
-
   isSubmitting.value = true
+  errorMessage.value = ''
   
   try {
-    const payload = {
-      serviceName: props.serviceName,
-      servicePrice: props.servicePrice,
-      customer: {
-        firstName: form.value.firstName,
-        lastName: form.value.lastName,
-        email: form.value.email,
-        phone: form.value.phone,
-        address: form.value.address
-      },
-      requestedDate: form.value.requestedDate,
-      notes: form.value.notes
-    }
-
-    const { error } = await useFetch('/api/book-service', {
+    await $fetch('/api/book-service', {
       method: 'POST',
-      body: payload
+      body: form.value
     })
-
-    if (error.value) throw new Error(error.value.message || 'Failed to submit')
-
-    submitSuccess.value = true
-  } catch (err) {
-    console.error('Booking failed:', err)
-    alert('We encountered an error processing your request. Please try again.')
+    isSuccess.value = true
+  } catch (error) {
+    errorMessage.value = error.data?.statusMessage || 'An error occurred. Please try again.'
   } finally {
     isSubmitting.value = false
   }
 }
+
+const closeModal = () => {
+  if (!isSubmitting.value) {
+    // Reset state on close
+    setTimeout(() => { isSuccess.value = false; errorMessage.value = '' }, 300)
+    emit('close')
+  }
+}
 </script>
 
-<style scoped>
-/* Hide scrollbar for a cleaner look */
-.hidden-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.hidden-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
-</style>
+<template>
+  <div v-if="isOpen" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+    
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative animate-in zoom-in-95 duration-200">
+      
+      <button @click="closeModal" class="absolute top-6 right-6 p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-all z-10">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+
+      <div v-if="isSuccess" class="p-12 text-center">
+        <div class="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg class="w-12 h-12" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+        </div>
+        <h2 class="text-3xl font-black text-slate-900 mb-4">Booking Received!</h2>
+        <p class="text-slate-600 font-medium mb-8">
+          Thank you, {{ form.firstName }}. Your request for <strong>{{ form.serviceType }}</strong> has been sent. Our dispatch team will call you shortly to confirm your appointment time.
+        </p>
+        <button @click="closeModal" class="bg-[#002888] text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-900 transition-all shadow-lg w-full sm:w-auto">
+          Done
+        </button>
+      </div>
+
+      <div v-else class="p-8 md:p-12">
+        <div class="mb-8">
+          <h2 class="text-3xl font-black text-[#002888] mb-2">Book a Service</h2>
+          <p class="text-slate-500 font-medium">Fill out the details below to schedule your <strong>{{ form.serviceType }}</strong>.</p>
+        </div>
+
+        <div v-if="errorMessage" class="mb-6 p-4 bg-red-50 text-red-700 rounded-xl font-bold text-sm">
+          {{ errorMessage }}
+        </div>
+
+        <form @submit.prevent="submitBooking" class="space-y-5">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">First Name</label>
+              <input v-model="form.firstName" type="text" required :disabled="isSubmitting" class="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:ring-4 focus:ring-blue-500/10 focus:border-[#002888] outline-none transition-all" />
+            </div>
+            <div>
+              <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Last Name</label>
+              <input v-model="form.lastName" type="text" required :disabled="isSubmitting" class="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:ring-4 focus:ring-blue-500/10 focus:border-[#002888] outline-none transition-all" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Phone</label>
+              <input v-model="form.phone" type="tel" required :disabled="isSubmitting" class="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:ring-4 focus:ring-blue-500/10 focus:border-[#002888] outline-none transition-all" />
+            </div>
+            <div>
+              <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Email</label>
+              <input v-model="form.email" type="email" required :disabled="isSubmitting" class="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:ring-4 focus:ring-blue-500/10 focus:border-[#002888] outline-none transition-all" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Service Address</label>
+            <input v-model="form.address" type="text" placeholder="123 Main St, City..." required :disabled="isSubmitting" class="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:ring-4 focus:ring-blue-500/10 focus:border-[#002888] outline-none transition-all" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Preferred Date</label>
+            <input v-model="form.preferredDate" type="date" required :disabled="isSubmitting" class="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:ring-4 focus:ring-blue-500/10 focus:border-[#002888] outline-none transition-all text-slate-700" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Issue Details / Notes</label>
+            <textarea v-model="form.details" rows="3" placeholder="Briefly describe what you need help with..." :disabled="isSubmitting" class="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:ring-4 focus:ring-blue-500/10 focus:border-[#002888] outline-none transition-all resize-none"></textarea>
+          </div>
+
+          <button type="submit" :disabled="isSubmitting" class="w-full bg-[#002888] text-white py-4 rounded-xl font-black text-lg uppercase tracking-widest hover:bg-blue-900 transition-all shadow-xl active:scale-95 disabled:opacity-70 flex items-center justify-center gap-3 mt-4">
+            <svg v-if="isSubmitting" class="animate-spin border-2 border-white/30 border-t-white w-5 h-5 rounded-full" viewBox="0 0 24 24"></svg>
+            {{ isSubmitting ? 'Booking...' : 'Confirm Booking' }}
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</template>

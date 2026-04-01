@@ -51,7 +51,10 @@
             </div>
             
             <div class="flex flex-col sm:flex-row gap-4">
-              <button @click="isBookingModalOpen = true" class="bg-[#002888] text-white px-8 py-4 rounded-xl font-bold uppercase tracking-wider hover:bg-blue-900 transition-colors shadow-lg active:scale-95 flex items-center justify-center gap-3 w-full sm:w-auto">
+              <button 
+                @click="currentServiceName = service?.NAME || `${formattedSlug} Service`; isModalOpen = true" 
+                class="bg-[#002888] text-white px-8 py-4 rounded-xl font-bold uppercase tracking-wider hover:bg-blue-900 transition-colors shadow-lg active:scale-95 flex items-center justify-center gap-3 w-full sm:w-auto"
+              >
                  Book Service
                  <span class="material-symbols-outlined text-xl">calendar_month</span>
               </button>
@@ -78,11 +81,11 @@
       </div>
     </div>
     
+    <!-- Service Booking Modal -->
     <BookingModal 
-      :isOpen="isBookingModalOpen" 
-      :serviceName="service?.NAME || `${formattedSlug} Service`" 
-      :servicePrice="service?.PRICE || 0"
-      @close="isBookingModalOpen = false" 
+      :isOpen="isModalOpen" 
+      :serviceName="currentServiceName" 
+      @close="isModalOpen = false" 
     />
   </div>
 </template>
@@ -90,7 +93,9 @@
 <script setup>
 import { ref, computed } from 'vue'
 
-const isBookingModalOpen = ref(false)
+// State for the booking modal
+const isModalOpen = ref(false)
+const currentServiceName = ref('')
 
 const route = useRoute()
 const slug = computed(() => (route.params.slug || '').toString().toLowerCase())

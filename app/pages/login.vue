@@ -109,7 +109,7 @@ const handleVerifyOtp = async () => {
       method: 'POST',
       body: { 
         email: email.value, 
-        otp: otp.value 
+        code: otp.value 
       }
     });
     // Redirect to account page on success
