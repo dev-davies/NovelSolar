@@ -319,10 +319,17 @@ const handleLogout = async () => {
       <div class="mb-10 text-center relative">
         <h1 class="text-4xl font-black text-slate-900 mb-2 tracking-tight">Batch Upload Products</h1>
         <p class="text-slate-500 font-medium italic">Upload multiple products to Bitrix24 & Cloudinary simultaneously</p>
-        <button @click="handleLogout" class="absolute top-0 right-0 px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all">
-          <span class="material-symbols-outlined text-sm">logout</span>
-          Logout
-        </button>
+        
+        <div class="absolute top-0 right-0 flex items-center gap-3">
+          <NuxtLink to="/admin/manage-products" class="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all shadow-sm">
+            <span class="material-symbols-outlined text-sm">inventory_2</span>
+            Manage Inventory
+          </NuxtLink>
+          <button @click="handleLogout" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all">
+            <span class="material-symbols-outlined text-sm">logout</span>
+            Logout
+          </button>
+        </div>
       </div>
 
       <form @submit.prevent="submitBatch" class="space-y-8">
