@@ -13,11 +13,26 @@ export default defineEventHandler(async (event) => {
   const branch = body.branch || {};
   const paymentMethod = body.paymentMethod || 'Bank Transfer';
 
+  // Generate a unique order ID
+  const orderId = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
+  // Prepare the order payload for CRM or fallback storage
+  const orderPayload = {
+    orderId,
+    customer,
+    cart,
+    total,
+    branch,
+    paymentMethod,
+    timestamp: new Date().toISOString(),
+    status: 'pending'
+  };
+
   // 1. FORMAT CART FOR CRM
   const orderDetailsList = cart.map((item: any) => `- ${item.quantity}x ${item.name} (₦${item.price.toLocaleString()})`).join('\n');
   
   const crmComments = `
-    NEW WEB ORDER
+    NEW WEB ORDER (${orderId})
     Fulfillment: ${paymentMethod === 'pickup' ? 'Store Pickup' : 'Delivery'}
     Branch: ${branch?.address || 'N/A'}
     Payment: ${paymentMethod}
@@ -27,37 +42,49 @@ export default defineEventHandler(async (event) => {
     ${orderDetailsList}
   `;
 
-  // 2. SEND TO BITRIX CRM (Create a Lead)
-  if (bitrixUrl) {
-    try {
-      console.log('Attempting to send order to Bitrix...');
-      await $fetch(`${bitrixUrl}crm.lead.add`, {
-        method: 'POST',
-        body: {
-          fields: {
-            TITLE: `Web Order: ${customer.firstName || 'Guest'} ${customer.lastName || ''}`,
-            NAME: customer.firstName || 'Guest',
-            LAST_NAME: customer.lastName || '',
-            EMAIL: [{ VALUE: customer.email, VALUE_TYPE: "WORK" }],
-            PHONE: [{ VALUE: customer.phone || '0000000000', VALUE_TYPE: "WORK" }],
-            ADDRESS: customer.address || customer.streetAddress || '',
-            OPPORTUNITY: total,
-            CURRENCY_ID: "NGN",
-            COMMENTS: crmComments,
-            SOURCE_ID: "WEB"
-          }
+  // 2. SEND TO BITRIX CRM (Create a Lead) — with Safety Net fallback
+  let crmSuccess = false;
+
+  try {
+    if (!bitrixUrl) throw new Error('Bitrix Webhook URL is missing from ENV');
+
+    console.log(`Attempting to send order ${orderId} to Bitrix...`);
+    const response: any = await $fetch(`${bitrixUrl}crm.lead.add`, {
+      method: 'POST',
+      body: {
+        fields: {
+          TITLE: `Web Order: ${customer.firstName || 'Guest'} ${customer.lastName || ''} (${orderId})`,
+          NAME: customer.firstName || 'Guest',
+          LAST_NAME: customer.lastName || '',
+          EMAIL: [{ VALUE: customer.email, VALUE_TYPE: "WORK" }],
+          PHONE: [{ VALUE: customer.phone || '0000000000', VALUE_TYPE: "WORK" }],
+          ADDRESS: customer.address || customer.streetAddress || '',
+          OPPORTUNITY: total,
+          CURRENCY_ID: "NGN",
+          COMMENTS: crmComments,
+          SOURCE_ID: "WEB"
         }
-      });
-      console.log('✅ Successfully created Lead in Bitrix!');
-    } catch (error: any) {
-      console.error('❌ Bitrix CRM Error:', error?.data || error);
-      // We don't throw here so the customer still gets their email
+      }
+    });
+
+    if (response.error) throw new Error(response.error_description);
+
+    crmSuccess = true;
+    console.log(`✅ Successfully created Lead in Bitrix for order ${orderId}`);
+  } catch (error: any) {
+    console.error(`[CHECKOUT ERROR] Bitrix failed for order ${orderId}:`, error.message);
+
+    // THE SAFETY NET: Save the order to Nitro's local storage
+    try {
+      const storage = useStorage('data:failed-orders');
+      await storage.setItem(orderId, orderPayload);
+      console.log(`[CHECKOUT RECOVERY] Order ${orderId} saved to fallback queue.`);
+    } catch (storageError) {
+      console.error('[CRITICAL] Failed to save order to fallback storage:', storageError);
     }
-  } else {
-    console.error('❌ Bitrix Webhook URL is missing from Nuxt config!');
   }
 
-  // 3. GENERATE PREMIUM EMAIL HTML
+  // 3. GENERATE PREMIUM EMAIL HTML (always runs regardless of CRM status)
   const generatedOrderNumber = 'NS-' + Math.floor(100000 + Math.random() * 900000);
   
   const orderData = {
@@ -111,5 +138,11 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  return { success: true, message: 'Order processed successfully' };
+  return { 
+    success: true, 
+    orderId,
+    message: crmSuccess 
+      ? 'Order processed successfully.' 
+      : 'Order received. (Queued locally due to CRM timeout).'
+  };
 });
