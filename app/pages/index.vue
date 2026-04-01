@@ -95,7 +95,7 @@
 
       <!-- Product Grid -->
       <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
-        <ProductCard v-for="product in products?.slice(0, 8)" :key="product.ID" :product="product" />
+        <ProductCard v-for="product in featuredProducts" :key="product.ID" :product="product" />
       </div>
 
       <!-- View All Button -->
@@ -150,7 +150,10 @@
 </template>
 
 <script setup>
+import { excludeServiceProducts } from '~/utils/productFilters'
+
 const { data: products, pending } = useFetch('/api/inventory')
+const featuredProducts = computed(() => excludeServiceProducts(products.value || []).slice(0, 8))
 
 const { addToCart } = useCart()
 

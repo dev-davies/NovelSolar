@@ -1,10 +1,11 @@
 <script setup>
+import { excludeServiceProducts } from '~/utils/productFilters'
+
 const categories = [
   { id: 'batteries', name: 'Batteries', SECTION_ID: null },
   { id: 'solar-panel', name: 'Solar Panel', SECTION_ID: null },
   { id: 'inverters', name: 'Inverters', SECTION_ID: null },
-  { id: 'accessories', name: 'Lightening & Accessories', SECTION_ID: null },
-  { id: 'services', name: 'Services', SECTION_ID: null }
+  { id: 'accessories', name: 'Lightening & Accessories', SECTION_ID: null }
 ];
 
 // Fetch live products
@@ -13,10 +14,10 @@ const { data: apiProducts, pending } = useFetch('/api/inventory');
 const getProductsArray = () => {
   if (!apiProducts.value) return [];
   // If the API returns { data: [...] } or { result: [...] }
-  if (Array.isArray(apiProducts.value.data)) return apiProducts.value.data;
-  if (Array.isArray(apiProducts.value.result)) return apiProducts.value.result;
+  if (Array.isArray(apiProducts.value.data)) return excludeServiceProducts(apiProducts.value.data);
+  if (Array.isArray(apiProducts.value.result)) return excludeServiceProducts(apiProducts.value.result);
   // If it's already an array
-  if (Array.isArray(apiProducts.value)) return apiProducts.value;
+  if (Array.isArray(apiProducts.value)) return excludeServiceProducts(apiProducts.value);
   return [];
 };
 
