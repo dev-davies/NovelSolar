@@ -21,50 +21,70 @@
       </div>
 
       <!-- Grid -->
-      <div v-else-if="posts && posts.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <NuxtLink 
-          v-for="post in posts" 
-          :key="post._id" 
-          :to="'/blog/' + post.slug.current"
-          class="group bg-white rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all flex flex-col h-full overflow-hidden border border-gray-50"
-        >
-          <!-- Image Layer -->
-          <div class="aspect-video bg-slate-100 overflow-hidden relative">
-            <SanityImage 
-              v-if="post.mainImage"
-              :asset-id="post.mainImage.asset._ref"
-              auto="format"
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-            />
-            <div v-else class="w-full h-full flex items-center justify-center text-slate-300">
-              <span class="material-symbols-outlined text-4xl">energy_savings_leaf</span>
+      <div v-else-if="allPosts && allPosts.length > 0">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+          <NuxtLink 
+            v-for="post in allPosts" 
+            :key="post._id" 
+            :to="'/blog/' + post.slug.current"
+            class="group bg-white rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all flex flex-col h-full overflow-hidden border border-gray-50"
+          >
+            <!-- Image Layer -->
+            <div class="aspect-video bg-slate-100 overflow-hidden relative group-hover:scale-105 transition-transform duration-700">
+              <img 
+                v-if="post.mainImage"
+                :src="urlFor(post.mainImage).width(801).height(451).url()"
+                :alt="post.title"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+              <div v-else class="w-full h-full relative overflow-hidden bg-slate-900 flex items-center justify-center">
+                <img src="/images/fallback-post.png" class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay" />
+                <div class="relative z-10 text-center px-4">
+                  <div class="text-[#3c59b0] font-black text-[10px] uppercase tracking-[0.2em] mb-1">Novel Solar</div>
+                  <span class="material-symbols-outlined text-white/20 text-2xl">solar_power</span>
+                </div>
+              </div>
             </div>
-          </div>
 
-          <!-- Content Layer -->
-          <div class="p-8 flex flex-col flex-grow">
-            <!-- Date Display -->
-            <div class="flex items-center gap-2 mb-4">
-               <span class="text-xs font-bold text-[#002888] uppercase tracking-widest">{{ formatDate(post.publishedAt) }}</span>
+            <!-- Content Layer -->
+            <div class="p-8 flex flex-col flex-grow">
+              <!-- Date Display -->
+              <div class="flex items-center gap-2 mb-4">
+                 <span class="text-xs font-bold text-[#002888] uppercase tracking-widest">{{ formatDate(post.publishedAt) }}</span>
+              </div>
+
+              <!-- Title -->
+              <h3 class="text-xl font-bold text-slate-900 mb-4 group-hover:text-[#002888] transition-colors line-clamp-2 leading-tight">
+                {{ post.title }}
+              </h3>
+
+              <!-- Excerpt -->
+              <p v-if="post.excerpt" class="text-slate-500 text-sm leading-relaxed line-clamp-3 mb-6 font-medium">
+                {{ post.excerpt }}
+              </p>
+
+              <!-- Bottom CTA -->
+              <div class="mt-auto flex items-center gap-2 text-[#002888] font-bold text-xs uppercase tracking-widest">
+                Read More
+                <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+              </div>
             </div>
+          </NuxtLink>
+        </div>
 
-            <!-- Title -->
-            <h3 class="text-xl font-bold text-slate-900 mb-4 group-hover:text-[#002888] transition-colors line-clamp-2 leading-tight">
-              {{ post.title }}
-            </h3>
-
-            <!-- Excerpt -->
-            <p v-if="post.excerpt" class="text-slate-500 text-sm leading-relaxed line-clamp-3 mb-6 font-medium">
-              {{ post.excerpt }}
-            </p>
-
-            <!-- Bottom CTA -->
-            <div class="mt-auto flex items-center gap-2 text-[#002888] font-bold text-xs uppercase tracking-widest">
-              Read More
-              <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
-            </div>
-          </div>
-        </NuxtLink>
+        <!-- Load More CTA -->
+        <div v-if="hasMore" class="flex justify-center mt-12 mb-16">
+          <button 
+            @click="loadMore"
+            :disabled="isLoadingMore"
+            class="inline-flex items-center gap-3 bg-white border-2 border-slate-100 px-10 py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] text-[#002888] hover:border-[#002888] hover:bg-slate-50 transition-all shadow-sm active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed group"
+          >
+            <span v-if="isLoadingMore" class="w-4 h-4 border-2 border-[#002888]/20 border-t-[#002888] rounded-full animate-spin"></span>
+            <span v-else class="material-symbols-outlined text-lg group-hover:rotate-180 transition-transform duration-700">refresh</span>
+            {{ isLoadingMore ? 'Syncing...' : 'Load More Insights' }}
+          </button>
+        </div>
       </div>
 
       <!-- Empty State -->
@@ -83,8 +103,69 @@
 </template>
 
 <script setup>
-const query = groq`*[_type == "post"] | order(publishedAt desc) { _id, title, slug, mainImage, "excerpt": pt::text(body), publishedAt }`
-const { data: posts, pending } = await useSanityQuery(query)
+const { urlFor } = useSanityImage()
+const sanity = useSanity()
+
+// Pagination State
+const pageSize = 9
+const isLoadingMore = ref(false)
+const hasMore = ref(true)
+
+// Optimized GROQ query with range parameters
+const query = groq`*[_type == "post"] | order(publishedAt desc) [$start...$end] { 
+  _id, 
+  title, 
+  slug, 
+  mainImage {
+    asset,
+    hotspot,
+    crop
+  }, 
+  "excerpt": pt::text(body), 
+  publishedAt 
+}`
+
+// Initial Fetch (First 9 posts)
+const { data: initialPosts, pending } = await useAsyncData('blog-posts-initial', () => 
+  sanity.fetch(query, { start: 0, end: pageSize })
+)
+
+// Maintain a reactive list of all loaded posts
+const allPosts = ref(initialPosts.value || [])
+
+// Check if we already reached the end on initial load
+if (allPosts.value.length < pageSize) {
+  hasMore.value = false
+}
+
+/**
+ * Fetch the next batch of posts and append them to the list
+ */
+const loadMore = async () => {
+  if (isLoadingMore.value || !hasMore.value) return
+  
+  isLoadingMore.value = true
+  const nextStart = allPosts.value.length
+  const nextEnd = nextStart + pageSize
+  
+  try {
+    const nextPosts = await sanity.fetch(query, { start: nextStart, end: nextEnd })
+    
+    // If we received fewer posts than requested, we've reached the end
+    if (nextPosts.length < pageSize) {
+      hasMore.value = false
+    }
+    
+    // Append new posts to the reactive array
+    if (nextPosts.length > 0) {
+      allPosts.value.push(...nextPosts)
+    }
+  } catch (error) {
+    console.error('[BLOG] Failed to load more posts:', error)
+  } finally {
+    isLoadingMore.value = false
+  }
+}
 
 const formatDate = (dateString) => {
   if (!dateString) return 'Latest Release'

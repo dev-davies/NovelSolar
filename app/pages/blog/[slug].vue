@@ -44,7 +44,7 @@
             </span>
             <span>&bull;</span>
             <span>
-              {{ new Date(post.publishedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) }}
+              {{ formatDate(post.publishedAt) }}
             </span>
           </div>
         </div>
@@ -58,15 +58,18 @@
       <div class="max-w-6xl mx-auto px-4 mb-20">
         <div class="aspect-video bg-slate-50 rounded-[40px] overflow-hidden shadow-2xl border-8 border-white group relative">
           <div class="absolute inset-0 bg-[#002888]/10 mix-blend-multiply opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10"></div>
-          <SanityImage 
+          <img 
             v-if="post.mainImage"
-            :asset-id="post.mainImage.asset._ref"
-            auto="format"
+            :src="urlFor(post.mainImage).width(1200).height(675).url()"
+            :alt="post.title"
             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[2000ms]"
           />
-          <div v-else class="w-full h-full flex flex-col items-center justify-center text-slate-200">
-             <span class="material-symbols-outlined text-8xl mb-4">image</span>
-             <span class="text-sm font-black uppercase tracking-widest">Image Coming Soon</span>
+          <div v-else class="w-full h-full relative overflow-hidden bg-slate-900 flex items-center justify-center">
+            <img src="/images/fallback-post.png" class="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-overlay" />
+            <div class="relative z-10 text-center">
+              <div class="text-[#3c59b0] font-black text-xs uppercase tracking-[0.4em] mb-4">Novel Solar Insights</div>
+              <span class="material-symbols-outlined text-white/10 text-9xl">solar_power</span>
+            </div>
           </div>
         </div>
       </div>
@@ -123,8 +126,16 @@
         <h3 class="font-bold text-lg text-slate-900 mb-4 border-b border-slate-200 pb-3">Latest Posts</h3>
         <div class="space-y-6">
           <NuxtLink v-for="recent in recentPosts" :key="recent.slug.current" :to="'/blog/' + recent.slug.current" class="group flex gap-4 items-start">
-            <div class="w-20 h-20 shrink-0 rounded-xl overflow-hidden bg-slate-200">
-              <SanityImage v-if="recent.mainImage" :asset-id="recent.mainImage.asset._ref" auto="format" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+            <div class="w-20 h-20 shrink-0 rounded-xl overflow-hidden bg-slate-200 relative">
+              <img 
+                v-if="recent.mainImage" 
+                :src="urlFor(recent.mainImage).width(200).height(200).url()" 
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" 
+              />
+              <div v-else class="w-full h-full bg-slate-900 flex items-center justify-center">
+                <img src="/images/fallback-post.png" class="absolute inset-0 w-full h-full object-cover opacity-20" />
+                <span class="material-symbols-outlined text-white/20 text-xl relative z-10">solar_power</span>
+              </div>
             </div>
             <div>
               <h4 class="font-bold text-sm text-slate-900 group-hover:text-[#002888] transition-colors line-clamp-2 leading-snug mb-1">{{ recent.title }}</h4>
@@ -154,18 +165,26 @@
 
 <script setup>
 import { useRoute } from 'vue-router'
-import { computed } from 'vue'
+import { computed, h } from 'vue'
 import { PortableText } from '@portabletext/vue'
 import PortableTextImage from '~/components/PortableTextImage.vue'
 
 const myPortableTextComponents = {
   types: {
     image: PortableTextImage,
+  },
+  marks: {
+    link: ({ value, slots }) => {
+      const rel = !value.href.startsWith('/') ? 'noreferrer noopener' : undefined
+      const target = !value.href.startsWith('/') ? '_blank' : undefined
+      return h('a', { href: value.href, rel, target, class: 'text-[#002888] font-bold hover:underline' }, slots.default?.())
+    }
   }
 }
 
 const route = useRoute()
 const sanity = useSanity()
+const { urlFor } = useSanityImage()
 
 // Make the slug a reactive computed property
 const activeSlug = computed(() => route.params.slug)
@@ -174,13 +193,15 @@ const activeSlug = computed(() => route.params.slug)
 const query = groq`{
   "post": *[_type == "post" && slug.current == $slug][0]{
     ...,
+    mainImage { asset, hotspot, crop },
+    "excerpt": pt::text(body),
     author->{name},
     categories[]->{title}
   },
   "recentPosts": *[_type == "post" && slug.current != $slug] | order(publishedAt desc)[0...3]{
     title,
     slug,
-    mainImage,
+    mainImage { asset, hotspot, crop },
     publishedAt
   },
   "categories": *[_type == "category"]{

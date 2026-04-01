@@ -1,4 +1,15 @@
+function getEmailTemplateUrls() {
+  const config = useRuntimeConfig();
+  const siteUrl = config.public.baseUrl.replace(/\/$/, '');
+
+  return {
+    siteUrl,
+    logoUrl: `${siteUrl}/images/logo.png`,
+  };
+}
+
 export function generateOrderReceiptHtml(orderDetails: any) {
+  const { siteUrl, logoUrl } = getEmailTemplateUrls();
   const productsHtml = orderDetails.products.map((item: any) => `
     <tr>
       <td style="padding: 15px 0; border-bottom: 1px solid #e5e2e1; width: 90px;">
@@ -25,8 +36,8 @@ export function generateOrderReceiptHtml(orderDetails: any) {
     <table align="center" width="100%" style="max-width: 640px; background-color: #ffffff; margin: 0 auto; border-spacing: 0; box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1); border-top: 4px solid #a9001d;">
       <tr>
         <td align="center" style="padding: 30px 20px; border-bottom: 1px solid #e5e2e1;">
-          <a href="https://novelsolar.com" target="_blank" style="text-decoration: none;">
-            <img src="https://novel-solar.vercel.app/_vercel/image?url=%2Fimages%2Flogo.png&w=1536&q=100" alt="Novel Solar" style="max-height: 45px; width: auto; display: block;" />
+          <a href="${siteUrl}" target="_blank" style="text-decoration: none;">
+            <img src="${logoUrl}" alt="Novel Solar" style="max-height: 45px; width: auto; display: block;" />
           </a>
         </td>
       </tr
@@ -138,6 +149,7 @@ export function generateOrderReceiptHtml(orderDetails: any) {
 }
 
 export function generateServiceBookingHtml(bookingDetails: any) {
+  const { siteUrl, logoUrl } = getEmailTemplateUrls();
   return `
   <!DOCTYPE html>
   <html lang="en">
@@ -149,8 +161,8 @@ export function generateServiceBookingHtml(bookingDetails: any) {
     <table align="center" width="100%" style="max-width: 640px; background-color: #ffffff; margin: 0 auto; border-spacing: 0; box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1); border-top: 4px solid #002888;">
       <tr>
         <td align="center" style="padding: 30px 20px; border-bottom: 1px solid #e5e2e1;">
-          <a href="https://novelsolar.com" target="_blank" style="text-decoration: none;">
-            <img src="https://novel-solar.vercel.app/_vercel/image?url=%2Fimages%2Flogo.png&w=1536&q=100" alt="Novel Solar" style="max-height: 45px; width: auto; display: block;" />
+          <a href="${siteUrl}" target="_blank" style="text-decoration: none;">
+            <img src="${logoUrl}" alt="Novel Solar" style="max-height: 45px; width: auto; display: block;" />
           </a>
         </td>
       </tr>
