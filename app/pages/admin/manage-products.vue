@@ -191,10 +191,17 @@ onMounted(() => {
       <div class="mb-10 text-center relative">
         <h1 class="text-4xl font-black text-slate-900 mb-2 tracking-tight">Manage Products</h1>
         <p class="text-slate-500 font-medium italic">Search and edit existing inventory</p>
-        <button @click="handleLogout" class="absolute top-0 right-0 px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all">
-          <span class="material-symbols-outlined text-sm">logout</span>
-          Logout
-        </button>
+        
+        <div class="absolute top-0 right-0 flex items-center gap-3">
+          <NuxtLink to="/admin/add-product" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl font-bold flex items-center gap-2 text-sm transition-all shadow-sm">
+            <span class="material-symbols-outlined text-sm">add</span>
+            Add Products
+          </NuxtLink>
+          <button @click="handleLogout" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all">
+            <span class="material-symbols-outlined text-sm">logout</span>
+            Logout
+          </button>
+        </div>
       </div>
 
       <div v-if="!isEditing" class="space-y-8">
