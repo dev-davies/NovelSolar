@@ -1,4 +1,5 @@
 export default defineEventHandler(async (event) => {
+  const config = useRuntimeConfig();
   const url = getQuery(event).url as string;
   if (!url) {
     throw createError({ statusCode: 400, statusMessage: 'Missing url parameter' });
@@ -25,8 +26,7 @@ export default defineEventHandler(async (event) => {
 
     const fieldName = fieldMapping[rawFieldName] || rawFieldName;
 
-    // 3. Get Webhook URL from environment variables
-    const webhookUrl = process.env.BITRIX_WEBHOOK_URL;
+    const webhookUrl = config.bitrixWebhookUrl;
     if (!webhookUrl) {
       throw createError({ statusCode: 500, statusMessage: 'Server configuration error: Webhook missing' });
     }

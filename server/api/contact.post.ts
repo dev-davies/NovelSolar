@@ -2,7 +2,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   const config = useRuntimeConfig();
 
-  const webhookUrl = config.bitrixWebhookUrl || config.bitrixWebhook;
+  const webhookUrl = config.bitrixWebhookUrl;
 
   if (!webhookUrl) {
     throw createError({

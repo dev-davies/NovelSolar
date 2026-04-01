@@ -1,9 +1,7 @@
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
   const config = useRuntimeConfig()
-  
-  // Support both possible naming conventions in runtimeConfig
-  const webhookUrl = config.bitrixWebhookUrl || config.bitrixWebhook
+  const webhookUrl = config.bitrixWebhookUrl
 
   if (!webhookUrl) {
     throw createError({ statusCode: 500, statusMessage: 'CRM connection not configured.' })

@@ -2,17 +2,16 @@
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
-  
-  // Normalize the webhook URL: ensure it doesn't end with a trailing slash to prevent double-slashes
-  const baseUrl = config.bitrixWebhook.replace(/\/$/, '') + '/';
-  
-  if (!baseUrl) {
+
+  if (!config.bitrixWebhookUrl) {
     console.error('Bitrix Webhook URL is missing from runtime config.');
     throw createError({ 
       statusCode: 500, 
       statusMessage: 'Server configuration error: Bitrix Webhook URL is missing.' 
     })
   }
+
+  const baseUrl = config.bitrixWebhookUrl.replace(/\/$/, '') + '/';
 
   const query = getQuery(event)
   const brand = (query.brand as string || 'itel').toLowerCase()

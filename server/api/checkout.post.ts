@@ -4,7 +4,7 @@ import { generateOrderReceiptHtml } from '../utils/emailTemplate';
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   const config = useRuntimeConfig();
-  const bitrixUrl = config.bitrixWebhookUrl || config.public.bitrixWebhookUrl;
+  const bitrixUrl = config.bitrixWebhookUrl;
   
   // Safely extract data
   const customer = body.customer || {};
@@ -47,9 +47,10 @@ export default defineEventHandler(async (event) => {
 
   try {
     if (!bitrixUrl) throw new Error('Bitrix Webhook URL is missing from ENV');
+    const normalizedBitrixUrl = bitrixUrl.endsWith('/') ? bitrixUrl : `${bitrixUrl}/`;
 
     console.log(`Attempting to send order ${orderId} to Bitrix...`);
-    const response: any = await $fetch(`${bitrixUrl}crm.lead.add`, {
+    const response: any = await $fetch(`${normalizedBitrixUrl}crm.lead.add`, {
       method: 'POST',
       body: {
         fields: {

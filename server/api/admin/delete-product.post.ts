@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const bitrixUrl = config.bitrixWebhookUrl || config.public.bitrixWebhookUrl || config.bitrixWebhook;
+    const bitrixUrl = config.bitrixWebhookUrl;
     if (!bitrixUrl) {
       throw createError({ statusCode: 500, statusMessage: 'Bitrix not configured' });
     }

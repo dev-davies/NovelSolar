@@ -1,6 +1,6 @@
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
-  const bitrixUrl = config.bitrixWebhookUrl || config.public.bitrixWebhookUrl || config.bitrixWebhook;
+  const bitrixUrl = config.bitrixWebhookUrl;
   const contactId = getCookie(event, 'auth_token');
 
   if (!contactId) {
@@ -29,6 +29,8 @@ export default defineEventHandler(async (event) => {
     });
   }
 
+  const normalizedBitrixUrl = bitrixUrl.endsWith('/') ? bitrixUrl : `${bitrixUrl}/`;
+
   // Use storage for short-term caching (5 minutes)
   const cacheKey = `profile:${contactId}`;
   const cachedProfile = await useStorage('cache').getItem(cacheKey) as any;
@@ -37,7 +39,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const response = await $fetch<{ result: any }>(`${bitrixUrl}crm.contact.get`, {
+    const response = await $fetch<{ result: any }>(`${normalizedBitrixUrl}crm.contact.get`, {
       method: 'POST',
       body: { id: contactId }
     });

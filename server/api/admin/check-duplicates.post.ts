@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const bitrixUrl = config.bitrixWebhookUrl || config.public.bitrixWebhookUrl || config.bitrixWebhook;
+    const bitrixUrl = config.bitrixWebhookUrl;
     if (!bitrixUrl) {
       console.warn('[DUPLICATE CHECK] Bitrix URL not configured');
       return { duplicates: [] };

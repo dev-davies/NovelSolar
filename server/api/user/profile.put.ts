@@ -1,6 +1,6 @@
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
-  const bitrixUrl = config.bitrixWebhookUrl || config.public.bitrixWebhookUrl || config.bitrixWebhook;
+  const bitrixUrl = config.bitrixWebhookUrl;
   const contactId = getCookie(event, 'auth_token');
   const body = await readBody(event);
   const { firstName, lastName, phone, address } = body;
@@ -19,8 +19,10 @@ export default defineEventHandler(async (event) => {
     });
   }
 
+  const normalizedBitrixUrl = bitrixUrl.endsWith('/') ? bitrixUrl : `${bitrixUrl}/`;
+
   try {
-    await $fetch(`${bitrixUrl}crm.contact.update`, {
+    await $fetch(`${normalizedBitrixUrl}crm.contact.update`, {
       method: 'POST',
       body: {
         id: contactId,
