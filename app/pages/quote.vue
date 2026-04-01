@@ -111,7 +111,7 @@
               placeholder="Please describe your current power setup or what you are looking to achieve..."
               :disabled="isSubmitting"
               class="w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:ring-4 focus:ring-blue-500/10 focus:border-[#002888] outline-none transition-all resize-none disabled:opacity-50 disabled:cursor-not-allowed"
-            /></textarea>
+            ></textarea>
           </div>
 
           <button 
