@@ -18,8 +18,8 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // 1. Rate limiting checks
-  const storage = useStorage('cache');
+  // 1. Rate limiting checks - switching to 'otp' storage for persistence across restarts
+  const storage = useStorage('otp');
   const throttleKey = `otp:throttle:${email}`;
   const attemptsKey = `otp:attempts:${email}`;
   const failedKey = `otp:failed:${email}`;
@@ -80,12 +80,15 @@ export default defineEventHandler(async (event) => {
   }
 
   // 2. Generate a random 6-digit numeric string
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+  
+  // Expiration time: 10 minutes from now
+  const expiresAt = Date.now() + 10 * 60 * 1000;
 
-  // 3. Save OTP in Nitro storage (expires in 10 minutes)
-  await storage.setItem(`otp:${email}`, { 
-    code: otp, 
-    expires: Date.now() + 10 * 60 * 1000 
+  // 3. Save OTP in Nitro storage (persistent KV)
+  await storage.setItem(`user:${email}`, { 
+    code: otpCode, 
+    expiresAt: expiresAt 
   });
 
   // 4. Update rate limiting trackers
@@ -95,14 +98,14 @@ export default defineEventHandler(async (event) => {
     resetTime: attempts.resetTime 
   }, { ttl: RATE_LIMIT.HOUR_WINDOW_MS / 1000 });
 
-  // 5. SMTP configuration (copied from checkout handler)
+  // 5. SMTP configuration
   if (config.smtpUser && config.smtpPass) {
     try {
       const transporter = nodemailer.createTransport({
         pool: true,
         host: config.smtpHost,
         port: Number(config.smtpPort) || 587,
-        secure: false, // Must be false for port 587
+        secure: false, 
         auth: { 
           user: config.smtpUser, 
           pass: config.smtpPass 
@@ -122,7 +125,7 @@ export default defineEventHandler(async (event) => {
               <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 24px;">Your Login Code</h2>
               <p style="color: #525252; margin-bottom: 32px;">Please use the following 6-digit code to complete your login. This code will expire in 10 minutes.</p>
               <div style="font-size: 48px; font-weight: 900; letter-spacing: 12px; color: #a9001d; background-color: #ffe7e5; padding: 20px; border-radius: 8px; display: inline-block;">
-                ${otp}
+                ${otpCode}
               </div>
               <p style="color: #94a3b8; font-size: 12px; margin-top: 32px;">If you didn't request this code, you can safely ignore this email.</p>
             </div>
@@ -140,8 +143,8 @@ export default defineEventHandler(async (event) => {
       });
     }
   } else {
-    // Development fallback if SMTP is not configured
-    console.log(`[DEV] OTP for ${email}: ${otp}`);
+    // Development fallback
+    console.log(`[DEV] OTP for ${email}: ${otpCode}`);
   }
 
   return { success: true, message: 'OTP sent successfully' };

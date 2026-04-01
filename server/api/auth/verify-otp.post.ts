@@ -1,47 +1,70 @@
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
-  const { email, otp } = body;
+  const { email, code } = body; // Body field name updated to 'code' as per persistent storage upgrade
   const config = useRuntimeConfig();
+  
+  // Support multiple naming conventions for bitrix webhook
   const bitrixUrl = config.bitrixWebhookUrl || config.public.bitrixWebhookUrl || config.bitrixWebhook;
 
-  if (!email || !otp) {
+  if (!email || !code) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Email and OTP are required',
+      statusMessage: 'Email and verification code are required',
     });
   }
 
-  const storage = useStorage('cache');
+  const storage = useStorage('otp');
+  const storageKey = `user:${email}`;
   const failedKey = `otp:failed:${email}`;
 
-  // 1. Fetch stored OTP data
-  const storageKey = `otp:${email}`;
-  const stored = await storage.getItem(storageKey) as { code: string, expires: number } | null;
+  // 1. Fetch stored OTP data from persistent storage (Vercel KV in prod)
+  const storedData: any = await storage.getItem(storageKey);
 
   // 2. Validate OTP
-  if (!stored || stored.code !== otp || Date.now() > stored.expires) {
-    // Track failed verification attempt
+  if (!storedData) {
+    throw createError({ 
+      statusCode: 400, 
+      statusMessage: 'OTP expired or not found.' 
+    });
+  }
+
+  // Check expiration
+  if (Date.now() > storedData.expiresAt) {
+    await storage.removeItem(storageKey); // Clean up expired code
+    throw createError({ 
+      statusCode: 400, 
+      statusMessage: 'OTP has expired. Please request a new one.' 
+    });
+  }
+
+  // Check code match
+  if (storedData.code !== code) {
+    // Track failed verification attempt persistently to prevent brute force across restarts
     const failedAttempts = (await storage.getItem(failedKey) as { count: number } | null) || { count: 0 };
     failedAttempts.count += 1;
     await storage.setItem(failedKey, failedAttempts, { ttl: 60 * 60 }); // 1 hour TTL
 
-    throw createError({
-      statusCode: 401,
-      statusMessage: 'Invalid or expired code',
+    throw createError({ 
+      statusCode: 400, 
+      statusMessage: 'Invalid OTP code.' 
     });
   }
 
-  // 3. Immediately delete OTP from storage
+  // SUCCESS: The code is valid and not expired.
+  // Immediately delete it so it cannot be used again.
   await storage.removeItem(storageKey);
 
-  // 4. Sync with Bitrix CRM
+  // 3. Sync with Bitrix CRM
   let contactId = null;
-  let isNewUser = false;
 
-  if (bitrixUrl) {
+  // Use the same normalization logic as other Bitrix integrations
+  const bitrixStr = bitrixUrl as string | undefined;
+  const normalizedUrl = bitrixStr ? (bitrixStr.endsWith('/') ? bitrixStr : `${bitrixStr}/`) : null;
+
+  if (normalizedUrl) {
     try {
       // Search for existing contact by email
-      const searchResponse = await $fetch<{ result: any[] }>(`${bitrixUrl}crm.contact.list`, {
+      const searchResponse = await $fetch<{ result: any[] }>(`${normalizedUrl}crm.contact.list`, {
         method: 'POST',
         body: {
           filter: { "EMAIL": email },
@@ -55,12 +78,11 @@ export default defineEventHandler(async (event) => {
         console.log(`[AUTH] Existing contact found in CRM: ${contactId} (${email})`);
       } else {
         // Create new contact
-        isNewUser = true;
         const nameParts = email.split('@')[0].split('.');
         const firstName = nameParts[0].charAt(0).toUpperCase() + nameParts[0].slice(1);
         const lastName = nameParts.length > 1 ? (nameParts[1].charAt(0).toUpperCase() + nameParts[1].slice(1)) : '';
 
-        const createResponse = await $fetch<{ result: any }>(`${bitrixUrl}crm.contact.add`, {
+        const createResponse = await $fetch<{ result: any }>(`${normalizedUrl}crm.contact.add`, {
           method: 'POST',
           body: {
             fields: {
@@ -87,7 +109,7 @@ export default defineEventHandler(async (event) => {
     console.warn('[AUTH] Bitrix URL not configured, using local fallback ID');
   }
 
-  // 5. Securely log user in for 7 days
+  // 4. Securely log user in for 7 days
   setCookie(event, 'auth_token', contactId, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
@@ -95,12 +117,12 @@ export default defineEventHandler(async (event) => {
     maxAge: 60 * 60 * 24 * 7 // 7 days
   });
 
-  // 6. Clear failed attempts on successful login
+  // 5. Clear failed attempts on successful login
   await storage.removeItem(failedKey);
 
   return { 
     success: true, 
     contactId, 
-    message: 'Login successful' 
+    message: 'Account verified successfully.' 
   };
 });

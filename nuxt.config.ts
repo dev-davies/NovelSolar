@@ -33,6 +33,14 @@ export default defineNuxtConfig({
       // any public keys go here
     }
   },
+  nitro: {
+    storage: {
+      // The 'otp' namespace will automatically use Vercel KV in production
+      otp: {
+        driver: process.env.NODE_ENV === 'production' ? 'vercelKV' : 'memory',
+      }
+    }
+  },
   sanity: {
     projectId: 'u2k0ma15',
     dataset: 'production',
