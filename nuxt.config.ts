@@ -37,7 +37,7 @@ export default defineNuxtConfig({
     storage: {
       // The 'otp' namespace will automatically use Vercel KV in production
       otp: {
-        driver: process.env.NODE_ENV === 'production' ? 'vercelKV' : 'memory',
+        driver: process.env.NODE_ENV === 'production' ? 'vercel-kv' : 'memory',
       }
     }
   },
