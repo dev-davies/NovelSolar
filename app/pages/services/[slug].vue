@@ -55,7 +55,7 @@
                  Book Service
                  <span class="material-symbols-outlined text-xl">calendar_month</span>
               </button>
-              <NuxtLink to="/contact" class="bg-white border-2 border-slate-200 text-slate-700 px-8 py-4 rounded-xl font-bold uppercase tracking-wider hover:border-[#002888] hover:text-[#002888] hover:bg-gray-50 transition-colors active:scale-95 flex items-center justify-center gap-2 w-full sm:w-auto">
+              <NuxtLink to="/quote" class="bg-white border-2 border-slate-200 text-slate-700 px-8 py-4 rounded-xl font-bold uppercase tracking-wider hover:border-[#002888] hover:text-[#002888] hover:bg-gray-50 transition-colors active:scale-95 flex items-center justify-center gap-2 w-full sm:w-auto">
                  Speak to Expert
                  <span class="material-symbols-outlined text-xl">support_agent</span>
               </NuxtLink>

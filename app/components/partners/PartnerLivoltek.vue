@@ -50,9 +50,9 @@ const activeProduct = ref(products[0])
         </p>
         
         <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-          <button class="bg-[#00AEEF] hover:bg-cyan-400 text-[#00164d] px-8 py-4 rounded-sm font-black uppercase tracking-widest transition-all duration-300 transform hover:-translate-y-1 shadow-[0_0_20px_rgba(0,174,239,0.3)]">
+          <NuxtLink to="/quote" class="bg-[#00AEEF] hover:bg-cyan-400 text-[#00164d] px-8 py-4 rounded-sm font-black uppercase tracking-widest transition-all duration-300 transform hover:-translate-y-1 shadow-[0_0_20px_rgba(0,174,239,0.3)] inline-flex items-center justify-center">
             Request a Quote
-          </button>
+          </NuxtLink>
           <button class="bg-transparent border-2 border-slate-500 hover:border-white text-white px-8 py-4 rounded-sm font-bold uppercase tracking-widest transition-all duration-300">
             Explore Catalog
           </button>
@@ -197,9 +197,9 @@ const activeProduct = ref(products[0])
         </p>
         
         <div class="flex flex-col sm:flex-row justify-center gap-4">
-          <button class="bg-[#00AEEF] hover:bg-cyan-400 text-[#00164d] px-10 py-5 rounded-sm font-black uppercase tracking-widest transition-all duration-300 transform hover:-translate-y-1">
+          <NuxtLink to="/quote" class="bg-[#00AEEF] hover:bg-cyan-400 text-[#00164d] px-10 py-5 rounded-sm font-black uppercase tracking-widest transition-all duration-300 transform hover:-translate-y-1 inline-flex items-center justify-center">
             Get a Custom Quote
-          </button>
+          </NuxtLink>
           <button class="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/30 text-white px-10 py-5 rounded-sm font-bold uppercase tracking-widest transition-all duration-300">
             Contact Support
           </button>
