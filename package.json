@@ -13,11 +13,13 @@
     "@nuxt/image": "^2.0.0",
     "@nuxtjs/sanity": "^2.2.0",
     "@portabletext/vue": "^1.0.14",
+    "@vercel/kv": "^3.0.0",
     "@vueuse/core": "^14.2.1",
     "@vueuse/nuxt": "^14.2.1",
     "cloudinary": "^2.9.0",
     "nodemailer": "^8.0.3",
     "nuxt": "^4.3.1",
+    "unstorage": "^1.17.5",
     "vue": "^3.5.29",
     "vue-router": "^4.6.4",
     "zod": "^4.3.6"
