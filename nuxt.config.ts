@@ -30,7 +30,7 @@ export default defineNuxtConfig({
     smtpPass: process.env.SMTP_PASS,
     smtpFrom: process.env.SMTP_FROM,
     public: {
-      // any public keys go here
+      baseUrl: process.env.NUXT_PUBLIC_BASE_URL || 'https://novel-solar.vercel.app',
     }
   },
   nitro: {
