@@ -2,10 +2,16 @@
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
-  
-  // Normalize the webhook URL: ensure it doesn't end with a trailing slash to prevent double-slashes
-  const baseUrl = config.bitrixWebhook.replace(/\/$/, '') + '/';
-  
+
+  if (!config.bitrixWebhookUrl) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Server configuration error: Bitrix Webhook URL is missing.',
+    });
+  }
+
+  const baseUrl = config.bitrixWebhookUrl.replace(/\/$/, '') + '/';
+
   const allProducts: any[] = [];
 
   // ─── PHASE 1: Paginate through crm.product.list to get all product metadata ───

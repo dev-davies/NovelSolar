@@ -1,10 +1,12 @@
 
 export default defineEventHandler(async (event) => {
-  const webhookUrl = process.env.BITRIX_WEBHOOK_URL
+  const config = useRuntimeConfig()
+  const webhookUrl = config.bitrixWebhookUrl
   if (!webhookUrl) {
     console.error('BITRIX_WEBHOOK_URL not configured')
     throw createError({ statusCode: 500, statusMessage: 'Server configuration error' })
   }
+  const normalizedBitrixUrl = webhookUrl.endsWith('/') ? webhookUrl : `${webhookUrl}/`
 
   const query = getQuery(event)
   const searchTerm = (query.q as string || '').trim().toLowerCase()
@@ -29,7 +31,7 @@ export default defineEventHandler(async (event) => {
       start: startFrom.toString(),
     })
 
-    const response = await $fetch(`${webhookUrl}crm.product.list`, {
+    const response = await $fetch(`${normalizedBitrixUrl}crm.product.list`, {
       method: 'GET',
       query: params as Record<string, string>,
     })

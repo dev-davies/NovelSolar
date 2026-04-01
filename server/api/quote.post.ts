@@ -2,8 +2,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   const config = useRuntimeConfig();
 
-  // Get webhook URL from runtime config (same pattern as other endpoints)
-  const webhookUrl = config.bitrixWebhookUrl || config.public.bitrixWebhookUrl || config.bitrixWebhook;
+  const webhookUrl = config.bitrixWebhookUrl;
 
   if (!webhookUrl) {
     throw createError({
@@ -20,9 +19,11 @@ export default defineEventHandler(async (event) => {
     });
   }
 
+  const normalizedUrl = webhookUrl.endsWith('/') ? webhookUrl : `${webhookUrl}/`;
+
   try {
     // Format the data for Bitrix crm.lead.add
-    const response: any = await $fetch(`${webhookUrl}crm.lead.add`, {
+    const response: any = await $fetch(`${normalizedUrl}crm.lead.add`, {
       method: 'POST',
       body: {
         fields: {

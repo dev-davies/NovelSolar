@@ -2,9 +2,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   const { email, code } = body; // Body field name updated to 'code' as per persistent storage upgrade
   const config = useRuntimeConfig();
-  
-  // Support multiple naming conventions for bitrix webhook
-  const bitrixUrl = config.bitrixWebhookUrl || config.public.bitrixWebhookUrl || config.bitrixWebhook;
+  const bitrixUrl = config.bitrixWebhookUrl;
 
   if (!email || !code) {
     throw createError({

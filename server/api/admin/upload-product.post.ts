@@ -1,6 +1,7 @@
 import { v2 as cloudinary } from 'cloudinary';
 
 export default defineEventHandler(async (event) => {
+  const config = useRuntimeConfig();
   // 1. Configure Cloudinary
   cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -70,7 +71,7 @@ export default defineEventHandler(async (event) => {
     const galleryUrls = galleryResults.map((r: any) => r.secure_url);
 
     // 5. Bitrix Upload: Add product with Cloudinary image URL in PROPERTY_44
-    const webhookUrl = process.env.BITRIX_WEBHOOK_URL;
+    const webhookUrl = config.bitrixWebhookUrl;
     if (!webhookUrl) throw new Error('BITRIX_WEBHOOK_URL not configured');
     const formattedWebhookUrl = webhookUrl.endsWith('/') ? webhookUrl : `${webhookUrl}/`;
 

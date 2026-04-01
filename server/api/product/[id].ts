@@ -3,14 +3,16 @@
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
   const id = getRouterParam(event, 'id');
-  const baseUrl = config.bitrixWebhook;
+  const webhookUrl = config.bitrixWebhookUrl;
 
-  if (!baseUrl) {
+  if (!webhookUrl) {
     throw createError({ statusCode: 500, statusMessage: 'Bitrix Webhook URL missing in configuration.' });
   }
 
+  const normalizedBitrixUrl = webhookUrl.endsWith('/') ? webhookUrl : `${webhookUrl}/`;
+
   try {
-    const response = await $fetch<{ result?: any }>(`${baseUrl}crm.product.get?id=${id}`);
+    const response = await $fetch<{ result?: any }>(`${normalizedBitrixUrl}crm.product.get?id=${id}`);
     const product = response.result || null;
     
     if (product) {

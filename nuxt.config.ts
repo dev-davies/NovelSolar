@@ -23,7 +23,6 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     bitrixWebhookUrl: process.env.BITRIX_WEBHOOK_URL,
-    bitrixWebhook: process.env.BITRIX_WEBHOOK_URL,
     smtpHost: process.env.SMTP_HOST,
     smtpPort: process.env.SMTP_PORT,
     smtpUser: process.env.SMTP_USER,
