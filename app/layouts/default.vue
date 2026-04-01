@@ -312,7 +312,7 @@
             <!-- Standard Links -->
             <NuxtLink 
               v-else
-              :to="link === 'About Us' ? '/about' : '#'"
+              :to="link === 'About Us' ? '/about' : link === 'Quote Request' ? '/quote' : '#'"
               class="block w-full text-left px-6 py-4 border-b border-gray-50 text-gray-800 font-semibold hover:bg-gray-50 hover:text-[#002888] transition-colors"
               @click="isMobileMenuOpen = false"
             >

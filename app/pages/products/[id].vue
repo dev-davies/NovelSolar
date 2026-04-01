@@ -181,9 +181,9 @@
         <p class="text-blue-100 text-lg mb-8">
           Planning a large-scale project? Get a personalized quote for bulk orders, custom logistics, and technical consulting.
         </p>
-        <button class="bg-white text-primary px-10 py-4 font-bold rounded-2xl shadow-xl hover:scale-105 transition-transform active:scale-95">
+        <NuxtLink to="/contact" class="bg-white text-primary px-10 py-4 font-bold rounded-2xl shadow-xl hover:scale-105 transition-transform active:scale-95 inline-flex items-center justify-center">
           Contact Sales Team
-        </button>
+        </NuxtLink>
       </div>
       <!-- Decorative circles -->
       <div class="absolute -right-20 -top-20 w-80 h-80 bg-blue-500 rounded-full blur-3xl opacity-20 transition-transform duration-700 group-hover:scale-110"></div>

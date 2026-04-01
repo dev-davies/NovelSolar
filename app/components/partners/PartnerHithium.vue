@@ -131,7 +131,7 @@
         <p class="text-lg text-slate-500 font-medium mb-10 leading-relaxed uppercase tracking-widest px-4">
           Novel Solar is the authorized regional partner for Hithium portable energy systems.
         </p>
-        <NuxtLink to="/contact" class="inline-flex items-center gap-4 bg-white border-2 border-slate-900 text-slate-900 px-12 py-6 rounded-3xl font-black text-xl hover:bg-slate-900 hover:text-white transition-all shadow-xl uppercase tracking-widest">
+        <NuxtLink to="/quote" class="inline-flex items-center gap-4 bg-white border-2 border-slate-900 text-slate-900 px-12 py-6 rounded-3xl font-black text-xl hover:bg-slate-900 hover:text-white transition-all shadow-xl uppercase tracking-widest">
            Talk to an expert
            <span class="material-symbols-outlined text-2xl font-black">call</span>
         </NuxtLink>
