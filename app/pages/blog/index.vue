@@ -129,20 +129,27 @@ const query = groq`*[_type == "post"] | order(publishedAt desc) [$start...$end] 
 }`
 
 // Initial Fetch (First 9 posts)
-const { data: initialPosts, pending } = await useAsyncData('blog-posts-initial', () => 
+const { data: initialPosts, pending, refresh } = await useAsyncData('blog-posts-initial', () => 
   sanity.fetch(query, { start: 0, end: pageSize })
 )
 
 // Maintain a reactive list of all loaded posts
 const allPosts = ref([])
 watch(initialPosts, (newVal) => {
-  if (newVal) {
-    allPosts.value = [...newVal]
-    if (newVal.length < pageSize) {
-      hasMore.value = false
-    }
+  if (!Array.isArray(newVal)) {
+    allPosts.value = []
+    hasMore.value = false
+    return
   }
+
+  allPosts.value = [...newVal]
+  hasMore.value = newVal.length >= pageSize
 }, { immediate: true })
+
+// Ensure latest posts are fetched after client-side navigation.
+onMounted(() => {
+  refresh()
+})
 
 /**
  * Fetch the next batch of posts and append them to the list
