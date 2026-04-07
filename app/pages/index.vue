@@ -121,23 +121,42 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <article v-for="post in posts" :key="post.id" class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
+          <article v-for="post in recentInsights || []" :key="post._id" class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
             <div class="aspect-video relative overflow-hidden">
-              <NuxtImg :src="post.image" :alt="post.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+              <NuxtImg
+                v-if="post.mainImage?.asset?._ref"
+                provider="sanity"
+                :src="post.mainImage.asset._ref"
+                :alt="post.title"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+              <img
+                v-else-if="post.mainImage"
+                :src="urlFor(post.mainImage).width(960).height(540).url()"
+                :alt="post.title"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                loading="lazy"
+              />
+              <NuxtImg
+                v-else
+                src="/images/fallback-post.png"
+                :alt="post.title"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
             </div>
             <div class="p-8">
               <div class="flex items-center gap-2 mb-4 text-xs font-medium text-gray-400">
-                <span>{{ post.category }}</span>
-                <span class="w-1 h-1 rounded-full bg-gray-300"></span>
-                <span>{{ post.readTime }}</span>
+                <span>{{ post.categories?.[0]?.title || 'Industry Insight' }}</span>
+                <span v-if="post.publishedAt" class="w-1 h-1 rounded-full bg-gray-300"></span>
+                <span>{{ formatPublishedAt(post.publishedAt) }}</span>
               </div>
               <h3 class="text-xl font-bold text-gray-900 mb-4 leading-snug group-hover:text-primary transition-colors">
                 {{ post.title }}
               </h3>
               <p class="text-gray-500 text-sm line-clamp-2 mb-6">
-                {{ post.excerpt }}
+                {{ post.excerpt || 'Read the latest update from Novel Solar insights.' }}
               </p>
-              <NuxtLink :to="`/blog/${post.id}`" class="text-primary font-bold text-sm inline-flex items-center gap-2">
+              <NuxtLink :to="post.slug?.current ? `/blog/${post.slug.current}` : '/blog'" class="text-primary font-bold text-sm inline-flex items-center gap-2">
                 Read Article
                 <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
               </NuxtLink>
@@ -154,6 +173,14 @@ import { excludeServiceProducts } from '~/utils/productFilters'
 
 const { data: products, pending } = useFetch('/api/inventory')
 const featuredProducts = computed(() => excludeServiceProducts(products.value || []).slice(0, 8))
+const sanity = useSanity()
+const { urlFor } = useSanityImage()
+
+const { data: recentInsights } = await useAsyncData('home-insights', () => {
+  return sanity.fetch(`*[_type == "post"] | order(publishedAt desc)[0...3] {
+    _id, title, slug, mainImage { asset }, "excerpt": pt::text(body), publishedAt, categories[]->{title}
+  }`)
+})
 
 const { addToCart } = useCart()
 
@@ -162,30 +189,12 @@ const buyNow = (product) => {
   navigateTo('/checkout')
 }
 
-const posts = [
-  {
-    id: 1,
-    title: 'The Future of bifacial solar technology in 2026',
-    excerpt: 'Exploring how recent breakthroughs in cell architecture are driving down double-sided yields.',
-    category: 'Technology',
-    readTime: '5 min read',
-    image: '/images/industry_insights_1_1773068313772.png'
-  },
-  {
-    id: 2,
-    title: 'Optimizing supply chain for utility-scale solar',
-    excerpt: 'Best practices for managing multi-megawatt components dispatch and local warehousing.',
-    category: 'Logistics',
-    readTime: '8 min read',
-    image: '/images/industry_insights_2_1773068331524.png'
-  },
-  {
-    id: 3,
-    title: 'Smart cities: The role of building integrated PV',
-    excerpt: 'How BIPV is transforming urban energy landscapes and increasing property value.',
-    category: 'Architecture',
-    readTime: '4 min read',
-    image: '/images/industry_insights_3_1773068348559.png'
-  }
-];
+const formatPublishedAt = (dateString) => {
+  if (!dateString) return 'Latest release'
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  }).format(new Date(dateString))
+}
 </script>
