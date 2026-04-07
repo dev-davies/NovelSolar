@@ -58,11 +58,16 @@
       <div class="max-w-6xl mx-auto px-4 mb-20">
         <div class="aspect-video bg-slate-50 rounded-[40px] overflow-hidden shadow-2xl border-8 border-white group relative">
           <div class="absolute inset-0 bg-[#002888]/10 mix-blend-multiply opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10"></div>
-          <img 
-            v-if="post.mainImage"
-            :src="urlFor(post.mainImage).width(1200).height(675).url()"
-            :alt="post.title"
+          <NuxtImg
+            v-if="post.mainImage?.asset?._ref"
+            provider="sanity"
+            :src="post.mainImage.asset._ref"
+            width="1200"
+            height="675"
+            loading="lazy"
+            format="webp"
             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[2000ms]"
+            :alt="post.title"
           />
           <div v-else class="w-full h-full relative overflow-hidden bg-slate-900 flex items-center justify-center">
             <img src="/images/fallback-post.png" class="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-overlay" />
@@ -105,7 +110,7 @@
       <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
         <h3 class="font-bold text-lg text-slate-900 mb-4">Search</h3>
         <div class="relative">
-          <input type="text" placeholder="Search insights..." class="w-full pl-4 pr-10 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#002888] focus:border-transparent outline-none transition-all">
+          <input v-model="searchQuery" @keyup.enter="handleSearch" type="text" placeholder="Search insights..." class="w-full pl-4 pr-10 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#002888] focus:border-transparent outline-none transition-all">
           <svg class="w-5 h-5 text-slate-400 absolute right-3 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
         </div>
       </div>
@@ -114,7 +119,7 @@
         <h3 class="font-bold text-lg text-slate-900 mb-4 border-b border-slate-200 pb-3">Categories</h3>
         <ul class="space-y-3">
           <li v-for="cat in allCategories" :key="cat.title">
-            <NuxtLink to="#" class="text-slate-600 hover:text-[#002888] hover:underline font-medium transition-colors flex items-center gap-2">
+            <NuxtLink :to="'/blog?category=' + encodeURIComponent(cat.title)" class="text-slate-600 hover:text-[#002888] hover:underline font-medium transition-colors flex items-center gap-2">
               <span class="w-1.5 h-1.5 rounded-full bg-red-600"></span>
               {{ cat.title }}
             </NuxtLink>
@@ -127,10 +132,16 @@
         <div class="space-y-6">
           <NuxtLink v-for="recent in recentPosts" :key="recent.slug.current" :to="'/blog/' + recent.slug.current" class="group flex gap-4 items-start">
             <div class="w-20 h-20 shrink-0 rounded-xl overflow-hidden bg-slate-200 relative">
-              <img 
-                v-if="recent.mainImage" 
-                :src="urlFor(recent.mainImage).width(200).height(200).url()" 
-                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" 
+              <NuxtImg
+                v-if="recent.mainImage?.asset?._ref"
+                provider="sanity"
+                :src="recent.mainImage.asset._ref"
+                width="200"
+                height="200"
+                loading="lazy"
+                format="webp"
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                :alt="recent.title"
               />
               <div v-else class="w-full h-full bg-slate-900 flex items-center justify-center">
                 <img src="/images/fallback-post.png" class="absolute inset-0 w-full h-full object-cover opacity-20" />
@@ -165,7 +176,7 @@
 
 <script setup>
 import { useRoute } from 'vue-router'
-import { computed, h } from 'vue'
+import { computed, h, ref } from 'vue'
 import { PortableText } from '@portabletext/vue'
 import PortableTextImage from '~/components/PortableTextImage.vue'
 
@@ -175,9 +186,10 @@ const myPortableTextComponents = {
   },
   marks: {
     link: ({ value, slots }) => {
-      const rel = !value.href.startsWith('/') ? 'noreferrer noopener' : undefined
-      const target = !value.href.startsWith('/') ? '_blank' : undefined
-      return h('a', { href: value.href, rel, target, class: 'text-[#002888] font-bold hover:underline' }, slots.default?.())
+      const href = value?.href || '#'
+      const rel = !href.startsWith('/') ? 'noreferrer noopener' : undefined
+      const target = !href.startsWith('/') ? '_blank' : undefined
+      return h('a', { href, rel, target, class: 'text-[#002888] font-bold hover:underline' }, slots.default?.())
     }
   }
 }
@@ -219,6 +231,13 @@ const { data, pending } = await useAsyncData(
 const post = computed(() => data.value?.post)
 const recentPosts = computed(() => data.value?.recentPosts)
 const allCategories = computed(() => data.value?.categories)
+const searchQuery = ref('')
+
+const handleSearch = () => {
+  if (searchQuery.value.trim()) {
+    navigateTo({ path: '/blog', query: { q: searchQuery.value } })
+  }
+}
 
 /**
  * Format the Sanity timestamp into a human-readable date
@@ -232,17 +251,13 @@ const formatDate = (dateString) => {
   }).format(new Date(dateString))
 }
 
-/**
- * SEO / Head Management
- */
-useHead({
-  title: post.value?.title ? `${post.value.title} | Novel Solar Insights` : 'Solar Insight Loading...',
-  meta: [
-    { 
-      name: 'description', 
-      content: post.value?.excerpt || 'Discover in-depth solar technology expertise, maintenance guides, and sustainable energy news.' 
-    }
-  ]
+useSeoMeta({
+  title: () => post.value?.title ? `${post.value.title} | Novel Solar Insights` : 'Novel Solar Insights',
+  description: () => post.value?.excerpt || 'Discover in-depth solar technology expertise.',
+  ogTitle: () => post.value?.title,
+  ogDescription: () => post.value?.excerpt,
+  ogImage: () => post.value?.mainImage ? urlFor(post.value.mainImage).width(1200).height(630).url() : 'https://novel-solar.vercel.app/images/fallback-post.png',
+  twitterCard: 'summary_large_image',
 })
 </script>
 

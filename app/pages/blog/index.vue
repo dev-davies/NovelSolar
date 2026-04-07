@@ -31,12 +31,16 @@
           >
             <!-- Image Layer -->
             <div class="aspect-video bg-slate-100 overflow-hidden relative group-hover:scale-105 transition-transform duration-700">
-              <img 
-                v-if="post.mainImage"
-                :src="urlFor(post.mainImage).width(801).height(451).url()"
-                :alt="post.title"
-                class="w-full h-full object-cover"
+              <NuxtImg
+                v-if="post.mainImage?.asset?._ref"
+                provider="sanity"
+                :src="post.mainImage.asset._ref"
+                width="801"
+                height="451"
                 loading="lazy"
+                format="webp"
+                class="w-full h-full object-cover"
+                :alt="post.title"
               />
               <div v-else class="w-full h-full relative overflow-hidden bg-slate-900 flex items-center justify-center">
                 <img src="/images/fallback-post.png" class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay" />
@@ -103,7 +107,6 @@
 </template>
 
 <script setup>
-const { urlFor } = useSanityImage()
 const sanity = useSanity()
 
 // Pagination State
@@ -131,7 +134,7 @@ const { data: initialPosts, pending } = await useAsyncData('blog-posts-initial',
 )
 
 // Maintain a reactive list of all loaded posts
-const allPosts = ref(initialPosts.value || [])
+const allPosts = useState('blog-posts-list', () => initialPosts.value || [])
 
 // Check if we already reached the end on initial load
 if (allPosts.value.length < pageSize) {
