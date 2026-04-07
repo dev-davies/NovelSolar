@@ -2,7 +2,19 @@
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
-  modules: ["@nuxtjs/tailwindcss", "@nuxt/image", "@vueuse/nuxt", "@nuxt/content"],
+  modules: ["@nuxtjs/tailwindcss", "@nuxt/image", "@vueuse/nuxt", "@nuxt/content", "@nuxtjs/sitemap"],
+  site: {
+    url: 'https://novelsolar.com',
+    name: 'Novel Solar'
+  },
+  sitemap: {
+    strictNuxtContentPaths: true,
+    exclude: [
+      '/admin/**', // Keep the admin dashboard out of Google
+      '/checkout',
+      '/thank-you'
+    ]
+  },
   image: {
     domains: ["nisl.bitrix24.com"],
     sanity: {
