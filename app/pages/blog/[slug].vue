@@ -197,6 +197,9 @@ const myPortableTextComponents = {
 const route = useRoute()
 const sanity = useSanity()
 const { urlFor } = useSanityImage()
+const runtimeConfig = useRuntimeConfig()
+const siteBaseUrl = runtimeConfig.public.baseUrl?.replace(/\/$/, '') || 'https://novel-solar.vercel.app'
+const fallbackOgImage = `${siteBaseUrl}/images/fallback-post.png`
 
 // Make the slug a reactive computed property
 const activeSlug = computed(() => route.params.slug)
@@ -256,7 +259,7 @@ useSeoMeta({
   description: () => post.value?.excerpt || 'Discover in-depth solar technology expertise.',
   ogTitle: () => post.value?.title,
   ogDescription: () => post.value?.excerpt,
-  ogImage: () => post.value?.mainImage ? urlFor(post.value.mainImage).width(1200).height(630).url() : 'https://novel-solar.vercel.app/images/fallback-post.png',
+  ogImage: () => post.value?.mainImage ? urlFor(post.value.mainImage).width(1200).height(630).url() : fallbackOgImage,
   twitterCard: 'summary_large_image',
 })
 </script>
