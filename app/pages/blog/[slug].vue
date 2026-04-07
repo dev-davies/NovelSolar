@@ -201,18 +201,22 @@ const runtimeConfig = useRuntimeConfig()
 const siteBaseUrl = runtimeConfig.public.baseUrl?.replace(/\/$/, '') || 'https://novel-solar.vercel.app'
 const fallbackOgImage = `${siteBaseUrl}/images/fallback-post.png`
 
-const currentSlug = route.params.slug
+const currentSlug = computed(() => {
+  const slug = route.params.slug
+  if (Array.isArray(slug)) return slug[0] || ''
+  return slug || ''
+})
 
 // Fetch the main post, recent posts (excluding current), and all categories
 const query = groq`{
-  "post": *[_type == "post" && slug.current == "${currentSlug}"][0]{
+  "post": *[_type == "post" && slug.current == $slug][0]{
     ...,
     mainImage { asset, hotspot, crop },
     "excerpt": pt::text(body),
     author->{name},
     categories[]->{title}
   },
-  "recentPosts": *[_type == "post" && slug.current != "${currentSlug}"] | order(publishedAt desc)[0...3]{
+  "recentPosts": *[_type == "post" && slug.current != $slug] | order(publishedAt desc)[0...3]{
     title,
     slug,
     mainImage { asset, hotspot, crop },
@@ -224,8 +228,14 @@ const query = groq`{
 }`
 
 const { data, pending } = await useAsyncData(
-  `blog-layout-${currentSlug}`,
-  () => sanity.fetch(query)
+  () => `blog-layout-${currentSlug.value || 'loading'}`,
+  () => {
+    if (!currentSlug.value) {
+      return Promise.resolve({ post: null, recentPosts: [], categories: [] })
+    }
+    return sanity.fetch(query, { slug: currentSlug.value })
+  },
+  { watch: [currentSlug] }
 )
 
 // Keep the 'post' variable working for the existing template
