@@ -113,7 +113,7 @@
     </section>
 
     <!-- Industry Insights Section -->
-    <section class="bg-gray-50 py-20">
+    <section v-if="recentInsights && recentInsights.length > 0" class="bg-gray-50 py-20">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
           <h2 class="text-3xl font-bold text-gray-900">Industry Insights</h2>
@@ -156,7 +156,7 @@
               <p class="text-gray-500 text-sm line-clamp-2 mb-6">
                 {{ post.excerpt || 'Read the latest update from Novel Solar insights.' }}
               </p>
-              <NuxtLink :to="post.slug?.current ? `/blog/${post.slug.current}` : '/blog'" class="text-primary font-bold text-sm inline-flex items-center gap-2">
+              <NuxtLink :to="`/blog/${post.slug.current}`" class="text-primary font-bold text-sm inline-flex items-center gap-2">
                 Read Article
                 <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
               </NuxtLink>

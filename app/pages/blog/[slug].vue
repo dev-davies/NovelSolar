@@ -201,19 +201,18 @@ const runtimeConfig = useRuntimeConfig()
 const siteBaseUrl = runtimeConfig.public.baseUrl?.replace(/\/$/, '') || 'https://novel-solar.vercel.app'
 const fallbackOgImage = `${siteBaseUrl}/images/fallback-post.png`
 
-// Make the slug a reactive computed property
-const activeSlug = computed(() => route.params.slug)
+const currentSlug = route.params.slug
 
 // Fetch the main post, recent posts (excluding current), and all categories
 const query = groq`{
-  "post": *[_type == "post" && slug.current == $slug][0]{
+  "post": *[_type == "post" && slug.current == "${currentSlug}"][0]{
     ...,
     mainImage { asset, hotspot, crop },
     "excerpt": pt::text(body),
     author->{name},
     categories[]->{title}
   },
-  "recentPosts": *[_type == "post" && slug.current != $slug] | order(publishedAt desc)[0...3]{
+  "recentPosts": *[_type == "post" && slug.current != "${currentSlug}"] | order(publishedAt desc)[0...3]{
     title,
     slug,
     mainImage { asset, hotspot, crop },
@@ -225,9 +224,8 @@ const query = groq`{
 }`
 
 const { data, pending } = await useAsyncData(
-  `blog-layout-${activeSlug.value}`,
-  () => sanity.fetch(query, { slug: activeSlug.value }),
-  { watch: [activeSlug] }
+  `blog-layout-${currentSlug}`,
+  () => sanity.fetch(query)
 )
 
 // Keep the 'post' variable working for the existing template

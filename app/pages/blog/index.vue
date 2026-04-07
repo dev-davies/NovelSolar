@@ -134,12 +134,15 @@ const { data: initialPosts, pending } = await useAsyncData('blog-posts-initial',
 )
 
 // Maintain a reactive list of all loaded posts
-const allPosts = useState('blog-posts-list', () => initialPosts.value || [])
-
-// Check if we already reached the end on initial load
-if (allPosts.value.length < pageSize) {
-  hasMore.value = false
-}
+const allPosts = ref([])
+watch(initialPosts, (newVal) => {
+  if (newVal) {
+    allPosts.value = [...newVal]
+    if (newVal.length < pageSize) {
+      hasMore.value = false
+    }
+  }
+}, { immediate: true })
 
 /**
  * Fetch the next batch of posts and append them to the list
