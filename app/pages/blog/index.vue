@@ -26,7 +26,7 @@
           <NuxtLink 
             v-for="post in allPosts" 
             :key="post._id" 
-            :to="'/blog/' + post.slug.current"
+            :to="post.slug?.current ? '/blog/' + post.slug.current : '/blog'"
             class="group bg-white rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all flex flex-col h-full overflow-hidden border border-gray-50"
           >
             <!-- Image Layer -->
