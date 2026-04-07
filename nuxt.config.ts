@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
-  modules: ["@nuxtjs/tailwindcss", "@nuxt/image", "@vueuse/nuxt", "@nuxtjs/sanity"],
+  modules: ["@nuxtjs/tailwindcss", "@nuxt/image", "@vueuse/nuxt", "@nuxt/content"],
   image: {
     domains: ["nisl.bitrix24.com"],
     sanity: {
@@ -39,11 +39,5 @@ export default defineNuxtConfig({
         driver: process.env.NODE_ENV === 'production' ? 'vercel-kv' : 'memory',
       }
     }
-  },
-  sanity: {
-    projectId: 'u2k0ma15',
-    dataset: 'production',
-    useCdn: false,
-    apiVersion: '2025-01-01',
   },
 });

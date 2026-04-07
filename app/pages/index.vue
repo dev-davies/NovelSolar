@@ -121,21 +121,13 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <article v-for="post in recentInsights || []" :key="post._id" class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
+          <article v-for="post in recentInsights || []" :key="post._path" class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
             <div class="aspect-video relative overflow-hidden">
               <NuxtImg
-                v-if="post.mainImage?.asset?._ref"
-                provider="sanity"
-                :src="post.mainImage.asset._ref"
+                v-if="post.image"
+                :src="post.image"
                 :alt="post.title"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-              <img
-                v-else-if="post.mainImage"
-                :src="urlFor(post.mainImage).width(960).height(540).url()"
-                :alt="post.title"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                loading="lazy"
               />
               <NuxtImg
                 v-else
@@ -146,17 +138,17 @@
             </div>
             <div class="p-8">
               <div class="flex items-center gap-2 mb-4 text-xs font-medium text-gray-400">
-                <span>{{ post.categories?.[0]?.title || 'Industry Insight' }}</span>
-                <span v-if="post.publishedAt" class="w-1 h-1 rounded-full bg-gray-300"></span>
-                <span>{{ formatPublishedAt(post.publishedAt) }}</span>
+                <span>{{ post.category || 'Industry Insight' }}</span>
+                <span v-if="post.date" class="w-1 h-1 rounded-full bg-gray-300"></span>
+                <span>{{ formatPublishedAt(post.date) }}</span>
               </div>
               <h3 class="text-xl font-bold text-gray-900 mb-4 leading-snug group-hover:text-primary transition-colors">
                 {{ post.title }}
               </h3>
               <p class="text-gray-500 text-sm line-clamp-2 mb-6">
-                {{ post.excerpt || 'Read the latest update from Novel Solar insights.' }}
+                {{ post.description || post.excerpt || 'Read the latest update from Novel Solar insights.' }}
               </p>
-              <NuxtLink :to="`/blog/${post.slug.current}`" class="text-primary font-bold text-sm inline-flex items-center gap-2">
+              <NuxtLink :to="`/blog/${post._path.replace('/blog/', '')}`" class="text-primary font-bold text-sm inline-flex items-center gap-2">
                 Read Article
                 <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
               </NuxtLink>
@@ -173,13 +165,9 @@ import { excludeServiceProducts } from '~/utils/productFilters'
 
 const { data: products, pending } = useFetch('/api/inventory')
 const featuredProducts = computed(() => excludeServiceProducts(products.value || []).slice(0, 8))
-const sanity = useSanity()
-const { urlFor } = useSanityImage()
 
 const { data: recentInsights } = await useAsyncData('home-insights', () => {
-  return sanity.fetch(`*[_type == "post"] | order(publishedAt desc)[0...3] {
-    _id, title, slug, mainImage { asset }, "excerpt": pt::text(body), publishedAt, categories[]->{title}
-  }`)
+  return queryContent('blog').sort({ date: -1 }).limit(3).find()
 })
 
 const { addToCart } = useCart()
