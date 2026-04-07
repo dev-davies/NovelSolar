@@ -1,6 +1,6 @@
 
 
-export default defineEventHandler(async (event) => {
+export default defineCachedEventHandler(async (event) => {
   const config = useRuntimeConfig();
 
   if (!config.bitrixWebhookUrl) {
@@ -57,4 +57,9 @@ export default defineEventHandler(async (event) => {
     PROPERTY_104: normalizeProperty(product.PROPERTY_104),
     PROPERTY_112: normalizeProperty(product.PROPERTY_112),
   }));
+}, {
+  maxAge: 60 * 5, // Cache for 5 minutes
+  swr: true, // Enable Stale-While-Revalidate for instant background fetching
+  name: 'bitrix-inventory',
+  getKey: () => 'global-catalog' // Static key so all users share the same cached JSON
 });
