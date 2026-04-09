@@ -2,20 +2,20 @@
   <div>
     <!-- Hero Section -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-      <div class="bg-primary rounded-3xl overflow-hidden py-16 sm:py-24 px-8 sm:px-12 relative">
+      <div class="bg-primary rounded-3xl overflow-hidden py-8 px-5 sm:py-24 sm:px-12 relative">
         <div class="max-w-2xl relative z-10">
-          <h1 class="text-4xl sm:text-6xl font-extrabold text-white leading-tight">
+          <h1 class="text-2xl sm:text-6xl font-extrabold text-white leading-tight">
             Reliable Solar Inventory, <br />
             <span class="text-blue-200">On-Demand.</span>
           </h1>
-          <p class="mt-6 text-xl text-blue-100 max-w-lg">
+          <p class="hidden sm:block mt-6 text-xl text-blue-100 max-w-lg">
             Sourcing the world's best solar components for residential and commercial projects. Instant quotes and same-day logistics.
           </p>
-          <div class="mt-10 flex flex-wrap gap-4">
-            <NuxtLink to="/shop" class="bg-white text-primary px-8 py-3 rounded-md text-lg font-bold hover:bg-gray-100 transition-colors shadow-lg">
+          <div class="mt-6 sm:mt-10 flex flex-wrap gap-3 sm:gap-4">
+            <NuxtLink to="/shop" class="bg-white text-primary text-sm px-5 py-2 sm:text-lg sm:px-8 sm:py-3 rounded-md font-bold hover:bg-gray-100 transition-colors shadow-lg">
               Browse Stock
             </NuxtLink>
-            <button class="border-2 border-white text-white px-8 py-3 rounded-md text-lg font-bold hover:bg-white/10 transition-colors">
+            <button class="border-2 border-white text-white text-sm px-5 py-2 sm:text-lg sm:px-8 sm:py-3 rounded-md font-bold hover:bg-white/10 transition-colors">
               Spec Sheets
             </button>
           </div>
@@ -27,9 +27,9 @@
 
     <!-- Our Ecosystem Selection -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-16">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="flex flex-col h-[280px] overflow-y-auto snap-y snap-mandatory md:h-auto md:overflow-visible md:grid md:grid-cols-2 gap-4 md:gap-8 rounded-xl no-scrollbar">
         <!-- Card 1 - Novel Academy -->
-        <a href="https://novel-academy.com" target="_blank" rel="noopener noreferrer" class="group relative block overflow-hidden rounded-xl bg-[#2C75D8] p-8 text-white shadow-md transition-transform hover:-translate-y-1 min-h-[280px] flex flex-col justify-end">
+        <a href="https://novel-academy.com" target="_blank" rel="noopener noreferrer" class="group relative block overflow-hidden rounded-xl bg-[#2C75D8] p-8 text-white shadow-md transition-transform hover:-translate-y-1 min-h-[280px] flex flex-col justify-end shrink-0 h-full w-full snap-center">
           <!-- Background Image -->
           <NuxtImg src="/images/novel academy.png" alt="Novel Academy" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
           <!-- Overlay Gradient for Readability -->
@@ -49,7 +49,7 @@
         </a>
 
         <!-- Card 2 - Solar Product Exchange -->
-        <a href="https://solarproductexchange.com" target="_blank" rel="noopener noreferrer" class="group relative block overflow-hidden rounded-xl bg-white border border-gray-200 p-8 shadow-md transition-transform hover:-translate-y-1 min-h-[280px] flex flex-col justify-end">
+        <a href="https://solarproductexchange.com" target="_blank" rel="noopener noreferrer" class="group relative block overflow-hidden rounded-xl bg-white border border-gray-200 p-8 shadow-md transition-transform hover:-translate-y-1 min-h-[280px] flex flex-col justify-end shrink-0 h-full w-full snap-center">
           <!-- Background Image -->
           <NuxtImg src="/images/solarexchange.png" alt="Solar Product Exchange" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
           <!-- Overlay Gradient for Readability -->
@@ -186,3 +186,14 @@ const formatPublishedAt = (dateString) => {
   }).format(new Date(dateString))
 }
 </script>
+
+<style scoped>
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+</style>
