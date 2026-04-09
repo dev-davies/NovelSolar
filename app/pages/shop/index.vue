@@ -54,8 +54,8 @@
         </div>
 
         <div v-else-if="!isFilterActive" class="space-y-10">
-          <div v-for="category in categories" :key="category.id">
-            <template v-if="getProductsForCategory(category.id).length > 0">
+          <div v-if="categorySections.length > 0">
+            <div v-for="category in categorySections" :key="category.id">
               <div class="flex items-center justify-between mb-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
                 <h2 class="text-lg md:text-xl font-bold text-slate-900">{{ category.name }}</h2>
                 <button @click="selectCategoryAndScroll(category.id)" class="text-sm font-bold text-[#002888] flex items-center gap-1 hover:underline">
@@ -63,9 +63,22 @@
                 </button>
               </div>
               <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
-                <ProductCard v-for="product in getProductsForCategory(category.id)" :key="product.ID" :product="product" />
+                <ProductCard v-for="product in category.products" :key="product.ID" :product="product" />
               </div>
-            </template>
+            </div>
+          </div>
+          <div v-else>
+            <div class="flex items-center justify-between mb-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+              <h2 class="text-lg md:text-xl font-bold text-slate-900">All Products</h2>
+            </div>
+            <div v-if="fallbackProducts.length === 0" class="text-center py-24 bg-white rounded-3xl border border-slate-100">
+              <span class="material-symbols-outlined text-6xl text-slate-300">inventory_2</span>
+              <h3 class="font-bold mt-2">No products available</h3>
+              <p class="text-slate-500 text-sm">Please check back shortly or try again later.</p>
+            </div>
+            <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
+              <ProductCard v-for="product in fallbackProducts" :key="product.ID" :product="product" />
+            </div>
           </div>
         </div>
 
@@ -112,12 +125,20 @@ const categories = [
 ]
 
 const { data: apiProducts, pending } = useFetch('/api/inventory')
+
+const normalizeSectionId = (value) => (value === null || value === undefined ? '' : String(value).trim())
+
 const getProductsArray = () => {
   if (!apiProducts.value) return []
   if (Array.isArray(apiProducts.value.data)) return excludeServiceProducts(apiProducts.value.data)
   if (Array.isArray(apiProducts.value.result)) return excludeServiceProducts(apiProducts.value.result)
   if (Array.isArray(apiProducts.value)) return excludeServiceProducts(apiProducts.value)
   return []
+}
+
+const getCategorySectionId = (categoryId) => {
+  const sectionId = categories.find(c => c.id === categoryId)?.SECTION_ID
+  return normalizeSectionId(sectionId)
 }
 
 const searchQuery = ref('')
@@ -150,8 +171,8 @@ const matchingProducts = computed(() => {
   return products.filter(product => {
     const productName = product.NAME || product.name || ''
     const matchesSearch = productName.toLowerCase().includes(searchQuery.value.toLowerCase())
-    const targetSection = categories.find(c => c.id === selectedCategory.value)?.SECTION_ID
-    const matchesCategory = selectedCategory.value === 'all' || product.SECTION_ID === targetSection
+    const targetSection = getCategorySectionId(selectedCategory.value)
+    const matchesCategory = selectedCategory.value === 'all' || normalizeSectionId(product.SECTION_ID) === targetSection
     const rawPrice = product.PRICE || product.price || 0
     const matchesPrice = Number(rawPrice) <= maxPrice.value
     return matchesSearch && matchesCategory && matchesPrice
@@ -166,9 +187,17 @@ watch([searchQuery, selectedCategory, maxPrice], () => {
 
 const getProductsForCategory = (categoryId) => {
   const products = getProductsArray()
-  const targetSectionId = categories.find(c => c.id === categoryId)?.SECTION_ID
-  return products.filter(p => p.SECTION_ID === targetSectionId).slice(0, 4)
+  const targetSectionId = getCategorySectionId(categoryId)
+  return products.filter(p => normalizeSectionId(p.SECTION_ID) === targetSectionId).slice(0, 4)
 }
+
+const categorySections = computed(() => {
+  return categories
+    .map(category => ({ ...category, products: getProductsForCategory(category.id) }))
+    .filter(category => category.products.length > 0)
+})
+
+const fallbackProducts = computed(() => getProductsArray().slice(0, 12))
 
 useHead({ title: 'Shop Inventory | NovelSolar' })
 </script>
