@@ -1,6 +1,10 @@
+import { createUserSession } from '../../utils/userSession'
+
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
-  const { email, code } = body; // Body field name updated to 'code' as per persistent storage upgrade
+  const rawEmail = body?.email ?? '';
+  const email = rawEmail.trim().toLowerCase();
+  const code = (body?.code ?? '').toString().trim();
   const config = useRuntimeConfig();
   const bitrixUrl = config.bitrixWebhookUrl;
 
@@ -108,11 +112,17 @@ export default defineEventHandler(async (event) => {
   }
 
   // 4. Securely log user in for 7 days
-  setCookie(event, 'auth_token', contactId, {
+  const userSession = await createUserSession({
+    contactId: String(contactId),
+    email,
+  })
+
+  setCookie(event, 'auth_token', userSession.token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 60 * 60 * 24 * 7 // 7 days
+    maxAge: userSession.maxAge, // 7 days
+    path: '/'
   });
 
   // 5. Clear failed attempts on successful login

@@ -1,14 +1,18 @@
+import { getUserSession } from '../../utils/userSession'
+
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
   const bitrixUrl = config.bitrixWebhookUrl;
-  const contactId = getCookie(event, 'auth_token');
+  const authToken = getCookie(event, 'auth_token');
+  const userSession = await getUserSession(authToken);
 
-  if (!contactId) {
+  if (!userSession) {
     throw createError({
       statusCode: 401,
       statusMessage: 'Unauthorized. Please login.',
     });
   }
+  const contactId = userSession.contactId;
 
   // Handle local/temporary IDs (if Bitrix was down during login)
   if (contactId.startsWith('temp_') || contactId.startsWith('local_')) {
