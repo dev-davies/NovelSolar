@@ -106,10 +106,13 @@ import { excludeServiceProducts } from '~/utils/productFilters'
 import { watch, computed, ref } from 'vue'
 
 const categories = [
-  { id: 'batteries', name: 'Batteries', SECTION_ID: null },
-  { id: 'solar-panel', name: 'Solar Panel', SECTION_ID: null },
+  { id: 'solar-panels', name: 'Solar Panels', SECTION_ID: null },
   { id: 'inverters', name: 'Inverters', SECTION_ID: null },
-  { id: 'accessories', name: 'Lightening & Accessories', SECTION_ID: null }
+  { id: 'batteries', name: 'Batteries', SECTION_ID: null },
+  { id: 'charge-controllers', name: 'Charge Controllers', SECTION_ID: null },
+  { id: 'lighting', name: 'Lighting', SECTION_ID: null },
+  { id: 'power-banks', name: 'Power Banks', SECTION_ID: null },
+  { id: 'accessories', name: 'Accessories', SECTION_ID: null }
 ]
 
 const { data: apiProducts, pending } = useFetch('/api/inventory')
@@ -129,11 +132,17 @@ const matchesCategory = (product, categoryId) => {
   const isBattery = title.includes('battery') || title.includes('lithium') || title.includes('tubular') || title.includes('dry cell')
   const isPanel = title.includes('panel') || title.includes('pv')
   const isInverter = title.includes('inverter') || title.includes('hybrid') || title.includes('generator')
+  const isController = title.includes('charge controller') || title.includes('controller')
+  const isLighting = (title.includes('flood light') || title.includes('streetlight') || title.includes('street light') || title.includes('bulb') || title.includes('light')) && !title.includes('hanger') && !title.includes('kits') && !title.includes('arrestor')
+  const isPowerBank = title.includes('power bank') || title.includes('power-bank') || title.includes('powerbank')
 
   if (categoryId === 'batteries') return isBattery
-  if (categoryId === 'solar-panel') return isPanel
+  if (categoryId === 'solar-panels') return isPanel
   if (categoryId === 'inverters') return isInverter
-  if (categoryId === 'accessories') return !isBattery && !isPanel && !isInverter
+  if (categoryId === 'charge-controllers') return isController
+  if (categoryId === 'lighting') return isLighting
+  if (categoryId === 'power-banks') return isPowerBank
+  if (categoryId === 'accessories') return !isBattery && !isPanel && !isInverter && !isController && !isLighting && !isPowerBank
 
   return false
 }
