@@ -53,57 +53,49 @@
           <h3 class="font-bold mt-2">Loading inventory...</h3>
         </div>
 
-        <div v-else-if="!isFilterActive" class="space-y-10">
-          <div v-if="categorySections.length > 0">
-            <div v-for="category in categorySections" :key="category.id">
-              <div class="flex items-center justify-between mb-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-                <h2 class="text-lg md:text-xl font-bold text-slate-900">{{ category.name }}</h2>
-                <button @click="selectCategoryAndScroll(category.id)" class="text-sm font-bold text-[#002888] flex items-center gap-1 hover:underline">
-                  See All <span class="material-symbols-outlined text-sm">arrow_forward</span>
-                </button>
-              </div>
-              <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
-                <ProductCard v-for="product in category.products" :key="product.ID" :product="product" />
-              </div>
+        <template v-else>
+          <div class="md:hidden space-y-10" :class="{ 'hidden': isFilterActive }">
+            <div v-for="category in categories" :key="category.id">
+              <template v-if="getProductsForCategory(category.id).length > 0">
+                <div class="flex items-center justify-between mb-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                  <h2 class="text-lg font-bold text-slate-900">{{ category.name }}</h2>
+                  <button @click="selectCategoryAndScroll(category.id)" class="text-sm font-bold text-[#002888] flex items-center gap-1 hover:underline">
+                    See All <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                  </button>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                  <ProductCard v-for="product in getProductsForCategory(category.id)" :key="product.ID" :product="product" />
+                </div>
+              </template>
             </div>
           </div>
-          <div v-else>
-            <div class="flex items-center justify-between mb-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-              <h2 class="text-lg md:text-xl font-bold text-slate-900">All Products</h2>
+
+          <div :class="{ 'hidden md:block': !isFilterActive, 'block': isFilterActive }">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-slate-200 gap-2">
+              <h2 class="text-xl font-bold text-slate-900">
+                {{ selectedCategory === 'all' ? 'All Inventory' : categories.find(c => c.id === selectedCategory)?.name }}
+              </h2>
+              <span class="bg-blue-100 text-[#002888] px-3 py-1 rounded-full text-xs font-black self-start sm:self-auto">{{ matchingProducts.length }} Results</span>
             </div>
-            <div v-if="fallbackProducts.length === 0" class="text-center py-24 bg-white rounded-3xl border border-slate-100">
+
+            <div v-if="matchingProducts.length === 0" class="text-center py-24 bg-white rounded-3xl border border-slate-100">
               <span class="material-symbols-outlined text-6xl text-slate-300">inventory_2</span>
-              <h3 class="font-bold mt-2">No products available</h3>
-              <p class="text-slate-500 text-sm">Please check back shortly or try again later.</p>
+              <h3 class="font-bold mt-2">No products found</h3>
+              <p class="text-slate-500 text-sm">Try adjusting your filters or price range.</p>
             </div>
+
             <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
-              <ProductCard v-for="product in fallbackProducts" :key="product.ID" :product="product" />
+              <ProductCard v-for="product in displayedProducts" :key="product.ID" :product="product" />
+            </div>
+            
+            <div v-if="matchingProducts.length > displayedProducts.length" class="mt-8 flex justify-center">
+              <button @click="displayLimit += 50" class="px-8 py-3 bg-white border-2 border-[#002888] text-[#002888] font-bold rounded-xl hover:bg-slate-50 transition-colors">
+                Load More Products
+              </button>
             </div>
           </div>
-        </div>
+        </template>
 
-        <div v-else>
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-slate-200 gap-2">
-            <h2 class="text-xl font-bold text-slate-900">{{ selectedCategory === 'all' ? 'Search Results' : categories.find(c => c.id === selectedCategory)?.name }}</h2>
-            <span class="bg-blue-100 text-[#002888] px-3 py-1 rounded-full text-xs font-black self-start sm:self-auto">{{ matchingProducts.length }} Results</span>
-          </div>
-
-          <div v-if="matchingProducts.length === 0" class="text-center py-24 bg-white rounded-3xl border border-slate-100">
-            <span class="material-symbols-outlined text-6xl text-slate-300">inventory_2</span>
-            <h3 class="font-bold mt-2">No products found</h3>
-            <p class="text-slate-500 text-sm">Try adjusting your filters or price range.</p>
-          </div>
-
-          <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
-            <ProductCard v-for="product in displayedProducts" :key="product.ID" :product="product" />
-          </div>
-
-          <div v-if="matchingProducts.length > displayedProducts.length" class="mt-8 flex justify-center">
-            <button @click="displayLimit += 50" class="px-8 py-3 bg-white border-2 border-[#002888] text-[#002888] font-bold rounded-xl hover:bg-slate-50 transition-colors">
-              Load More
-            </button>
-          </div>
-        </div>
       </main>
     </div>
   </div>
@@ -113,20 +105,14 @@
 import { excludeServiceProducts } from '~/utils/productFilters'
 import { watch, computed, ref } from 'vue'
 
-// Updated to include ALL categories from the ecosystem
 const categories = [
-  { id: 'solar-panels', name: 'Solar Panels', SECTION_ID: 1 },
-  { id: 'inverters', name: 'Inverters', SECTION_ID: 2 },
-  { id: 'batteries', name: 'Batteries', SECTION_ID: 3 },
-  { id: 'charge-controllers', name: 'Charge Controllers', SECTION_ID: 4 },
-  { id: 'lighting', name: 'Lighting', SECTION_ID: 5 },
-  { id: 'power-banks', name: 'Power Banks', SECTION_ID: 6 },
-  { id: 'accessories', name: 'Accessories', SECTION_ID: 7 }
+  { id: 'batteries', name: 'Batteries', SECTION_ID: null },
+  { id: 'solar-panel', name: 'Solar Panel', SECTION_ID: null },
+  { id: 'inverters', name: 'Inverters', SECTION_ID: null },
+  { id: 'accessories', name: 'Lightening & Accessories', SECTION_ID: null }
 ]
 
 const { data: apiProducts, pending } = useFetch('/api/inventory')
-
-const normalizeSectionId = (value) => (value === null || value === undefined ? '' : String(value).trim())
 
 const getProductsArray = () => {
   if (!apiProducts.value) return []
@@ -136,9 +122,20 @@ const getProductsArray = () => {
   return []
 }
 
-const getCategorySectionId = (categoryId) => {
-  const sectionId = categories.find(c => c.id === categoryId)?.SECTION_ID
-  return normalizeSectionId(sectionId)
+const matchesCategory = (product, categoryId) => {
+  if (categoryId === 'all') return true
+
+  const title = (product.NAME || product.name || '').toLowerCase()
+  const isBattery = title.includes('battery') || title.includes('lithium') || title.includes('tubular') || title.includes('dry cell')
+  const isPanel = title.includes('panel') || title.includes('pv')
+  const isInverter = title.includes('inverter') || title.includes('hybrid') || title.includes('generator')
+
+  if (categoryId === 'batteries') return isBattery
+  if (categoryId === 'solar-panel') return isPanel
+  if (categoryId === 'inverters') return isInverter
+  if (categoryId === 'accessories') return !isBattery && !isPanel && !isInverter
+
+  return false
 }
 
 const searchQuery = ref('')
@@ -171,11 +168,10 @@ const matchingProducts = computed(() => {
   return products.filter(product => {
     const productName = product.NAME || product.name || ''
     const matchesSearch = productName.toLowerCase().includes(searchQuery.value.toLowerCase())
-    const targetSection = getCategorySectionId(selectedCategory.value)
-    const matchesCategory = selectedCategory.value === 'all' || normalizeSectionId(product.SECTION_ID) === targetSection
+    const matchesCategoryFilter = matchesCategory(product, selectedCategory.value)
     const rawPrice = product.PRICE || product.price || 0
     const matchesPrice = Number(rawPrice) <= maxPrice.value
-    return matchesSearch && matchesCategory && matchesPrice
+    return matchesSearch && matchesCategoryFilter && matchesPrice
   })
 })
 
@@ -187,17 +183,8 @@ watch([searchQuery, selectedCategory, maxPrice], () => {
 
 const getProductsForCategory = (categoryId) => {
   const products = getProductsArray()
-  const targetSectionId = getCategorySectionId(categoryId)
-  return products.filter(p => normalizeSectionId(p.SECTION_ID) === targetSectionId).slice(0, 4)
+  return products.filter(product => matchesCategory(product, categoryId)).slice(0, 4)
 }
-
-const categorySections = computed(() => {
-  return categories
-    .map(category => ({ ...category, products: getProductsForCategory(category.id) }))
-    .filter(category => category.products.length > 0)
-})
-
-const fallbackProducts = computed(() => getProductsArray().slice(0, 12))
 
 useHead({ title: 'Shop Inventory | NovelSolar' })
 </script>
