@@ -6,7 +6,7 @@
     </header>
 
     <div class="max-w-7xl mx-auto px-4 md:px-6 flex flex-col md:flex-row gap-8">
-      <aside class="w-full md:w-64 shrink-0 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 h-fit">
+      <aside class="hidden md:block md:w-64 shrink-0 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 h-fit">
         <div class="space-y-8">
           <div>
             <h3 class="font-bold text-slate-900 mb-3 text-sm uppercase tracking-wider">Search</h3>
@@ -47,12 +47,12 @@
         </div>
 
         <template v-else>
-          <div class="md:hidden space-y-10" :class="{ 'hidden': isFilterActive }">
+          <div class="md:hidden space-y-10">
             <div v-for="category in categories" :key="category.id">
               <template v-if="getProductsForCategory(category.id).length > 0">
-                <div class="flex items-center justify-between mb-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-                  <h2 class="text-lg font-bold text-slate-900">{{ category.name }}</h2>
-                  <button @click="selectCategoryAndScroll(category.id)" class="text-sm font-bold text-[#002888] flex items-center gap-1 hover:underline">
+                <div class="flex items-center justify-between mb-4 bg-[#002888] p-4 rounded-2xl shadow-sm border border-[#002888]">
+                  <h2 class="text-lg font-bold text-white">{{ category.name }}</h2>
+                  <button @click="selectCategoryAndScroll(category.id)" class="text-sm font-bold text-white flex items-center gap-1 hover:underline">
                     See All <span class="material-symbols-outlined text-sm">arrow_forward</span>
                   </button>
                 </div>
@@ -63,7 +63,7 @@
             </div>
           </div>
 
-          <div :class="{ 'hidden md:block': !isFilterActive, 'block': isFilterActive }">
+          <div class="hidden md:block">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-slate-200 gap-2">
               <h2 class="text-xl font-bold text-slate-900">
                 {{ selectedCategory === 'all' ? 'All Inventory' : categories.find(c => c.id === selectedCategory)?.name }}
