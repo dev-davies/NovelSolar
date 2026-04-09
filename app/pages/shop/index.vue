@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="pb-20 bg-slate-50 min-h-screen">
     <header class="max-w-7xl mx-auto px-4 md:px-6 pt-8 mb-4">
       <h1 class="text-3xl font-bold text-slate-900 mb-2">Inventory Hub</h1>
@@ -7,14 +7,7 @@
 
     <div class="max-w-7xl mx-auto px-4 md:px-6 flex flex-col md:flex-row gap-8">
       <aside class="w-full md:w-64 shrink-0 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 h-fit">
-        <button @click="showMobileFilters = !showMobileFilters" class="md:hidden w-full flex items-center justify-between font-bold text-slate-900 mb-2">
-          <span class="flex items-center gap-2">
-            <span class="material-symbols-outlined">tune</span> Filters & Search
-          </span>
-          <span class="material-symbols-outlined">{{ showMobileFilters ? 'expand_less' : 'expand_more' }}</span>
-        </button>
-
-        <div :class="{ 'hidden md:block': !showMobileFilters, 'block': showMobileFilters }" class="mt-6 md:mt-0 space-y-8 transition-all">
+        <div class="space-y-8">
           <div>
             <h3 class="font-bold text-slate-900 mb-3 text-sm uppercase tracking-wider">Search</h3>
             <input v-model="searchQuery" type="text" placeholder="Search..." class="w-full rounded-xl border-slate-200 bg-slate-50 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888] p-3 outline-none" />
@@ -36,7 +29,7 @@
 
           <div>
             <h3 class="font-bold text-slate-900 mb-3 text-sm uppercase tracking-wider flex justify-between">
-              Max Price <span class="text-[#002888]">₦{{ Number(maxPrice).toLocaleString() }}</span>
+              Max Price <span class="text-[#002888]">&#8358;{{ Number(maxPrice).toLocaleString() }}</span>
             </h3>
             <input v-model="maxPrice" type="range" min="0" max="2000000" step="50000" class="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-[#002888]" />
           </div>
@@ -151,7 +144,6 @@ const searchQuery = ref('')
 const selectedCategory = ref('all')
 const maxPrice = ref(2000000)
 const displayLimit = ref(50)
-const showMobileFilters = ref(false)
 
 // Determine if the user is actively using any filters
 const isFilterActive = computed(() => {
@@ -162,7 +154,6 @@ const clearFilters = () => {
   searchQuery.value = ''
   selectedCategory.value = 'all'
   maxPrice.value = 2000000
-  showMobileFilters.value = false
 }
 
 // The "See All" button magic: Applies filter and scrolls top natively
@@ -197,3 +188,4 @@ const getProductsForCategory = (categoryId) => {
 
 useHead({ title: 'Shop Inventory | NovelSolar' })
 </script>
+
