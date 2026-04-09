@@ -1,4 +1,14 @@
 import { createUserSession } from '../../utils/userSession'
+import { OTP_CHALLENGE_COOKIE, createOtpCodeHash, parseOtpChallengeToken } from '../../utils/otpChallenge'
+
+function getOtpSecret(config: ReturnType<typeof useRuntimeConfig>) {
+  return String(
+    config.otpSecret
+    || config.authSessionSecret
+    || config.smtpPass
+    || 'novel-solar-otp-secret'
+  )
+}
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
@@ -18,9 +28,53 @@ export default defineEventHandler(async (event) => {
   const storage = useStorage('otp');
   const storageKey = `user:${email}`;
   const failedKey = `otp:failed:${email}`;
+  let storageHealthy = true;
+
+  const safeGet = async <T>(key: string, fallback: T): Promise<T> => {
+    try {
+      const value = await storage.getItem<T>(key);
+      return (value ?? fallback) as T;
+    } catch (storageError: any) {
+      storageHealthy = false;
+      console.error('[AUTH] OTP storage read failed during verification:', storageError?.message || storageError);
+      return fallback;
+    }
+  };
+
+  const safeSet = async (key: string, value: unknown, options?: { ttl?: number }) => {
+    try {
+      await storage.setItem(key, value, options);
+    } catch (storageError: any) {
+      storageHealthy = false;
+      console.error('[AUTH] OTP storage write failed during verification:', storageError?.message || storageError);
+    }
+  };
+
+  const safeRemove = async (key: string) => {
+    try {
+      await storage.removeItem(key);
+    } catch (storageError: any) {
+      storageHealthy = false;
+      console.error('[AUTH] OTP storage delete failed during verification:', storageError?.message || storageError);
+    }
+  };
 
   // 1. Fetch stored OTP data from persistent storage (Vercel KV in prod)
-  const storedData: any = await storage.getItem(storageKey);
+  let storedData: any = await safeGet<any | null>(storageKey, null);
+
+  // Fallback to signed cookie challenge if storage is unavailable or empty.
+  if (!storedData) {
+    const challengeToken = getCookie(event, OTP_CHALLENGE_COOKIE);
+    if (challengeToken) {
+      const parsedChallenge = parseOtpChallengeToken(challengeToken, getOtpSecret(config));
+      if (parsedChallenge && parsedChallenge.email === email) {
+        storedData = {
+          codeHash: parsedChallenge.codeHash,
+          expiresAt: parsedChallenge.expiresAt,
+        };
+      }
+    }
+  }
 
   // 2. Validate OTP
   if (!storedData) {
@@ -32,7 +86,8 @@ export default defineEventHandler(async (event) => {
 
   // Check expiration
   if (Date.now() > storedData.expiresAt) {
-    await storage.removeItem(storageKey); // Clean up expired code
+    await safeRemove(storageKey); // Clean up expired code
+    deleteCookie(event, OTP_CHALLENGE_COOKIE, { path: '/' });
     throw createError({ 
       statusCode: 400, 
       statusMessage: 'OTP has expired. Please request a new one.' 
@@ -40,11 +95,18 @@ export default defineEventHandler(async (event) => {
   }
 
   // Check code match
-  if (storedData.code !== code) {
+  const hasCodeMatch = typeof storedData.code === 'string'
+    ? storedData.code === code
+    : (
+      typeof storedData.codeHash === 'string'
+      && storedData.codeHash === createOtpCodeHash(email, code, getOtpSecret(config))
+    );
+
+  if (!hasCodeMatch) {
     // Track failed verification attempt persistently to prevent brute force across restarts
-    const failedAttempts = (await storage.getItem(failedKey) as { count: number } | null) || { count: 0 };
+    const failedAttempts = await safeGet<{ count: number }>(failedKey, { count: 0 });
     failedAttempts.count += 1;
-    await storage.setItem(failedKey, failedAttempts, { ttl: 60 * 60 }); // 1 hour TTL
+    await safeSet(failedKey, failedAttempts, { ttl: 60 * 60 }); // 1 hour TTL
 
     throw createError({ 
       statusCode: 400, 
@@ -54,7 +116,8 @@ export default defineEventHandler(async (event) => {
 
   // SUCCESS: The code is valid and not expired.
   // Immediately delete it so it cannot be used again.
-  await storage.removeItem(storageKey);
+  await safeRemove(storageKey);
+  deleteCookie(event, OTP_CHALLENGE_COOKIE, { path: '/' });
 
   // 3. Sync with Bitrix CRM
   let contactId = null;
@@ -126,7 +189,11 @@ export default defineEventHandler(async (event) => {
   });
 
   // 5. Clear failed attempts on successful login
-  await storage.removeItem(failedKey);
+  await safeRemove(failedKey);
+
+  if (!storageHealthy) {
+    console.warn('[AUTH] OTP verification completed with storage fallback mode enabled.');
+  }
 
   return { 
     success: true, 

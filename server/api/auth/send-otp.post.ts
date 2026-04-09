@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer'
+import { OTP_CHALLENGE_COOKIE, createOtpChallengeToken, createOtpCodeHash } from '../../utils/otpChallenge'
 
 const RATE_LIMIT = {
   THROTTLE_MS: 2 * 60 * 1000,
@@ -17,6 +18,15 @@ function createRateLimitError(statusMessage: string, type: RateLimitType, retryA
     statusMessage,
     data: { type, retryAfter },
   })
+}
+
+function getOtpSecret(config: ReturnType<typeof useRuntimeConfig>) {
+  return String(
+    config.otpSecret
+    || config.authSessionSecret
+    || config.smtpPass
+    || 'novel-solar-otp-secret'
+  )
 }
 
 export default defineEventHandler(async (event) => {
@@ -41,7 +51,29 @@ export default defineEventHandler(async (event) => {
     const failedKey = `otp:failed:${email}`
     const userCodeKey = `user:${email}`
 
-    const failedAttempts = (await storage.getItem(failedKey) as { count: number } | null) || { count: 0 }
+    let storageHealthy = true
+
+    const safeGet = async <T>(key: string, fallback: T): Promise<T> => {
+      try {
+        const value = await storage.getItem<T>(key)
+        return (value ?? fallback) as T
+      } catch (storageError: any) {
+        storageHealthy = false
+        console.error('[AUTH] OTP storage read failed. Falling back:', storageError?.message || storageError)
+        return fallback
+      }
+    }
+
+    const safeSet = async (key: string, value: unknown, options?: { ttl?: number }) => {
+      try {
+        await storage.setItem(key, value, options)
+      } catch (storageError: any) {
+        storageHealthy = false
+        console.error('[AUTH] OTP storage write failed. Falling back:', storageError?.message || storageError)
+      }
+    }
+
+    const failedAttempts = await safeGet<{ count: number }>(failedKey, { count: 0 })
     if (failedAttempts.count >= 5) {
       throw createRateLimitError(
         'Too many failed attempts. Please try again in 1 hour.',
@@ -50,7 +82,7 @@ export default defineEventHandler(async (event) => {
       )
     }
 
-    const lastRequest = await storage.getItem(throttleKey) as { timestamp: number } | null
+    const lastRequest = await safeGet<{ timestamp: number } | null>(throttleKey, null)
     if (lastRequest && (Date.now() - lastRequest.timestamp) < RATE_LIMIT.THROTTLE_MS) {
       const retryAfter = Math.ceil((RATE_LIMIT.THROTTLE_MS - (Date.now() - lastRequest.timestamp)) / 1000)
       throw createRateLimitError(
@@ -60,10 +92,10 @@ export default defineEventHandler(async (event) => {
       )
     }
 
-    const attempts = (await storage.getItem(attemptsKey) as { count: number, resetTime: number } | null) || {
+    const attempts = await safeGet<{ count: number, resetTime: number }>(attemptsKey, {
       count: 0,
       resetTime: Date.now() + RATE_LIMIT.HOUR_WINDOW_MS,
-    }
+    })
 
     if (Date.now() > attempts.resetTime) {
       attempts.count = 0
@@ -83,18 +115,31 @@ export default defineEventHandler(async (event) => {
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString()
     const expiresAt = Date.now() + (OTP_TTL_SECONDS * 1000)
 
-    await storage.setItem(userCodeKey, { code: otpCode, expiresAt }, { ttl: OTP_TTL_SECONDS })
-    await storage.setItem(throttleKey, { timestamp: Date.now() }, { ttl: Math.ceil(RATE_LIMIT.THROTTLE_MS / 1000) })
-    await storage.setItem(
+    await safeSet(userCodeKey, { code: otpCode, expiresAt }, { ttl: OTP_TTL_SECONDS })
+    await safeSet(throttleKey, { timestamp: Date.now() }, { ttl: Math.ceil(RATE_LIMIT.THROTTLE_MS / 1000) })
+    await safeSet(
       attemptsKey,
       { count: attempts.count + 1, resetTime: attempts.resetTime },
       { ttl: Math.ceil(RATE_LIMIT.HOUR_WINDOW_MS / 1000) }
     )
 
+    const challengeToken = createOtpChallengeToken(
+      { email, codeHash: createOtpCodeHash(email, otpCode, getOtpSecret(config)), expiresAt },
+      getOtpSecret(config)
+    )
+
+    setCookie(event, OTP_CHALLENGE_COOKIE, challengeToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: OTP_TTL_SECONDS,
+      path: '/',
+    })
+
     if (config.smtpUser && config.smtpPass) {
       const transporter = nodemailer.createTransport({
         pool: true,
-        host: config.smtpHost,
+        host: config.smtpHost || 'smtp.gmail.com',
         port: Number(config.smtpPort) || 587,
         secure: false,
         auth: {
@@ -105,13 +150,17 @@ export default defineEventHandler(async (event) => {
       })
 
       await transporter.sendMail({
-        from: config.smtpFrom,
+        from: config.smtpFrom || config.smtpUser,
         to: email,
         subject: 'Your Novel Solar Login Code',
         html: `<p>Your code is: <strong>${otpCode}</strong></p>`,
       })
     } else {
       console.log(`[DEV] OTP for ${email}: ${otpCode}`)
+    }
+
+    if (!storageHealthy) {
+      console.warn('[AUTH] OTP endpoint completed with storage fallback mode enabled.')
     }
 
     return { success: true, message: 'OTP sent successfully' }
