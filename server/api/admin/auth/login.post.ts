@@ -1,5 +1,7 @@
+import { createAdminSession } from '../../../utils/adminSession'
+
 export default defineEventHandler(async (event) => {
-  const body = await readBody(event)
+  const body = await readBody<{ passcode?: string }>(event)
   const validPasscode = process.env.ADMIN_UPLOAD_PASSCODE
 
   if (!validPasscode) {
@@ -7,19 +9,22 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 500, statusMessage: 'Server configuration error.' })
   }
 
+  if (!body?.passcode) {
+    throw createError({ statusCode: 400, statusMessage: 'Passcode is required.' })
+  }
+
   if (body.passcode !== validPasscode) {
     throw createError({ statusCode: 401, statusMessage: 'Invalid passcode.' })
   }
 
-  // Generate a secure session token
-  const sessionToken = `admin_session_${Date.now()}_${Math.random().toString(36).substring(7)}`
+  // Create server-side session and set cookie token reference
+  const session = await createAdminSession()
 
-  // Set an HttpOnly, Secure cookie that expires in 2 hours (7200 seconds)
-  setCookie(event, 'admin_token', sessionToken, {
+  setCookie(event, 'admin_token', session.token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 7200,
+    maxAge: session.maxAge,
     path: '/'
   })
 

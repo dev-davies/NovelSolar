@@ -1,4 +1,6 @@
-export default defineEventHandler((event) => {
+import { validateAdminSession } from '../utils/adminSession'
+
+export default defineEventHandler(async (event) => {
   const url = getRequestURL(event)
   
   // Only protect routes that start with /api/admin/
@@ -8,7 +10,9 @@ export default defineEventHandler((event) => {
     // Read the HttpOnly cookie
     const adminToken = getCookie(event, 'admin_token')
 
-    if (!adminToken) {
+    const isValidSession = await validateAdminSession(adminToken)
+
+    if (!isValidSession) {
       throw createError({ 
         statusCode: 401, 
         statusMessage: 'Unauthorized: Missing or expired admin session.' 
