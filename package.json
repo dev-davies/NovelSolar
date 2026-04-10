@@ -19,6 +19,8 @@
     "@vueuse/nuxt": "^14.2.1",
     "better-sqlite3": "^12.8.0",
     "cloudinary": "^2.9.0",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.7",
     "nodemailer": "^8.0.3",
     "nuxt": "^4.3.1",
     "unstorage": "^1.17.5",
