@@ -1,24 +1,36 @@
+import { serverSupabaseClient } from '#supabase/server'
 import { createAdminSession } from '../../../utils/adminSession'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody<{ passcode?: string }>(event)
-  const config = useRuntimeConfig(event)
-  const validPasscode = config.adminUploadPasscode
-
-  if (!validPasscode) {
-    console.error('CRITICAL: ADMIN_UPLOAD_PASSCODE is missing from server configuration.')
-    throw createError({ statusCode: 500, statusMessage: 'Server configuration error.' })
-  }
-
+  
   if (!body?.passcode) {
     throw createError({ statusCode: 400, statusMessage: 'Passcode is required.' })
   }
 
-  if (body.passcode !== validPasscode) {
+  const supabase = await serverSupabaseClient(event)
+
+  // Query the admin_settings table for the admin_passcode
+  const { data, error } = await supabase
+    .from('admin_settings')
+    .select('value')
+    .eq('key', 'admin_passcode')
+    .single()
+
+  if (error || !data) {
+    console.error('Database check failed:', error?.message || 'admin_passcode key not found')
+    throw createError({ 
+      statusCode: 500, 
+      statusMessage: 'Server configuration error. Admin passcode not found in database.' 
+    })
+  }
+
+  // Verification
+  if (body.passcode !== data.value) {
     throw createError({ statusCode: 401, statusMessage: 'Invalid passcode.' })
   }
 
-  // Create server-side session and set cookie token reference
+  // Session Creation
   try {
     const session = await createAdminSession()
 
@@ -35,7 +47,7 @@ export default defineEventHandler(async (event) => {
     console.error('Session creation failed:', error.message)
     throw createError({ 
       statusCode: 500, 
-      statusMessage: `Session creation failed: ${error.message || 'Unknown error'}. Ensure Vercel KV is linked.` 
+      statusMessage: `Session creation failed: ${error.message || 'Unknown error'}.` 
     })
   }
 })
