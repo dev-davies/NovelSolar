@@ -19,15 +19,23 @@ export default defineEventHandler(async (event) => {
   }
 
   // Create server-side session and set cookie token reference
-  const session = await createAdminSession()
+  try {
+    const session = await createAdminSession()
 
-  setCookie(event, 'admin_token', session.token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    maxAge: session.maxAge,
-    path: '/'
-  })
+    setCookie(event, 'admin_token', session.token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: session.maxAge,
+      path: '/'
+    })
 
-  return { success: true, message: 'Authentication successful.' }
+    return { success: true, message: 'Authentication successful.' }
+  } catch (error: any) {
+    console.error('Session creation failed:', error.message)
+    throw createError({ 
+      statusCode: 500, 
+      statusMessage: `Session creation failed: ${error.message || 'Unknown error'}. Ensure Vercel KV is linked.` 
+    })
+  }
 })
