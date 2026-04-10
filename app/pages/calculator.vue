@@ -1,8 +1,42 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex items-center justify-center p-8">
-    <div class="bg-white p-12 rounded-xl shadow-md text-center max-w-lg w-full border-t-4 border-[#002888]">
-      <h1 class="text-3xl font-bold text-[#002888] mb-4">Solar Load Calculator</h1>
-      <p class="text-gray-600">Interactive appliance wattage calculator coming soon.</p>
+  <div class="min-h-screen bg-gray-50 pb-20">
+    <!-- Hero Header -->
+    <div class="bg-[#002888] py-16 px-4">
+      <div class="max-w-6xl mx-auto text-center">
+        <h1 class="text-3xl md:text-5xl font-black text-white mb-4">Precision Load Calculator</h1>
+        <p class="text-blue-100 max-w-2xl mx-auto text-lg">
+          Accurately estimate your power requirements to choose the perfect solar solution for your needs.
+        </p>
+      </div>
     </div>
+
+    <!-- Calculator Component -->
+    <LoadCalculator />
+
+    <!-- FAQ / Info Section -->
+    <section class="max-w-4xl mx-auto px-4 mt-12 space-y-8">
+      <div class="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">How does it work?</h3>
+        <p class="text-gray-600 leading-relaxed mb-4">
+          This calculator uses industrial standard formulas for solar system sizing. We calculate your <strong>Total Connected Load</strong> and then apply a safety factor (typically 1.25x for panels and 1.2x for inverters) to ensure your system performs reliably even during peak usage.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="flex gap-3">
+            <span class="material-symbols-outlined text-orange-500">info</span>
+            <p class="text-sm text-gray-500"><strong>Inverter Rating:</strong> Measures the maximum power the system can deliver at once.</p>
+          </div>
+          <div class="flex gap-3">
+            <span class="material-symbols-outlined text-orange-500">info</span>
+            <p class="text-sm text-gray-500"><strong>Panel Capacity:</strong> Measures how much energy is generated daily to charge batteries.</p>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
+
+<script setup>
+definePageMeta({
+  title: 'Solar Load Calculator - NovelSolar'
+})
+</script>
