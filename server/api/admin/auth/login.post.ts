@@ -2,10 +2,11 @@ import { createAdminSession } from '../../../utils/adminSession'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody<{ passcode?: string }>(event)
-  const validPasscode = process.env.ADMIN_UPLOAD_PASSCODE
+  const config = useRuntimeConfig(event)
+  const validPasscode = config.adminUploadPasscode
 
   if (!validPasscode) {
-    console.error('CRITICAL: ADMIN_UPLOAD_PASSCODE is missing from .env file.')
+    console.error('CRITICAL: ADMIN_UPLOAD_PASSCODE is missing from server configuration.')
     throw createError({ statusCode: 500, statusMessage: 'Server configuration error.' })
   }
 
