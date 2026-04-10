@@ -34,6 +34,7 @@ export default defineNuxtConfig({
     }
   },
   runtimeConfig: {
+    adminUploadPasscode: process.env.ADMIN_UPLOAD_PASSCODE,
     bitrixWebhookUrl: process.env.BITRIX_WEBHOOK_URL,
     otpSecret: process.env.OTP_SECRET,
     authSessionSecret: process.env.AUTH_SESSION_SECRET,
