@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
-  modules: ["@nuxtjs/tailwindcss", "@nuxt/image", "@vueuse/nuxt", "@nuxt/content", "@nuxtjs/sitemap"],
+  modules: ["@nuxtjs/tailwindcss", "@nuxt/image", "@vueuse/nuxt", "@nuxt/content", "@nuxtjs/sitemap", "@nuxtjs/supabase"],
   site: {
     url: 'https://novelsolar.com',
     name: 'Novel Solar'
@@ -49,15 +49,15 @@ export default defineNuxtConfig({
   },
   nitro: {
     storage: {
-      // The 'otp' namespace will automatically use Vercel KV in production
+      // The 'otp' namespace will automatically use Vercel KV in production if linked
       otp: {
-        driver: process.env.NODE_ENV === 'production' ? 'vercel-kv' : 'memory',
+        driver: (process.env.NODE_ENV === 'production' && process.env.KV_REST_API_URL) ? 'vercel-kv' : 'memory',
       },
       adminSessions: {
-        driver: process.env.NODE_ENV === 'production' ? 'vercel-kv' : 'memory',
+        driver: (process.env.NODE_ENV === 'production' && process.env.KV_REST_API_URL) ? 'vercel-kv' : 'memory',
       },
       userSessions: {
-        driver: process.env.NODE_ENV === 'production' ? 'vercel-kv' : 'memory',
+        driver: (process.env.NODE_ENV === 'production' && process.env.KV_REST_API_URL) ? 'vercel-kv' : 'memory',
       },
     }
   },

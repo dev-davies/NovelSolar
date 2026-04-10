@@ -1,7 +1,8 @@
 import { randomUUID } from 'node:crypto'
 
-const ADMIN_SESSION_MAX_AGE_SECONDS = 60 * 60 * 2 // 2 hours
+// Use memory storage for session persistence across requests
 const ADMIN_SESSION_STORAGE = 'adminSessions'
+const ADMIN_SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 // 24 hours
 
 interface AdminSessionRecord {
   createdAt: number
@@ -27,6 +28,7 @@ export async function validateAdminSession(token?: string | null) {
 
   const storage = useStorage(ADMIN_SESSION_STORAGE)
   const session = await storage.getItem<AdminSessionRecord | null>(token)
+  
   if (!session) return false
 
   if (Date.now() > session.expiresAt) {
