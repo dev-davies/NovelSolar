@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 const email = ref('');
 const isSuccess = ref(false);
 const isLoading = ref(false);
