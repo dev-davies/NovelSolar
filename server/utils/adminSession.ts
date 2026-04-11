@@ -1,5 +1,3 @@
-import { randomUUID } from 'node:crypto'
-
 // Use memory storage for session persistence across requests
 const ADMIN_SESSION_STORAGE = 'adminSessions'
 const ADMIN_SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 // 24 hours
@@ -10,7 +8,7 @@ interface AdminSessionRecord {
 }
 
 export async function createAdminSession() {
-  const token = `admin_session_${randomUUID()}`
+  const token = `admin_session_${globalThis.crypto.randomUUID()}`
   const createdAt = Date.now()
   const expiresAt = createdAt + (ADMIN_SESSION_MAX_AGE_SECONDS * 1000)
 

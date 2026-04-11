@@ -1,14 +1,23 @@
-import { serverSupabaseClient } from '#supabase/server'
+import { createClient } from '@supabase/supabase-js'
 import { createAdminSession } from '../../../utils/adminSession'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody<{ passcode?: string }>(event)
-  
+
   if (!body?.passcode) {
     throw createError({ statusCode: 400, statusMessage: 'Passcode is required.' })
   }
 
-  const supabase = await serverSupabaseClient(event)
+  // Initialize Supabase directly with env vars (avoids #supabase/server import issues)
+  const supabaseUrl = process.env.SUPABASE_URL
+  const supabaseKey = process.env.SUPABASE_KEY
+
+  if (!supabaseUrl || !supabaseKey) {
+    console.error('Missing SUPABASE_URL or SUPABASE_KEY environment variables')
+    throw createError({ statusCode: 500, statusMessage: 'Server configuration error.' })
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseKey)
 
   // Query the admin_settings table for the admin_passcode
   const { data, error } = await supabase
@@ -18,36 +27,31 @@ export default defineEventHandler(async (event) => {
     .single()
 
   if (error || !data) {
-    console.error('Database check failed:', error?.message || 'admin_passcode key not found')
-    throw createError({ 
-      statusCode: 500, 
-      statusMessage: 'Server configuration error. Admin passcode not found in database.' 
+    console.error('Supabase query error:', error?.message, '| Data:', data)
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Server configuration error. Could not retrieve admin passcode from database.'
     })
   }
 
-  // Verification
-  if (body.passcode !== data.value) {
+  // Verification — trim both sides to avoid whitespace mismatches
+  const inputPasscode = body.passcode.trim()
+  const dbPasscode = String(data.value).trim()
+
+  if (inputPasscode !== dbPasscode) {
     throw createError({ statusCode: 401, statusMessage: 'Invalid passcode.' })
   }
 
   // Session Creation
-  try {
-    const session = await createAdminSession()
+  const session = await createAdminSession()
 
-    setCookie(event, 'admin_token', session.token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: session.maxAge,
-      path: '/'
-    })
+  setCookie(event, 'admin_token', session.token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: session.maxAge,
+    path: '/'
+  })
 
-    return { success: true, message: 'Authentication successful.' }
-  } catch (error: any) {
-    console.error('Session creation failed:', error.message)
-    throw createError({ 
-      statusCode: 500, 
-      statusMessage: `Session creation failed: ${error.message || 'Unknown error'}.` 
-    })
-  }
+  return { success: true, message: 'Authentication successful.' }
 })
