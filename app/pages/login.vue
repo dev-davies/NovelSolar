@@ -4,6 +4,7 @@ const isSuccess = ref(false);
 const isLoading = ref(false);
 const errorMessage = ref('');
 const supabase = useSupabaseClient();
+const { public: { baseUrl } } = useRuntimeConfig();
 
 const handleLogin = async () => {
   if (!email.value) {
@@ -19,7 +20,9 @@ const handleLogin = async () => {
     const { error } = await supabase.auth.signInWithOtp({
       email: email.value,
       options: {
-        emailRedirectTo: window.location.origin + '/admin/manage-products',
+        // Uses the configured public URL so the magic link works on the live
+        // site regardless of whether localhost is running.
+        emailRedirectTo: baseUrl + '/account',
       }
     });
     
@@ -34,8 +37,8 @@ const handleLogin = async () => {
 };
 
 useHead({
-  title: 'Login | Novel Solar',
-  meta: [{ name: 'description', content: 'Secure login to your Novel Solar account.' }]
+  title: 'Sign In | Novel Solar',
+  meta: [{ name: 'description', content: 'Sign in to your Novel Solar account to view orders and manage your profile.' }]
 });
 </script>
 
@@ -65,8 +68,8 @@ useHead({
         <div class="animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div v-if="!isSuccess">
             <div class="mb-8">
-              <h2 class="text-2xl font-bold text-slate-900 mb-2">Sign In or Create Account</h2>
-              <p class="text-slate-500 font-medium">Enter your email and we'll send you a passwordless login link.</p>
+              <h2 class="text-2xl font-bold text-slate-900 mb-2">Sign In to Your Account</h2>
+              <p class="text-slate-500 font-medium">Enter your email and we'll send you a magic link. No password needed — and you don't need an account to shop.</p>
             </div>
 
             <form @submit.prevent="handleLogin" class="space-y-6">
