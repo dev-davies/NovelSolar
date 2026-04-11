@@ -47,6 +47,12 @@ export default defineNuxtConfig({
       baseUrl: process.env.NUXT_PUBLIC_BASE_URL || 'https://novel-solar.vercel.app',
     }
   },
+  supabase: {
+    // Disable the module's global redirect so unauthenticated users can
+    // freely browse the shop and checkout. Auth is only enforced on
+    // /admin pages via the custom admin middleware.
+    redirect: false,
+  },
   nitro: {
     storage: {
       // The 'otp' namespace will automatically use Vercel KV in production if linked
