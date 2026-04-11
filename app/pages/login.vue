@@ -22,7 +22,8 @@ const handleLogin = async () => {
       options: {
         // Uses the configured public URL so the magic link works on the live
         // site regardless of whether localhost is running.
-        emailRedirectTo: baseUrl + '/account',
+        // /confirm handles the PKCE token exchange before redirecting to /account.
+        emailRedirectTo: baseUrl + '/confirm',
       }
     });
     
