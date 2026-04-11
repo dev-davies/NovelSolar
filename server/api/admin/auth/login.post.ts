@@ -1,4 +1,3 @@
-import { createClient } from '@supabase/supabase-js'
 import { createAdminSession } from '../../../utils/adminSession'
 
 export default defineEventHandler(async (event) => {
@@ -8,37 +7,17 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'Passcode is required.' })
   }
 
-  // Initialize Supabase directly with env vars (avoids #supabase/server import issues)
-  const supabaseUrl = process.env.SUPABASE_URL
-  const supabaseKey = process.env.SUPABASE_KEY
+  // Read the admin passcode directly from the server environment variable.
+  // This is more secure than a DB lookup — the secret never leaves the server.
+  const adminPasscode = process.env.ADMIN_UPLOAD_PASSCODE
 
-  if (!supabaseUrl || !supabaseKey) {
-    console.error('Missing SUPABASE_URL or SUPABASE_KEY environment variables')
+  if (!adminPasscode) {
+    console.error('ADMIN_UPLOAD_PASSCODE environment variable is not set.')
     throw createError({ statusCode: 500, statusMessage: 'Server configuration error.' })
   }
 
-  const supabase = createClient(supabaseUrl, supabaseKey)
-
-  // Query the admin_settings table for the admin_passcode
-  const { data, error } = await supabase
-    .from('admin_settings')
-    .select('value')
-    .eq('key', 'admin_passcode')
-    .single()
-
-  if (error || !data) {
-    console.error('Supabase query error:', error?.message, '| Data:', data)
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Server configuration error. Could not retrieve admin passcode from database.'
-    })
-  }
-
-  // Verification — trim both sides to avoid whitespace mismatches
-  const inputPasscode = body.passcode.trim()
-  const dbPasscode = String(data.value).trim()
-
-  if (inputPasscode !== dbPasscode) {
+  // Trim both sides to avoid whitespace mismatches
+  if (body.passcode.trim() !== adminPasscode.trim()) {
     throw createError({ statusCode: 401, statusMessage: 'Invalid passcode.' })
   }
 
@@ -55,3 +34,4 @@ export default defineEventHandler(async (event) => {
 
   return { success: true, message: 'Authentication successful.' }
 })
+
