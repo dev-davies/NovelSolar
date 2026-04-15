@@ -19,31 +19,17 @@
             :alt="slide.title"
             class="absolute inset-0 h-full w-full object-cover"
           />
-          <div class="absolute inset-0 bg-gradient-to-r from-[#031333]/90 via-[#06235a]/55 to-[#041022]/35"></div>
-          <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
 
           <div class="relative z-10 flex h-full items-end px-5 py-8 sm:px-12 sm:py-12">
             <div class="max-w-2xl">
-              <div class="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.25em] text-blue-100 backdrop-blur-sm">
-                {{ slide.eyebrow }}
-              </div>
-              <h1 class="mt-5 text-3xl font-extrabold leading-tight text-white sm:text-6xl">
-                {{ slide.title }}
-              </h1>
-              <p class="mt-5 max-w-xl text-sm text-blue-50 sm:text-xl">
-                {{ slide.description }}
-              </p>
               <div class="mt-6 flex flex-wrap items-center gap-3 sm:mt-10 sm:gap-4">
                 <NuxtLink
                   to="/shop"
-                  class="relative z-20 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-black text-[#002888] shadow-lg transition-all hover:bg-blue-50 sm:px-8 sm:py-4 sm:text-base"
+                  class="relative z-20 inline-flex items-center gap-2 rounded-full bg-white/95 px-6 py-3 text-sm font-black text-[#002888] shadow-lg transition-all hover:bg-white sm:px-8 sm:py-4 sm:text-base"
                 >
                   Shop Now
                   <span class="material-symbols-outlined text-base">arrow_forward</span>
                 </NuxtLink>
-                <div class="text-xs font-bold uppercase tracking-[0.2em] text-blue-100/80 sm:text-sm">
-                  {{ slide.caption }}
-                </div>
               </div>
             </div>
           </div>
