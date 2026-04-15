@@ -188,11 +188,13 @@ onMounted(() => {
 <template>
   <div class="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-7xl mx-auto">
-      <div class="mb-10 text-center relative">
-        <h1 class="text-4xl font-black text-slate-900 mb-2 tracking-tight">Manage Products</h1>
-        <p class="text-slate-500 font-medium italic">Search and edit existing inventory</p>
-        
-        <div class="absolute top-0 right-0 flex items-center gap-3">
+      <div class="mb-10 flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+        <div class="text-center lg:text-left">
+          <h1 class="text-4xl font-black text-slate-900 mb-2 tracking-tight">Manage Products</h1>
+          <p class="text-slate-500 font-medium italic">Search and edit existing inventory</p>
+        </div>
+
+        <div class="flex flex-wrap justify-center lg:justify-end items-center gap-3 lg:max-w-[45%]">
           <NuxtLink to="/admin/add-product" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl font-bold flex items-center gap-2 text-sm transition-all shadow-sm">
             <span class="material-symbols-outlined text-sm">add</span>
             Add Products

@@ -69,11 +69,13 @@ const handleLogout = async () => {
 <template>
   <div class="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-3xl mx-auto">
-      <div class="mb-10 text-center relative">
-        <h1 class="text-4xl font-black text-slate-900 mb-2 tracking-tight">Change Password</h1>
-        <p class="text-slate-500 font-medium italic">Update your admin password securely.</p>
+      <div class="mb-10 flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+        <div class="text-center lg:text-left">
+          <h1 class="text-4xl font-black text-slate-900 mb-2 tracking-tight">Change Password</h1>
+          <p class="text-slate-500 font-medium italic">Update your admin password securely.</p>
+        </div>
 
-        <div class="absolute top-0 right-0 flex items-center gap-3">
+        <div class="flex flex-wrap justify-center lg:justify-end items-center gap-3 lg:max-w-[50%]">
           <NuxtLink to="/admin/add-product" class="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all shadow-sm">
             <span class="material-symbols-outlined text-sm">add_box</span>
             Add Products
