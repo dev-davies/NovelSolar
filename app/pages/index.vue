@@ -25,7 +25,7 @@
               <div class="mt-6 flex flex-wrap items-center gap-3 sm:mt-10 sm:gap-4">
                 <NuxtLink
                   to="/shop"
-                  class="relative z-20 inline-flex items-center gap-2 rounded-full bg-white/95 px-6 py-3 text-sm font-black text-[#002888] shadow-lg transition-all hover:bg-white sm:px-8 sm:py-4 sm:text-base"
+                  class="relative z-20 inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-[2px] transition-all group-hover:bg-white/20 group-hover:font-black group-hover:shadow-lg sm:px-8 sm:py-4 sm:text-base"
                 >
                   Shop Now
                   <span class="material-symbols-outlined text-base">arrow_forward</span>
@@ -67,14 +67,10 @@
         <a href="https://novel-academy.com" target="_blank" rel="noopener noreferrer" class="group relative block overflow-hidden rounded-xl bg-[#2C75D8] p-8 text-white shadow-md transition-transform hover:-translate-y-1 min-h-[280px] flex flex-col justify-end shrink-0 h-full w-full snap-center">
           <!-- Background Image -->
           <NuxtImg src="/images/Website BannersNovel Academy.jpg.jpeg" alt="Novel Academy" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-          <!-- Overlay Gradient for Readability -->
-          <div class="absolute inset-0 bg-gradient-to-t from-[#06132d]/90 via-[#0f2d68]/45 to-transparent"></div>
           
           <!-- Content -->
           <div class="relative z-10">
-            <h3 class="text-2xl font-bold mb-2 text-white">Novel Academy</h3>
-            <p class="text-blue-50 mb-6 max-w-sm">Launch your career with our hands-on technical training courses. Learn professional solar installation, maintenance, and system design.</p>
-            <span class="inline-flex items-center gap-2 rounded-full bg-[#2C75D8] px-5 py-3 text-sm font-bold text-white shadow-lg shadow-[#2C75D8]/30 transition-all group-hover:bg-[#1f5db4]">
+            <span class="inline-flex items-center gap-2 rounded-full border border-white/70 bg-[#2C75D8]/15 px-5 py-3 text-sm font-semibold text-white backdrop-blur-[2px] transition-all group-hover:bg-[#2C75D8]/30 group-hover:font-black group-hover:shadow-lg">
               Explore Courses
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
@@ -87,14 +83,10 @@
         <a href="https://solarproductexchange.com" target="_blank" rel="noopener noreferrer" class="group relative block overflow-hidden rounded-xl bg-white border border-gray-200 p-8 shadow-md transition-transform hover:-translate-y-1 min-h-[280px] flex flex-col justify-end shrink-0 h-full w-full snap-center">
           <!-- Background Image -->
           <NuxtImg src="/images/Website BannersTokunbo shop.jpg.jpeg" alt="Solar Product Exchange" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-          <!-- Overlay Gradient for Readability -->
-          <div class="absolute inset-0 bg-gradient-to-t from-[#0a111f]/90 via-[#8a3b09]/35 to-transparent"></div>
 
           <!-- Content -->
           <div class="relative z-10">
-            <h3 class="text-2xl font-bold text-white mb-2">Solar Product Exchange</h3>
-            <p class="text-gray-100 mb-6 max-w-sm">Looking for budget-friendly options? Shop our certified pre-owned, tokunbo, and open-box solar panels and inverters at unbeatable prices.</p>
-            <span class="inline-flex items-center gap-2 rounded-full bg-[#ea580c] px-5 py-3 text-sm font-bold text-white shadow-lg shadow-[#ea580c]/30 transition-all group-hover:bg-[#c2410c]">
+            <span class="inline-flex items-center gap-2 rounded-full border border-white/70 bg-[#ea580c]/15 px-5 py-3 text-sm font-semibold text-white backdrop-blur-[2px] transition-all group-hover:bg-[#ea580c]/30 group-hover:font-black group-hover:shadow-lg">
               Shop Used Inventory
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
