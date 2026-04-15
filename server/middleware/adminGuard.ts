@@ -1,4 +1,4 @@
-import { validateAdminSession } from '../utils/adminSession'
+import { getAdminSession } from '../utils/adminSession'
 
 export default defineEventHandler(async (event) => {
   const url = getRequestURL(event)
@@ -7,13 +7,18 @@ export default defineEventHandler(async (event) => {
   // Exclude auth routes (like login) so people can actually authenticate
   if (url.pathname.startsWith('/api/admin/') && !url.pathname.startsWith('/api/admin/auth/')) {
     const token = getCookie(event, 'admin_token')
-    const isValid = await validateAdminSession(token)
+    const session = await getAdminSession(token)
 
-    if (!isValid) {
+    if (!session) {
       throw createError({ 
         statusCode: 401, 
         statusMessage: 'Unauthorized. An admin session is required to perform this action.' 
       })
+    }
+
+    event.context.admin = {
+      user_id: session.userId,
+      email: session.email
     }
   }
 })
