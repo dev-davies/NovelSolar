@@ -8,6 +8,7 @@ const uploadResults = ref({})
 const showResults = ref(false)
 const checkingDuplicates = ref(false)
 const existingProducts = ref({})
+const showAdminPanel = ref(false)
 
 // Drag & Drop state
 const dragOverMain = ref({})
@@ -321,6 +322,14 @@ const handleLogout = async () => {
         <p class="text-slate-500 font-medium italic">Upload multiple products to Bitrix24 & Cloudinary simultaneously</p>
         
         <div class="absolute top-0 right-0 flex items-center gap-3">
+          <button
+            type="button"
+            @click="showAdminPanel = !showAdminPanel"
+            class="px-4 py-2 bg-red-50 border border-red-200 hover:bg-red-100 text-red-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all shadow-sm"
+          >
+            <span class="material-symbols-outlined text-sm">person_add</span>
+            {{ showAdminPanel ? 'Hide Admins' : 'Add Admin' }}
+          </button>
           <NuxtLink to="/admin/manage-products" class="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all shadow-sm">
             <span class="material-symbols-outlined text-sm">inventory_2</span>
             Manage Inventory
@@ -330,6 +339,10 @@ const handleLogout = async () => {
             Logout
           </button>
         </div>
+      </div>
+
+      <div v-if="showAdminPanel" class="mb-8">
+        <AdminManagement />
       </div>
 
       <form @submit.prevent="submitBatch" class="space-y-8">
