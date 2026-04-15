@@ -24,6 +24,10 @@ const handleLogout = async () => {
         <p class="text-slate-500 font-medium italic">Create new admin accounts and review access levels.</p>
 
         <div class="absolute top-0 right-0 flex items-center gap-3">
+          <NuxtLink to="/admin/change-password" class="px-4 py-2 bg-red-50 border border-red-200 hover:bg-red-100 text-red-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all shadow-sm">
+            <span class="material-symbols-outlined text-sm">lock_reset</span>
+            Change Password
+          </NuxtLink>
           <NuxtLink to="/admin/add-product" class="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all shadow-sm">
             <span class="material-symbols-outlined text-sm">add_box</span>
             Add Products
