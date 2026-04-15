@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const email = ref('')
 const password = ref('')
+const showPassword = ref(false)
 const isLoading = ref(false)
 const errorMessage = ref('')
 
@@ -81,13 +82,25 @@ const handleLogin = async () => {
               <input
                 id="password"
                 v-model="password"
-                type="password"
+                :type="showPassword ? 'text' : 'password'"
                 placeholder="Enter your password"
                 required
-                class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 pl-12 pr-4 text-slate-900 font-medium outline-none focus:border-red-500 focus:ring-4 focus:ring-red-100 transition-all"
+                class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 pl-12 pr-12 text-slate-900 font-medium outline-none focus:border-red-500 focus:ring-4 focus:ring-red-100 transition-all"
                 :disabled="isLoading"
                 autocomplete="current-password"
               />
+              <button
+                type="button"
+                class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition-colors"
+                @click="showPassword = !showPassword"
+              >
+                <span class="material-symbols-outlined text-xl">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+              </button>
+            </div>
+            <div class="flex justify-end mt-2">
+              <NuxtLink to="/admin/forgot-password" class="text-xs font-bold text-red-600 hover:text-red-700 transition-colors">
+                Forgot password?
+              </NuxtLink>
             </div>
           </div>
 

@@ -1,0 +1,42 @@
+import { getSupabaseAdminClient } from '../../../utils/supabaseAdmin'
+
+export default defineEventHandler(async (event) => {
+  const body = await readBody<{ email?: string }>(event)
+  const config = useRuntimeConfig()
+
+  if (!body?.email) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Email is required.'
+    })
+  }
+
+  const trimmedEmail = body.email.trim().toLowerCase()
+
+  try {
+    const supabase = getSupabaseAdminClient()
+    const { data: usersData } = await supabase.auth.admin.listUsers()
+    const authUser = usersData.users.find((user) => user.email?.toLowerCase() === trimmedEmail)
+
+    if (authUser) {
+      const { data: adminProfile } = await supabase
+        .from('admin_profiles')
+        .select('user_id')
+        .eq('user_id', authUser.id)
+        .maybeSingle()
+
+      if (adminProfile) {
+        await supabase.auth.resetPasswordForEmail(trimmedEmail, {
+          redirectTo: `${config.public.baseUrl || 'http://localhost:3000'}/admin/reset-password`
+        })
+      }
+    }
+  } catch (error) {
+    console.error('Admin password reset request failed:', error)
+  }
+
+  return {
+    success: true,
+    message: 'If that admin account exists, a password reset link has been sent.'
+  }
+})

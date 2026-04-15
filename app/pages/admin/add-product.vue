@@ -8,6 +8,7 @@ const uploadResults = ref({})
 const showResults = ref(false)
 const checkingDuplicates = ref(false)
 const existingProducts = ref({})
+const currentAdmin = ref(null)
 
 // Drag & Drop state
 const dragOverMain = ref({})
@@ -37,6 +38,15 @@ const revokeUrls = (files) => {
 onUnmounted(() => {
   previewUrls.forEach(url => URL.revokeObjectURL(url))
   previewUrls.clear()
+})
+
+onMounted(async () => {
+  try {
+    const response = await $fetch('/api/admin/me')
+    currentAdmin.value = response.admin
+  } catch (error) {
+    console.error('Failed to load current admin:', error)
+  }
 })
 
 // Batch products
@@ -322,11 +332,11 @@ const handleLogout = async () => {
         
         <div class="absolute top-0 right-0 flex items-center gap-3">
           <NuxtLink
-            to="/admin/manage-admins"
+            :to="currentAdmin?.is_master ? '/admin/manage-admins' : '/admin/change-password'"
             class="px-4 py-2 bg-red-50 border border-red-200 hover:bg-red-100 text-red-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all shadow-sm"
           >
-            <span class="material-symbols-outlined text-sm">person_add</span>
-            Add Admin
+            <span class="material-symbols-outlined text-sm">{{ currentAdmin?.is_master ? 'person_add' : 'lock_reset' }}</span>
+            {{ currentAdmin?.is_master ? 'Add Admin' : 'Change Password' }}
           </NuxtLink>
           <NuxtLink to="/admin/manage-products" class="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all shadow-sm">
             <span class="material-symbols-outlined text-sm">inventory_2</span>
