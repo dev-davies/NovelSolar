@@ -2,10 +2,11 @@ import { createAdminSession } from '../../../utils/adminSession'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody<{ email?: string, password?: string, passcode?: string }>(event)
+  const config = useRuntimeConfig()
 
   if (body?.email && body?.password) {
-    const supabaseUrl = process.env.SUPABASE_URL
-    const supabaseAnonKey = process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY
+    const supabaseUrl = config.public.supabaseUrl || process.env.NUXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL
+    const supabaseAnonKey = config.public.supabaseAnonKey || process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NUXT_PUBLIC_SUPABASE_KEY
 
     if (!supabaseUrl || !supabaseAnonKey) {
       console.error('Supabase authentication environment variables are not configured.')
@@ -16,7 +17,8 @@ export default defineEventHandler(async (event) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        apikey: supabaseAnonKey
+        apikey: supabaseAnonKey,
+        Authorization: `Bearer ${supabaseAnonKey}`
       },
       body: JSON.stringify({
         email: body.email.trim(),
