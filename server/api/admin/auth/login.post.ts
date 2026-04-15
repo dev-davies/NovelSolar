@@ -1,8 +1,11 @@
 import { createAdminSession } from '../../../utils/adminSession'
+import { getSupabaseAdminClient } from '../../../utils/supabaseAdmin'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody<{ email?: string, password?: string, passcode?: string }>(event)
   const config = useRuntimeConfig()
+  let authenticatedUserId: string | undefined
+  let authenticatedEmail: string | null | undefined
 
   if (body?.email && body?.password) {
     const supabaseUrl = config.public.supabaseUrl || process.env.NUXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL
@@ -40,6 +43,31 @@ export default defineEventHandler(async (event) => {
         statusMessage: error?.msg || error?.error_description || 'Invalid email or password.'
       })
     }
+
+    const authPayload = await response.json().catch(() => null)
+    authenticatedUserId = authPayload?.user?.id
+    authenticatedEmail = authPayload?.user?.email || body.email.trim()
+
+    if (!authenticatedUserId) {
+      throw createError({
+        statusCode: 401,
+        statusMessage: 'Invalid email or password.'
+      })
+    }
+
+    const supabaseAdmin = getSupabaseAdminClient()
+    const { data: adminProfile, error: adminProfileError } = await supabaseAdmin
+      .from('admin_profiles')
+      .select('user_id')
+      .eq('user_id', authenticatedUserId)
+      .maybeSingle()
+
+    if (adminProfileError || !adminProfile) {
+      throw createError({
+        statusCode: 403,
+        statusMessage: 'This account does not have admin access.'
+      })
+    }
   } else if (body?.passcode) {
     // Backward-compatible fallback for environments still using a shared admin passcode.
     const adminPasscode = process.env.ADMIN_UPLOAD_PASSCODE
@@ -56,7 +84,10 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'Email and password are required.' })
   }
 
-  const session = await createAdminSession()
+  const session = await createAdminSession({
+    userId: authenticatedUserId,
+    email: authenticatedEmail
+  })
 
   setCookie(event, 'admin_token', session.token, {
     httpOnly: true,
