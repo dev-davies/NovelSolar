@@ -57,6 +57,7 @@ export default defineEventHandler(async (event) => {
   return {
     success: true,
     isMasterAdmin: true,
+    currentUserId,
     admins: adminsWithEmail
   }
 })

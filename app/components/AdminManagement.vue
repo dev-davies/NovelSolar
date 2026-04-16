@@ -81,6 +81,11 @@
           </button>
         </div>
 
+        <div v-if="deleteError" class="bg-red-50 border border-red-200 rounded-2xl p-4 text-sm text-red-700 flex items-center justify-between gap-3">
+          <span>{{ deleteError }}</span>
+          <button type="button" @click="deleteError = ''" class="text-red-400 hover:text-red-600 font-black text-xs">✕ Dismiss</button>
+        </div>
+
         <div v-if="isLoadingAdmins" class="text-center py-8 text-slate-500">
           Loading admin accounts...
         </div>
@@ -93,15 +98,53 @@
           <div
             v-for="admin in admins"
             :key="admin.user_id"
-            class="flex items-center justify-between gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-200"
+            class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-200 transition-all"
+            :class="{ 'border-red-300 bg-red-50': confirmDeleteId === admin.user_id }"
           >
             <div>
               <p class="font-black text-slate-900">{{ admin.admin_username }}</p>
               <p class="text-sm text-slate-600">{{ admin.email }}</p>
             </div>
-            <div class="flex items-center gap-3 text-xs font-bold">
+
+            <div class="flex items-center gap-3 text-xs font-bold flex-wrap justify-end">
               <span v-if="admin.is_master" class="px-3 py-1 rounded-full bg-red-50 text-red-700 border border-red-100">MASTER</span>
               <span class="text-slate-500">{{ formatDate(admin.created_at) }}</span>
+
+              <!-- Delete action — master admin only, cannot delete self -->
+              <template v-if="isMasterAdmin && admin.user_id !== currentUserId">
+                <!-- Confirm prompt -->
+                <div v-if="confirmDeleteId === admin.user_id" class="flex items-center gap-2">
+                  <span class="text-red-600 font-black text-xs">Remove this admin?</span>
+                  <button
+                    type="button"
+                    @click="deleteAdmin(admin.user_id)"
+                    :disabled="deletingId === admin.user_id"
+                    class="px-3 py-1.5 bg-red-600 text-white rounded-xl font-black hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center gap-1"
+                  >
+                    <span v-if="deletingId === admin.user_id" class="animate-spin border-2 border-white/30 border-t-white w-3 h-3 rounded-full"></span>
+                    {{ deletingId === admin.user_id ? 'Removing…' : 'Yes, Remove' }}
+                  </button>
+                  <button
+                    type="button"
+                    @click="confirmDeleteId = null"
+                    :disabled="deletingId === admin.user_id"
+                    class="px-3 py-1.5 bg-slate-200 text-slate-700 rounded-xl font-black hover:bg-slate-300 transition-colors disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                </div>
+
+                <!-- Initial delete button -->
+                <button
+                  v-else
+                  type="button"
+                  @click="confirmDeleteId = admin.user_id"
+                  class="px-3 py-1.5 bg-white border border-red-200 text-red-600 rounded-xl font-black hover:bg-red-50 transition-colors flex items-center gap-1"
+                >
+                  <span class="material-symbols-outlined text-sm" style="font-size:14px">person_remove</span>
+                  Remove
+                </button>
+              </template>
             </div>
           </div>
         </div>
@@ -125,9 +168,15 @@ const admins = ref<Admin[]>([])
 const isLoadingAdmins = ref(false)
 const isCreatingAdmin = ref(false)
 const isMasterAdmin = ref(false)
+const currentUserId = ref<string | null>(null)
 const loadError = ref('')
 const createAdminError = ref('')
 const createAdminSuccess = ref('')
+
+// Delete admin state
+const confirmDeleteId = ref<string | null>(null)
+const deletingId = ref<string | null>(null)
+const deleteError = ref('')
 
 const newAdminForm = ref({
   email: '',
@@ -145,9 +194,10 @@ const loadAdmins = async () => {
   loadError.value = ''
 
   try {
-    const response = await $fetch<{ admins: Admin[], isMasterAdmin: boolean }>('/api/admin/list-admins')
+    const response = await $fetch<{ admins: Admin[], isMasterAdmin: boolean, currentUserId?: string }>('/api/admin/list-admins')
     admins.value = response.admins || []
     isMasterAdmin.value = !!response.isMasterAdmin
+    currentUserId.value = response.currentUserId || null
   } catch (error: any) {
     loadError.value = error?.data?.statusMessage || 'Failed to load admin accounts.'
     admins.value = []
@@ -180,6 +230,24 @@ const createNewAdmin = async () => {
     createAdminError.value = error?.data?.statusMessage || 'Failed to create admin.'
   } finally {
     isCreatingAdmin.value = false
+  }
+}
+
+const deleteAdmin = async (targetUserId: string) => {
+  deletingId.value = targetUserId
+  deleteError.value = ''
+
+  try {
+    await $fetch('/api/admin/delete-admin', {
+      method: 'POST',
+      body: { target_user_id: targetUserId }
+    })
+    confirmDeleteId.value = null
+    await loadAdmins()
+  } catch (error: any) {
+    deleteError.value = error?.data?.statusMessage || 'Failed to remove admin.'
+  } finally {
+    deletingId.value = null
   }
 }
 
