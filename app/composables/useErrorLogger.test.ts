@@ -13,13 +13,6 @@ vi.mock('#app', () => ({
   })
 }))
 
-// Mock import.meta.client
-const originalClient = import.meta.client
-Object.defineProperty(import.meta, 'client', {
-  value: true,
-  writable: true
-})
-
 describe('useErrorLogger', () => {
   let mockFetch: ReturnType<typeof vi.fn>
   
