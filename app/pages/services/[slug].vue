@@ -21,7 +21,7 @@
 
              <div class="w-full max-w-sm aspect-square bg-white rounded-[40px] shadow-lg flex items-center justify-center p-8 relative z-10 transition-transform duration-500 group-hover:scale-105">
                 <!-- Fallback Icon if no specific image is provided for the service -->
-                <img v-if="localServiceImage" :src="localServiceImage" :alt="service.NAME" class="w-full h-full object-contain drop-shadow-xl" />
+                <img loading="lazy" v-if="localServiceImage" :src="localServiceImage" :alt="service.NAME" class="w-full h-full object-contain drop-shadow-xl" />
                 <span v-else class="material-symbols-outlined text-[100px] text-[#002888]/20 group-hover:text-[#002888] transition-colors duration-500">
                   home_repair_service
                 </span>
@@ -82,7 +82,7 @@
     </div>
     
     <!-- Service Booking Modal -->
-    <BookingModal 
+    <LazyBookingModal 
       :isOpen="isModalOpen" 
       :serviceName="currentServiceName" 
       @close="isModalOpen = false" 

@@ -152,12 +152,12 @@
       <!-- Right Section: Actions -->
       <div class="flex items-center gap-6">
         <!-- Cart -->
-        <div @click="toggleCart" class="text-gray-600 hover:text-black transition-colors relative group/cart cursor-pointer">
+        <button @click="toggleCart" aria-label="Toggle Shopping Cart" class="text-gray-600 hover:text-black transition-colors relative group/cart cursor-pointer flex items-center bg-transparent border-none p-0">
           <span class="material-symbols-outlined text-2xl">shopping_cart</span>
           <span v-if="cartItemCount > 0" class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
             {{ cartItemCount }}
           </span>
-        </div>
+        </button>
 
         <!-- Button -->
         <NuxtLink to="/quote" class="bg-[#002888] text-white px-5 py-2.5 rounded-md text-sm font-bold hover:bg-blue-900 transition-colors shadow-sm hidden sm:block">
@@ -184,7 +184,7 @@
           <div v-if="user" class="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-100 shadow-xl rounded-xl opacity-0 invisible group-hover/profile:opacity-100 group-hover/profile:visible transition-all duration-200 z-[60] py-2 overflow-hidden">
             <div class="px-4 py-3 border-b border-gray-50 mb-1">
               <p class="text-xs font-bold text-gray-900 truncate">{{ user.firstName }} {{ user.lastName }}</p>
-              <p class="text-[10px] text-gray-400 truncate">{{ user.email }}</p>
+              <p class="text-[10px] text-gray-500 truncate">{{ user.email }}</p>
             </div>
             <NuxtLink to="/account" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">My Profile</NuxtLink>
             <NuxtLink to="/orders" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Order History</NuxtLink>
@@ -198,7 +198,7 @@
         </div>
 
         <!-- Mobile Toggle Button -->
-        <button @click="toggleMobileMenu" class="hidden p-2 text-gray-600 hover:text-[#002888] transition-colors" aria-label="Toggle menu">
+        <button @click="toggleMobileMenu" class="hidden p-2 text-gray-600 hover:text-[#002888] transition-colors focus-visible:ring-2 focus-visible:ring-[#002888] rounded-md" aria-label="Toggle Navigation Menu" :aria-expanded="isMobileMenuOpen">
           <svg v-if="!isMobileMenuOpen" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
           </svg>

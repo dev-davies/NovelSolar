@@ -1,5 +1,5 @@
 export default defineEventHandler(async (event) => {
-  const body = await readBody(event)
+  const body = sanitizePayload(await readBody(event))
   const config = useRuntimeConfig()
   const webhookUrl = config.bitrixWebhookUrl
 

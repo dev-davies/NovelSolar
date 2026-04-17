@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
   // Helper to extract fields from multipart form data
   const getField = (name: string) => {
     const field = formData.find(f => f.name === name);
-    return field ? field.data.toString() : null;
+    return field ? sanitizePayload(field.data.toString()) : null;
   };
 
   // Removed passcode check - Handled globally by admin-auth server middleware

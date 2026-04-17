@@ -16,7 +16,17 @@ export default defineNuxtConfig({
     ]
   },
   image: {
-    domains: ["nisl.bitrix24.com"],
+    domains: ["nisl.bitrix24.com", "res.cloudinary.com"],
+    format: ["webp", "avif"],
+    quality: 80,
+    screens: {
+      xs: 320,
+      sm: 640,
+      md: 768,
+      lg: 1024,
+      xl: 1280,
+      xxl: 1536,
+    },
     sanity: {
       projectId: 'u2k0ma15'
     }
@@ -72,6 +82,9 @@ export default defineNuxtConfig({
   },
   nitro: {
     storage: {
+      rateLimit: {
+        driver: (process.env.NODE_ENV === 'production' && process.env.KV_REST_API_URL) ? 'vercel-kv' : 'memory',
+      },
       // The 'otp' namespace will automatically use Vercel KV in production if linked
       otp: {
         driver: (process.env.NODE_ENV === 'production' && process.env.KV_REST_API_URL) ? 'vercel-kv' : 'memory',

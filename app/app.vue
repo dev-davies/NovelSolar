@@ -1,11 +1,13 @@
 <template>
-  <NuxtLayout>
-    <NuxtPage />
-  </NuxtLayout>
-  <ToastContainer />
+  <ErrorBoundary>
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
+    <ToastContainer />
+  </ErrorBoundary>
 </template>
 
-<script setup>
+<script setup lang="ts">
 useSeoMeta({
   titleTemplate: (titleChunk) => {
     return titleChunk ? `${titleChunk} | Novel Solar` : 'Novel Solar | Premium Components & Engineering';

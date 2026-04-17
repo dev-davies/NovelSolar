@@ -7,12 +7,21 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
+    exclude: ['e2e/**', '**/node_modules/**', '**/dist/**'],
   },
   resolve: {
     alias: {
       '#app': resolve('./node_modules/nuxt/dist/app'),
       '~': resolve('./app'),
       '@': resolve('./app'),
+      '#components': resolve('./app/components'),
     },
   },
+  vue: {
+    template: {
+      compilerOptions: {
+        isCustomElement: (tag) => tag.startsWith('Nuxt')
+      }
+    }
+  }
 })

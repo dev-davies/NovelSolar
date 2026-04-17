@@ -25,15 +25,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, defineAsyncComponent } from 'vue'
 import { useRoute } from 'nuxt/app'
-
-// Explicit imports to avoid Nuxt auto-prefix ambiguity
-import PartnerItel from '~/components/partners/PartnerItel.vue'
-import PartnerHaisic from '~/components/partners/PartnerHaisic.vue'
-import PartnerYinergy from '~/components/partners/PartnerYinergy.vue'
-import PartnerLivoltek from '~/components/partners/PartnerLivoltek.vue'
-import PartnerHithium from '~/components/partners/PartnerHithium.vue'
 
 const route = useRoute()
 
@@ -43,11 +36,11 @@ const formattedBrand = computed(() => {
 })
 
 const componentMap: Record<string, any> = {
-  itel: PartnerItel,
-  haisic: PartnerHaisic,
-  yinergy: PartnerYinergy,
-  livoltek: PartnerLivoltek,
-  hithium: PartnerHithium
+  itel: defineAsyncComponent(() => import('~/components/partners/PartnerItel.vue')),
+  haisic: defineAsyncComponent(() => import('~/components/partners/PartnerHaisic.vue')),
+  yinergy: defineAsyncComponent(() => import('~/components/partners/PartnerYinergy.vue')),
+  livoltek: defineAsyncComponent(() => import('~/components/partners/PartnerLivoltek.vue')),
+  hithium: defineAsyncComponent(() => import('~/components/partners/PartnerHithium.vue'))
 }
 
 const activeComponent = computed(() => {

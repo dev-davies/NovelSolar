@@ -39,7 +39,7 @@
                 :alt="post.title"
               />
               <div v-else class="w-full h-full relative overflow-hidden bg-slate-900 flex items-center justify-center">
-                <img src="/images/fallback-post.png" class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay" />
+                <img loading="lazy" src="/images/fallback-post.png" class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay" />
                 <div class="relative z-10 text-center px-4">
                   <div class="text-[#3c59b0] font-black text-[10px] uppercase tracking-[0.2em] mb-1">Novel Solar</div>
                   <span class="material-symbols-outlined text-white/20 text-2xl">solar_power</span>

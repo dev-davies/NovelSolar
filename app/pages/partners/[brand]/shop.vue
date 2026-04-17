@@ -13,7 +13,7 @@
           <p class="text-gray-500 mt-2 font-medium">Premium energy solutions curated for you.</p>
         </div>
         <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
-          <img :src="brandBanner" :alt="brand.toUpperCase() + ' Logo'" class="h-8 w-auto object-contain" />
+          <img loading="lazy" :src="brandBanner" :alt="brand.toUpperCase() + ' Logo'" class="h-8 w-auto object-contain" />
           <div class="h-8 w-px bg-gray-200"></div>
           <span class="text-xs font-black text-gray-400 uppercase tracking-widest">{{ brand.toUpperCase() }} Official Store</span>
         </div>

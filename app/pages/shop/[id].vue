@@ -126,7 +126,7 @@ useHead({
               class="aspect-square rounded-xl bg-white border-2 flex items-center justify-center cursor-pointer overflow-hidden transition-all"
               :class="(!selectedImage || selectedImage === getProductImage(product)) ? 'border-[#002888] shadow-md' : 'border-slate-200 opacity-60 hover:opacity-100'"
             >
-              <img :src="getProductImage(product)" class="w-full h-full object-cover" />
+              <img loading="lazy" :src="getProductImage(product)" class="w-full h-full object-cover" />
             </div>
 
             <!-- Loop through extra gallery images -->
@@ -137,7 +137,7 @@ useHead({
               class="aspect-square rounded-xl bg-white border-2 flex items-center justify-center cursor-pointer overflow-hidden transition-all"
               :class="selectedImage === img ? 'border-[#002888] shadow-md' : 'border-slate-200 opacity-60 hover:opacity-100'"
             >
-              <img :src="img" class="w-full h-full object-cover" />
+              <img loading="lazy" :src="img" class="w-full h-full object-cover" />
             </div>
           </div>
         </div>

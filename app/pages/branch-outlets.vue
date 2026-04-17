@@ -81,7 +81,7 @@
               
               <!-- Card Header / Mini-hero -->
               <div class="h-48 relative bg-gray-900 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1542332213-9b5a5a3fad35?auto=format&fit=crop&q=80&w=800" alt="Solar Branch" class="w-full h-full object-cover opacity-60 mix-blend-overlay scale-110 group-hover:scale-100 transition-transform duration-1000" />
+                <img loading="lazy" src="https://images.unsplash.com/photo-1542332213-9b5a5a3fad35?auto=format&fit=crop&q=80&w=800" alt="Solar Branch" class="w-full h-full object-cover opacity-60 mix-blend-overlay scale-110 group-hover:scale-100 transition-transform duration-1000" />
                 <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
                 <div class="absolute bottom-6 left-8">
                   <div class="flex items-center gap-2 mb-2">

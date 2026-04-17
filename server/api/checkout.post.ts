@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer';
 import { generateOrderReceiptHtml } from '../utils/emailTemplate';
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody(event);
+  const body = sanitizePayload(await readBody(event));
   const config = useRuntimeConfig();
   const bitrixUrl = config.bitrixWebhookUrl;
   

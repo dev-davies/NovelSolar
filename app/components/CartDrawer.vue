@@ -23,18 +23,21 @@ const { cart, isCartOpen, toggleCart, removeFromCart, updateQuantity, cartTotalA
     <!-- Drawer Panel -->
     <div 
       :class="isCartOpen ? 'translate-x-0' : 'translate-x-full'"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="cart-heading"
       class="fixed inset-y-0 right-0 z-[101] w-full max-w-md bg-white shadow-2xl flex flex-col transition-transform duration-500 ease-in-out"
     >
       <!-- Header -->
       <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between bg-white">
         <div class="flex items-center gap-3">
           <span class="material-symbols-outlined text-[#002888]">shopping_bag</span>
-          <h2 class="text-xl font-bold text-slate-900">Your Cart</h2>
+          <h2 id="cart-heading" class="text-xl font-bold text-slate-900">Your Cart</h2>
           <span v-if="cart.length > 0" class="bg-blue-50 text-[#002888] text-xs font-bold px-2 py-0.5 rounded-full">
             {{ cart.length }}
           </span>
         </div>
-        <button @click="toggleCart" class="p-2 hover:bg-gray-100 rounded-full text-gray-400 hover:text-gray-600 transition-colors">
+        <button @click="toggleCart" aria-label="Close Cart" class="p-2 hover:bg-gray-100 rounded-full text-gray-500 hover:text-gray-700 transition-colors focus-visible:ring-2 focus-visible:ring-[#002888]">
           <span class="material-symbols-outlined">close</span>
         </button>
       </div>
@@ -63,7 +66,7 @@ const { cart, isCartOpen, toggleCart, removeFromCart, updateQuantity, cartTotalA
           <div class="flex-1 flex flex-col justify-between">
             <div class="flex justify-between items-start gap-2">
               <h3 class="text-sm font-bold text-slate-900 line-clamp-2 leading-snug">{{ item.name }}</h3>
-              <button @click="removeFromCart(item.id)" class="text-gray-300 hover:text-red-500 transition-colors p-1">
+              <button @click="removeFromCart(item.id)" :aria-label="'Remove ' + item.name + ' from cart'" class="text-gray-400 hover:text-red-500 transition-colors p-1 focus-visible:ring-2 focus-visible:ring-red-500 rounded">
                 <span class="material-symbols-outlined text-xl">delete</span>
               </button>
             </div>
@@ -77,14 +80,16 @@ const { cart, isCartOpen, toggleCart, removeFromCart, updateQuantity, cartTotalA
               <div class="flex items-center bg-white border border-gray-200 rounded-lg shadow-sm">
                 <button 
                   @click="updateQuantity(item.id, -1)" 
-                  class="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-50 rounded-l-lg transition-colors"
+                  aria-label="Decrease quantity"
+                  class="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-50 rounded-l-lg transition-colors focus-visible:ring-2 focus-visible:ring-[#002888]"
                 >
                   <span class="material-symbols-outlined text-lg">remove</span>
                 </button>
-                <span class="w-8 text-center text-xs font-bold text-slate-900">{{ item.quantity }}</span>
+                <span class="w-8 text-center text-xs font-bold text-slate-900" aria-label="Current quantity">{{ item.quantity }}</span>
                 <button 
-                  @click="updateQuantity(item.id, 1)" 
-                  class="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-50 rounded-r-lg transition-colors"
+                  @click="updateQuantity(item.id, 1)"
+                  aria-label="Increase quantity" 
+                  class="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-50 rounded-r-lg transition-colors focus-visible:ring-2 focus-visible:ring-[#002888]"
                 >
                   <span class="material-symbols-outlined text-lg">add</span>
                 </button>
@@ -98,7 +103,7 @@ const { cart, isCartOpen, toggleCart, removeFromCart, updateQuantity, cartTotalA
       <div v-if="cart.length > 0" class="p-6 border-t border-gray-100 bg-white shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.1)]">
         <div class="flex justify-between items-center mb-6">
           <div class="flex flex-col">
-            <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Estimated Total</span>
+            <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Estimated Total</span>
             <span class="text-2xl font-black text-slate-900">₦{{ Number(cartTotalAmount).toLocaleString() }}</span>
           </div>
           <div class="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-1 rounded">
@@ -109,12 +114,12 @@ const { cart, isCartOpen, toggleCart, removeFromCart, updateQuantity, cartTotalA
         <NuxtLink 
           to="/checkout" 
           @click="toggleCart" 
-          class="w-full flex items-center justify-center gap-3 bg-[#002888] text-white py-4 rounded-xl font-bold text-lg hover:bg-blue-900 transition-all shadow-lg active:scale-[0.98]"
+          class="w-full flex items-center justify-center gap-3 bg-[#002888] text-white py-4 rounded-xl font-bold text-lg hover:bg-blue-900 transition-all shadow-lg active:scale-[0.98] outline-none focus-visible:ring-4 focus-visible:ring-blue-300"
         >
           Checkout Now
           <span class="material-symbols-outlined">arrow_forward</span>
         </NuxtLink>
-        <p class="text-center text-[11px] text-gray-400 mt-4">
+        <p class="text-center text-[11px] text-gray-500 mt-4">
           Secure checkout powered by NovelSolar
         </p>
       </div>

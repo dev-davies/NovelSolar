@@ -23,7 +23,7 @@
         >
           <div class="w-full aspect-[3/2] bg-slate-50 rounded-2xl mb-8 flex items-center justify-center border-2 border-slate-100 group-hover:bg-blue-50/50 group-hover:border-[#002888]/20 transition-all overflow-hidden p-6 relative">
             <template v-if="partner.logo">
-              <img 
+              <img loading="lazy" 
                 :src="partner.logo" 
                 :alt="partner.name + ' Logo'" 
                 class="w-full h-full object-contain filter group-hover:scale-105 transition-transform duration-500 ease-out z-10 relative"

@@ -1,5 +1,5 @@
 export default defineEventHandler(async (event) => {
-  const body = await readBody(event);
+  const body = sanitizePayload(await readBody(event));
   const { productId, productName, productPrice, productDescription, productSpecs } = body;
   const config = useRuntimeConfig();
 

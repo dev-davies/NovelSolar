@@ -250,7 +250,7 @@ onMounted(() => {
             >
               <div class="flex gap-4">
                 <div v-if="product.imageUrl" class="w-20 h-20 rounded-xl bg-slate-100 flex-shrink-0 overflow-hidden">
-                  <img :src="product.imageUrl" :alt="product.name" class="w-full h-full object-cover" />
+                  <img loading="lazy" :src="product.imageUrl" :alt="product.name" class="w-full h-full object-cover" />
                 </div>
                 <div class="flex-1 min-w-0">
                   <h3 class="font-black text-slate-900 truncate hover:text-purple-600">{{ product.name }}</h3>
@@ -408,7 +408,7 @@ onMounted(() => {
               <h3 class="text-lg font-black mb-6">Preview</h3>
 
               <div v-if="selectedProduct.imageUrl" class="w-full h-40 rounded-2xl bg-white/10 overflow-hidden mb-6">
-                <img :src="selectedProduct.imageUrl" :alt="selectedProduct.name" class="w-full h-full object-cover" />
+                <img loading="lazy" :src="selectedProduct.imageUrl" :alt="selectedProduct.name" class="w-full h-full object-cover" />
               </div>
 
               <div class="space-y-4">
