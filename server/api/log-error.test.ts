@@ -1,10 +1,10 @@
 // filepath: server/api/log-error.test.ts
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { createEvent } from 'h3'
-import logErrorHandler from './log-error.post'
+import { createEvent, readBody } from 'h3'
 
+// Mock #imports before importing the handler
 vi.mock('#imports', () => ({
-  useRuntimeConfig: () => ({
+  useRuntimeConfig: (event?: any) => ({
     public: {
       appVersion: '1.0.0'
     },
@@ -14,6 +14,18 @@ vi.mock('#imports', () => ({
   })
 }))
 
+// Mock h3 readBody
+vi.mock('h3', async () => {
+  const actual = await vi.importActual('h3') as any
+  return {
+    ...actual,
+    readBody: vi.fn(),
+    createEvent: actual.createEvent
+  }
+})
+
+import logErrorHandler from './log-error.post'
+
 describe('log-error.post.ts', () => {
   let mockConsoleLog: ReturnType<typeof vi.spyOn>
   let mockConsoleError: ReturnType<typeof vi.spyOn>
@@ -21,6 +33,7 @@ describe('log-error.post.ts', () => {
   beforeEach(() => {
     mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {})
     mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
+    vi.clearAllMocks()
   })
   
   afterEach(() => {
@@ -31,12 +44,15 @@ describe('log-error.post.ts', () => {
     const event = createEvent({
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: {
-        message: 'Test error',
-        timestamp: new Date().toISOString(),
-        level: 'error'
-      }
-    })
+    } as any, {} as any)
+    
+    const body = {
+      message: 'Test error',
+      timestamp: new Date().toISOString(),
+      level: 'error'
+    }
+
+    vi.mocked(readBody).mockResolvedValue(body)
 
     const response = await logErrorHandler(event)
     expect(response.success).toBe(true)
@@ -47,17 +63,20 @@ describe('log-error.post.ts', () => {
     const event = createEvent({
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: {
-        timestamp: new Date().toISOString(),
-        level: 'error'
-      }
-    })
+    } as any, {} as any)
+
+    const body = {
+      timestamp: new Date().toISOString(),
+      level: 'error'
+    }
+
+    vi.mocked(readBody).mockResolvedValue(body)
 
     try {
       await logErrorHandler(event)
-    } catch (error: unknown) {
-      const err = error as { statusCode?: number }
-      expect(err.statusCode).toBe(400)
+      expect(true).toBe(false) // Should not reach here
+    } catch (error: any) {
+      expect(error.statusCode).toBe(400)
     }
   })
 
@@ -65,17 +84,20 @@ describe('log-error.post.ts', () => {
     const event = createEvent({
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: {
-        message: 'Test error',
-        level: 'error'
-      }
-    })
+    } as any, {} as any)
+
+    const body = {
+      message: 'Test error',
+      level: 'error'
+    }
+
+    vi.mocked(readBody).mockResolvedValue(body)
 
     try {
       await logErrorHandler(event)
-    } catch (error: unknown) {
-      const err = error as { statusCode?: number }
-      expect(err.statusCode).toBe(400)
+      expect(true).toBe(false) // Should not reach here
+    } catch (error: any) {
+      expect(error.statusCode).toBe(400)
     }
   })
 
@@ -83,16 +105,17 @@ describe('log-error.post.ts', () => {
     const event = createEvent({
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: {
-        message: 'Test error',
-        timestamp: new Date().toISOString(),
-        level: 'error'
-      }
-    })
+    } as any, {} as any)
+
+    const body = {
+      message: 'Test error',
+      timestamp: new Date().toISOString(),
+      level: 'error'
+    }
+
+    vi.mocked(readBody).mockResolvedValue(body)
 
     const response = await logErrorHandler(event)
-    // The handler adds serverVersion to the log but doesn't return it
-    // This test just verifies the endpoint works
     expect(response).toBeDefined()
   })
 
@@ -103,12 +126,15 @@ describe('log-error.post.ts', () => {
       const event = createEvent({
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: {
-          message: `Test ${level}`,
-          timestamp: new Date().toISOString(),
-          level
-        }
-      })
+      } as any, {} as any)
+
+      const body = {
+        message: `Test ${level}`,
+        timestamp: new Date().toISOString(),
+        level
+      }
+
+      vi.mocked(readBody).mockResolvedValue(body)
 
       const response = await logErrorHandler(event)
       expect(response.success).toBe(true)
