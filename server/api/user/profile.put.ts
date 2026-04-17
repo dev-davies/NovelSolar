@@ -1,4 +1,4 @@
-import { getUserSession } from '../../utils/userSession'
+import { getUserSession, createUserSession } from '../../utils/userSession'
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
@@ -14,7 +14,9 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'Unauthorized',
     });
   }
+  
   const contactId = userSession.contactId;
+  const isLocalSession = contactId.startsWith('local_') || contactId.startsWith('temp_');
 
   if (!bitrixUrl) {
     throw createError({
@@ -26,25 +28,66 @@ export default defineEventHandler(async (event) => {
   const normalizedBitrixUrl = bitrixUrl.endsWith('/') ? bitrixUrl : `${bitrixUrl}/`;
 
   try {
-    await $fetch(`${normalizedBitrixUrl}crm.contact.update`, {
-      method: 'POST',
-      body: {
-        id: contactId,
-        fields: {
-          NAME: firstName,
-          LAST_NAME: lastName,
-          PHONE: [{ VALUE: phone, VALUE_TYPE: "WORK" }],
-          ADDRESS: address
-        }
-      }
-    });
+    let finalContactId = contactId;
 
-    return { success: true, message: 'Profile updated successfully' };
-  } catch (error) {
-    console.error('Bitrix Profile Update Error:', error);
+    if (isLocalSession) {
+      // 1. Create a NEW contact for this previously local session
+      console.log(`[AUTH] Promoting local session for ${userSession.email} to real CRM contact`);
+      const createResponse = await $fetch<{ result: string }>(`${normalizedBitrixUrl}crm.contact.add`, {
+        method: 'POST',
+        body: {
+          fields: {
+            NAME: firstName,
+            LAST_NAME: lastName,
+            EMAIL: [{ VALUE: userSession.email, VALUE_TYPE: "WORK" }],
+            PHONE: [{ VALUE: phone, VALUE_TYPE: "WORK" }],
+            ADDRESS: address,
+            TYPE_ID: 'CLIENT',
+            SOURCE_ID: 'WEB'
+          }
+        }
+      });
+      finalContactId = createResponse.result;
+
+      // 2. Update the session with the new real contactId
+      const { token, maxAge } = await createUserSession({
+        contactId: finalContactId,
+        email: userSession.email
+      });
+
+      setCookie(event, 'auth_token', token, {
+        maxAge,
+        path: '/',
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production'
+      });
+    } else {
+      // 3. Regular update for existing contacts
+      await $fetch(`${normalizedBitrixUrl}crm.contact.update`, {
+        method: 'POST',
+        body: {
+          id: finalContactId,
+          fields: {
+            NAME: firstName,
+            LAST_NAME: lastName,
+            PHONE: [{ VALUE: phone, VALUE_TYPE: "WORK" }],
+            ADDRESS: address
+          }
+        }
+      });
+    }
+
+    return { 
+      success: true, 
+      message: isLocalSession ? 'Account created and profile updated successfully' : 'Profile updated successfully',
+      contactId: finalContactId
+    };
+  } catch (error: any) {
+    console.error('Bitrix Profile Update/Promotion Error:', error?.data || error);
     throw createError({
       statusCode: 500,
-      statusMessage: 'Failed to update profile in CRM',
+      statusMessage: 'Failed to synchronize profile with CRM',
     });
   }
 });
