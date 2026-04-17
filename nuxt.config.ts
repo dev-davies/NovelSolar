@@ -34,6 +34,7 @@ export default defineNuxtConfig({
   css: ["~/assets/css/main.css"],
   app: {
     head: {
+      title: 'Novel Solar: Leading Solar Energy Company in Nigeria - novelsolar',
       link: [
         { rel: 'icon', type: 'image/png', href: '/favicon.png' },
         { 

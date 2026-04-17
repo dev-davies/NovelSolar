@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="pb-20 bg-slate-50 min-h-screen">
     <header class="max-w-7xl mx-auto px-4 md:px-6 pt-8 mb-4">
       <h1 class="text-3xl font-bold text-slate-900 mb-2">Inventory Hub</h1>
@@ -186,6 +186,6 @@ const getProductsForCategory = (categoryId) => {
   return products.filter(product => matchesCategory(product, categoryId)).slice(0, 4)
 }
 
-useHead({ title: 'Shop Inventory | NovelSolar' })
+useHead({ title: 'Shop Inventory' })
 </script>
 
