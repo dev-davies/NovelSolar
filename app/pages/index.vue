@@ -193,6 +193,11 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 import { excludeServiceProducts } from '~/utils/productFilters'
+import { useHead } from '#imports'
+
+useHead({
+  title: 'Novel Solar: Leading Solar Energy Company in Nigeria - novelsolar',
+})
 
 const heroSlides = [
   {

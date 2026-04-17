@@ -227,7 +227,7 @@ const sendMessage = async () => {
 }
 
 useHead({
-  title: 'Contact | Novel Solar',
+  title: 'Contact',
   meta: [
     { name: 'description', content: 'Contact Novel Solar for product questions, support, and general solar energy inquiries.' },
   ],

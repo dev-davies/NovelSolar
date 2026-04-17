@@ -131,7 +131,7 @@
 
 <script setup>
 useHead({
-  title: 'About Us | NovelSolar',
+  title: 'About Us',
   meta: [
     { name: 'description', content: 'Empowering Nigeria with sustainable energy solutions. Leading the charge towards a greener, brighter future.' }
   ]

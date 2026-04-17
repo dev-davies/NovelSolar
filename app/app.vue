@@ -10,7 +10,7 @@
 <script setup lang="ts">
 useSeoMeta({
   titleTemplate: (titleChunk) => {
-    return titleChunk ? `${titleChunk} | Novel Solar` : 'Novel Solar | Premium Components & Engineering';
+    return titleChunk ? `${titleChunk} - novelsolar` : 'Novel Solar: Leading Solar Energy Company in Nigeria - novelsolar';
   },
   ogType: 'website',
   description: 'Sourcing the world\'s best solar components for residential and commercial projects. Instant quotes, high-efficiency panels, and same-day logistics in Nigeria.',
