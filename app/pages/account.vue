@@ -59,7 +59,7 @@ const handleUpdateProfile = async () => {
     await fetchProfile();
   } catch (error) {
     console.error('Update profile error:', error);
-    alert('Failed to update profile. Please try again.');
+    alert('Synchronization Error: We were unable to save your details to the CRM. Please check your connection and try again.');
   } finally {
     isLoading.value = false;
   }
@@ -269,13 +269,6 @@ useHead({
     </div>
   </div>
 </template>
-
-<style scoped>
-.material-symbols-outlined {
-  font-variation-settings: 'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 24;
-}
-</style>
-
 
 <style scoped>
 .material-symbols-outlined {
