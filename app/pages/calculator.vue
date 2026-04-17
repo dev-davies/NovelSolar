@@ -11,7 +11,7 @@
     </div>
 
     <!-- Calculator Component -->
-    <LoadCalculator />
+    <LazyLoadCalculator />
 
     <!-- FAQ / Info Section -->
     <section class="max-w-4xl mx-auto px-4 mt-12 space-y-8">

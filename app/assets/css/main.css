@@ -9,4 +9,11 @@
     --color-secondary: #ef4444;
     --color-background: #f9fafb;
   }
+
+  /* Global Keyboard Accessibility Strategy */
+  *:focus-visible {
+    outline: 2px solid #002888;
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 }

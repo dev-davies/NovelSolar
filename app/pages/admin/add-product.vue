@@ -578,7 +578,7 @@ const handleLogout = async () => {
                     @drop.prevent="handleFileDrop(product.id, $event, 'main')"
                   >
                     <template v-if="product.image">
-                      <img :src="getPreviewUrl(product.image)" class="w-full h-full object-cover" />
+                      <img loading="lazy" :src="getPreviewUrl(product.image)" class="w-full h-full object-cover" />
                       <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-2">
                         <button type="button" @click="clearMainImage(product.id)" class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-red-500 transition-all flex items-center justify-center">
                           <span class="material-symbols-outlined">delete</span>
@@ -625,7 +625,7 @@ const handleLogout = async () => {
                   >
                     <div v-if="product.gallery.length" class="p-3 grid grid-cols-2 gap-2">
                       <div v-for="(file, idx) in product.gallery" :key="idx" class="relative aspect-square rounded-xl overflow-hidden group/item border border-slate-200 shadow-sm">
-                        <img :src="getPreviewUrl(file)" class="w-full h-full object-cover" />
+                        <img loading="lazy" :src="getPreviewUrl(file)" class="w-full h-full object-cover" />
                         <button
                           type="button"
                           @click="removeGalleryImage(product.id, idx)"

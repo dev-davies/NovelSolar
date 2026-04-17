@@ -39,7 +39,7 @@
         </div>
         <div class="order-1 md:order-2 relative">
           <div class="aspect-square bg-primary/10 rounded-2xl overflow-hidden">
-            <img alt="Engineers working on a solar farm" class="w-full h-full object-cover" data-alt="Engineers installing high-efficiency solar panels" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAp9i-W1AJUW5HVrRnO3eV4M7iTNUBhCbNe5Cj8ZPb3Z8MXKKK9d8is90qGRULlQqPUqcRSdQ6nfFf7A32_tHVLaN2-XyN68cmuQRDHmNEij3NWKaClUQI0nnOOkrJZr2UiVFiqcjxseyvrTsitQqc_18k7LnITZ1HjoDuLf4q-e5mSVplpojU2UDEJUfrZubdm-GvWVsFLWK1O5F3zx8JeYLckyt2_K5E3aRPhJU-OtDkGVhlxL2qAE9wft3OTBkXmbLIkHfR9Tyw"/>
+            <img loading="lazy" alt="Engineers working on a solar farm" class="w-full h-full object-cover" data-alt="Engineers installing high-efficiency solar panels" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAp9i-W1AJUW5HVrRnO3eV4M7iTNUBhCbNe5Cj8ZPb3Z8MXKKK9d8is90qGRULlQqPUqcRSdQ6nfFf7A32_tHVLaN2-XyN68cmuQRDHmNEij3NWKaClUQI0nnOOkrJZr2UiVFiqcjxseyvrTsitQqc_18k7LnITZ1HjoDuLf4q-e5mSVplpojU2UDEJUfrZubdm-GvWVsFLWK1O5F3zx8JeYLckyt2_K5E3aRPhJU-OtDkGVhlxL2qAE9wft3OTBkXmbLIkHfR9Tyw"/>
           </div>
           <div class="absolute -bottom-6 -left-6 bg-white dark:bg-slate-800 p-6 rounded-xl shadow-xl hidden lg:block">
             <div class="text-primary font-bold text-4xl">10+</div>

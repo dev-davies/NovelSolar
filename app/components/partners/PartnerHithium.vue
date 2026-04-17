@@ -2,14 +2,14 @@
   <div class="bg-white font-sans text-slate-900 border-t-4 border-[#00AEEF]">
     <!-- Top Banner -->
     <div class="w-full bg-white py-8 md:py-12 border-b border-slate-100 flex items-center justify-center overflow-hidden">
-      <img src="/images/hithium_partner.png" alt="Novel Solar x Hithium Partnership" class="h-12 md:h-20 object-contain px-4" />
+      <img loading="lazy" src="/images/hithium_partner.png" alt="Novel Solar x Hithium Partnership" class="h-12 md:h-20 object-contain px-4" />
     </div>
 
     <!-- Hero Section -->
     <section class="relative bg-slate-900 text-white overflow-hidden py-24 lg:py-32">
       <!-- Decorative Background -->
       <div class="absolute inset-0 z-0 scale-110 blur-sm opacity-40">
-        <img src="/images/hithium_hero.png" alt="Hithium Energy Storage Facility" class="w-full h-full object-cover" />
+        <img loading="lazy" src="/images/hithium_hero.png" alt="Hithium Energy Storage Facility" class="w-full h-full object-cover" />
       </div>
       <div class="absolute inset-0 bg-gradient-to-br from-[#00AEEF]/20 to-slate-900/90 z-1"></div>
       
@@ -65,7 +65,7 @@
           </div>
           <div class="order-1 lg:order-2 p-8 relative">
              <div class="absolute inset-0 bg-slate-50 rounded-[50px] scale-95 group-hover:bg-cyan-50 transition-colors"></div>
-             <img src="/images/Hithium3.png" alt="Hithium 1kWh Solar Generator" class="relative w-full h-auto object-contain z-10 group-hover:scale-105 transition-transform duration-700 drop-shadow-2xl" />
+             <img loading="lazy" src="/images/Hithium3.png" alt="Hithium 1kWh Solar Generator" class="relative w-full h-auto object-contain z-10 group-hover:scale-105 transition-transform duration-700 drop-shadow-2xl" />
           </div>
         </div>
 
@@ -73,7 +73,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center group">
           <div class="p-8 relative">
              <div class="absolute inset-0 bg-slate-50 rounded-[50px] scale-95 group-hover:bg-blue-50 transition-colors"></div>
-             <img src="/images/Hithium1.jpg" alt="Hithium Heroee 2 Solar Generator" class="relative w-full h-auto object-contain z-10 group-hover:scale-105 transition-transform duration-700 drop-shadow-2xl" />
+             <img loading="lazy" src="/images/Hithium1.jpg" alt="Hithium Heroee 2 Solar Generator" class="relative w-full h-auto object-contain z-10 group-hover:scale-105 transition-transform duration-700 drop-shadow-2xl" />
           </div>
           <div>
              <span class="text-sm font-black text-blue-600 uppercase tracking-[0.2em] mb-4 block">High-Capacity Workhorse</span>

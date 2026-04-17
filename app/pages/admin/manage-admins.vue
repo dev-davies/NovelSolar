@@ -45,7 +45,7 @@ const handleLogout = async () => {
         </div>
       </div>
 
-      <AdminManagement />
+      <LazyAdminManagement />
     </div>
   </div>
 </template>

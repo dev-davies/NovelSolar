@@ -5,8 +5,11 @@
  */
 export function normalizeProperty(val: any): any {
   if (!val) return null;
-  if (Array.isArray(val) && val.length > 0) {
-    return val[0].value || val[0];
+  if (Array.isArray(val)) {
+    if (val.length === 0) return null;
+    const firstItem = val[0];
+    if (firstItem === null || firstItem === undefined) return null;
+    return firstItem.value ?? firstItem ?? null;
   }
   return val;
 }

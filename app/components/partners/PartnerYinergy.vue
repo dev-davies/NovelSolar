@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-white font-sans">
     <!-- 1. Top Partner Banner -->
     <div class="bg-white w-full py-6 flex justify-center items-center border-b border-gray-100">
-      <img 
+      <img loading="lazy" 
         src="/images/yinergy_partner.png" 
         alt="Novel Solar x Yinergy Partnership" 
         class="h-12 md:h-16 w-auto object-contain mx-auto"
@@ -76,7 +76,7 @@
             <div class="relative group">
               <div class="absolute inset-0 bg-emerald-500/20 rounded-[40px] blur-3xl -z-10 animate-pulse"></div>
               <div class="bg-white/95 backdrop-blur-sm p-4 rounded-[40px] shadow-2xl transform rotate-2 group-hover:rotate-0 transition-transform duration-700 overflow-hidden">
-                <img 
+                <img loading="lazy" 
                   src="/images/yinergy4.png" 
                   alt="Yinergy Industrial Solution" 
                   class="w-full h-auto object-contain rounded-[30px]"
@@ -158,7 +158,7 @@
           <div class="order-1 md:order-2">
             <div class="relative">
               <div class="absolute inset-0 bg-emerald-600/5 translate-x-4 translate-y-4 rounded-3xl"></div>
-              <img 
+              <img loading="lazy" 
                 src="/images/Yinergy2.png" 
                 alt="Yinergy Hybrid Inverter" 
                 class="rounded-3xl shadow-xl w-full object-cover relative z-10 hover:-translate-y-2 transition-transform duration-500"
@@ -174,7 +174,7 @@
           <div class="md:order-1">
             <div class="relative">
               <div class="absolute inset-0 bg-emerald-600/5 -translate-x-4 translate-y-4 rounded-3xl"></div>
-              <img 
+              <img loading="lazy" 
                 src="/images/yinergy3.png" 
                 alt="Yinergy Energy Storage" 
                 class="rounded-3xl shadow-xl w-full object-cover relative z-10 hover:-translate-y-2 transition-transform duration-500"
@@ -222,17 +222,17 @@
         <div class="grid md:grid-cols-3 gap-8">
           <div class="group cursor-pointer">
             <div class="overflow-hidden rounded-2xl aspect-square bg-white border border-slate-200">
-              <img src="/images/yinergy1.png" alt="Yinergy Core Technology" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+              <img loading="lazy" src="/images/yinergy1.png" alt="Yinergy Core Technology" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
             </div>
           </div>
           <div class="group cursor-pointer">
             <div class="overflow-hidden rounded-2xl aspect-square bg-white border border-slate-200">
-              <img src="/images/yinergy5.png" alt="Yinergy Smart Interface" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+              <img loading="lazy" src="/images/yinergy5.png" alt="Yinergy Smart Interface" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
             </div>
           </div>
           <div class="group cursor-pointer">
             <div class="overflow-hidden rounded-2xl aspect-square bg-white border border-slate-200">
-              <img src="/images/yinergy1.png" alt="Yinergy Industrial Scale" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+              <img loading="lazy" src="/images/yinergy1.png" alt="Yinergy Industrial Scale" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
             </div>
           </div>
         </div>

@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-[#FDFDFD]">
     <!-- Section 1: The Top Logo Banner -->
     <div class="w-full bg-white border-b border-gray-100 py-4 px-8 flex justify-center">
-      <img src="/images/logo-new-novel.-itel.png" alt="NovelSolar x itel" class="h-12 md:h-16 w-auto object-contain" />
+      <img loading="lazy" src="/images/logo-new-novel.-itel.png" alt="NovelSolar x itel" class="h-12 md:h-16 w-auto object-contain" />
     </div>
 
     <!-- Section 2: The Hero Section -->
@@ -20,7 +20,7 @@
           </NuxtLink>
         </div>
         <div class="relative">
-          <img src="/images/itel_3.png" alt="itel Home Solar" class="rounded-3xl shadow-2xl w-full object-cover aspect-[4/3]" />
+          <img loading="lazy" src="/images/itel_3.png" alt="itel Home Solar" class="rounded-3xl shadow-2xl w-full object-cover aspect-[4/3]" />
           <div class="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl hidden lg:block">
             <div class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-1">Energy Independence</div>
             <div class="text-3xl font-black text-[#002888]">100%</div>
@@ -34,7 +34,7 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid md:grid-cols-2 gap-16 items-center">
           <div>
-            <img src="/images/itel.jpg" alt="itel Reliable Power" class="rounded-2xl shadow-lg w-full" />
+            <img loading="lazy" src="/images/itel.jpg" alt="itel Reliable Power" class="rounded-2xl shadow-lg w-full" />
           </div>
           <div>
             <h2 class="text-4xl font-bold text-gray-900 mb-6">Silent, Safe, and Smart Home Energy</h2>
@@ -59,7 +59,7 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid md:grid-cols-3 gap-12 items-center">
           <div class="md:col-span-2">
-            <img src="/images/itel-5-600x600.webp" alt="itel Home Inverter" class="max-w-md mx-auto drop-shadow-2xl hover:scale-105 transition-transform duration-700" />
+            <img loading="lazy" src="/images/itel-5-600x600.webp" alt="itel Home Inverter" class="max-w-md mx-auto drop-shadow-2xl hover:scale-105 transition-transform duration-700" />
           </div>
           <div>
             <h3 class="text-3xl font-bold text-gray-900 mb-6 font-primary">itel Home Inverter Series</h3>
@@ -92,7 +92,7 @@
           <!-- Benefit 1 -->
           <div class="flex flex-col gap-8">
             <div class="h-[400px] overflow-hidden rounded-3xl">
-              <img src="/images/itel_2.jpg" alt="Home Integration" class="w-full h-full object-cover" />
+              <img loading="lazy" src="/images/itel_2.jpg" alt="Home Integration" class="w-full h-full object-cover" />
             </div>
             <div>
               <h4 class="text-2xl font-bold text-gray-900 mb-4">Seamless Home Integration</h4>
@@ -102,7 +102,7 @@
           <!-- Benefit 2 -->
           <div class="flex flex-col gap-8">
             <div class="h-[400px] overflow-hidden rounded-3xl">
-              <img src="/images/itel_1.jpg" alt="Reliability" class="w-full h-full object-cover" />
+              <img loading="lazy" src="/images/itel_1.jpg" alt="Reliability" class="w-full h-full object-cover" />
             </div>
             <div>
               <h4 class="text-2xl font-bold text-gray-900 mb-4">Long-Term Family Security</h4>

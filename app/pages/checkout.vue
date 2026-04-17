@@ -372,7 +372,7 @@ onMounted(async () => {
               <div v-for="item in cart" :key="item.id" class="flex gap-4">
                 <div class="relative w-16 h-16 shrink-0 mt-2 mr-2">
                   <div class="w-full h-full bg-slate-50 rounded-xl flex items-center justify-center border border-slate-100 overflow-hidden">
-                    <img 
+                    <img loading="lazy" 
                       :src="item.PROPERTY_102 || item.image || item.PREVIEW_PICTURE || '/images/placeholder.png'" 
                       :alt="item.name"
                       class="w-full h-full object-cover"

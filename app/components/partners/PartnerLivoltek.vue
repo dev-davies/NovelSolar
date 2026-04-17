@@ -32,7 +32,7 @@ const activeProduct = ref(products[0])
   <div class="bg-white font-sans text-slate-900 border-t-4 border-[#00164d]">
     <!-- Header Banner -->
     <div class="w-full bg-white py-8 md:py-12 border-b border-slate-100 flex items-center justify-center overflow-hidden">
-      <img src="/images/livoltekpartner.png" alt="Novel Solar x Livoltek Partnership" class="h-12 md:h-20 object-contain px-4" />
+      <img loading="lazy" src="/images/livoltekpartner.png" alt="Novel Solar x Livoltek Partnership" class="h-12 md:h-20 object-contain px-4" />
     </div>
 
     <!-- Hero Section -->
@@ -159,7 +159,7 @@ const activeProduct = ref(products[0])
             </div>
 
             <div class="w-full md:w-1/2 flex justify-center z-10">
-              <img :src="activeProduct.image" :alt="activeProduct.name" class="max-h-[350px] object-contain drop-shadow-2xl transition-all duration-500 hover:scale-105" :key="activeProduct.id" />
+              <img loading="lazy" :src="activeProduct.image" :alt="activeProduct.name" class="max-h-[350px] object-contain drop-shadow-2xl transition-all duration-500 hover:scale-105" :key="activeProduct.id" />
             </div>
             
             <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-white rounded-full opacity-50 blur-3xl pointer-events-none"></div>
@@ -186,7 +186,7 @@ const activeProduct = ref(products[0])
     <!-- Lifestyle CTA -->
     <section class="relative py-32 overflow-hidden">
       <div class="absolute inset-0 z-0">
-        <img src="/images/livoltek_family.png" alt="Nigerian Family with Solar" class="w-full h-full object-cover object-center" />
+        <img loading="lazy" src="/images/livoltek_family.png" alt="Nigerian Family with Solar" class="w-full h-full object-cover object-center" />
         <div class="absolute inset-0 bg-[#00164d]/90 mix-blend-multiply"></div>
       </div>
 

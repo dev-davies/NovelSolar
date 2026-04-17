@@ -17,6 +17,9 @@
           <NuxtImg
             :src="slide.image"
             :alt="slide.title"
+            :preload="index === 0"
+            :fetchpriority="index === 0 ? 'high' : 'auto'"
+            :loading="index === 0 ? 'eager' : 'lazy'"
             class="absolute inset-0 h-full w-full object-cover"
           />
 
