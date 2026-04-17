@@ -1,7 +1,13 @@
-// filepath: app/components/ErrorBoundary.test.ts
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import ErrorBoundary from './ErrorBoundary.vue'
+
+// Mock useErrorLogger
+vi.mock('~/composables/useErrorLogger', () => ({
+  useErrorLogger: () => ({
+    trackVueError: vi.fn()
+  })
+}))
 
 // Mock Nuxt components
 vi.mock('#components/NuxtLink', () => ({
@@ -11,6 +17,21 @@ vi.mock('#components/NuxtLink', () => ({
     props: ['to']
   }
 }))
+
+// Mock auto-imports that ErrorBoundary uses
+vi.mock('vue', async () => {
+  const actual = await vi.importActual('vue') as any
+  return {
+    ...actual,
+    ref: actual.ref,
+    computed: actual.computed,
+    withDefaults: actual.withDefaults,
+    defineProps: actual.defineProps,
+    defineEmits: actual.defineEmits,
+    onMounted: actual.onMounted,
+    onErrorCaptured: actual.onErrorCaptured
+  }
+})
 
 describe('ErrorBoundary', () => {
   it('should render slot content when no error', () => {
@@ -32,7 +53,6 @@ describe('ErrorBoundary', () => {
       }
     })
 
-    // Access the component's setError method via expose
     const vm = wrapper.vm as any
     vm.setError(new Error('Test error'))
 
@@ -132,7 +152,6 @@ describe('ErrorBoundary', () => {
     await wrapper.find('.btn-retry').trigger('click')
     await wrapper.vm.$nextTick()
 
-    // After retry, error should be cleared and original content shown
     expect(vm.error).toBeNull()
   })
 
