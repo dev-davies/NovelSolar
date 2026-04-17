@@ -103,12 +103,6 @@ const props = withDefaults(defineProps<Props>(), {
   ])
 })
 
-defineEmits<{
-  retry: []
-  back: []
-  search: [query: string]
-}>()
-
 const searchQuery = ref('')
 
 const normalizedStatusCode = computed(() => props.statusCode || 500)
