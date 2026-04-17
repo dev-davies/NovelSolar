@@ -20,7 +20,7 @@ export interface ErrorLoggerOptions {
 
 export function useErrorLogger(options: ErrorLoggerOptions = {}) {
   const config = useRuntimeConfig()
-  const isClient = import.meta.client
+  const isClient = typeof window !== 'undefined'
   const baseUrl = config.public.baseUrl || ''
 
   const loggerConfig = {
