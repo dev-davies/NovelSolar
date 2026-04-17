@@ -23,19 +23,7 @@
             class="absolute inset-0 h-full w-full object-cover"
           />
 
-          <div class="relative z-10 flex h-full items-end px-5 py-8 sm:px-12 sm:py-12">
-            <div class="max-w-2xl">
-              <div class="mt-6 flex flex-wrap items-center gap-3 sm:mt-10 sm:gap-4">
-                <NuxtLink
-                  to="/shop"
-                  class="relative z-20 inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-[2px] transition-all group-hover:bg-white/20 group-hover:font-black group-hover:shadow-lg sm:px-8 sm:py-4 sm:text-base"
-                >
-                  Shop Now
-                  <span class="material-symbols-outlined text-base">arrow_forward</span>
-                </NuxtLink>
-              </div>
-            </div>
-          </div>
+
         </div>
 
         <div class="absolute bottom-5 left-5 right-5 z-20 flex items-center justify-between gap-4 sm:bottom-8 sm:left-12 sm:right-12">
