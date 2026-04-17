@@ -2,7 +2,7 @@
   <div>
     <!-- Hero Section -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-      <div class="relative min-h-[460px] sm:min-h-[560px] rounded-3xl overflow-hidden shadow-2xl shadow-slate-900/10">
+      <div class="relative aspect-video sm:aspect-auto sm:min-h-[560px] rounded-3xl overflow-hidden shadow-2xl shadow-slate-900/10">
         <div
           v-for="(slide, index) in heroSlides"
           :key="slide.image"
