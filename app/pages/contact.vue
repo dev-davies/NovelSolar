@@ -140,7 +140,7 @@
                 </div>
                 <div>
                   <h3 class="font-black text-slate-900 mb-1">Phone</h3>
-                  <p class="text-slate-500 font-medium">+234 800 SOLAR NG</p>
+                  <p class="text-slate-500 font-medium">+234 802 211 9908</p>
                 </div>
               </div>
 

@@ -156,7 +156,7 @@
               <p class="text-xs text-gray-500">Free solar consultation</p>
             </div>
           </div>
-          <a href="https://wa.me/2348122615555" target="_blank" class="text-sm font-bold text-[#002888] hover:underline flex items-center gap-1">
+          <a href="https://wa.me/2348022119908" target="_blank" class="text-sm font-bold text-[#002888] hover:underline flex items-center gap-1">
             Chat on WhatsApp
             <span class="material-symbols-outlined text-sm">arrow_outward</span>
           </a>
@@ -289,7 +289,7 @@ const handlePdfDownload = () => {
   // Footer / CTA
   doc.setFontSize(9);
   doc.setFont("helvetica", "italic");
-  doc.text("Visit www.novelsolar.com or call +234 812 261 5555 for a formal site audit.", 20, doc.internal.pageSize.height - 20);
+  doc.text("Visit www.novelsolar.com or call +234 802 211 9908 for a formal site audit.", 20, doc.internal.pageSize.height - 20);
 
   doc.save("NovelSolar_Estimate.pdf");
 };
