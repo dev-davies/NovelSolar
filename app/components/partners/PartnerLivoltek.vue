@@ -7,21 +7,24 @@ const products = [
     name: 'Complete Hybrid Systems',
     desc: 'The ultimate solar kit featuring Livoltek hybrid inverters, tier-1 panels, and smart monitoring. Perfect for achieving total energy independence while staying grid-connected.',
     image: '/images/livoltek1.png',
-    features: ['Dual MPPT Tracking', 'Seamless Grid Switching', 'IP65 Rated Protection']
+    features: ['Dual MPPT Tracking', 'Seamless Grid Switching', 'IP65 Rated Protection'],
+    specsUrl: 'https://ng.livoltek.com/product/hybrid-inverter-single-phase-3-6kw/'
   },
   {
     id: 'storage',
     name: 'All-In-One Storage',
     desc: 'Sleek, stackable lithium battery systems designed for modern homes. Maximum safety meets minimalist design.',
     image: '/images/livoltek2.jpg',
-    features: ['Safe LiFePO4 Chemistry', 'Plug & Play Expansion', 'Space-Saving Vertical Design']
+    features: ['Safe LiFePO4 Chemistry', 'Plug & Play Expansion', 'Space-Saving Vertical Design'],
+    specsUrl: 'https://www.livoltek.com/product/hyrid-all-in-one-ess-3-6kw/'
   },
   {
     id: 'offgrid',
     name: 'Off-Grid Inverters',
     desc: 'Robust 3.5kW to 6.2kW off-grid solutions built specifically to withstand heavy loads and unstable local grids.',
     image: '/images/livoltek3.png',
-    features: ['High Surge Capacity', 'Generator Compatible', 'Built-in MPPT Charge Controller']
+    features: ['High Surge Capacity', 'Generator Compatible', 'Built-in MPPT Charge Controller'],
+    specsUrl: 'https://ng.livoltek.com/product/off-grid-inverter-3-5-6-2kw/'
   }
 ]
 
@@ -53,9 +56,9 @@ const activeProduct = ref(products[0])
           <NuxtLink to="/quote" class="bg-[#00AEEF] hover:bg-cyan-400 text-[#00164d] px-8 py-4 rounded-sm font-black uppercase tracking-widest transition-all duration-300 transform hover:-translate-y-1 shadow-[0_0_20px_rgba(0,174,239,0.3)] inline-flex items-center justify-center">
             Request a Quote
           </NuxtLink>
-          <button class="bg-transparent border-2 border-slate-500 hover:border-white text-white px-8 py-4 rounded-sm font-bold uppercase tracking-widest transition-all duration-300">
+          <NuxtLink to="/partners/livoltek/shop" class="bg-transparent border-2 border-slate-500 hover:border-white text-white px-8 py-4 rounded-sm font-bold uppercase tracking-widest transition-all duration-300 inline-flex items-center justify-center">
             Explore Catalog
-          </button>
+          </NuxtLink>
         </div>
       </div>
       
@@ -153,9 +156,9 @@ const activeProduct = ref(products[0])
                 </li>
               </ul>
               
-              <button class="text-[#002888] font-black uppercase tracking-widest text-sm hover:text-[#00AEEF] transition-colors flex items-center gap-2">
+              <a :href="activeProduct.specsUrl" target="_blank" class="text-[#002888] font-black uppercase tracking-widest text-sm hover:text-[#00AEEF] transition-colors flex items-center gap-2">
                 View Technical Specs <span class="text-lg">&rarr;</span>
-              </button>
+              </a>
             </div>
 
             <div class="w-full md:w-1/2 flex justify-center z-10">
@@ -200,9 +203,9 @@ const activeProduct = ref(products[0])
           <NuxtLink to="/quote" class="bg-[#00AEEF] hover:bg-cyan-400 text-[#00164d] px-10 py-5 rounded-sm font-black uppercase tracking-widest transition-all duration-300 transform hover:-translate-y-1 inline-flex items-center justify-center">
             Get a Custom Quote
           </NuxtLink>
-          <button class="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/30 text-white px-10 py-5 rounded-sm font-bold uppercase tracking-widest transition-all duration-300">
+          <NuxtLink to="/contact" class="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/30 text-white px-10 py-5 rounded-sm font-bold uppercase tracking-widest transition-all duration-300 inline-flex items-center justify-center">
             Contact Support
-          </button>
+          </NuxtLink>
         </div>
       </div>
     </section>
