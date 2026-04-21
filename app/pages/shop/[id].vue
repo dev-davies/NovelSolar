@@ -176,7 +176,7 @@ useHead({
             </div>
 
             <!-- WhatsApp Direct -->
-            <a href="https://wa.me/234XXXXXXXXXX" target="_blank" class="group bg-[#25D366]/5 border-2 border-[#25D366]/10 p-5 rounded-2xl flex items-center gap-5 hover:bg-[#25D366]/10 hover:border-[#25D366]/30 transition-all">
+            <a href="https://wa.me/2348022119908" target="_blank" class="group bg-[#25D366]/5 border-2 border-[#25D366]/10 p-5 rounded-2xl flex items-center gap-5 hover:bg-[#25D366]/10 hover:border-[#25D366]/30 transition-all">
               <div class="w-14 h-14 rounded-full bg-[#25D366] flex items-center justify-center text-white shrink-0 shadow-lg shadow-green-500/20 transition-transform group-hover:scale-110">
                 <span class="material-symbols-outlined text-2xl">chat</span>
               </div>

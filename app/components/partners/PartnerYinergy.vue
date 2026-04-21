@@ -60,7 +60,7 @@
               </NuxtLink>
               
               <a 
-                href="https://wa.me/your-number" 
+                href="https://wa.me/2348022119908" 
                 target="_blank"
                 class="inline-flex items-center gap-2 text-white px-6 py-4 rounded-lg font-bold text-sm hover:opacity-90 transition-all shadow-lg shadow-green-900/10 active:scale-95"
                 style="background-color: #25D366;"

@@ -436,6 +436,8 @@
     </nav>
     <!-- Global Cart Drawer -->
     <CartDrawer />
+    <!-- Global WhatsApp Floating Button -->
+    <WhatsAppFloating />
   </div>
 </template>
 
