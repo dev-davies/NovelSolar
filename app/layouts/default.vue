@@ -91,7 +91,7 @@
                 <li><NuxtLink to="/about" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors" @click="isMobileMenuOpen = false">About us</NuxtLink></li>
                 <li><NuxtLink to="/branch-outlets" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Branch outlets</NuxtLink></li>
                 <li><NuxtLink to="/gallery" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Gallery</NuxtLink></li>
-                <li><NuxtLink to="/news" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">News</NuxtLink></li>
+                <li><NuxtLink to="/blog" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Blog</NuxtLink></li>
               </ul>
             </div>
           </div>
