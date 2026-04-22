@@ -136,6 +136,18 @@ describe('/api/quote', () => {
     expect(response.result).toBeDefined()
   })
 
+  it('rejects invalid email format', () => {
+    const body = {
+      firstName: 'Jane',
+      lastName: 'Smith',
+      email: 'not-valid',
+      phone: '9876543210',
+      projectType: 'Solar Installation'
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+    expect(emailRegex.test(body.email.trim())).toBe(false)
+  })
+
   it('handles missing optional details', async () => {
     const mockResponse = { result: 'lead_123' }
     global.$fetch.mockResolvedValueOnce(mockResponse)

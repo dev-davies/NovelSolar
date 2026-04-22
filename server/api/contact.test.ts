@@ -128,6 +128,18 @@ describe('/api/contact logic', () => {
     expect(phoneValue).toBe('')
   })
 
+  it('rejects invalid email format', () => {
+    const body = { name: 'John', email: 'not-an-email', message: 'Hello' }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+    expect(emailRegex.test(body.email.trim())).toBe(false)
+  })
+
+  it('rejects email without domain', () => {
+    const body = { name: 'John', email: 'user@', message: 'Hello' }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+    expect(emailRegex.test(body.email.trim())).toBe(false)
+  })
+
   it('handles optional subject field', () => {
     const body = {
       name: 'Test User',

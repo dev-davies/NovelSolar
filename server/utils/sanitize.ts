@@ -1,3 +1,16 @@
+/**
+ * Validates that a string looks like a real email address.
+ * Checks structure (local@domain.tld) and rejects obvious junk.
+ */
+export const isValidEmail = (email: unknown): boolean => {
+  if (typeof email !== 'string') return false
+  const trimmed = email.trim()
+  if (trimmed.length > 254) return false
+  // RFC 5322 simplified: local part, @, domain with at least one dot in TLD
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+  return emailRegex.test(trimmed)
+}
+
 // Utility to escape potentially dangerous HTML characters
 const escapeHtml = (unsafe: string) => {
   if (typeof unsafe !== 'string') return unsafe;

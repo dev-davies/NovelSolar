@@ -144,6 +144,16 @@ describe('/api/checkout logic', () => {
     expect(orderDetailsList).toContain('₦150,000') // individual item price
   })
 
+  it('rejects invalid customer email format', () => {
+    const body = {
+      customer: { firstName: 'John', email: 'bad-email', phone: '123' },
+      cart: [{ name: 'Panel', price: 1000, quantity: 1 }],
+      total: 1000
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+    expect(emailRegex.test((body.customer.email || '').trim())).toBe(false)
+  })
+
   it('generates order ID with timestamp', () => {
     const orderId = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`
     

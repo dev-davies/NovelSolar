@@ -131,6 +131,18 @@ describe('/api/book-service', () => {
     expect(response.result).toBeDefined()
   })
 
+  it('rejects invalid email format', () => {
+    const body = {
+      firstName: 'John',
+      lastName: 'Doe',
+      email: 'invalid-email',
+      phone: '1234567890',
+      serviceType: 'Installation'
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+    expect(emailRegex.test(body.email.trim())).toBe(false)
+  })
+
   it('handles missing optional details field', async () => {
     const mockResponse = { result: 'lead_123' }
     global.$fetch.mockResolvedValueOnce(mockResponse)

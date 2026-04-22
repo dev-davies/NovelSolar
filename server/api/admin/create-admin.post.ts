@@ -19,6 +19,13 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  if (!isValidEmail(body.admin_email)) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Please provide a valid email address.',
+    })
+  }
+
   const supabase = getSupabaseAdminClient()
 
   const { data: currentAdmin, error: currentAdminError } = await supabase

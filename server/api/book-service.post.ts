@@ -7,6 +7,13 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 500, statusMessage: 'CRM connection not configured.' })
   }
 
+  if (!isValidEmail(body.email)) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Please provide a valid email address.',
+    })
+  }
+
   // Ensure URL ends with a slash for safety
   const normalizedUrl = webhookUrl.endsWith('/') ? webhookUrl : `${webhookUrl}/`
 

@@ -13,6 +13,13 @@ export default defineEventHandler(async (event) => {
   const branch = body.branch || {};
   const paymentMethod = body.paymentMethod || 'Bank Transfer';
 
+  if (!isValidEmail(customer.email)) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Please provide a valid email address.',
+    });
+  }
+
   // Generate a unique order ID
   const orderId = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
