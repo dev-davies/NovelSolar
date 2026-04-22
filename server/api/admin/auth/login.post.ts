@@ -2,6 +2,8 @@ import { createAdminSession } from '../../../utils/adminSession'
 import { getSupabaseAdminClient } from '../../../utils/supabaseAdmin'
 
 export default defineEventHandler(async (event) => {
+  await enforceAuthRateLimit(event)
+
   const body = await readBody<{ email?: string, password?: string, passcode?: string }>(event)
   const config = useRuntimeConfig()
   let authenticatedUserId: string | undefined
