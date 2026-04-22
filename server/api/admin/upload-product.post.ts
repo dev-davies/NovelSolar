@@ -1,5 +1,25 @@
 import { v2 as cloudinary } from 'cloudinary';
 
+const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'];
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+const MAX_GALLERY_FILES = 10;
+
+function validateImageFile(file: { filename?: string; type?: string; data: Buffer }, label: string) {
+  if (!file.type || !ALLOWED_MIME_TYPES.includes(file.type)) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: `${label}: Invalid file type "${file.type || 'unknown'}". Allowed: JPEG, PNG, WebP, GIF, AVIF.`,
+    });
+  }
+  if (file.data.length > MAX_FILE_SIZE) {
+    const sizeMB = (file.data.length / (1024 * 1024)).toFixed(1);
+    throw createError({
+      statusCode: 400,
+      statusMessage: `${label}: File too large (${sizeMB} MB). Maximum allowed: 10 MB.`,
+    });
+  }
+}
+
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
   // 1. Configure Cloudinary
@@ -34,6 +54,20 @@ export default defineEventHandler(async (event) => {
 
   if (!productName || !productPrice || !imageFile) {
     throw createError({ statusCode: 400, statusMessage: 'Missing required fields' });
+  }
+
+  // Validate main image
+  validateImageFile(imageFile, 'Main image');
+
+  // Validate gallery images
+  if (galleryImages.length > MAX_GALLERY_FILES) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: `Too many gallery images (${galleryImages.length}). Maximum allowed: ${MAX_GALLERY_FILES}.`,
+    });
+  }
+  for (let i = 0; i < galleryImages.length; i++) {
+    validateImageFile(galleryImages[i], `Gallery image ${i + 1}`);
   }
 
   // 3.5. Brand Integrity: Ensure the brand name is in the product title for shop filtering
