@@ -5,11 +5,12 @@ function getEmailTemplateUrls() {
   return {
     siteUrl,
     logoUrl: `${siteUrl}/images/logo.png`,
+    whatsappUrl: `https://wa.me/${config.public.whatsappNumber}`,
   };
 }
 
 export function generateOrderReceiptHtml(orderDetails: any) {
-  const { siteUrl, logoUrl } = getEmailTemplateUrls();
+  const { siteUrl, logoUrl, whatsappUrl } = getEmailTemplateUrls();
   const productsHtml = orderDetails.products.map((item: any) => `
     <tr>
       <td style="padding: 15px 0; border-bottom: 1px solid #e5e2e1; width: 90px;">
@@ -124,7 +125,7 @@ export function generateOrderReceiptHtml(orderDetails: any) {
           <p style="font-family: 'Inter', Arial, sans-serif; color: #525252; font-size: 14px; line-height: 1.6; max-width: 400px; margin: 0 auto 30px;">
             Our sales team will reach out to you to validate your order within 24 hours.
           </p>
-          <a href="https://wa.me/234XXXXXXXXXX" target="_blank" style="display: block; width: 100%; max-width: 320px; margin: 0 auto; text-decoration: none; border: 2px solid #25D366; border-radius: 4px; padding: 14px 0; background-color: #ffffff; text-align: center;">
+          <a href="${whatsappUrl}" target="_blank" style="display: block; width: 100%; max-width: 320px; margin: 0 auto; text-decoration: none; border: 2px solid #25D366; border-radius: 4px; padding: 14px 0; background-color: #ffffff; text-align: center;">
             <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/WhatsApp_icon.png" alt="WhatsApp" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 8px; display: inline-block;" />
             <span style="font-family: 'Space Grotesk', Arial, sans-serif; font-size: 12px; font-weight: bold; letter-spacing: 0.15em; color: #128C7E; text-transform: uppercase; vertical-align: middle; display: inline-block;">WhatsApp Support</span>
           </a>
@@ -149,7 +150,7 @@ export function generateOrderReceiptHtml(orderDetails: any) {
 }
 
 export function generateServiceBookingHtml(bookingDetails: any) {
-  const { siteUrl, logoUrl } = getEmailTemplateUrls();
+  const { siteUrl, logoUrl, whatsappUrl } = getEmailTemplateUrls();
   return `
   <!DOCTYPE html>
   <html lang="en">

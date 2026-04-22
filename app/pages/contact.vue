@@ -140,7 +140,7 @@
                 </div>
                 <div>
                   <h3 class="font-black text-slate-900 mb-1">Phone</h3>
-                  <p class="text-slate-500 font-medium">+234 802 211 9908</p>
+                  <p class="text-slate-500 font-medium">{{ whatsappNumberFormatted }}</p>
                 </div>
               </div>
 
@@ -189,6 +189,8 @@
 </template>
 
 <script setup lang="ts">
+const { public: { whatsappNumberFormatted } } = useRuntimeConfig()
+
 const initialFormState = () => ({
   name: '',
   email: '',

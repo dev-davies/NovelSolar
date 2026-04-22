@@ -95,3 +95,17 @@ export interface NigerianState {
   name: string
   coords: [number, number]
 }
+
+/** Navigation menu item with a title and route link */
+export interface NavMenuItem {
+  title: string
+  link: string
+}
+
+/** Calculator price tier mapping load range to cost range */
+export interface PriceTier {
+  minLoad: number
+  maxLoad: number | null
+  minPrice: number
+  maxPrice: number
+}

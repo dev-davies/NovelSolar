@@ -453,35 +453,8 @@ const handleSearch = () => {
   searchQuery.value = ''
 }
 
-const productMenu = [
-  { title: 'Solar Panels' },
-  { title: 'Inverters' },
-  { title: 'Batteries' },
-  { title: 'Charge Controllers' },
-  { title: 'Lighting' },
-  { title: 'Power Banks' },
-  { title: 'Accessories' }
-]
-
-const servicesMenu = [
-  { title: 'Power & Load Audit Service', link: '/services/audit' },
-  { title: 'Inverter, Solar Panel & Battery Installation', link: '/services/installation' },
-  { title: 'Inverter Repair (Solar Panel, Battery etc Repairs)', link: '/services/repair' },
-  { title: 'Solar Panel, Tubular Battery & Inverter Maintenance', link: '/services/maintenance' }
-]
-
-const partnersMenu = [
-  { title: 'Itel', link: '/partners/itel' },
-  { title: 'Haisic', link: '/partners/haisic' },
-  { title: 'Yinergy', link: '/partners/yinergy' },
-  { title: 'Hithium', link: '/partners/hithium' },
-  { title: 'Livoltek', link: '/partners/livoltek' }
-]
-
-const supportMenu = [
-  { title: 'FAQ', link: '/faq' },
-  { title: 'Contact Us', link: '/contact' }
-]
+const { nav } = useAppConfig()
+const { productMenu, servicesMenu, partnersMenu, supportMenu } = nav
 
 const { cartItemCount, toggleCart } = useCart();
 

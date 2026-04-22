@@ -1,6 +1,6 @@
 <template>
   <a
-    href="https://wa.me/2348022119908"
+    :href="whatsappUrl"
     target="_blank"
     class="fixed bottom-24 right-6 md:bottom-8 md:right-8 z-[100] flex items-center justify-center w-14 h-14 bg-[#25D366] text-white rounded-full shadow-[0_10px_25px_-5px_rgba(37,211,102,0.4)] hover:shadow-[0_15px_30px_-5px_rgba(37,211,102,0.6)] transition-all duration-300 hover:scale-110 active:scale-95 group"
     aria-label="Chat with us on WhatsApp"
@@ -22,7 +22,8 @@
 </template>
 
 <script setup lang="ts">
-// No specific logic needed for now
+const { public: { whatsappNumber } } = useRuntimeConfig()
+const whatsappUrl = computed(() => `https://wa.me/${whatsappNumber}`)
 </script>
 
 <style scoped>
