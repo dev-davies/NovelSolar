@@ -8,6 +8,9 @@ export default defineEventHandler(async (event) => {
   let authenticatedEmail: string | null | undefined
 
   if (body?.email && body?.password) {
+    if (!isValidEmail(body.email)) {
+      throw createError({ statusCode: 400, statusMessage: 'Please provide a valid email address.' })
+    }
     const supabaseUrl = config.public.supabaseUrl || process.env.NUXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL
     const supabaseAnonKey =
       config.public.supabaseAnonKey ||

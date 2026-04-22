@@ -18,6 +18,13 @@ export default defineEventHandler(async (event) => {
     });
   }
 
+  if (!isValidEmail(body.email)) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Please provide a valid email address.',
+    });
+  }
+
   const normalizedUrl = webhookUrl.endsWith('/') ? webhookUrl : `${webhookUrl}/`;
 
   try {
