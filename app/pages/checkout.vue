@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { z } from 'zod';
 const { cart, cartTotalAmount } = useCart();
 const { addToast } = useToast();

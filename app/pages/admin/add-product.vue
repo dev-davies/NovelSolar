@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { onUnmounted } from 'vue'
 definePageMeta({ middleware: 'admin' })
 

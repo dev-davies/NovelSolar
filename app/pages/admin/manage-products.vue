@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 definePageMeta({ middleware: 'admin' })
 
 const searchQuery = ref('')

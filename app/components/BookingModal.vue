@@ -1,13 +1,14 @@
-<script setup>
-const props = defineProps({
-  isOpen: Boolean,
-  serviceName: {
-    type: String,
-    default: 'General Service'
-  }
+<script setup lang="ts">
+const props = withDefaults(defineProps<{
+  isOpen: boolean
+  serviceName?: string
+}>(), {
+  serviceName: 'General Service'
 })
 
-const emit = defineEmits(['close'])
+const emit = defineEmits<{
+  close: []
+}>()
 
 const form = ref({
   firstName: '',

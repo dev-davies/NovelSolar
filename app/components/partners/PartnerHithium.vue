@@ -140,7 +140,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 useHead({
   title: 'Hithium Portable Solar Generators | NovelSolar Partner',
   meta: [

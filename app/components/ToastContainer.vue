@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { useToast } from '~/composables/useToast';
 import ToastNotification from './ToastNotification.vue';
 

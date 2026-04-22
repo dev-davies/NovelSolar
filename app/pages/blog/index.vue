@@ -89,7 +89,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const { data: allPosts, pending } = await useAsyncData('blog-hub', () => {
   return queryContent('blog').sort({ date: -1 }).find()
 })

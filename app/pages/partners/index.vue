@@ -79,7 +79,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const partners = [
   { name: 'Itel', slug: 'itel', desc: 'Premium solar panels and energy solutions designed for reliability.', logo: '/images/itel_logo.png' },
   { name: 'Haisic', slug: 'haisic', desc: 'High-efficiency inverters and battery systems for smart energy management.', logo: '/images/haisic_logo.png' },

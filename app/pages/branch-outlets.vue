@@ -167,7 +167,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const searchQuery = ref('')
 
 // Initialize locations logic

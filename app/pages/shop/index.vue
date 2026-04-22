@@ -94,7 +94,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { excludeServiceProducts } from '~/utils/productFilters'
 import { watch, computed, ref } from 'vue'
 

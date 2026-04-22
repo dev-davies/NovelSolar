@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 const isLoading = ref(false);
 const isLoadingProfile = ref(true);
 const profile = ref({

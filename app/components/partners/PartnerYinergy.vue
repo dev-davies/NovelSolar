@@ -265,7 +265,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 useHead({
   title: 'Yinergy Intelligent Energy Solutions | NovelSolar Partner',
   meta: [

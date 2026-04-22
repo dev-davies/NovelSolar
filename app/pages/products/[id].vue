@@ -192,7 +192,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const { addToCart: doAddToCart } = useCart()
 const { addToast } = useToast()
 const { getProductImage } = useProductImage()

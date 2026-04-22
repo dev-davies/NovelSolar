@@ -17,7 +17,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const route = useRoute()
 useHead({
   title: `${route.params.slug.replace(/-/g, ' ').toUpperCase()} | ${route.params.brand.toUpperCase()}`,

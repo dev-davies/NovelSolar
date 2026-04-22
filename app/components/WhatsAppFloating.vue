@@ -21,7 +21,7 @@
   </a>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // No specific logic needed for now
 </script>
 
