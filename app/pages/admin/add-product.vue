@@ -56,6 +56,7 @@ const products = ref([{
   price: null,
   type: 'piece',
   brand: 'general',
+  customBrand: '',
   description: '',
   specs: [{ label: '', value: '' }],
   image: null,
@@ -117,6 +118,7 @@ const addProduct = () => {
     price: null,
     type: 'piece',
     brand: 'general',
+    customBrand: '',
     description: '',
     specs: [{ label: '', value: '' }],
     image: null,
@@ -219,6 +221,7 @@ const validateBatch = () => {
     if (!product.name) errors.push(`Product ${index + 1}: Name is required`)
     if (!product.price) errors.push(`Product ${index + 1}: Price is required`)
     if (!product.image) errors.push(`Product ${index + 1}: Main image is required`)
+    if (product.brand === '__custom' && !product.customBrand.trim()) errors.push(`Product ${index + 1}: Custom brand name is required`)
     if (batchDuplicates[product.id]) errors.push(`Product ${index + 1}: Duplicate name in batch`)
   })
   
@@ -255,7 +258,7 @@ const submitBatch = async () => {
       formData.append('productName', product.name)
       formData.append('productPrice', product.price)
       formData.append('productType', product.type)
-      formData.append('productBrand', product.brand)
+      formData.append('productBrand', product.brand === '__custom' ? product.customBrand.trim() : product.brand)
       formData.append('productDescription', product.description)
       formData.append('productSpecs', JSON.stringify(product.specs))
       formData.append('productImage', product.image)
@@ -297,6 +300,7 @@ const submitBatch = async () => {
       price: null,
       type: 'piece',
       brand: 'general',
+      customBrand: '',
       description: '',
       specs: [{ label: '', value: '' }],
       image: null,
@@ -497,7 +501,16 @@ const handleLogout = async () => {
                     <option value="yinergy">Yinergy</option>
                     <option value="haisic">Haisic</option>
                     <option value="hithium">Hithium</option>
+                    <option value="__custom">Custom Brand...</option>
                   </select>
+                  <input
+                    v-if="product.brand === '__custom'"
+                    v-model="product.customBrand"
+                    type="text"
+                    placeholder="Enter brand name"
+                    class="w-full mt-2 px-5 py-4 rounded-2xl border-2 border-blue-200 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all font-bold text-slate-700 bg-blue-50/30"
+                    :disabled="isUploading"
+                  />
                 </div>
               </div>
 
