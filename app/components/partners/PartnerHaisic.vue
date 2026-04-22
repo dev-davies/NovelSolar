@@ -233,7 +233,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 useHead({
   title: 'Haisic High-Performance Solar | NovelSolar Partner',
   meta: [

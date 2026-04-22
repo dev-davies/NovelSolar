@@ -1,11 +1,10 @@
-<script setup>
+<script setup lang="ts">
+import type { PortableTextImageValue } from '~/types'
+
 const { urlFor } = useSanityImage()
-const props = defineProps({
-  value: {
-    type: Object,
-    required: true
-  }
-})
+const props = defineProps<{
+  value: PortableTextImageValue
+}>()
 </script>
 
 <template>

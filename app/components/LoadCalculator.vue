@@ -166,11 +166,12 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
+import type { Appliance, SummaryStat } from '~/types'
 
-const appliances = ref([
+const appliances = ref<Appliance[]>([
   { id: 'bulb', name: 'Normal Bulb', icon: 'lightbulb', quantity: 0, load: 60 },
   { id: 'tube', name: 'Tube Light', icon: 'fluorescent', quantity: 0, load: 18 },
   { id: 'led', name: 'LED Light', icon: 'emoji_objects', quantity: 0, load: 15 },

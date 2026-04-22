@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 const { cart, isCartOpen, toggleCart, removeFromCart, updateQuantity, cartTotalAmount } = useCart();
 </script>
 

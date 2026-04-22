@@ -1,10 +1,9 @@
-<script setup>
-const props = defineProps({
-  product: {
-    type: Object,
-    required: true
-  }
-})
+<script setup lang="ts">
+import type { BitrixProduct } from '~/types'
+
+const props = defineProps<{
+  product: BitrixProduct
+}>()
 
 const { getProductImage } = useProductImage()
 </script>

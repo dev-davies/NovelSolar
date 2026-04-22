@@ -441,7 +441,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const isMobileMenuOpen = ref(false)
 const toggleMobileMenu = () => { isMobileMenuOpen.value = !isMobileMenuOpen.value }
 

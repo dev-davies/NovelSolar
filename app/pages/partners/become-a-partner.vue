@@ -160,7 +160,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const partnershipTracks = [
   {
     title: 'Distribution Expansion',

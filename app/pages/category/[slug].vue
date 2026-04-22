@@ -55,7 +55,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const route = useRoute()
 const categorySlug = computed(() => (route.params.slug || '').toString())
 

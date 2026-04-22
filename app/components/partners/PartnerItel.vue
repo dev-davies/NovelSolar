@@ -132,7 +132,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 useHead({
   title: 'itel Home Solar Solutions | 24/7 Energy Independence',
   meta: [
