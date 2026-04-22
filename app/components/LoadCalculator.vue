@@ -156,7 +156,7 @@
               <p class="text-xs text-gray-500">Free solar consultation</p>
             </div>
           </div>
-          <a href="https://wa.me/2348022119908" target="_blank" class="text-sm font-bold text-[#002888] hover:underline flex items-center gap-1">
+          <a :href="whatsappUrl" target="_blank" class="text-sm font-bold text-[#002888] hover:underline flex items-center gap-1">
             Chat on WhatsApp
             <span class="material-symbols-outlined text-sm">arrow_outward</span>
           </a>
@@ -170,6 +170,10 @@
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import type { Appliance, SummaryStat } from '~/types'
+
+const { public: { whatsappNumber, whatsappNumberFormatted } } = useRuntimeConfig()
+const whatsappUrl = computed(() => `https://wa.me/${whatsappNumber}`)
+const { calculator } = useAppConfig()
 
 const appliances = ref<Appliance[]>([
   { id: 'bulb', name: 'Normal Bulb', icon: 'lightbulb', quantity: 0, load: 60 },
@@ -216,14 +220,11 @@ const summaryStats = computed(() => [
 
 const costRange = computed(() => {
   const load = totalLoad.value;
-  let min = 0, max = 0;
-  
-  if (load >= 60 && load <= 200) { min = 160000; max = 500000; }
-  else if (load > 200 && load <= 400) { min = 500000; max = 700000; }
-  else if (load > 400 && load <= 600) { min = 700000; max = 1500000; }
-  else if (load > 600 && load <= 1000) { min = 1500000; max = 3000000; }
-  else if (load > 1000) { min = 5000000; max = 6000000; }
-  
+  const tier = calculator.priceTiers.find(
+    (t: { minLoad: number; maxLoad: number | null }) => load >= t.minLoad && (t.maxLoad === null || load <= t.maxLoad)
+  );
+  const min = tier?.minPrice ?? 0;
+  const max = tier?.maxPrice ?? 0;
   return {
     min: min.toLocaleString(),
     max: max.toLocaleString()
@@ -290,7 +291,7 @@ const handlePdfDownload = () => {
   // Footer / CTA
   doc.setFontSize(9);
   doc.setFont("helvetica", "italic");
-  doc.text("Visit www.novelsolar.com or call +234 802 211 9908 for a formal site audit.", 20, doc.internal.pageSize.height - 20);
+  doc.text(`Visit www.novelsolar.com or call ${whatsappNumberFormatted} for a formal site audit.`, 20, doc.internal.pageSize.height - 20);
 
   doc.save("NovelSolar_Estimate.pdf");
 };
