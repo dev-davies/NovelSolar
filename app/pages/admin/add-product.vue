@@ -495,7 +495,7 @@ const handleLogout = async () => {
                     class="w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all appearance-none bg-white font-bold text-slate-700 bg-slate-50/30"
                     :disabled="isUploading"
                   >
-                    <option value="general">Novel General</option>
+                    <option value="general">NovelSolar</option>
                     <option value="livoltek">Livoltek</option>
                     <option value="itel">iTel</option>
                     <option value="yinergy">Yinergy</option>
