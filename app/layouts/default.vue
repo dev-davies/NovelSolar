@@ -453,8 +453,11 @@ const handleSearch = () => {
   searchQuery.value = ''
 }
 
-const { nav } = useAppConfig()
-const { productMenu, servicesMenu, partnersMenu, supportMenu } = nav
+const appConfig = useAppConfig()
+const productMenu = computed(() => appConfig.nav.productMenu)
+const servicesMenu = computed(() => appConfig.nav.servicesMenu)
+const partnersMenu = computed(() => appConfig.nav.partnersMenu)
+const supportMenu = computed(() => appConfig.nav.supportMenu)
 
 const { cartItemCount, toggleCart } = useCart();
 
