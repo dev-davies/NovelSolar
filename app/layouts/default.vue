@@ -454,10 +454,11 @@ const handleSearch = () => {
 }
 
 const appConfig = useAppConfig()
-const productMenu = computed(() => appConfig.nav.productMenu)
-const servicesMenu = computed(() => appConfig.nav.servicesMenu)
-const partnersMenu = computed(() => appConfig.nav.partnersMenu)
-const supportMenu = computed(() => appConfig.nav.supportMenu)
+const nav = appConfig?.nav ?? {}
+const productMenu = computed(() => nav.productMenu ?? [])
+const servicesMenu = computed(() => nav.servicesMenu ?? [])
+const partnersMenu = computed(() => nav.partnersMenu ?? [])
+const supportMenu = computed(() => nav.supportMenu ?? [])
 
 const { cartItemCount, toggleCart } = useCart();
 
