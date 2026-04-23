@@ -16,7 +16,7 @@
             </NuxtLink>
             
             <!-- Simplified Product Dropdown -->
-            <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-64 bg-white border border-gray-200 shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 py-2">
+            <div class="absolute left-1/2 -translate-x-1/2 top-full w-64 bg-white border border-gray-200 shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 py-2">
               <NuxtLink 
                 v-for="category in productMenu" 
                 :key="category.title"
@@ -38,7 +38,7 @@
               <span class="inline-block text-gray-500 font-light ml-1 text-lg leading-none transition-transform duration-300 group-hover:rotate-45">+</span>
             </div>
 
-            <div class="absolute left-0 top-full mt-2 w-80 bg-white border border-gray-200 shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 py-2">
+            <div class="absolute left-0 top-full w-80 bg-white border border-gray-200 shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 py-2">
               <NuxtLink 
                 v-for="service in servicesMenu" 
                 :key="service.title"
@@ -59,7 +59,7 @@
               <span class="inline-block text-gray-500 font-light ml-1 text-lg leading-none transition-transform duration-300 group-hover:rotate-45">+</span>
             </NuxtLink>
 
-            <div class="absolute left-0 top-full mt-2 w-56 bg-white border border-gray-200 shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 py-2">
+            <div class="absolute left-0 top-full w-56 bg-white border border-gray-200 shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 py-2">
               <NuxtLink 
                 v-for="partner in partnersMenu" 
                 :key="partner.title"
@@ -118,7 +118,7 @@
             Support
             <span class="inline-block text-gray-500 font-light ml-1 text-lg leading-none transition-transform duration-300 group-hover:rotate-45">+</span>
 
-            <div class="absolute left-0 top-full mt-2 w-48 bg-white border border-gray-200 shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 py-2">
+            <div class="absolute left-0 top-full w-48 bg-white border border-gray-200 shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 py-2">
               <NuxtLink 
                 v-for="item in supportMenu" 
                 :key="item.title"
