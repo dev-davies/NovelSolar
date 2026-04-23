@@ -17,8 +17,25 @@ logs
 .DS_Store
 .fleet
 .idea
+.vscode
+*.swp
+*.swo
+*~
+Thumbs.db
 
 # Local env files
 .env
 .env.*
 !.env.example
+
+# Test outputs
+coverage
+test-results
+playwright-report
+blob-report
+
+# Vercel
+.vercel
+
+# Turbo
+.turbo
