@@ -27,7 +27,7 @@
               <NuxtLink
                 v-for="category in productMenu"
                 :key="category.title"
-                :to="'/category/' + category.title.toLowerCase().replace(' ', '-')"
+                :to="getCategoryLink(category.title)"
                 class="block px-6 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#002888] transition-colors"
                 @click="isMobileMenuOpen = false"
               >
@@ -237,9 +237,9 @@
 
         <!-- Links -->
         <nav class="flex flex-col">
-          <template v-for="link in ['Product', 'Services', 'Partners', 'About Us', 'Quote Request', 'Support']" :key="link">
+          <template v-for="link in mobileMenuSections" :key="link.title">
             <!-- Simplified Product in Mobile Menu -->
-            <div v-if="link === 'Product'" class="px-6 py-4 border-b border-gray-50">
+            <div v-if="link.title === 'Product'" class="px-6 py-4 border-b border-gray-50">
               <NuxtLink to="/shop" class="flex items-center justify-between group/mob-prod" @click="isMobileMenuOpen = false">
                 <div class="text-[#002888] text-[10px] font-black uppercase tracking-widest mb-4 group-hover/mob-prod:underline">Shop All Products &rarr;</div>
               </NuxtLink>
@@ -247,7 +247,7 @@
                 <NuxtLink 
                   v-for="category in productMenu" 
                   :key="category.title"
-                  :to="'/category/' + category.title.toLowerCase().replace(' ', '-')" 
+                  :to="getCategoryLink(category.title)"
                   class="block text-gray-900 hover:text-[#002888] transition-colors font-bold text-base" 
                   @click="isMobileMenuOpen = false"
                 >
@@ -256,7 +256,7 @@
               </nav>
             </div>
             <!-- Special Handling for Services in Mobile Menu -->
-            <div v-else-if="link === 'Services'" class="px-6 py-4 border-b border-gray-50">
+            <div v-else-if="link.title === 'Services'" class="px-6 py-4 border-b border-gray-50">
               <h4 class="text-gray-900 font-bold text-base mb-2 flex items-center justify-between">
                 Services
                 <span class="text-gray-500 font-light text-lg leading-none">+</span>
@@ -274,7 +274,7 @@
               </div>
             </div>
             <!-- Special Handling for Partners in Mobile Menu -->
-            <div v-else-if="link === 'Partners'" class="px-6 py-4 border-b border-gray-50">
+            <div v-else-if="link.title === 'Partners'" class="px-6 py-4 border-b border-gray-50">
               <h4 class="text-gray-900 font-bold text-base mb-2 flex items-center justify-between">
                 Partners
                 <span class="text-gray-500 font-light text-lg leading-none">+</span>
@@ -298,8 +298,44 @@
                 </NuxtLink>
               </div>
             </div>
+            <!-- Special Handling for About Us in Mobile Menu -->
+            <div v-else-if="link.title === 'About Us'" class="px-6 py-4 border-b border-gray-50">
+              <h4 class="text-gray-900 font-bold text-base mb-2 flex items-center justify-between">
+                About Us
+                <span class="text-gray-500 font-light text-lg leading-none">+</span>
+              </h4>
+              <div class="pl-4 border-l-2 border-primary/10 ml-1 space-y-1">
+                <NuxtLink
+                  v-for="item in link.items"
+                  :key="item.title"
+                  :to="item.link"
+                  class="block text-gray-600 py-3 text-sm hover:text-primary transition-colors border-b border-gray-50 last:border-0"
+                  @click="isMobileMenuOpen = false"
+                >
+                  {{ item.title }}
+                </NuxtLink>
+              </div>
+            </div>
+            <!-- Special Handling for Quote Request in Mobile Menu -->
+            <div v-else-if="link.title === 'Quote Request'" class="px-6 py-4 border-b border-gray-50">
+              <h4 class="text-gray-900 font-bold text-base mb-2 flex items-center justify-between">
+                Quote Request
+                <span class="text-gray-500 font-light text-lg leading-none">+</span>
+              </h4>
+              <div class="pl-4 border-l-2 border-primary/10 ml-1 space-y-1">
+                <NuxtLink
+                  v-for="item in link.items"
+                  :key="item.title"
+                  :to="item.link"
+                  class="block text-gray-600 py-3 text-sm hover:text-primary transition-colors border-b border-gray-50 last:border-0"
+                  @click="isMobileMenuOpen = false"
+                >
+                  {{ item.title }}
+                </NuxtLink>
+              </div>
+            </div>
             <!-- Special Handling for Support in Mobile Menu -->
-            <div v-else-if="link === 'Support'" class="px-6 py-4 border-b border-gray-50">
+            <div v-else-if="link.title === 'Support'" class="px-6 py-4 border-b border-gray-50">
               <h4 class="text-gray-900 font-bold text-base mb-2 flex items-center justify-between">
                 Support
                 <span class="text-gray-500 font-light text-lg leading-none">+</span>
@@ -319,11 +355,11 @@
             <!-- Standard Links -->
             <NuxtLink 
               v-else
-              :to="link === 'About Us' ? '/about' : link === 'Quote Request' ? '/quote' : '#'"
+              :to="link.link"
               class="block w-full text-left px-6 py-4 border-b border-gray-50 text-gray-800 font-semibold hover:bg-gray-50 hover:text-[#002888] transition-colors"
               @click="isMobileMenuOpen = false"
             >
-              {{ link }}
+              {{ link.title }}
             </NuxtLink>
           </template>
         </nav>
@@ -465,6 +501,26 @@ const productMenu = computed(() => appConfig.nav?.productMenu || [])
 const servicesMenu = computed(() => appConfig.nav?.servicesMenu || [])
 const partnersMenu = computed(() => appConfig.nav?.partnersMenu || [])
 const supportMenu = computed(() => appConfig.nav?.supportMenu || [])
+const aboutMenu = [
+  { title: 'About us', link: '/about' },
+  { title: 'Branch outlets', link: '/branch-outlets' },
+  { title: 'Gallery', link: '/gallery' },
+  { title: 'Blog', link: '/blog' },
+]
+const quoteRequestMenu = [
+  { title: 'Request a quote', link: '/quote' },
+  { title: 'Load calculator', link: '/calculator' },
+]
+const mobileMenuSections = computed(() => [
+  { title: 'Product' },
+  { title: 'Services' },
+  { title: 'Partners' },
+  { title: 'About Us', items: aboutMenu },
+  { title: 'Quote Request', items: quoteRequestMenu },
+  { title: 'Support' },
+])
+
+const getCategoryLink = (title: string) => `/category/${title.toLowerCase().replace(/\s+/g, '-')}`
 
 const { cartItemCount, toggleCart } = useCart();
 
