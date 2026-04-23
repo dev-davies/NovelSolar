@@ -9,18 +9,28 @@
         </NuxtLink>
         <nav class="hidden lg:flex items-center gap-2">
           <!-- Desktop Product Dropdown -->
-          <div class="relative group py-6 cursor-pointer">
-            <div class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 group-hover:text-[#002888] transition-colors">
+          <div
+            class="relative py-6"
+            @mouseenter="openDesktopMenu('product')"
+            @mouseleave="closeDesktopMenu()"
+          >
+            <button
+              type="button"
+              class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 hover:text-[#002888] transition-colors"
+              :class="{ 'text-[#002888]': isDesktopMenuOpen('product') }"
+              :aria-expanded="isDesktopMenuOpen('product')"
+              @click="toggleDesktopMenu('product')"
+            >
               Product
-              <span class="inline-block text-gray-500 font-light ml-1 text-lg leading-none transition-transform duration-300 group-hover:rotate-45">+</span>
-            </div>
+              <span class="inline-block text-gray-500 font-light ml-1 text-lg leading-none transition-transform duration-300" :class="{ 'rotate-45': isDesktopMenuOpen('product') }">+</span>
+            </button>
 
             <!-- Simplified Product Dropdown -->
-            <div class="absolute left-1/2 -translate-x-1/2 top-full w-64 bg-white border border-gray-200 shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 py-2">
+            <div class="absolute left-1/2 -translate-x-1/2 top-full w-64 bg-white border border-gray-200 shadow-xl rounded-lg transition-all duration-200 z-50 py-2" :class="desktopDropdownClass('product')">
               <NuxtLink
                 to="/shop"
                 class="block px-6 py-2.5 text-sm font-semibold text-[#002888] hover:bg-blue-50 transition-colors border-b border-gray-100"
-                @click="isMobileMenuOpen = false"
+                @click="closeDesktopMenu"
               >
                 Shop All Products &rarr;
               </NuxtLink>
@@ -29,7 +39,7 @@
                 :key="category.title"
                 :to="getCategoryLink(category.title)"
                 class="block px-6 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#002888] transition-colors"
-                @click="isMobileMenuOpen = false"
+                @click="closeDesktopMenu"
               >
                 {{ category.title }}
               </NuxtLink>
@@ -39,18 +49,29 @@
           <div class="w-4"></div>
 
           <!-- Desktop Services Dropdown -->
-          <div class="relative group py-6 cursor-pointer">
-            <div class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 group-hover:text-[#002888] transition-colors">
+          <div
+            class="relative py-6"
+            @mouseenter="openDesktopMenu('services')"
+            @mouseleave="closeDesktopMenu()"
+          >
+            <button
+              type="button"
+              class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 hover:text-[#002888] transition-colors"
+              :class="{ 'text-[#002888]': isDesktopMenuOpen('services') }"
+              :aria-expanded="isDesktopMenuOpen('services')"
+              @click="toggleDesktopMenu('services')"
+            >
               Services
-              <span class="inline-block text-gray-500 font-light ml-1 text-lg leading-none transition-transform duration-300 group-hover:rotate-45">+</span>
-            </div>
+              <span class="inline-block text-gray-500 font-light ml-1 text-lg leading-none transition-transform duration-300" :class="{ 'rotate-45': isDesktopMenuOpen('services') }">+</span>
+            </button>
 
-            <div class="absolute left-0 top-full w-80 bg-white border border-gray-200 shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 py-2">
+            <div class="absolute left-0 top-full w-80 bg-white border border-gray-200 shadow-xl rounded-lg transition-all duration-200 z-50 py-2" :class="desktopDropdownClass('services')">
               <NuxtLink 
                 v-for="service in servicesMenu" 
                 :key="service.title"
                 :to="service.link" 
                 class="block px-6 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#002888] transition-colors border-b border-gray-100 last:border-0"
+                @click="closeDesktopMenu"
               >
                 {{ service.title }}
               </NuxtLink>
@@ -60,24 +81,28 @@
           <div class="w-4"></div>
 
           <!-- Desktop Partners Dropdown -->
-          <div class="relative group py-6 cursor-pointer">
-            <NuxtLink to="/partners" class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 group-hover:text-[#002888] transition-colors">
+          <div
+            class="relative py-6"
+            @mouseenter="openDesktopMenu('partners')"
+            @mouseleave="closeDesktopMenu()"
+          >
+            <NuxtLink to="/partners" class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 hover:text-[#002888] transition-colors" :class="{ 'text-[#002888]': isDesktopMenuOpen('partners') }" @click="openDesktopMenu('partners')">
               Partners
-              <span class="inline-block text-gray-500 font-light ml-1 text-lg leading-none transition-transform duration-300 group-hover:rotate-45">+</span>
+              <span class="inline-block text-gray-500 font-light ml-1 text-lg leading-none transition-transform duration-300" :class="{ 'rotate-45': isDesktopMenuOpen('partners') }">+</span>
             </NuxtLink>
 
-            <div class="absolute left-0 top-full w-56 bg-white border border-gray-200 shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 py-2">
+            <div class="absolute left-0 top-full w-56 bg-white border border-gray-200 shadow-xl rounded-lg transition-all duration-200 z-50 py-2" :class="desktopDropdownClass('partners')">
               <NuxtLink 
                 v-for="partner in partnersMenu" 
                 :key="partner.title"
                 :to="partner.link" 
                 class="block px-6 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#002888] transition-colors"
-                @click="isMobileMenuOpen = false"
+                @click="closeDesktopMenu"
               >
                 {{ partner.title }}
               </NuxtLink>
               <div class="border-t border-gray-100 mt-2 pt-2">
-                <NuxtLink to="/partners/become-a-partner" class="block px-6 py-2.5 text-sm font-semibold text-[#002888] hover:bg-blue-50 transition-colors">
+                <NuxtLink to="/partners/become-a-partner" class="block px-6 py-2.5 text-sm font-semibold text-[#002888] hover:bg-blue-50 transition-colors" @click="closeDesktopMenu">
                   Become a Partner &rarr;
                 </NuxtLink>
               </div>
@@ -87,18 +112,28 @@
           <div class="w-4"></div>
 
           <!-- About Us Dropdown -->
-          <div class="relative group py-6 cursor-pointer">
-            <div class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 group-hover:text-[#002888] transition-colors">
+          <div
+            class="relative py-6"
+            @mouseenter="openDesktopMenu('about')"
+            @mouseleave="closeDesktopMenu()"
+          >
+            <button
+              type="button"
+              class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 hover:text-[#002888] transition-colors"
+              :class="{ 'text-[#002888]': isDesktopMenuOpen('about') }"
+              :aria-expanded="isDesktopMenuOpen('about')"
+              @click="toggleDesktopMenu('about')"
+            >
               About Us
-              <span class="inline-block text-gray-500 font-light ml-1 text-lg leading-none transition-transform duration-300 group-hover:rotate-45">+</span>
-            </div>
+              <span class="inline-block text-gray-500 font-light ml-1 text-lg leading-none transition-transform duration-300" :class="{ 'rotate-45': isDesktopMenuOpen('about') }">+</span>
+            </button>
 
-            <div class="absolute top-full left-0 w-48 bg-white border border-gray-100 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden">
+            <div class="absolute top-full left-0 w-48 bg-white border border-gray-100 shadow-lg rounded-md transition-all duration-200 z-50 overflow-hidden" :class="desktopDropdownClass('about')">
               <ul class="py-1">
-                <li><NuxtLink to="/about" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors" @click="isMobileMenuOpen = false">About us</NuxtLink></li>
-                <li><NuxtLink to="/branch-outlets" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Branch outlets</NuxtLink></li>
-                <li><NuxtLink to="/gallery" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Gallery</NuxtLink></li>
-                <li><NuxtLink to="/blog" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors">Blog</NuxtLink></li>
+                <li><NuxtLink to="/about" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors" @click="closeDesktopMenu">About us</NuxtLink></li>
+                <li><NuxtLink to="/branch-outlets" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors" @click="closeDesktopMenu">Branch outlets</NuxtLink></li>
+                <li><NuxtLink to="/gallery" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors" @click="closeDesktopMenu">Gallery</NuxtLink></li>
+                <li><NuxtLink to="/blog" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors" @click="closeDesktopMenu">Blog</NuxtLink></li>
               </ul>
             </div>
           </div>
@@ -106,14 +141,26 @@
           <div class="w-4"></div>
 
           <!-- Quote Request Dropdown -->
-          <div class="relative group py-6 cursor-pointer text-sm font-semibold text-gray-700 hover:text-[#002888] transition-colors flex items-center gap-1">
-            Quote Request
-            <span class="inline-block text-gray-500 font-light ml-1 text-lg leading-none transition-transform duration-300 group-hover:rotate-45">+</span>
+          <div
+            class="relative py-6"
+            @mouseenter="openDesktopMenu('quote')"
+            @mouseleave="closeDesktopMenu()"
+          >
+            <button
+              type="button"
+              class="text-sm font-semibold text-gray-700 hover:text-[#002888] transition-colors flex items-center gap-1"
+              :class="{ 'text-[#002888]': isDesktopMenuOpen('quote') }"
+              :aria-expanded="isDesktopMenuOpen('quote')"
+              @click="toggleDesktopMenu('quote')"
+            >
+              Quote Request
+              <span class="inline-block text-gray-500 font-light ml-1 text-lg leading-none transition-transform duration-300" :class="{ 'rotate-45': isDesktopMenuOpen('quote') }">+</span>
+            </button>
 
-            <div class="absolute top-full left-0 w-56 bg-white border border-gray-100 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden">
+            <div class="absolute top-full left-0 w-56 bg-white border border-gray-100 shadow-lg rounded-md transition-all duration-200 z-50 overflow-hidden" :class="desktopDropdownClass('quote')">
               <ul class="py-1">
-                <li><NuxtLink to="/quote" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors font-normal">Request a quote</NuxtLink></li>
-                <li><NuxtLink to="/calculator" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors font-normal">Load calculator</NuxtLink></li>
+                <li><NuxtLink to="/quote" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors font-normal" @click="closeDesktopMenu">Request a quote</NuxtLink></li>
+                <li><NuxtLink to="/calculator" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002888] transition-colors font-normal" @click="closeDesktopMenu">Load calculator</NuxtLink></li>
               </ul>
             </div>
           </div>
@@ -121,17 +168,29 @@
           <div class="w-4"></div>
 
           <!-- Desktop Support Dropdown -->
-          <div class="relative group py-6 cursor-pointer text-sm font-semibold text-gray-700 hover:text-[#002888] transition-colors flex items-center gap-1">
-            Support
-            <span class="inline-block text-gray-500 font-light ml-1 text-lg leading-none transition-transform duration-300 group-hover:rotate-45">+</span>
+          <div
+            class="relative py-6"
+            @mouseenter="openDesktopMenu('support')"
+            @mouseleave="closeDesktopMenu()"
+          >
+            <button
+              type="button"
+              class="text-sm font-semibold text-gray-700 hover:text-[#002888] transition-colors flex items-center gap-1"
+              :class="{ 'text-[#002888]': isDesktopMenuOpen('support') }"
+              :aria-expanded="isDesktopMenuOpen('support')"
+              @click="toggleDesktopMenu('support')"
+            >
+              Support
+              <span class="inline-block text-gray-500 font-light ml-1 text-lg leading-none transition-transform duration-300" :class="{ 'rotate-45': isDesktopMenuOpen('support') }">+</span>
+            </button>
 
-            <div class="absolute left-0 top-full w-48 bg-white border border-gray-200 shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 py-2">
+            <div class="absolute left-0 top-full w-48 bg-white border border-gray-200 shadow-xl rounded-lg transition-all duration-200 z-50 py-2" :class="desktopDropdownClass('support')">
               <NuxtLink 
                 v-for="item in supportMenu" 
                 :key="item.title"
                 :to="item.link" 
                 class="block px-6 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#002888] transition-colors"
-                @click="isMobileMenuOpen = false"
+                @click="closeDesktopMenu"
               >
                 {{ item.title }}
               </NuxtLink>
@@ -487,20 +546,66 @@
 <script setup lang="ts">
 const isMobileMenuOpen = ref(false)
 const toggleMobileMenu = () => { isMobileMenuOpen.value = !isMobileMenuOpen.value }
+const activeDesktopMenu = ref<string | null>(null)
+
+const openDesktopMenu = (menu: string) => {
+  activeDesktopMenu.value = menu
+}
+
+const closeDesktopMenu = () => {
+  activeDesktopMenu.value = null
+}
+
+const toggleDesktopMenu = (menu: string) => {
+  activeDesktopMenu.value = activeDesktopMenu.value === menu ? null : menu
+}
+
+const isDesktopMenuOpen = (menu: string) => activeDesktopMenu.value === menu
+const desktopDropdownClass = (menu: string) => isDesktopMenuOpen(menu)
+  ? 'opacity-100 visible translate-y-0 pointer-events-auto'
+  : 'opacity-0 invisible -translate-y-1 pointer-events-none'
 
 const searchQuery = ref('')
 const handleSearch = () => {
   if (!searchQuery.value.trim()) return
   navigateTo(`/products?q=${encodeURIComponent(searchQuery.value.trim())}`)
   isMobileMenuOpen.value = false
+  closeDesktopMenu()
   searchQuery.value = ''
 }
 
 const appConfig = useAppConfig()
-const productMenu = computed(() => appConfig.nav?.productMenu || [])
-const servicesMenu = computed(() => appConfig.nav?.servicesMenu || [])
-const partnersMenu = computed(() => appConfig.nav?.partnersMenu || [])
-const supportMenu = computed(() => appConfig.nav?.supportMenu || [])
+const fallbackProductMenu = [
+  { title: 'Solar Panels' },
+  { title: 'Inverters' },
+  { title: 'Batteries' },
+  { title: 'Charge Controllers' },
+  { title: 'Lighting' },
+  { title: 'Power Banks' },
+  { title: 'Accessories' },
+]
+const fallbackServicesMenu = [
+  { title: 'Power & Load Audit Service', link: '/services/audit' },
+  { title: 'Inverter, Solar Panel & Battery Installation', link: '/services/installation' },
+  { title: 'Inverter Repair (Solar Panel, Battery etc Repairs)', link: '/services/repair' },
+  { title: 'Solar Panel, Tubular Battery & Inverter Maintenance', link: '/services/maintenance' },
+]
+const fallbackPartnersMenu = [
+  { title: 'Itel', link: '/partners/itel' },
+  { title: 'Haisic', link: '/partners/haisic' },
+  { title: 'Yinergy', link: '/partners/yinergy' },
+  { title: 'Hithium', link: '/partners/hithium' },
+  { title: 'Livoltek', link: '/partners/livoltek' },
+]
+const fallbackSupportMenu = [
+  { title: 'FAQ', link: '/faq' },
+  { title: 'Contact Us', link: '/contact' },
+]
+
+const productMenu = computed(() => appConfig.nav?.productMenu?.length ? appConfig.nav.productMenu : fallbackProductMenu)
+const servicesMenu = computed(() => appConfig.nav?.servicesMenu?.length ? appConfig.nav.servicesMenu : fallbackServicesMenu)
+const partnersMenu = computed(() => appConfig.nav?.partnersMenu?.length ? appConfig.nav.partnersMenu : fallbackPartnersMenu)
+const supportMenu = computed(() => appConfig.nav?.supportMenu?.length ? appConfig.nav.supportMenu : fallbackSupportMenu)
 const aboutMenu = [
   { title: 'About us', link: '/about' },
   { title: 'Branch outlets', link: '/branch-outlets' },
