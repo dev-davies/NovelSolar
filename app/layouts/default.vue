@@ -10,17 +10,24 @@
         <nav class="hidden lg:flex items-center gap-2">
           <!-- Desktop Product Dropdown -->
           <div class="relative group py-6 cursor-pointer">
-            <NuxtLink to="/shop" class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 group-hover:text-[#002888] transition-colors">
+            <div class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 group-hover:text-[#002888] transition-colors">
               Product
               <span class="inline-block text-gray-500 font-light ml-1 text-lg leading-none transition-transform duration-300 group-hover:rotate-45">+</span>
-            </NuxtLink>
-            
+            </div>
+
             <!-- Simplified Product Dropdown -->
             <div class="absolute left-1/2 -translate-x-1/2 top-full w-64 bg-white border border-gray-200 shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 py-2">
-              <NuxtLink 
-                v-for="category in productMenu" 
+              <NuxtLink
+                to="/shop"
+                class="block px-6 py-2.5 text-sm font-semibold text-[#002888] hover:bg-blue-50 transition-colors border-b border-gray-100"
+                @click="isMobileMenuOpen = false"
+              >
+                Shop All Products &rarr;
+              </NuxtLink>
+              <NuxtLink
+                v-for="category in productMenu"
                 :key="category.title"
-                :to="'/category/' + category.title.toLowerCase().replace(' ', '-')" 
+                :to="'/category/' + category.title.toLowerCase().replace(' ', '-')"
                 class="block px-6 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#002888] transition-colors"
                 @click="isMobileMenuOpen = false"
               >
@@ -454,11 +461,10 @@ const handleSearch = () => {
 }
 
 const appConfig = useAppConfig()
-const nav = appConfig?.nav ?? {}
-const productMenu = computed(() => nav.productMenu ?? [])
-const servicesMenu = computed(() => nav.servicesMenu ?? [])
-const partnersMenu = computed(() => nav.partnersMenu ?? [])
-const supportMenu = computed(() => nav.supportMenu ?? [])
+const productMenu = computed(() => appConfig.nav?.productMenu || [])
+const servicesMenu = computed(() => appConfig.nav?.servicesMenu || [])
+const partnersMenu = computed(() => appConfig.nav?.partnersMenu || [])
+const supportMenu = computed(() => appConfig.nav?.supportMenu || [])
 
 const { cartItemCount, toggleCart } = useCart();
 
