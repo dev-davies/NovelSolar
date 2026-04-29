@@ -1,75 +1,27 @@
-# Nuxt Minimal Starter
+# NovelSolar
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+NovelSolar is a Nuxt application for a solar commerce and service platform. It includes a storefront, product catalog, checkout flow, admin inventory tools, and supporting content pages.
 
-## Setup
+The app integrates with Bitrix for product and CRM workflows, Supabase for authentication and admin account management, Cloudinary for product media, and Nuxt Content for editorial pages.
 
-Make sure to install dependencies:
+## Stack
 
-```bash
-# npm
-npm install
+- Nuxt 4
+- Vue 3
+- Tailwind CSS
+- Supabase
+- Bitrix
+- Cloudinary
+- Vitest
+- Playwright
 
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
+## Scripts
 
 ```bash
-# npm
 npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
 npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
 npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
+npm run test
+npm run test:run
+npm run test:e2e
 ```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
