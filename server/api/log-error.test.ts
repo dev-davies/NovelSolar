@@ -1,17 +1,19 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { createEvent, readBody } from 'h3'
 
-// CRITICAL FIX: Nuxt auto-imports resolve to #imports in jsdom test environments
-vi.mock('#imports', () => ({
-  useRuntimeConfig: () => ({
-    public: {
-      appVersion: '1.0.0'
-    },
-    errorLoggingWebhookUrl: '',
-    errorLoggingWebhookAuthHeader: '',
-    errorLoggingWebhookToken: ''
-  })
-}))
+const mockConfig = {
+  public: { appVersion: '1.0.0' },
+  errorLoggingWebhookUrl: '',
+  errorLoggingWebhookAuthHeader: '',
+  errorLoggingWebhookToken: ''
+}
+
+// Intercept standard Nuxt aliases
+vi.mock('#imports', () => ({ useRuntimeConfig: () => mockConfig }))
+vi.mock('#internal/nitro', () => ({ useRuntimeConfig: () => mockConfig }))
+
+// Intercept global auto-imports injected by @nuxt/test-utils
+vi.stubGlobal('useRuntimeConfig', () => mockConfig)
 
 // Mock h3
 vi.mock('h3', async () => {
