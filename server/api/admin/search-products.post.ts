@@ -50,6 +50,7 @@ export default defineEventHandler(async (event) => {
         descriptionType: p.DESCRIPTION_TYPE,
         measure: p.MEASURE,
         isDisabled: p.ACTIVE === 'N',
+        persistedMainImageUrl: cloudinaryUrl || '',
         // Priority 1: Cloudinary URL (PROPERTY_102), Priority 2: Bitrix Image Proxy
         imageUrl: cloudinaryUrl || (legacyImageId ? `/api/bitrix-image?url=${encodeURIComponent(`https://nisl.bitrix24.com/bitrix/admin/crm_product_show.php?ID=${p.ID}&fieldName=DETAIL_PICTURE`)}` : null),
         specs: typeof p.PROPERTY_104 === 'string' 
