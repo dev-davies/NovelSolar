@@ -47,27 +47,26 @@
               </div>
             </div>
 
-            <!-- Content Layer -->
             <div class="p-8 flex flex-col flex-grow">
-              <!-- Date Display -->
-              <div class="flex items-center gap-2 mb-4">
-                 <span class="text-xs font-bold text-[#002888] uppercase tracking-widest">{{ formatDate(post.date) }}</span>
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-bold text-[#002888] uppercase tracking-widest">{{ formatDate(post.date) }}</span>
+                <span v-if="post.category" class="bg-blue-50 text-[#002888] text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-wider">{{ post.category }}</span>
               </div>
 
-              <!-- Title -->
               <h3 class="text-xl font-bold text-slate-900 mb-4 group-hover:text-[#002888] transition-colors line-clamp-2 leading-tight">
                 {{ post.title }}
               </h3>
 
-              <!-- Excerpt -->
               <p v-if="post.excerpt" class="text-slate-500 text-sm leading-relaxed line-clamp-3 mb-6 font-medium">
                 {{ post.excerpt }}
               </p>
 
-              <!-- Bottom CTA -->
-              <div class="mt-auto flex items-center gap-2 text-[#002888] font-bold text-xs uppercase tracking-widest">
-                Read More
-                <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+              <div class="mt-auto flex items-center justify-between">
+                <div class="flex items-center gap-2 text-[#002888] font-bold text-xs uppercase tracking-widest">
+                  Read More
+                  <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                </div>
+                <span v-if="post.author" class="text-xs text-slate-400 font-medium">{{ post.author }}</span>
               </div>
             </div>
           </NuxtLink>
@@ -91,7 +90,7 @@
 
 <script setup lang="ts">
 const { data: allPosts, pending } = await useAsyncData('blog-hub', () => {
-  return queryContent('blog').sort({ date: -1 }).find()
+  return queryContent('blog').where({ draft: { $ne: true } }).sort({ date: -1 }).find()
 })
 
 const formatDate = (dateString) => {

@@ -11,10 +11,20 @@
       <template #default="{ doc }">
         <article class="max-w-4xl mx-auto px-4 pb-24">
           <header class="text-center mb-14">
-            <p class="text-sm text-slate-500 mb-5">{{ formatDate(doc.date) }}</p>
-            <h1 class="text-4xl md:text-6xl font-black text-slate-900 leading-tight tracking-tight">
+            <div class="flex items-center justify-center gap-3 mb-5">
+              <span v-if="doc.category" class="bg-blue-50 text-[#002888] text-xs font-black px-3 py-1 rounded-md uppercase tracking-widest">{{ doc.category }}</span>
+              <span class="text-slate-300">•</span>
+              <p class="text-sm text-slate-500 font-medium">{{ formatDate(doc.date) }}</p>
+            </div>
+            
+            <h1 class="text-4xl md:text-6xl font-black text-slate-900 leading-tight tracking-tight mb-6">
               {{ doc.title }}
             </h1>
+          
+            <div v-if="doc.author" class="flex items-center justify-center gap-2 text-slate-600">
+              <span class="material-symbols-outlined text-xl">edit_document</span>
+              <span class="font-bold text-sm">Written by {{ doc.author }}</span>
+            </div>
           </header>
 
           <div class="aspect-video bg-slate-50 rounded-3xl overflow-hidden shadow-xl border border-slate-100 mb-14">
