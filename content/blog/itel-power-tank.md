@@ -4,6 +4,9 @@ description: 'In a world where staying connected is essential, access to reliabl
 date: '2026-03-04'
 image: '/images/itel.jpg'
 category: 'Inverter'
+excerpt: 'The Itel Solar Power Tank is designed to provide seamless backup power for your essential home devices, keeping you connected during outages.'
+author: 'Novel Solar Editorial'
+draft: false
 ---
 
 In a world where staying connected is essential, access to reliable power can make all the difference. The Itel Solar Power Tank is designed to provide seamless backup power for your essential home devices.
