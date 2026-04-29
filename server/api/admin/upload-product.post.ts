@@ -1,33 +1,8 @@
-import { v2 as cloudinary } from 'cloudinary';
-
-const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'];
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
-const MAX_GALLERY_FILES = 10;
-
-function validateImageFile(file: { filename?: string; type?: string; data: Buffer }, label: string) {
-  if (!file.type || !ALLOWED_MIME_TYPES.includes(file.type)) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: `${label}: Invalid file type "${file.type || 'unknown'}". Allowed: JPEG, PNG, WebP, GIF, AVIF.`,
-    });
-  }
-  if (file.data.length > MAX_FILE_SIZE) {
-    const sizeMB = (file.data.length / (1024 * 1024)).toFixed(1);
-    throw createError({
-      statusCode: 400,
-      statusMessage: `${label}: File too large (${sizeMB} MB). Maximum allowed: 10 MB.`,
-    });
-  }
-}
+import { configureCloudinary, uploadBufferToCloudinary, validateGalleryFiles, validateImageFile } from '../../utils/productMedia'
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
-  // 1. Configure Cloudinary
-  cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
-  });
+  configureCloudinary()
 
   const formData = await readMultipartFormData(event);
   if (!formData) {
@@ -53,22 +28,14 @@ export default defineEventHandler(async (event) => {
   const galleryImages = formData.filter(f => f.name === 'galleryImages');
 
   if (!productName || !productPrice || !imageFile) {
-    throw createError({ statusCode: 400, statusMessage: 'Missing required fields' });
+    throw createError({ statusCode: 400, statusMessage: 'Missing required fields' })
   }
 
   // Validate main image
-  validateImageFile(imageFile, 'Main image');
+  validateImageFile(imageFile, 'Main image')
 
   // Validate gallery images
-  if (galleryImages.length > MAX_GALLERY_FILES) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: `Too many gallery images (${galleryImages.length}). Maximum allowed: ${MAX_GALLERY_FILES}.`,
-    });
-  }
-  for (let i = 0; i < galleryImages.length; i++) {
-    validateImageFile(galleryImages[i], `Gallery image ${i + 1}`);
-  }
+  validateGalleryFiles(galleryImages)
 
   // 3.5. Brand Integrity: Ensure the brand name is in the product title for shop filtering
   if (productBrand && productBrand !== 'general') {
@@ -79,30 +46,13 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    // 4. Cloudinary Upload: Promise wrapper for upload_stream
-    const uploadToCloudinary = (buffer: Buffer) => {
-      return new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          { folder: 'novel_solar_products' },
-          (error, result) => {
-            if (error) {
-              console.error('Cloudinary Upload Error:', error);
-              return reject(error);
-            }
-            resolve(result);
-          }
-        );
-        uploadStream.end(buffer);
-      });
-    };
-
-    const cloudinaryResult: any = await uploadToCloudinary(imageFile.data);
-    const imageUrl = cloudinaryResult.secure_url;
+    const cloudinaryResult: any = await uploadBufferToCloudinary(imageFile.data)
+    const imageUrl = cloudinaryResult.secure_url
 
     // 4.5. Gallery Uploads: Process additional images
-    const galleryUploadPromises = galleryImages.map(img => uploadToCloudinary(img.data));
-    const galleryResults: any = await Promise.all(galleryUploadPromises);
-    const galleryUrls = galleryResults.map((r: any) => r.secure_url);
+    const galleryUploadPromises = galleryImages.map(img => uploadBufferToCloudinary(img.data))
+    const galleryResults: any = await Promise.all(galleryUploadPromises)
+    const galleryUrls = galleryResults.map((r: any) => r.secure_url)
 
     // 5. Bitrix Upload: Add product with Cloudinary image URL in PROPERTY_44
     const webhookUrl = config.bitrixWebhookUrl;

@@ -9,6 +9,7 @@ const isEditing = ref(false)
 const isSaving = ref(false)
 const isDeleting = ref(false)
 const showDeleteConfirm = ref(false)
+const previewUrls = new Map()
 
 // Pagination state
 const nextOffset = ref(null)
@@ -22,10 +23,57 @@ const editForm = ref({
   price: null,
   description: '',
   specs: [{ label: '', value: '' }],
-  isDisabled: false
+  isDisabled: false,
+  previewImageUrl: '',
+  mainImageUrl: '',
+  mainImageFile: null,
+  galleryUrls: [],
+  newGalleryFiles: [],
+  removeMainImage: false
 })
 
+const getPreviewUrl = (file) => {
+  if (!file) return null
+  if (previewUrls.has(file)) return previewUrls.get(file)
+  const url = URL.createObjectURL(file)
+  previewUrls.set(file, url)
+  return url
+}
+
+const revokePreviewUrl = (file) => {
+  if (!file || !previewUrls.has(file)) return
+  URL.revokeObjectURL(previewUrls.get(file))
+  previewUrls.delete(file)
+}
+
+const resetMediaState = () => {
+  if (editForm.value.mainImageFile) {
+    revokePreviewUrl(editForm.value.mainImageFile)
+  }
+
+  editForm.value.newGalleryFiles.forEach((file) => revokePreviewUrl(file))
+}
+
+const currentMainImagePreview = computed(() => {
+  if (editForm.value.mainImageFile) {
+    return getPreviewUrl(editForm.value.mainImageFile)
+  }
+
+  return editForm.value.removeMainImage ? '' : editForm.value.previewImageUrl
+})
+
+const combinedGalleryPreview = computed(() => [
+  ...editForm.value.galleryUrls.map((url) => ({ type: 'existing', url })),
+  ...editForm.value.newGalleryFiles.map((file, index) => ({
+    type: 'new',
+    file,
+    index,
+    url: getPreviewUrl(file),
+  })),
+])
+
 const resetSearch = () => {
+  resetMediaState()
   searchQuery.value = ''
   searchResults.value = []
   selectedProduct.value = null
@@ -74,6 +122,7 @@ const performSearch = async (isLoadMore = false) => {
 }
 
 const selectProduct = (product) => {
+  resetMediaState()
   selectedProduct.value = product
   editForm.value = {
     id: product.id,
@@ -81,7 +130,13 @@ const selectProduct = (product) => {
     price: parseFloat(product.price),
     description: product.description || '',
     specs: product.specs && product.specs.length > 0 ? [...product.specs] : [{ label: '', value: '' }],
-    isDisabled: !!product.isDisabled
+    isDisabled: !!product.isDisabled,
+    previewImageUrl: product.imageUrl || '',
+    mainImageUrl: product.persistedMainImageUrl || '',
+    mainImageFile: null,
+    galleryUrls: Array.isArray(product.gallery) ? [...product.gallery] : [],
+    newGalleryFiles: [],
+    removeMainImage: false
   }
   isEditing.value = true
 }
@@ -105,16 +160,28 @@ const saveChanges = async () => {
   isSaving.value = true
 
   try {
+    const formData = new FormData()
+    formData.append('productId', editForm.value.id)
+    formData.append('productName', editForm.value.name)
+    formData.append('productPrice', String(editForm.value.price))
+    formData.append('productDescription', editForm.value.description || '')
+    formData.append('productSpecs', JSON.stringify(editForm.value.specs))
+    formData.append('productDisabled', String(editForm.value.isDisabled))
+    formData.append('mainImageUrl', editForm.value.mainImageUrl || '')
+    formData.append('galleryUrls', JSON.stringify(editForm.value.galleryUrls || []))
+    formData.append('removeMainImage', String(editForm.value.removeMainImage))
+
+    if (editForm.value.mainImageFile) {
+      formData.append('mainImageFile', editForm.value.mainImageFile)
+    }
+
+    editForm.value.newGalleryFiles.forEach((file) => {
+      formData.append('newGalleryFiles', file)
+    })
+
     const response = await $fetch('/api/admin/update-product', {
       method: 'POST',
-      body: {
-        productId: editForm.value.id,
-        productName: editForm.value.name,
-        productPrice: editForm.value.price,
-        productDescription: editForm.value.description,
-        productSpecs: editForm.value.specs,
-        productDisabled: editForm.value.isDisabled
-      }
+      body: formData
     })
 
     alert('Product updated successfully!')
@@ -130,6 +197,7 @@ const saveChanges = async () => {
 }
 
 const cancelEdit = () => {
+  resetMediaState()
   isEditing.value = false
   selectedProduct.value = null
   showDeleteConfirm.value = false
@@ -137,6 +205,46 @@ const cancelEdit = () => {
 
 const confirmDelete = () => {
   showDeleteConfirm.value = true
+}
+
+const handleMainImageChange = (event) => {
+  const file = event.target.files?.[0]
+  if (!file) return
+
+  if (editForm.value.mainImageFile) {
+    revokePreviewUrl(editForm.value.mainImageFile)
+  }
+
+  editForm.value.mainImageFile = file
+  editForm.value.previewImageUrl = getPreviewUrl(file)
+  editForm.value.removeMainImage = false
+}
+
+const clearMainImage = () => {
+  if (editForm.value.mainImageFile) {
+    revokePreviewUrl(editForm.value.mainImageFile)
+  }
+
+  editForm.value.mainImageFile = null
+  editForm.value.previewImageUrl = ''
+  editForm.value.mainImageUrl = ''
+  editForm.value.removeMainImage = true
+}
+
+const handleGalleryUpload = (event) => {
+  const files = Array.from(event.target.files || [])
+  if (files.length === 0) return
+  editForm.value.newGalleryFiles = [...editForm.value.newGalleryFiles, ...files]
+}
+
+const removeExistingGalleryImage = (index) => {
+  editForm.value.galleryUrls.splice(index, 1)
+}
+
+const removeNewGalleryImage = (index) => {
+  const file = editForm.value.newGalleryFiles[index]
+  revokePreviewUrl(file)
+  editForm.value.newGalleryFiles.splice(index, 1)
 }
 
 const deleteProduct = async () => {
@@ -185,6 +293,12 @@ const handleLogout = async () => {
 
 onMounted(() => {
   performSearch(true)
+})
+
+onUnmounted(() => {
+  resetMediaState()
+  previewUrls.forEach((url) => URL.revokeObjectURL(url))
+  previewUrls.clear()
 })
 </script>
 
@@ -385,6 +499,81 @@ onMounted(() => {
               </div>
             </div>
 
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 space-y-6">
+              <div class="flex items-center justify-between gap-4">
+                <h3 class="text-xl font-black text-slate-900 flex items-center gap-2">
+                  <span class="material-symbols-outlined">imagesmode</span>
+                  Product Media
+                </h3>
+                <label class="px-4 py-2 bg-purple-50 text-purple-700 font-black rounded-xl border border-purple-100 hover:bg-purple-100 transition-all text-xs uppercase cursor-pointer">
+                  Replace Cover
+                  <input type="file" accept="image/*" class="hidden" @change="handleMainImageChange" :disabled="isSaving" />
+                </label>
+              </div>
+
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <p class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Cover Image</p>
+                  <div class="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                    <div v-if="currentMainImagePreview" class="relative aspect-square overflow-hidden rounded-2xl bg-white">
+                      <img :src="currentMainImagePreview" :alt="selectedProduct.name" class="w-full h-full object-cover" />
+                    </div>
+                    <div v-else class="aspect-square rounded-2xl border-2 border-dashed border-slate-200 bg-white text-slate-400 flex items-center justify-center text-sm font-bold text-center p-6">
+                      No cover image selected
+                    </div>
+
+                    <div class="mt-4 flex flex-wrap gap-3">
+                      <label class="px-4 py-3 bg-slate-900 text-white font-black rounded-2xl hover:bg-slate-800 transition-all text-xs uppercase cursor-pointer">
+                        Upload New
+                        <input type="file" accept="image/*" class="hidden" @change="handleMainImageChange" :disabled="isSaving" />
+                      </label>
+                      <button
+                        type="button"
+                        class="px-4 py-3 bg-red-50 text-red-700 font-black rounded-2xl hover:bg-red-100 transition-all text-xs uppercase disabled:opacity-50"
+                        :disabled="isSaving || (!currentMainImagePreview && !editForm.mainImageFile && !editForm.mainImageUrl)"
+                        @click="clearMainImage"
+                      >
+                        Remove Cover
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex items-center justify-between mb-3">
+                    <p class="block text-xs font-black text-slate-400 uppercase tracking-widest">Gallery</p>
+                    <label class="px-3 py-2 bg-purple-50 text-purple-700 font-black rounded-xl border border-purple-100 hover:bg-purple-100 transition-all text-xs uppercase cursor-pointer">
+                      Add Images
+                      <input type="file" multiple accept="image/*" class="hidden" @change="handleGalleryUpload" :disabled="isSaving" />
+                    </label>
+                  </div>
+
+                  <div class="rounded-3xl border border-slate-200 bg-slate-50 p-4 min-h-[280px]">
+                    <div v-if="combinedGalleryPreview.length > 0" class="grid grid-cols-2 gap-3">
+                      <div
+                        v-for="(image, index) in combinedGalleryPreview"
+                        :key="image.type === 'existing' ? `existing-${image.url}` : `new-${image.index}`"
+                        class="relative aspect-square overflow-hidden rounded-2xl border border-slate-200 bg-white group"
+                      >
+                        <img :src="image.url" :alt="`${selectedProduct.name} gallery image ${index + 1}`" class="w-full h-full object-cover" />
+                        <button
+                          type="button"
+                          class="absolute top-2 right-2 h-8 w-8 rounded-full bg-black/65 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500"
+                          :disabled="isSaving"
+                          @click="image.type === 'existing' ? removeExistingGalleryImage(index) : removeNewGalleryImage(image.index)"
+                        >
+                          <span class="material-symbols-outlined text-sm">close</span>
+                        </button>
+                      </div>
+                    </div>
+                    <div v-else class="h-full min-h-[240px] rounded-2xl border-2 border-dashed border-slate-200 bg-white text-slate-400 flex items-center justify-center text-sm font-bold text-center p-6">
+                      No gallery images yet
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- Specs -->
             <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 space-y-6">
               <div class="flex items-center justify-between">
@@ -437,8 +626,8 @@ onMounted(() => {
             <div class="bg-gradient-to-br from-purple-600 to-purple-700 rounded-3xl shadow-xl p-8 text-white sticky top-8">
               <h3 class="text-lg font-black mb-6">Preview</h3>
 
-              <div v-if="selectedProduct.imageUrl" class="w-full h-40 rounded-2xl bg-white/10 overflow-hidden mb-6">
-                <img loading="lazy" :src="selectedProduct.imageUrl" :alt="selectedProduct.name" class="w-full h-full object-cover" />
+              <div v-if="currentMainImagePreview" class="w-full h-40 rounded-2xl bg-white/10 overflow-hidden mb-6">
+                <img loading="lazy" :src="currentMainImagePreview" :alt="selectedProduct.name" class="w-full h-full object-cover" />
               </div>
 
               <div class="space-y-4">
@@ -469,9 +658,9 @@ onMounted(() => {
                   </div>
                 </div>
 
-                <div v-if="selectedProduct.gallery.length" class="pt-4 border-t border-white/20">
+                <div v-if="combinedGalleryPreview.length" class="pt-4 border-t border-white/20">
                   <p class="text-xs text-purple-200 uppercase font-bold mb-2">Gallery</p>
-                  <p class="text-sm text-purple-100">{{ selectedProduct.gallery.length }} additional images</p>
+                  <p class="text-sm text-purple-100">{{ combinedGalleryPreview.length }} additional images</p>
                 </div>
               </div>
             </div>
