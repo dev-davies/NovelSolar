@@ -15,11 +15,13 @@ const { getProductImage } = useProductImage()
       <span class="absolute top-4 left-4 bg-green-50 text-green-600 text-xs font-extrabold px-3 py-1 rounded-md tracking-wide z-10">IN STOCK</span>
 
       <div class="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-500 overflow-hidden">
-        <img
+        <NuxtImg
           :src="getProductImage(product)"
+          loading="lazy"
+          placeholder
+          format="webp"
           :alt="product.NAME"
           class="w-full h-full object-contain p-4"
-          loading="lazy"
         />
       </div>
     </div>
