@@ -23,7 +23,8 @@ export default defineEventHandler(async (event) => {
     const listResponse = await $fetch<{ result?: any[] }>(`${baseUrl}crm.product.list`, {
       query: {
         'filter[%NAME]': brand,
-        'select[]': ['ID', 'NAME', 'PRICE', 'QUANTITY', 'CURRENCY_ID', 'SECTION_ID', 'PROPERTY_102', 'PROPERTY_104', 'PROPERTY_112', 'DETAIL_PICTURE', 'PREVIEW_PICTURE', 'PROPERTY_44']
+        'filter[ACTIVE]': 'Y',
+        'select[]': ['ID', 'NAME', 'PRICE', 'QUANTITY', 'CURRENCY_ID', 'SECTION_ID', 'ACTIVE', 'PROPERTY_102', 'PROPERTY_104', 'PROPERTY_112', 'DETAIL_PICTURE', 'PREVIEW_PICTURE', 'PROPERTY_44']
       }
     });
     
@@ -40,6 +41,7 @@ export default defineEventHandler(async (event) => {
   // so no secondary batch fetch is needed.
   return itelProducts.map(product => ({
     ...product,
+    ACTIVE: product.ACTIVE,
     DETAIL_PICTURE: product.DETAIL_PICTURE || null,
     PREVIEW_PICTURE: product.PREVIEW_PICTURE || null,
     PROPERTY_44: normalizeProperty(product.PROPERTY_44),

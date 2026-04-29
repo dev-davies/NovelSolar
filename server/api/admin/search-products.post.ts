@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
         method: 'POST',
         body: {
           filter: searchQuery ? { '%NAME': searchQuery } : {}, 
-          select: ['ID', 'NAME', 'PRICE', 'DESCRIPTION', 'DESCRIPTION_TYPE', 'MEASURE', 'PROPERTY_102', 'PROPERTY_104', 'PROPERTY_112', 'PROPERTY_44', 'CURRENCY_ID', 'DETAIL_PICTURE', 'PREVIEW_PICTURE'],
+          select: ['ID', 'NAME', 'PRICE', 'DESCRIPTION', 'DESCRIPTION_TYPE', 'MEASURE', 'ACTIVE', 'PROPERTY_102', 'PROPERTY_104', 'PROPERTY_112', 'PROPERTY_44', 'CURRENCY_ID', 'DETAIL_PICTURE', 'PREVIEW_PICTURE'],
           limit: 50,
           start: nextStart,
           order: { ID: 'DESC' },
@@ -49,6 +49,7 @@ export default defineEventHandler(async (event) => {
         description: p.DESCRIPTION,
         descriptionType: p.DESCRIPTION_TYPE,
         measure: p.MEASURE,
+        isDisabled: p.ACTIVE === 'N',
         // Priority 1: Cloudinary URL (PROPERTY_102), Priority 2: Bitrix Image Proxy
         imageUrl: cloudinaryUrl || (legacyImageId ? `/api/bitrix-image?url=${encodeURIComponent(`https://nisl.bitrix24.com/bitrix/admin/crm_product_show.php?ID=${p.ID}&fieldName=DETAIL_PICTURE`)}` : null),
         specs: typeof p.PROPERTY_104 === 'string' 

@@ -26,7 +26,8 @@ export default defineCachedEventHandler(async (event) => {
         method: 'POST',
         body: {
           limit: 50,
-          select: ["ID", "NAME", "PRICE", "QUANTITY", "CURRENCY_ID", "SECTION_ID", "PROPERTY_102", "PROPERTY_104", "PROPERTY_112", "DETAIL_PICTURE", "PREVIEW_PICTURE", "PROPERTY_44"]
+          filter: { ACTIVE: 'Y' },
+          select: ["ID", "NAME", "PRICE", "QUANTITY", "CURRENCY_ID", "SECTION_ID", "ACTIVE", "PROPERTY_102", "PROPERTY_104", "PROPERTY_112", "DETAIL_PICTURE", "PREVIEW_PICTURE", "PROPERTY_44"]
         }
       });
 
@@ -50,6 +51,7 @@ export default defineCachedEventHandler(async (event) => {
   // so no secondary batch fetch is needed.
   return allProducts.map(product => ({
     ...product,
+    ACTIVE: product.ACTIVE,
     DETAIL_PICTURE: product.DETAIL_PICTURE || null,
     PREVIEW_PICTURE: product.PREVIEW_PICTURE || null,
     PROPERTY_44: normalizeProperty(product.PROPERTY_44),
