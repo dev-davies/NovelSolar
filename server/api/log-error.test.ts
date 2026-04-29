@@ -1,10 +1,9 @@
-// filepath: server/api/log-error.test.ts
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { createEvent, readBody } from 'h3'
 
-// Mock Nitro auto-imports before importing the handler
-vi.mock('#internal/nitro', () => ({
-  useRuntimeConfig: (event?: any) => ({
+// CRITICAL FIX: Nuxt auto-imports resolve to #imports in jsdom test environments
+vi.mock('#imports', () => ({
+  useRuntimeConfig: () => ({
     public: {
       appVersion: '1.0.0'
     },
@@ -14,7 +13,7 @@ vi.mock('#internal/nitro', () => ({
   })
 }))
 
-// Mock h3 readBody
+// Mock h3
 vi.mock('h3', async () => {
   const actual = await vi.importActual('h3') as any
   return {
@@ -24,6 +23,7 @@ vi.mock('h3', async () => {
   }
 })
 
+// Import handler AFTER mocks
 import logErrorHandler from './log-error.post'
 
 describe('log-error.post.ts', () => {
@@ -74,7 +74,7 @@ describe('log-error.post.ts', () => {
 
     try {
       await logErrorHandler(event)
-      expect(true).toBe(false) // Should not reach here
+      expect(true).toBe(false)
     } catch (error: any) {
       expect(error.statusCode).toBe(400)
     }
@@ -95,7 +95,7 @@ describe('log-error.post.ts', () => {
 
     try {
       await logErrorHandler(event)
-      expect(true).toBe(false) // Should not reach here
+      expect(true).toBe(false)
     } catch (error: any) {
       expect(error.statusCode).toBe(400)
     }
