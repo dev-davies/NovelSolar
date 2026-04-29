@@ -119,6 +119,7 @@ export default defineEventHandler(async (event) => {
           NAME: productName,
           PRICE: productPrice,
           CURRENCY_ID: 'NGN',
+          ACTIVE: 'Y',
           MEASURE: measureId,
           DESCRIPTION: productDescription,
           DESCRIPTION_TYPE: 'html',

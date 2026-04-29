@@ -1,6 +1,6 @@
 export default defineEventHandler(async (event) => {
   const body = sanitizePayload(await readBody(event));
-  const { productId, productName, productPrice, productDescription, productSpecs } = body;
+  const { productId, productName, productPrice, productDescription, productSpecs, productDisabled } = body;
   const config = useRuntimeConfig();
 
   // Security check handled by admin-auth server middleware
@@ -32,6 +32,7 @@ export default defineEventHandler(async (event) => {
             PRICE: productPrice,
             DESCRIPTION: productDescription || '',
             DESCRIPTION_TYPE: 'html',
+            ACTIVE: productDisabled ? 'N' : 'Y',
             PROPERTY_104: productSpecs ? JSON.stringify(productSpecs) : '[]',
           },
         },

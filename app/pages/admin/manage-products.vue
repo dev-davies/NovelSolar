@@ -21,7 +21,8 @@ const editForm = ref({
   name: '',
   price: null,
   description: '',
-  specs: [{ label: '', value: '' }]
+  specs: [{ label: '', value: '' }],
+  isDisabled: false
 })
 
 const resetSearch = () => {
@@ -79,7 +80,8 @@ const selectProduct = (product) => {
     name: product.name,
     price: parseFloat(product.price),
     description: product.description || '',
-    specs: product.specs && product.specs.length > 0 ? [...product.specs] : [{ label: '', value: '' }]
+    specs: product.specs && product.specs.length > 0 ? [...product.specs] : [{ label: '', value: '' }],
+    isDisabled: !!product.isDisabled
   }
   isEditing.value = true
 }
@@ -110,7 +112,8 @@ const saveChanges = async () => {
         productName: editForm.value.name,
         productPrice: editForm.value.price,
         productDescription: editForm.value.description,
-        productSpecs: editForm.value.specs
+        productSpecs: editForm.value.specs,
+        productDisabled: editForm.value.isDisabled
       }
     })
 
@@ -256,6 +259,12 @@ onMounted(() => {
                   <h3 class="font-black text-slate-900 truncate hover:text-purple-600">{{ product.name }}</h3>
                   <p class="text-lg font-bold text-purple-600 mt-1">₦{{ Number(product.price).toLocaleString() }}</p>
                   <p v-if="product.description" class="text-xs text-slate-500 line-clamp-2 mt-2">{{ product.description }}</p>
+                  <div v-if="product.isDisabled" class="mt-2">
+                    <span class="inline-flex items-center gap-1 rounded-full bg-slate-200 px-2 py-1 text-[10px] font-black uppercase tracking-widest text-slate-700">
+                      <span class="material-symbols-outlined text-xs">visibility_off</span>
+                      Hidden From Storefront
+                    </span>
+                  </div>
                   <div class="mt-3 flex gap-2 text-xs font-bold text-slate-500">
                     <span v-if="product.specs.length" class="inline-flex items-center gap-1">
                       <span class="material-symbols-outlined text-sm">info</span>
@@ -352,6 +361,27 @@ onMounted(() => {
                     :disabled="isSaving"
                   ></textarea>
                 </div>
+
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                  <div class="flex items-start justify-between gap-4">
+                    <div>
+                      <p class="text-xs font-black uppercase tracking-widest text-slate-400">Storefront Visibility</p>
+                      <p class="mt-2 text-sm font-medium text-slate-600">
+                        Disable this product to hide it from all customer-facing product pages without changing stock quantity.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      class="inline-flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-black transition-all"
+                      :class="editForm.isDisabled ? 'bg-slate-900 text-white hover:bg-slate-800' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200'"
+                      :disabled="isSaving"
+                      @click="editForm.isDisabled = !editForm.isDisabled"
+                    >
+                      <span class="material-symbols-outlined text-base">{{ editForm.isDisabled ? 'visibility_off' : 'visibility' }}</span>
+                      {{ editForm.isDisabled ? 'Disabled' : 'Visible' }}
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -422,6 +452,13 @@ onMounted(() => {
                   <p class="text-2xl font-black text-purple-100">₦{{ Number(editForm.price).toLocaleString() }}</p>
                 </div>
 
+                <div>
+                  <p class="text-xs text-purple-200 uppercase font-bold">Visibility</p>
+                  <p class="text-sm font-black text-purple-50">
+                    {{ editForm.isDisabled ? 'Hidden from customer UI' : 'Visible on customer UI' }}
+                  </p>
+                </div>
+
                 <div v-if="editForm.specs.some(s => s.label && s.value)">
                   <p class="text-xs text-purple-200 uppercase font-bold mb-2">Specs</p>
                   <div class="space-y-2">
@@ -464,7 +501,7 @@ onMounted(() => {
             class="px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-black rounded-2xl hover:from-purple-700 hover:to-purple-800 transition-all disabled:opacity-50 flex items-center gap-2"
           >
             <span v-if="isSaving" class="animate-spin border-2 border-white/30 border-t-white w-4 h-4 rounded-full"></span>
-            {{ isSaving ? 'Saving...' : 'Save Changes' }}
+            {{ isSaving ? 'Saving...' : (editForm.isDisabled ? 'Save as Hidden' : 'Save Changes') }}
           </button>
         </div>
       </div>

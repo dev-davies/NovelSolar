@@ -19,6 +19,7 @@ export default defineEventHandler(async (event) => {
   try {
     // Build filter: brand + search (if provided) or all products
     const filters: Record<string, any> = {}
+    filters.ACTIVE = 'Y'
     if (brandFilter && searchTerm) {
       filters['%NAME'] = `${brandFilter} ${searchTerm}`.trim()
     } else if (brandFilter) {
@@ -44,6 +45,7 @@ export default defineEventHandler(async (event) => {
           'CURRENCY_ID',
           'DESCRIPTION',
           'QUANTITY',
+          'ACTIVE',
           'PREVIEW_PICTURE',
           'DETAIL_PICTURE',
           'PROPERTY_44',
@@ -99,6 +101,7 @@ export default defineEventHandler(async (event) => {
         CURRENCY_ID: product.CURRENCY_ID,
         DESCRIPTION: normalizeProperty(product.DESCRIPTION) || '',
         QUANTITY: product.QUANTITY,
+        ACTIVE: product.ACTIVE,
         imageUrl: imageUrl || '/images/placeholder.png',
         PROPERTY_102: normalizeProperty(product.PROPERTY_102), // Cloudinary URL
         PROPERTY_104: normalizeProperty(product.PROPERTY_104), // Specs

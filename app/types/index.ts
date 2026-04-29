@@ -7,6 +7,7 @@ export interface BitrixProduct {
   title?: string
   PRICE: number
   price?: number
+  ACTIVE?: 'Y' | 'N'
   DETAIL_TEXT?: string
   PROPERTY_102?: string | Array<{ value: string }>
   PROPERTY_44?: { showUrl?: string; downloadUrl?: string }
