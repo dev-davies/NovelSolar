@@ -1,6 +1,5 @@
 // filepath: server/api/log-error.post.ts
 import { createError, defineEventHandler, getHeader, readBody } from 'h3'
-import { useRuntimeConfig } from '#imports'
 
 interface ErrorLogEntry {
   message: string

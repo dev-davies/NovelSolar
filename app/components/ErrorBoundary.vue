@@ -1,4 +1,3 @@
-// filepath: app/components/ErrorBoundary.vue
 <template>
   <div v-if="error" class="error-boundary">
     <slot name="fallback" :error="error" :retry="retry" :clear-error="clearError">

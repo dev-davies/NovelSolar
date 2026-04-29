@@ -2,8 +2,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { createEvent, readBody } from 'h3'
 
-// Mock #imports before importing the handler
-vi.mock('#imports', () => ({
+// Mock Nitro auto-imports before importing the handler
+vi.mock('#internal/nitro', () => ({
   useRuntimeConfig: (event?: any) => ({
     public: {
       appVersion: '1.0.0'
