@@ -537,7 +537,7 @@
       </button>
     </nav>
     <!-- Global Cart Drawer -->
-    <CartDrawer />
+    <LazyCartDrawer />
     <!-- Global WhatsApp Floating Button -->
     <WhatsAppFloating />
   </div>
