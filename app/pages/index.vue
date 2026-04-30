@@ -333,8 +333,34 @@ onUnmounted(() => {
   }
 })
 
-const { data: products, pending } = useFetch('/api/inventory')
-const featuredProducts = computed(() => excludeServiceProducts(products.value || []).slice(0, 8))
+const FEATURED_BRAND = 'novelsolar'
+const FEATURED_PER_WEEK = 4
+
+const { data: featuredProducts, pending } = await useAsyncData('home-featured-novelsolar', async () => {
+  const all = await $fetch<any[]>('/api/inventory')
+
+  const novelSolarPool = excludeServiceProducts(all || [])
+    .filter(p => typeof p?.NAME === 'string' && p.NAME.toLowerCase().includes(FEATURED_BRAND))
+    // Sort by ID desc as a proxy for created_at desc — Bitrix IDs are monotonically increasing,
+    // so the newest products land at the top of the rotation pool.
+    .sort((a, b) => Number(b.ID) - Number(a.ID))
+
+  // Fewer than a full page → show everything, no rotation needed.
+  if (novelSolarPool.length <= FEATURED_PER_WEEK) {
+    return novelSolarPool
+  }
+
+  // Deterministic weekly rotation — same week → same slice for every visitor (SSR-safe).
+  const now = new Date()
+  const startOfYear = new Date(now.getFullYear(), 0, 1)
+  const weekNumber = Math.ceil(
+    (((now.getTime() - startOfYear.getTime()) / 86400000) + startOfYear.getDay() + 1) / 7,
+  )
+
+  const totalPages = Math.ceil(novelSolarPool.length / FEATURED_PER_WEEK)
+  const startIndex = (weekNumber % totalPages) * FEATURED_PER_WEEK
+  return novelSolarPool.slice(startIndex, startIndex + FEATURED_PER_WEEK)
+})
 
 const { data: recentInsights } = await useAsyncData('home-insights', () => {
   return queryContent('blog').where({ draft: { $ne: true } }).sort({ date: -1 }).limit(3).find()
