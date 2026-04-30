@@ -25,6 +25,15 @@ export default defineEventHandler(async (event) => {
     sha: remote.sha,
   })
 
+  // Trigger Vercel build immediately
+  const deployHookUrl = process.env.VERCEL_DEPLOY_HOOK_URL
+  if (deployHookUrl) {
+    // Fire and forget - don't await so we don't block the UI
+    $fetch(deployHookUrl, { method: 'POST' }).catch(err => {
+      console.error('Failed to trigger Vercel deploy hook:', err)
+    })
+  }
+
   return {
     success: true,
     slug,

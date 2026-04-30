@@ -46,14 +46,15 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'Post title is required.' })
   }
 
-  if (!isRename || (originalSlug && originalSlug !== slug)) {
-    const collision = await readLocalPost(slug).catch(() => null)
-    if (collision && (!originalSlug || originalSlug !== slug)) {
-      const isUpdatingExisting = !originalSlug
-      if (!isUpdatingExisting) {
-        throw createError({ statusCode: 409, statusMessage: `Slug already exists: ${slug}` })
-      }
-    }
+  const collision = await readLocalPost(slug).catch(() => null)
+
+  // If a file already exists at the target slug, we MUST reject it,
+  // UNLESS the user is updating this exact same post (originalSlug === slug).
+  if (collision && originalSlug !== slug) {
+    throw createError({
+      statusCode: 409,
+      statusMessage: `A post with the slug "${slug}" already exists. Please modify the title or slug.`
+    })
   }
 
   const frontmatter: BlogFrontmatter = {
@@ -97,6 +98,15 @@ export default defineEventHandler(async (event) => {
       })
       renameCommitSha = del.commitSha
     }
+  }
+
+  // Trigger Vercel build immediately
+  const deployHookUrl = process.env.VERCEL_DEPLOY_HOOK_URL
+  if (deployHookUrl) {
+    // Fire and forget - don't await so we don't block the UI
+    $fetch(deployHookUrl, { method: 'POST' }).catch(err => {
+      console.error('Failed to trigger Vercel deploy hook:', err)
+    })
   }
 
   return {
