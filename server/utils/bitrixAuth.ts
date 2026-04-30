@@ -56,3 +56,35 @@ export async function fetchWithBitrixContext<T>(event: any, endpoint: string, op
   
   return $fetch<T>(url, options)
 }
+
+export interface BitrixTokenRefreshResponse {
+  access_token: string
+  expires_in: number
+  client_endpoint: string
+  refresh_token: string
+  domain: string
+  server_endpoint: string
+}
+
+export async function refreshBitrixToken(domain: string, refreshToken: string): Promise<BitrixTokenRefreshResponse> {
+  const config = useRuntimeConfig()
+  
+  if (!config.bitrixClientId || !config.bitrixClientSecret) {
+    throw createError({ 
+      statusCode: 500, 
+      statusMessage: 'Server configuration error: Bitrix OAuth credentials are missing in runtime config.' 
+    })
+  }
+
+  const response = await $fetch<BitrixTokenRefreshResponse>('https://oauth.bitrix.info/oauth/token/', {
+    method: 'GET',
+    query: {
+      grant_type: 'refresh_token',
+      client_id: config.bitrixClientId,
+      client_secret: config.bitrixClientSecret,
+      refresh_token: refreshToken
+    }
+  })
+
+  return response
+}
