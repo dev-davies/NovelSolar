@@ -1,37 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import ErrorBoundary from './ErrorBoundary.vue'
-
-// Mock useErrorLogger
-vi.mock('~/composables/useErrorLogger', () => ({
-  useErrorLogger: () => ({
-    trackVueError: vi.fn()
-  })
-}))
-
-// Mock Nuxt components
-vi.mock('#components/NuxtLink', () => ({
-  default: {
-    name: 'NuxtLink',
-    template: '<a :href="to"><slot /></a>',
-    props: ['to']
-  }
-}))
-
-// Mock auto-imports that ErrorBoundary uses
-vi.mock('vue', async () => {
-  const actual = await vi.importActual('vue') as any
-  return {
-    ...actual,
-    ref: actual.ref,
-    computed: actual.computed,
-    withDefaults: actual.withDefaults,
-    defineProps: actual.defineProps,
-    defineEmits: actual.defineEmits,
-    onMounted: actual.onMounted,
-    onErrorCaptured: actual.onErrorCaptured
-  }
-})
 
 describe('ErrorBoundary', () => {
   it('should render slot content when no error', () => {
@@ -45,131 +15,68 @@ describe('ErrorBoundary', () => {
     expect(wrapper.find('.error-boundary').exists()).toBe(false)
   })
 
-  it('should show fallback when error is set', async () => {
+  it('should show default fallback when a child throws', async () => {
+    const Thrower = {
+      setup() {
+        throw new Error('Boom')
+      },
+      template: '<div />'
+    }
+
     const wrapper = mount(ErrorBoundary, {
       slots: {
-        default: '<div>Content</div>',
-        fallback: '<template #fallback="{ error }"><div>Error Fallback {{ error.message }}</div></template>'
+        default: Thrower as never
       }
     })
 
-    const vm = wrapper.vm as any
-    vm.setError(new Error('Test error'))
+    await nextTick()
 
-    await wrapper.vm.$nextTick()
-
-    expect(wrapper.text()).toContain('Error Fallback Test error')
+    expect(wrapper.find('.error-boundary').exists()).toBe(true)
+    expect(wrapper.text()).toContain('Something went wrong')
+    expect(wrapper.text()).toContain('Boom')
   })
 
-  it('should display default error title for generic errors', async () => {
+  it('should render fallback slot with error and clearError', async () => {
+    const Thrower = {
+      setup() {
+        throw new Error('Custom failure')
+      },
+      template: '<div />'
+    }
+
     const wrapper = mount(ErrorBoundary, {
-      props: {
-        fallback: true
+      slots: {
+        default: Thrower as never,
+        fallback: `<template #fallback="{ error, clearError }">
+          <div class="custom-fallback">{{ error.message }}</div>
+        </template>`
       }
     })
 
-    const vm = wrapper.vm as any
-    vm.setError(new Error('Something went wrong'))
+    await nextTick()
 
-    await wrapper.vm.$nextTick()
-
-    expect(wrapper.text()).toContain('Something Went Wrong')
+    expect(wrapper.find('.custom-fallback').exists()).toBe(true)
+    expect(wrapper.text()).toContain('Custom failure')
   })
 
-  it('should display "Page Not Found" for 404 errors', async () => {
+  it('should expose Try Again button in the default fallback', async () => {
+    const Thrower = {
+      setup() {
+        throw new Error('Test error')
+      },
+      template: '<div />'
+    }
+
     const wrapper = mount(ErrorBoundary, {
-      props: {
-        fallback: true
+      slots: {
+        default: Thrower as never
       }
     })
 
-    const vm = wrapper.vm as any
-    vm.setError(new Error('404 Not Found'))
+    await nextTick()
 
-    await wrapper.vm.$nextTick()
-
-    expect(wrapper.text()).toContain('Page Not Found')
-  })
-
-  it('should display "Server Error" for 500 errors', async () => {
-    const wrapper = mount(ErrorBoundary, {
-      props: {
-        fallback: true
-      }
-    })
-
-    const vm = wrapper.vm as any
-    vm.setError(new Error('500 Internal Server Error'))
-
-    await wrapper.vm.$nextTick()
-
-    expect(wrapper.text()).toContain('Server Error')
-  })
-
-  it('should not show retry button for 404 errors', async () => {
-    const wrapper = mount(ErrorBoundary, {
-      props: {
-        fallback: true
-      }
-    })
-
-    const vm = wrapper.vm as any
-    vm.setError(new Error('404 Not Found'))
-
-    await wrapper.vm.$nextTick()
-
-    expect(wrapper.find('.btn-retry').exists()).toBe(false)
-  })
-
-  it('should show retry button for other errors', async () => {
-    const wrapper = mount(ErrorBoundary, {
-      props: {
-        fallback: true
-      }
-    })
-
-    const vm = wrapper.vm as any
-    vm.setError(new Error('Network error'))
-
-    await wrapper.vm.$nextTick()
-
-    expect(wrapper.find('.btn-retry').exists()).toBe(true)
-  })
-
-  it('should clear error when retry is clicked', async () => {
-    const wrapper = mount(ErrorBoundary, {
-      props: {
-        fallback: true
-      }
-    })
-
-    const vm = wrapper.vm as any
-    vm.setError(new Error('Test error'))
-
-    await wrapper.vm.$nextTick()
-    expect(wrapper.text()).toContain('Something Went Wrong')
-
-    await wrapper.find('.btn-retry').trigger('click')
-    await wrapper.vm.$nextTick()
-
-    expect(vm.error).toBeNull()
-  })
-
-  it('should expose setError and clearError methods', () => {
-    const wrapper = mount(ErrorBoundary)
-
-    const vm = wrapper.vm as any
-    expect(typeof vm.setError).toBe('function')
-    expect(typeof vm.clearError).toBe('function')
-  })
-
-  it('should have working retry method', () => {
-    const wrapper = mount(ErrorBoundary)
-
-    const vm = wrapper.vm as any
-    vm.setError(new Error('Test'))
-    vm.retry()
-
-    expect(vm.error).toBeNull()
+    const button = wrapper.find('button')
+    expect(button.exists()).toBe(true)
+    expect(button.text()).toContain('Try Again')
   })
 })

@@ -1,6 +1,5 @@
 // filepath: server/api/log-error.post.ts
 import { createError, defineEventHandler, getHeader, readBody } from 'h3'
-import { useRuntimeConfig } from '#imports'
 
 interface ErrorLogEntry {
   message: string
@@ -13,7 +12,10 @@ interface ErrorLogEntry {
 }
 
 export default defineEventHandler(async (event) => {
-  const config = useRuntimeConfig(event)
+  const webhookUrl = process.env.ERROR_LOGGING_WEBHOOK_URL
+  const authHeader = process.env.ERROR_LOGGING_WEBHOOK_AUTH_HEADER
+  const webhookToken = process.env.ERROR_LOGGING_WEBHOOK_TOKEN
+  const appVersion = process.env.npm_package_version || process.env.NUXT_PUBLIC_APP_VERSION || '1.0.0'
 
   try {
     const body = await readBody<ErrorLogEntry>(event)
@@ -28,7 +30,7 @@ export default defineEventHandler(async (event) => {
     const logEntry = {
       ...body,
       receivedAt: new Date().toISOString(),
-      serverVersion: process.env.npm_package_version || config.public.appVersion || '1.0.0',
+      serverVersion: appVersion,
       request: {
         path: event.path,
         ipAddress: getHeader(event, 'x-forwarded-for') || getHeader(event, 'x-real-ip'),
@@ -42,17 +44,17 @@ export default defineEventHandler(async (event) => {
 
     let forwarded = false
 
-    if (config.errorLoggingWebhookUrl) {
+    if (webhookUrl) {
       try {
         const headers: Record<string, string> = {
           'Content-Type': 'application/json'
         }
 
-        if (config.errorLoggingWebhookAuthHeader && config.errorLoggingWebhookToken) {
-          headers[config.errorLoggingWebhookAuthHeader] = config.errorLoggingWebhookToken
+        if (authHeader && webhookToken) {
+          headers[authHeader] = webhookToken
         }
 
-        const response = await fetch(config.errorLoggingWebhookUrl, {
+        const response = await fetch(webhookUrl, {
           method: 'POST',
           headers,
           body: JSON.stringify(logEntry)
