@@ -40,3 +40,7 @@ blob-report
 # Turbo
 .turbo
 .claude
+
+# Custom Logs
+clean-error.txt
+*.log
