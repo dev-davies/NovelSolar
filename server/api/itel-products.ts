@@ -1,5 +1,7 @@
 
 
+import { normalizeProperty } from '../utils/normalizeProperty'
+
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
 
