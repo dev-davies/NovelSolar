@@ -1,15 +1,7 @@
 import { normalizeProperty } from '../utils/normalizeProperty'
+import { fetchWithBitrixContext } from '../utils/bitrixAuth'
 
 export default defineEventHandler(async (event) => {
-  const config = useRuntimeConfig()
-  const webhookUrl = config.bitrixWebhookUrl
-
-  if (!webhookUrl) {
-    console.error('BITRIX_WEBHOOK_URL not configured')
-    throw createError({ statusCode: 500, statusMessage: 'Server configuration error' })
-  }
-
-  const normalizedBitrixUrl = webhookUrl.endsWith('/') ? webhookUrl : `${webhookUrl}/`
 
   const query = getQuery(event)
   const searchTerm = (query.q as string || '').trim().toLowerCase()
@@ -30,13 +22,13 @@ export default defineEventHandler(async (event) => {
       filters['?NAME'] = searchTerm
     }
 
-    const response = await $fetch<{
+    const response = await fetchWithBitrixContext<{
       result?: any[] | { products?: any[] }
       total?: number
       next?: number
       error?: string
       error_description?: string
-    }>(`${normalizedBitrixUrl}crm.product.list`, {
+    }>(event, 'crm.product.list', {
       method: 'POST',
       body: {
         filter: filters,

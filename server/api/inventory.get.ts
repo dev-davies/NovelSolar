@@ -1,16 +1,7 @@
 import { normalizeProperty } from '../utils/normalizeProperty'
+import { fetchWithBitrixContext } from '../utils/bitrixAuth'
 
 export default defineCachedEventHandler(async (event) => {
-  const config = useRuntimeConfig();
-
-  if (!config.bitrixWebhookUrl) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Server configuration error: Bitrix Webhook URL is missing.',
-    });
-  }
-
-  const baseUrl = config.bitrixWebhookUrl.replace(/\/$/, '') + '/';
 
   const allProducts: any[] = [];
 
@@ -20,9 +11,9 @@ export default defineCachedEventHandler(async (event) => {
     let hasMore = true;
 
     while (hasMore) {
-      const url = `${baseUrl}crm.product.list${start > 0 ? `?start=${start}` : ''}`;
+      const endpoint = `crm.product.list${start > 0 ? `?start=${start}` : ''}`;
 
-      const response = await $fetch<{ result: any[], next?: number }>(url, {
+      const response = await fetchWithBitrixContext<{ result: any[], next?: number }>(event, endpoint, {
         method: 'POST',
         body: {
           limit: 50,
@@ -63,5 +54,9 @@ export default defineCachedEventHandler(async (event) => {
   maxAge: 60 * 5, // Cache for 5 minutes
   swr: true, // Enable Stale-While-Revalidate for instant background fetching
   name: 'bitrix-inventory',
-  getKey: () => 'global-catalog' // Static key so all users share the same cached JSON
+  getKey: (event) => {
+    // Include the bitrix session in the cache key so different workspaces/users have isolated caches
+    const session = getCookie(event, 'bitrix_session');
+    return session ? `catalog-${session}` : 'global-catalog';
+  }
 });
