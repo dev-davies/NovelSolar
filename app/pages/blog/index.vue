@@ -90,7 +90,11 @@
 
 <script setup lang="ts">
 const { data: allPosts, pending } = await useAsyncData('blog-hub', () => {
-  return queryContent('blog').where({ draft: { $ne: true } }).sort({ date: -1 }).find()
+  return queryContent('blog')
+    .where({ draft: { $ne: true } })
+    .only(['title', 'excerpt', 'date', 'image', 'category', 'author', '_path'])
+    .sort({ date: -1 })
+    .find()
 })
 
 const formatDate = (dateString) => {
