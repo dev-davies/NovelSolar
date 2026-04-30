@@ -130,6 +130,53 @@
       </div>
     </section>
 
+    <!-- Services / Business Arms Section -->
+    <section class="bg-white py-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <span class="text-xs font-black uppercase tracking-[0.25em] text-[#002888]">What We Do</span>
+          <h2 class="text-3xl md:text-4xl font-black text-slate-900 mt-3 tracking-tight">Our Services</h2>
+          <p class="text-slate-500 mt-4 max-w-2xl mx-auto leading-relaxed">
+            Three connected arms of the Novel group — powering homes, training the next generation of engineers, and shipping software the world relies on.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <article
+            v-for="service in services"
+            :key="service.title"
+            class="group bg-white rounded-3xl border border-slate-200 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col"
+          >
+            <div class="aspect-[4/3] bg-slate-100 overflow-hidden relative">
+              <NuxtImg
+                :src="service.image"
+                :alt="service.title"
+                loading="lazy"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+              <div class="absolute top-4 left-4 w-12 h-12 rounded-2xl flex items-center justify-center backdrop-blur-md" :class="service.iconBg">
+                <span class="material-symbols-outlined text-2xl" :class="service.iconColor">{{ service.icon }}</span>
+              </div>
+            </div>
+            <div class="p-8 flex flex-col flex-grow">
+              <span class="text-[10px] font-black uppercase tracking-widest mb-3" :class="service.tagColor">{{ service.tag }}</span>
+              <h3 class="text-xl font-black text-slate-900 mb-3 tracking-tight leading-tight">{{ service.title }}</h3>
+              <p class="text-sm text-slate-500 leading-relaxed font-medium mb-6">{{ service.description }}</p>
+
+              <NuxtLink
+                :to="service.link"
+                class="mt-auto inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest"
+                :class="service.linkColor"
+              >
+                Learn More
+                <span class="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform">arrow_forward</span>
+              </NuxtLink>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
     <!-- Industry Insights Section -->
     <section v-if="recentInsights && recentInsights.length > 0" class="bg-gray-50 py-20">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -172,6 +219,16 @@
               </NuxtLink>
             </div>
           </article>
+        </div>
+
+        <div class="mt-12 flex justify-center">
+          <NuxtLink
+            to="/blog"
+            class="inline-flex items-center gap-2 border-2 border-[#002888] text-[#002888] hover:bg-[#002888] hover:text-white px-7 py-3 rounded-md text-sm font-bold transition-colors"
+          >
+            View More Insights
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+          </NuxtLink>
         </div>
       </div>
     </section>
@@ -282,6 +339,45 @@ const featuredProducts = computed(() => excludeServiceProducts(products.value ||
 const { data: recentInsights } = await useAsyncData('home-insights', () => {
   return queryContent('blog').where({ draft: { $ne: true } }).sort({ date: -1 }).limit(3).find()
 })
+
+const services = [
+  {
+    title: 'Solar Energy Solutions',
+    tag: 'Novel Solar',
+    description: 'High-performance inverters, batteries and solar panels backed by our installation engineers — plus Novel Solar Academy training for the next generation of certified solar technicians.',
+    image: '/images/services-main.jpg',
+    icon: 'solar_power',
+    iconBg: 'bg-blue-100/90',
+    iconColor: 'text-blue-700',
+    tagColor: 'text-blue-700',
+    linkColor: 'text-[#002888] hover:underline',
+    link: '/services/installation',
+  },
+  {
+    title: 'Tech & Web Development',
+    tag: 'Novel Tech',
+    description: 'Headless commerce platforms, custom dashboards and full-stack web apps. Built with modern stacks like Nuxt, Vue and Node — production-grade software for businesses scaling online.',
+    image: '/images/services-main.jpg',
+    icon: 'code_blocks',
+    iconBg: 'bg-purple-100/90',
+    iconColor: 'text-purple-700',
+    tagColor: 'text-purple-700',
+    linkColor: 'text-purple-700 hover:underline',
+    link: '/services/audit',
+  },
+  {
+    title: 'Home Appliances',
+    tag: 'Novel Homes',
+    description: 'Energy-saving appliances curated for Nigerian homes — from inverter-friendly fridges and fans to LED lighting and smart kitchen essentials. Lower your bills, lighten your load.',
+    image: '/images/services-main.jpg',
+    icon: 'cottage',
+    iconBg: 'bg-emerald-100/90',
+    iconColor: 'text-emerald-700',
+    tagColor: 'text-emerald-700',
+    linkColor: 'text-emerald-700 hover:underline',
+    link: '/shop',
+  },
+]
 
 const { addToCart } = useCart()
 
