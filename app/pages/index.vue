@@ -141,7 +141,7 @@
           </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <article
             v-for="service in services"
             :key="service.title"
@@ -154,19 +154,17 @@
                 loading="lazy"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
-              <div class="absolute top-4 left-4 w-12 h-12 rounded-2xl flex items-center justify-center backdrop-blur-md" :class="service.iconBg">
-                <span class="material-symbols-outlined text-2xl" :class="service.iconColor">{{ service.icon }}</span>
+              <div class="absolute top-4 left-4 w-11 h-11 rounded-2xl flex items-center justify-center bg-white/90 backdrop-blur-md shadow-sm">
+                <span class="material-symbols-outlined text-xl text-[#002888]">{{ service.icon }}</span>
               </div>
             </div>
-            <div class="p-8 flex flex-col flex-grow">
-              <span class="text-[10px] font-black uppercase tracking-widest mb-3" :class="service.tagColor">{{ service.tag }}</span>
-              <h3 class="text-xl font-black text-slate-900 mb-3 tracking-tight leading-tight">{{ service.title }}</h3>
+            <div class="p-6 flex flex-col flex-grow">
+              <h3 class="text-base font-black text-slate-900 mb-3 tracking-tight leading-tight">{{ service.title }}</h3>
               <p class="text-sm text-slate-500 leading-relaxed font-medium mb-6">{{ service.description }}</p>
 
               <NuxtLink
                 :to="service.link"
-                class="mt-auto inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest"
-                :class="service.linkColor"
+                class="mt-auto inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#002888] hover:underline"
               >
                 Learn More
                 <span class="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform">arrow_forward</span>
@@ -368,40 +366,32 @@ const { data: recentInsights } = await useAsyncData('home-insights', () => {
 
 const services = [
   {
-    title: 'Solar Energy Solutions',
-    tag: 'Novel Solar',
-    description: 'High-performance inverters, batteries and solar panels backed by our installation engineers — plus Novel Solar Academy training for the next generation of certified solar technicians.',
-    image: '/images/services-main.jpg',
-    icon: 'solar_power',
-    iconBg: 'bg-blue-100/90',
-    iconColor: 'text-blue-700',
-    tagColor: 'text-blue-700',
-    linkColor: 'text-[#002888] hover:underline',
-    link: '/services/installation',
-  },
-  {
-    title: 'Tech & Web Development',
-    tag: 'Novel Tech',
-    description: 'Headless commerce platforms, custom dashboards and full-stack web apps. Built with modern stacks like Nuxt, Vue and Node — production-grade software for businesses scaling online.',
-    image: '/images/services-main.jpg',
-    icon: 'code_blocks',
-    iconBg: 'bg-purple-100/90',
-    iconColor: 'text-purple-700',
-    tagColor: 'text-purple-700',
-    linkColor: 'text-purple-700 hover:underline',
+    title: 'Power & Load Audit Service',
+    description: 'Site walkthrough, appliance-by-appliance load profiling and a sized recommendation report — so you buy the right inverter and battery the first time.',
+    image: '/images/PowerAuditEngineer.png',
+    icon: 'monitoring',
     link: '/services/audit',
   },
   {
-    title: 'Home Appliances',
-    tag: 'Novel Homes',
-    description: 'Energy-saving appliances curated for Nigerian homes — from inverter-friendly fridges and fans to LED lighting and smart kitchen essentials. Lower your bills, lighten your load.',
-    image: '/images/services-main.jpg',
-    icon: 'cottage',
-    iconBg: 'bg-emerald-100/90',
-    iconColor: 'text-emerald-700',
-    tagColor: 'text-emerald-700',
-    linkColor: 'text-emerald-700 hover:underline',
-    link: '/shop',
+    title: 'Inverter, Solar Panel & Battery Installation',
+    description: 'Turnkey installation by our certified engineers: mounting, wiring, commissioning and live-system handover for residential and commercial sites.',
+    image: '/images/installation.png',
+    icon: 'construction',
+    link: '/services/installation',
+  },
+  {
+    title: 'Inverter Repair (Solar Panel, Battery etc Repairs)',
+    description: 'Diagnostics and component-level repair for inverters, panels and batteries — including non-Novel Solar units. Fast turnaround at our regional service hubs.',
+    image: '/images/InverterRepairEngineer.png',
+    icon: 'build',
+    link: '/services/repair',
+  },
+  {
+    title: 'Solar Panel, Tubular Battery & Inverter Maintenance',
+    description: 'Scheduled cleaning, electrolyte top-ups, terminal servicing and firmware checks to keep your system running at peak output for years.',
+    image: '/images/PanelMaintenance.png',
+    icon: 'cleaning_services',
+    link: '/services/maintenance',
   },
 ]
 
