@@ -46,10 +46,10 @@ export function configureCloudinary() {
   })
 }
 
-export async function uploadBufferToCloudinary(buffer: Buffer) {
+export async function uploadBufferToCloudinary(buffer: Buffer, folder = 'novel_solar_products') {
   return new Promise<any>((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
-      { folder: 'novel_solar_products' },
+      { folder },
       (error, result) => {
         if (error) {
           console.error('Cloudinary Upload Error:', error)
