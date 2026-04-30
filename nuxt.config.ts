@@ -1,4 +1,11 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+
+// Allowed iframe ancestors for the Bitrix24 portal embed. Modern browsers
+// drive this off CSP `frame-ancestors`; X-Frame-Options is set to SAMEORIGIN
+// only as a defensive default and is overridden per-route below for embeds.
+const BITRIX_FRAME_ANCESTOR = process.env.BITRIX_FRAME_ANCESTOR || 'https://*.bitrix24.com'
+const FRAME_ANCESTORS = `'self' ${BITRIX_FRAME_ANCESTOR}`
+
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
@@ -86,6 +93,20 @@ export default defineNuxtConfig({
     // freely browse the shop and checkout. Auth is only enforced on
     // /admin pages via the custom admin middleware.
     redirect: false,
+  },
+  // Allow the Bitrix24 portal to embed any page of the app in an iframe.
+  // X-Frame-Options is intentionally NOT set: the spec only supports DENY /
+  // SAMEORIGIN / ALLOW-FROM, and ALLOW-FROM is ignored by Chrome/Edge/Safari,
+  // so any value here would either block the embed or do nothing useful.
+  // Modern browsers honour CSP `frame-ancestors` instead, which supports
+  // multiple origins and wildcards.
+  routeRules: {
+    '/**': {
+      headers: {
+        'X-Frame-Options': `ALLOW-FROM ${BITRIX_FRAME_ANCESTOR}`,
+        'Content-Security-Policy': `frame-ancestors ${FRAME_ANCESTORS}`,
+      },
+    },
   },
   nitro: {
     storage: {

@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen flex flex-col bg-background font-sans text-gray-800">
     <!-- Navbar -->
-    <header class="flex items-center justify-between px-8 py-4 bg-white border-b border-gray-200 h-20 sticky top-0 z-50">
+    <header v-if="!isBitrixContext" class="flex items-center justify-between px-8 py-4 bg-white border-b border-gray-200 h-20 sticky top-0 z-50">
       <!-- Left Section: Logo & Links -->
       <div class="flex items-center gap-8">
         <NuxtLink to="/" class="flex items-center">
@@ -451,7 +451,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 mt-12 py-12">
+    <footer v-if="!isBitrixContext" class="bg-white border-t border-gray-200 mt-12 py-12">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
           
@@ -513,7 +513,7 @@
     </footer>
 
     <!-- Fixed Bottom Navigation (Mobile Only) -->
-    <nav class="fixed bottom-0 left-0 w-full bg-white/90 backdrop-blur-lg border-t border-gray-200 z-[60] md:hidden flex justify-around items-center pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] px-2 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+    <nav v-if="!isBitrixContext" class="fixed bottom-0 left-0 w-full bg-white/90 backdrop-blur-lg border-t border-gray-200 z-[60] md:hidden flex justify-around items-center pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] px-2 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
       <!-- Home -->
       <NuxtLink to="/" class="flex flex-col items-center p-2 text-gray-500 hover:text-[#002888] active:scale-95 transition-transform" exact-active-class="!text-[#002888]">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -557,6 +557,14 @@
 </template>
 
 <script setup lang="ts">
+const isBitrixContext = useState('isBitrixContext', () => false)
+
+useHead({
+  script: [
+    { src: 'https://api.bitrix24.com/api/v1/', defer: true }
+  ]
+})
+
 const isMobileMenuOpen = ref(false)
 const toggleMobileMenu = () => { isMobileMenuOpen.value = !isMobileMenuOpen.value }
 const activeDesktopMenu = ref<string | null>(null)
@@ -669,7 +677,25 @@ const handleLogout = async () => {
   }
 };
 
+const { initBitrixNavigation } = useBitrixNavigation()
+
 onMounted(() => {
   // Mobile search focus handler
+  
+  // Check if we are running inside an iframe (Bitrix24 context)
+  if (window !== window.parent) {
+    isBitrixContext.value = true
+    
+    // Wait for BX24 to be available and initialize
+    const checkBX24 = setInterval(() => {
+      if (typeof (window as any).BX24 !== 'undefined') {
+        clearInterval(checkBX24)
+        ;(window as any).BX24.init()
+        initBitrixNavigation() // Start navigation sync once BX24 is ready
+      }
+    }, 100)
+    // Clear after 5 seconds to avoid infinite loop
+    setTimeout(() => clearInterval(checkBX24), 5000)
+  }
 });
 </script>

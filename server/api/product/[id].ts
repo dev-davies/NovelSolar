@@ -1,20 +1,11 @@
-
-
 import { normalizeProperty } from '../../utils/normalizeProperty'
+import { fetchWithBitrixContext } from '../../utils/bitrixAuth'
 
 export default defineEventHandler(async (event) => {
-  const config = useRuntimeConfig();
   const id = getRouterParam(event, 'id');
-  const webhookUrl = config.bitrixWebhookUrl;
-
-  if (!webhookUrl) {
-    throw createError({ statusCode: 500, statusMessage: 'Bitrix Webhook URL missing in configuration.' });
-  }
-
-  const normalizedBitrixUrl = webhookUrl.endsWith('/') ? webhookUrl : `${webhookUrl}/`;
 
   try {
-    const response = await $fetch<{ result?: any }>(`${normalizedBitrixUrl}crm.product.get?id=${id}`);
+    const response = await fetchWithBitrixContext<{ result?: any }>(event, `crm.product.get?id=${id}`);
     const product = response.result || null;
     
     if (product) {

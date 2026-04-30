@@ -1,19 +1,7 @@
-
-
 import { normalizeProperty } from '../utils/normalizeProperty'
+import { fetchWithBitrixContext } from '../utils/bitrixAuth'
 
 export default defineEventHandler(async (event) => {
-  const config = useRuntimeConfig()
-
-  if (!config.bitrixWebhookUrl) {
-    console.error('Bitrix Webhook URL is missing from runtime config.');
-    throw createError({ 
-      statusCode: 500, 
-      statusMessage: 'Server configuration error: Bitrix Webhook URL is missing.' 
-    })
-  }
-
-  const baseUrl = config.bitrixWebhookUrl.replace(/\/$/, '') + '/';
 
   const query = getQuery(event)
   const brand = (query.brand as string || 'itel').toLowerCase()
@@ -22,7 +10,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     // ─── PHASE 1: Fetch products matching the dynamic brand (IDs and basic metadata) ───
-    const listResponse = await $fetch<{ result?: any[] }>(`${baseUrl}crm.product.list`, {
+    const listResponse = await fetchWithBitrixContext<{ result?: any[] }>(event, 'crm.product.list', {
       query: {
         'filter[%NAME]': brand,
         'filter[ACTIVE]': 'Y',
