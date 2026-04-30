@@ -140,6 +140,19 @@
 
           <div class="w-4"></div>
 
+          <!-- Blog Link -->
+          <div class="relative py-6">
+            <NuxtLink
+              to="/blog"
+              class="text-sm font-semibold text-gray-700 hover:text-[#002888] transition-colors"
+              :class="{ 'text-[#002888]': isBlogRoute }"
+            >
+              Blog
+            </NuxtLink>
+          </div>
+
+          <div class="w-4"></div>
+
           <!-- Quote Request Dropdown -->
           <div
             class="relative py-6"
@@ -621,9 +634,13 @@ const mobileMenuSections = computed(() => [
   { title: 'Services' },
   { title: 'Partners' },
   { title: 'About Us', items: aboutMenu },
+  { title: 'Blog', link: '/blog' },
   { title: 'Quote Request', items: quoteRequestMenu },
   { title: 'Support' },
 ])
+
+const route = useRoute()
+const isBlogRoute = computed(() => route.path === '/blog' || route.path.startsWith('/blog/'))
 
 const getCategoryLink = (title: string) => `/category/${title.toLowerCase().replace(/\s+/g, '-')}`
 
