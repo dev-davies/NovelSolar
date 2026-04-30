@@ -40,7 +40,8 @@ function parseStatelessSessionToken(token: string): UserSessionRecord | null {
   const parts = rawToken.split('.')
   if (parts.length !== 2) return null
 
-  const [encodedPayload, signature] = parts
+  const encodedPayload = parts[0]!
+  const signature = parts[1]!
   const expectedSignature = signValue(encodedPayload, secret)
   const actualBuffer = Buffer.from(signature)
   const expectedBuffer = Buffer.from(expectedSignature)
