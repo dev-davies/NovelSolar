@@ -1,4 +1,4 @@
-
+import { normalizeProperty } from '../utils/normalizeProperty'
 
 export default defineCachedEventHandler(async (event) => {
   const config = useRuntimeConfig();

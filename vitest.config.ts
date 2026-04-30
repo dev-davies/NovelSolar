@@ -8,6 +8,10 @@ export default defineVitestConfig({
     environment: 'jsdom',
     globals: true,
     exclude: ['e2e/**', '**/node_modules/**', '**/dist/**'],
+    env: {
+      NUXT_PUBLIC_SUPABASE_URL: 'http://localhost:54321',
+      NUXT_PUBLIC_SUPABASE_KEY: 'test-key',
+    }
   },
   define: {
     'import.meta.client': true,
