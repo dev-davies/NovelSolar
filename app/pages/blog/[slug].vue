@@ -7,65 +7,59 @@
       </NuxtLink>
     </div>
 
-    <ContentDoc :path="contentPath">
-      <template #default="{ doc }">
-        <article class="max-w-4xl mx-auto px-4 pb-24">
-          <header class="text-center mb-14">
-            <div class="flex items-center justify-center gap-3 mb-5">
-              <span v-if="doc.category" class="bg-blue-50 text-[#002888] text-xs font-black px-3 py-1 rounded-md uppercase tracking-widest">{{ doc.category }}</span>
-              <span class="text-slate-300">•</span>
-              <p class="text-sm text-slate-500 font-medium">{{ formatDate(doc.date) }}</p>
-            </div>
-            
-            <h1 class="text-4xl md:text-6xl font-black text-slate-900 leading-tight tracking-tight mb-6">
-              {{ doc.title }}
-            </h1>
-          
-            <div v-if="doc.author" class="flex items-center justify-center gap-2 text-slate-600">
-              <span class="material-symbols-outlined text-xl">edit_document</span>
-              <span class="font-bold text-sm">Written by {{ doc.author }}</span>
-            </div>
-          </header>
-
-          <div class="aspect-video bg-slate-50 rounded-3xl overflow-hidden shadow-xl border border-slate-100 mb-14">
-            <NuxtImg
-              v-if="doc.image"
-              :src="doc.image"
-              width="1200"
-              height="675"
-              loading="lazy"
-              format="webp"
-              class="w-full h-full object-cover"
-              :alt="doc.title"
-            />
-            <NuxtImg
-              v-else
-              src="/images/fallback-post.png"
-              width="1200"
-              height="675"
-              loading="lazy"
-              format="webp"
-              class="w-full h-full object-cover"
-              :alt="doc.title"
-            />
-          </div>
-
-          <div class="prose prose-slate lg:prose-xl max-w-none prose-headings:font-black prose-a:text-[#002888] prose-a:font-bold">
-            <ContentRenderer :value="doc" />
-          </div>
-        </article>
-      </template>
-
-      <template #not-found>
-        <div class="min-h-[60vh] flex flex-col items-center justify-center p-8 text-center">
-          <h1 class="text-4xl md:text-5xl font-black text-slate-900 mb-4">Insight Not Found</h1>
-          <p class="text-slate-500 mb-8">The article you are looking for does not exist.</p>
-          <NuxtLink to="/blog" class="inline-flex items-center gap-2 bg-[#002888] text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-900 transition-all">
-            Back to Blog
-          </NuxtLink>
+    <article v-if="post" class="max-w-4xl mx-auto px-4 pb-24">
+      <header class="text-center mb-14">
+        <div class="flex items-center justify-center gap-3 mb-5">
+          <span v-if="post.category" class="bg-blue-50 text-[#002888] text-xs font-black px-3 py-1 rounded-md uppercase tracking-widest">{{ post.category }}</span>
+          <span class="text-slate-300">•</span>
+          <p class="text-sm text-slate-500 font-medium">{{ formatDate(post.date) }}</p>
         </div>
-      </template>
-    </ContentDoc>
+
+        <h1 class="text-4xl md:text-6xl font-black text-slate-900 leading-tight tracking-tight mb-6">
+          {{ post.title }}
+        </h1>
+
+        <div v-if="post.author" class="flex items-center justify-center gap-2 text-slate-600">
+          <span class="material-symbols-outlined text-xl">edit_document</span>
+          <span class="font-bold text-sm">Written by {{ post.author }}</span>
+        </div>
+      </header>
+
+      <div class="aspect-video bg-slate-50 rounded-3xl overflow-hidden shadow-xl border border-slate-100 mb-14">
+        <NuxtImg
+          v-if="post.image"
+          :src="post.image"
+          width="1200"
+          height="675"
+          loading="lazy"
+          format="webp"
+          class="w-full h-full object-cover"
+          :alt="post.title"
+        />
+        <NuxtImg
+          v-else
+          src="/images/fallback-post.png"
+          width="1200"
+          height="675"
+          loading="lazy"
+          format="webp"
+          class="w-full h-full object-cover"
+          :alt="post.title"
+        />
+      </div>
+
+      <div class="prose prose-slate lg:prose-xl max-w-none prose-headings:font-black prose-a:text-[#002888] prose-a:font-bold">
+        <ContentRenderer :value="post" />
+      </div>
+    </article>
+
+    <div v-else class="min-h-[60vh] flex flex-col items-center justify-center p-8 text-center">
+      <h1 class="text-4xl md:text-5xl font-black text-slate-900 mb-4">Insight Not Found</h1>
+      <p class="text-slate-500 mb-8">The article you are looking for does not exist.</p>
+      <NuxtLink to="/blog" class="inline-flex items-center gap-2 bg-[#002888] text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-900 transition-all">
+        Back to Blog
+      </NuxtLink>
+    </div>
   </div>
 </template>
 
@@ -85,11 +79,14 @@ const slug = computed(() => {
 
 const contentPath = computed(() => `/blog/${slug.value}`)
 
-const { data: seoDoc } = await useAsyncData(
-  () => `blog-seo-${slug.value || 'loading'}`,
-  () => {
+const { data: post } = await useAsyncData(
+  () => `blog-post-${slug.value || 'loading'}`,
+  async () => {
     if (!slug.value) return null
-    return queryContent('blog').where({ _path: contentPath.value }).findOne()
+    const doc = await queryContent('blog')
+      .where({ _path: contentPath.value, draft: { $ne: true } })
+      .findOne()
+    return doc || null
   },
   { watch: [slug] }
 )
@@ -110,11 +107,11 @@ const formatDate = (dateString) => {
 }
 
 useSeoMeta({
-  title: () => seoDoc.value?.title ? `${seoDoc.value.title} | Novel Solar Insights` : 'Novel Solar Insights',
-  description: () => seoDoc.value?.description || defaultDescription,
-  ogTitle: () => seoDoc.value?.title || 'Novel Solar Insights',
-  ogDescription: () => seoDoc.value?.description || defaultDescription,
-  ogImage: () => toAbsoluteImage(seoDoc.value?.image),
+  title: () => post.value?.title ? `${post.value.title} | Novel Solar Insights` : 'Novel Solar Insights',
+  description: () => post.value?.description || defaultDescription,
+  ogTitle: () => post.value?.title || 'Novel Solar Insights',
+  ogDescription: () => post.value?.description || defaultDescription,
+  ogImage: () => toAbsoluteImage(post.value?.image),
   ogUrl: () => `${siteBaseUrl}${route.path}`,
   twitterCard: 'summary_large_image'
 })

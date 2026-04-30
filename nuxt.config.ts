@@ -54,6 +54,10 @@ export default defineNuxtConfig({
     smtpUser: process.env.SMTP_USER,
     smtpPass: process.env.SMTP_PASS,
     smtpFrom: process.env.SMTP_FROM,
+    blogGithubToken: process.env.BLOG_GITHUB_TOKEN,
+    blogGithubOwner: process.env.BLOG_GITHUB_OWNER || 'dev-davies',
+    blogGithubRepo: process.env.BLOG_GITHUB_REPO || 'NovelSolar',
+    blogGithubBranch: process.env.BLOG_GITHUB_BRANCH || 'master',
     public: {
       whatsappNumber: process.env.NUXT_PUBLIC_WHATSAPP_NUMBER || '2348022119908',
       whatsappNumberFormatted: process.env.NUXT_PUBLIC_WHATSAPP_NUMBER_FORMATTED || '+234 802 211 9908',

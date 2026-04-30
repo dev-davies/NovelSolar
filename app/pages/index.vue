@@ -280,7 +280,7 @@ const { data: products, pending } = useFetch('/api/inventory')
 const featuredProducts = computed(() => excludeServiceProducts(products.value || []).slice(0, 8))
 
 const { data: recentInsights } = await useAsyncData('home-insights', () => {
-  return queryContent('blog').sort({ date: -1 }).limit(3).find()
+  return queryContent('blog').where({ draft: { $ne: true } }).sort({ date: -1 }).limit(3).find()
 })
 
 const { addToCart } = useCart()

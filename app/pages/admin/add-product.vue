@@ -348,6 +348,10 @@ const handleLogout = async () => {
             <span class="material-symbols-outlined text-sm">inventory_2</span>
             Manage Inventory
           </NuxtLink>
+          <NuxtLink to="/admin/manage-blog" class="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all shadow-sm">
+            <span class="material-symbols-outlined text-sm">article</span>
+            Manage Blog
+          </NuxtLink>
           <button @click="handleLogout" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all">
             <span class="material-symbols-outlined text-sm">logout</span>
             Logout
