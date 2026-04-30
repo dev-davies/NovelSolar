@@ -32,7 +32,7 @@ const handleLogin = async () => {
       }
     })
 
-    await navigateTo('/admin/manage-products')
+    await navigateTo('/admin')
   } catch (error: any) {
     console.error('Login failed:', error)
     errorMessage.value = error?.data?.statusMessage || 'Invalid email or password.'
