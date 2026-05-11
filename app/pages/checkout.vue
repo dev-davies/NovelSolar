@@ -91,8 +91,10 @@ const submitOrder = async () => {
       method: 'POST',
       body: {
         customer: form,
-        cart: cart.value,
-        total: cartTotalAmount.value,
+        cart: cart.value.map((item) => ({
+          id: item.id,
+          quantity: item.quantity
+        })),
         branch: selectedBranch.value,
         paymentMethod: paymentMethod.value
       }

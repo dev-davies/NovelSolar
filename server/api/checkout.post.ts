@@ -1,15 +1,127 @@
 import nodemailer from 'nodemailer';
+import { z } from 'zod';
 import { generateOrderReceiptHtml } from '../utils/emailTemplate';
+import { fetchWithBitrixContext } from '../utils/bitrixAuth';
+import { normalizeProperty } from '../utils/normalizeProperty';
+
+type SubmittedCartItem = {
+  id?: string | number;
+  ID?: string | number;
+  quantity?: number;
+  image?: string;
+}
+
+type TrustedCartItem = {
+  id: string | number;
+  name: string;
+  price: number;
+  image: string;
+  quantity: number;
+}
+
+const checkoutSchema = z.object({
+  customer: z.object({
+    firstName: z.string().trim().min(2).max(80),
+    lastName: z.string().trim().min(2).max(80),
+    email: z.string().trim().email().max(254),
+    phone: z.string().trim().min(7).max(30),
+    address: z.string().trim().min(5).max(500),
+    note: z.string().trim().max(1000).optional().default(''),
+  }),
+  cart: z.array(z.object({
+    id: z.union([z.string().trim().min(1).max(80), z.number().int().positive()]).optional(),
+    ID: z.union([z.string().trim().min(1).max(80), z.number().int().positive()]).optional(),
+    quantity: z.number().int().min(1).max(99),
+  }).refine((item) => item.id || item.ID, {
+    message: 'A product id is required.',
+  })).min(1).max(50),
+  branch: z.object({
+    address: z.string().trim().max(500).optional(),
+    state: z.string().trim().max(100).optional(),
+    name: z.string().trim().max(160).optional(),
+  }).passthrough().optional().default({}),
+  paymentMethod: z.string().trim().min(2).max(80).optional().default('Bank Transfer'),
+});
+
+async function resolveTrustedCart(event: any, submittedCart: SubmittedCartItem[]) {
+  if (!Array.isArray(submittedCart) || submittedCart.length === 0) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Cart cannot be empty.',
+    });
+  }
+
+  const trustedCart: TrustedCartItem[] = [];
+
+  for (const item of submittedCart) {
+    const productId = item?.id || item?.ID;
+    const quantity = Number(item?.quantity);
+
+    if (!productId || !Number.isInteger(quantity) || quantity < 1 || quantity > 99) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: 'Cart contains an invalid product or quantity.',
+      });
+    }
+
+    const response = await fetchWithBitrixContext<{ result?: any }>(event, `crm.product.get?id=${encodeURIComponent(String(productId))}`);
+    const product = response?.result;
+
+    if (!product || product.ACTIVE === 'N') {
+      throw createError({
+        statusCode: 400,
+        statusMessage: 'Cart contains an unavailable product.',
+      });
+    }
+
+    const price = Number(product.PRICE);
+
+    if (!Number.isFinite(price) || price < 0) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: 'Cart contains a product with invalid pricing.',
+      });
+    }
+
+    const cloudinaryUrl = normalizeProperty(product.PROPERTY_102);
+    const bitrixImage = normalizeProperty(product.PROPERTY_44)
+      || normalizeProperty(product.PREVIEW_PICTURE)
+      || normalizeProperty(product.DETAIL_PICTURE);
+    const image = cloudinaryUrl
+      || (bitrixImage ? `/api/bitrix-image?url=${encodeURIComponent(bitrixImage)}` : '/images/placeholder.png');
+
+    trustedCart.push({
+      id: product.ID || productId,
+      name: product.NAME || `Product ${productId}`,
+      price,
+      image,
+      quantity,
+    });
+  }
+
+  const total = trustedCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+  return { cart: trustedCart, total };
+}
 
 export default defineEventHandler(async (event) => {
-  const body = sanitizePayload(await readBody(event));
+  const rawBody = sanitizePayload(await readBody(event));
+  const parsedBody = checkoutSchema.safeParse(rawBody);
+
+  if (!parsedBody.success) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: parsedBody.error.issues[0]?.message || 'Invalid checkout details.',
+    });
+  }
+
+  const body = parsedBody.data;
   const config = useRuntimeConfig();
   const bitrixUrl = config.bitrixWebhookUrl;
   
   // Safely extract data
   const customer = body.customer || {};
-  const cart = body.cart || [];
-  const total = body.total || body.cartTotal || 0;
+  const { cart, total } = await resolveTrustedCart(event, body.cart || []);
   const branch = body.branch || {};
   const paymentMethod = body.paymentMethod || 'Bank Transfer';
 
