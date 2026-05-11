@@ -1,3 +1,4 @@
+import type { BitrixLeadResponse } from '../types/bitrix'
 export default defineEventHandler(async (event) => {
   const body = sanitizePayload(await readBody(event))
   const config = useRuntimeConfig()
@@ -19,7 +20,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     // Format the data for Bitrix crm.lead.add
-    const response: any = await $fetch(`${normalizedUrl}crm.lead.add`, {
+    const response = await $fetch<BitrixLeadResponse>(`${normalizedUrl}crm.lead.add`, {
       method: 'POST',
       body: {
         fields: {

@@ -18,8 +18,8 @@ All endpoints run relative to the `/api/` base route.
 ### Checkout Processing
 `POST /api/checkout`
 Processes an eCommerce cart payload, pushing customer data directly into the Bitrix CRM as a Lead and dispatching confirmation emails.
-- **Body:** `{ customerDetails: Object, orderItems: Array, totalAmount: Number }`
-- **Response:** `200 OK` `{ success: boolean, leadId: number, orderId: string }`
+- **Body:** `{ customer: { firstName: string, lastName: string, email: string, phone?: string, address?: string, note?: string }, cart: Array<{ id?: string|number, ID?: string|number, quantity: number }>, branch?: { address?: string, state?: string, name?: string }, paymentMethod?: string }`
+- **Response:** `200 OK` `{ success: boolean, leadId: number, orderId: string, message: string }`
 
 ### Contact Inquiry
 `POST /api/contact`
@@ -30,14 +30,14 @@ Generates a "General Inquiry" Lead within Bitrix24.
 ### Quote Generation
 `POST /api/quote`
 Calculates solar sizing references and fires a custom Lead payload into Bitrix.
-- **Body:** `{ type: string, loadDetails: Object, personalInfo: Object }`
-- **Response:** `200 OK` `{ success: true, leadId: number }`
+- **Body:** `{ firstName: string, lastName: string, email: string, phone: string, projectType: string, details?: string }`
+- **Response:** `200 OK` `{ success: boolean, leadId: number, message: string }`
 
 ### Service Booking
 `POST /api/book-service`
 Processes field requests such as audits, installations, and repairs.
-- **Body:** `{ firstName: string, lastName: string, email: string, phone: string, address: string, preferredDate: string, serviceType: string, details: string }`
-- **Response:** `200 OK` `{ success: true }`
+- **Body:** `{ firstName: string, lastName: string, email: string, phone: string, address: string, preferredDate: string, serviceType: string, details?: string }`
+- **Response:** `200 OK` `{ success: boolean, leadId: number }`
 
 ---
 
@@ -65,6 +65,15 @@ Captures uncaught frontend client exceptions entirely offline and logs them into
 - **`GET /api/admin/list-admins`**: Fetches registered Sub-administrators from Supabase Auth DB.
 - **`POST /api/admin/create-admin`**: Invites a new Auth user via Supabase.
 - **`POST /api/admin/delete-admin`**: Revokes an administrator's access to the CMS system securely.
+
+### Fallback Storage Management
+*These endpoints allow administrators to review and manage submissions that were saved locally due to Bitrix24 connectivity issues.*
+- **`GET /api/admin/failed-contacts`**: Retrieves failed contact inquiries stored locally during Bitrix outages.
+  - **Response:** `200 OK` `{ success: true, contacts: Array, count: number }`
+- **`GET /api/admin/failed-bookings`**: Retrieves failed service bookings stored locally during Bitrix outages.
+  - **Response:** `200 OK` `{ success: true, bookings: Array, count: number }`
+- **`GET /api/admin/failed-quotes`**: Retrieves failed quote requests stored locally during Bitrix outages.
+  - **Response:** `200 OK` `{ success: true, quotes: Array, count: number }`
 
 ---
 
