@@ -5,6 +5,7 @@ import { generateOrderReceiptHtml } from '../utils/emailTemplate';
 import { fetchWithBitrixContext } from '../utils/bitrixAuth';
 import { normalizeProperty } from '../utils/normalizeProperty';
 import type { BitrixLeadResponse } from '../types/bitrix'
+import { logger } from '../utils/logger'
 
 type SubmittedCartItem = {
   id?: string | number;
@@ -163,14 +164,8 @@ export default defineEventHandler(async (event) => {
     ${orderDetailsList}
   `;
 
-  // 2. SEND TO BITRIX CRM (Create a Lead) — with Safety Net fallback
-  let crmSuccess = false;
-
-  try {
-    if (!bitrixUrl) throw new Error('Bitrix Webhook URL is missing from ENV');
-    const normalizedBitrixUrl = bitrixUrl.endsWith('/') ? bitrixUrl : `${bitrixUrl}/`;
-
-    console.log(`Attempting to send order ${orderId} to Bitrix...`);
+    logger.info('Checkout API', `Attempting to send order ${orderId} to Bitrix...`);
+    
     const response = await $fetch<BitrixLeadResponse>(`${normalizedBitrixUrl}crm.lead.add`, {
       method: 'POST',
       body: {
@@ -191,20 +186,7 @@ export default defineEventHandler(async (event) => {
 
     if (response.error) throw new Error(response.error_description);
 
-    crmSuccess = true;
-    console.log(`✅ Successfully created Lead in Bitrix for order ${orderId}`);
-  } catch (error: any) {
-    console.error(`[CHECKOUT ERROR] Bitrix failed for order ${orderId}:`, error.message);
-
-    // THE SAFETY NET: Save the order to Nitro's local storage
-    try {
-      const storage = useStorage('data:failed-orders');
-      await storage.setItem(orderId, orderPayload);
-      console.log(`[CHECKOUT RECOVERY] Order ${orderId} saved to fallback queue.`);
-    } catch (storageError) {
-      console.error('[CRITICAL] Failed to save order to fallback storage:', storageError);
-    }
-  }
+    logger.info('Checkout API', `✅ Successfully created Lead in Bitrix for order ${orderId}`, { orderId });
 
   // 3. GENERATE PREMIUM EMAIL HTML (always runs regardless of CRM status)
   const generatedOrderNumber = 'NS-' + Math.floor(100000 + Math.random() * 900000);

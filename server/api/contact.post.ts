@@ -1,4 +1,5 @@
 import type { BitrixLeadResponse } from '../types/bitrix'
+import { logger } from '../utils/logger'
 export default defineEventHandler(async (event) => {
   const body = sanitizePayload(await readBody(event));
   const config = useRuntimeConfig();
@@ -29,6 +30,8 @@ export default defineEventHandler(async (event) => {
   const normalizedUrl = webhookUrl.endsWith('/') ? webhookUrl : `${webhookUrl}/`;
 
   try {
+    logger.info('Contact API', `Attempting to send contact inquiry to Bitrix for ${body.email}`);
+
     const response = await $fetch<BitrixLeadResponse>(`${normalizedUrl}crm.lead.add`, {
       method: 'POST',
       body: {
@@ -46,15 +49,18 @@ export default defineEventHandler(async (event) => {
     });
 
     if (response.error) {
+      logger.error('Contact API', 'Bitrix error response', { error: response.error, error_description: response.error_description });
       throw new Error(response.error_description || 'Unknown Bitrix error');
     }
+
+    logger.info('Contact API', `Successfully created Lead in Bitrix for ${body.email}`, { leadId: response.result });
 
     return {
       success: true,
       leadId: response.result,
     };
   } catch (error: any) {
-    console.error('Bitrix Contact Inquiry Error:', error?.data || error);
+    logger.error('Contact API', 'Bitrix Contact Inquiry Error', { error: error?.data || error, email: body.email });
 
     // THE SAFETY NET: Save the contact inquiry to Nitro's local storage
     try {
@@ -65,9 +71,9 @@ export default defineEventHandler(async (event) => {
         timestamp: new Date().toISOString(),
         id: contactId,
       });
-      console.log(`[CONTACT RECOVERY] Contact inquiry ${contactId} saved to fallback queue.`);
+      logger.info('Contact API', `Contact inquiry ${contactId} saved to fallback queue.`);
     } catch (storageError) {
-      console.error('[CRITICAL] Failed to save contact inquiry to fallback storage:', storageError);
+      logger.error('Contact API', '[CRITICAL] Failed to save contact inquiry to fallback storage', { error: storageError });
     }
 
     throw createError({
