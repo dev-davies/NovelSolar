@@ -87,7 +87,7 @@ const submitOrder = async () => {
 
   isSubmitting.value = true;
   try {
-    await $fetch('/api/checkout', {
+    await useNuxtApp().$apiFetch('/api/checkout', {
       method: 'POST',
       body: {
         customer: form,
@@ -114,7 +114,7 @@ const submitOrder = async () => {
 
 onMounted(async () => {
   try {
-    const profile = await $fetch('/api/user/profile');
+    const profile = await useNuxtApp().$apiFetch('/api/user/profile');
     if (profile) {
       // Auto-fill form fields if data exists
       if (profile.firstName) form.firstName = profile.firstName;

@@ -35,7 +35,7 @@ const submitBooking = async () => {
   errorMessage.value = ''
   
   try {
-    await $fetch('/api/book-service', {
+    await useNuxtApp().$apiFetch('/api/book-service', {
       method: 'POST',
       body: form.value
     })

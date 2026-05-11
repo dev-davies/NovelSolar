@@ -65,7 +65,7 @@ const fetchProducts = async (isLoadMore = false) => {
   }
 
   try {
-    const response = await $fetch('/api/products', {
+    const response = await useNuxtApp().$apiFetch('/api/products', {
       query: {
         q: activeSearch.value,
         start: isLoadMore ? nextOffset.value : 0

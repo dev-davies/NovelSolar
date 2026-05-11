@@ -148,7 +148,7 @@ const submitQuote = async () => {
   errorMessage.value = ''
   
   try {
-    await $fetch('/api/quote', {
+    await useNuxtApp().$apiFetch('/api/quote', {
       method: 'POST',
       body: form.value
     })

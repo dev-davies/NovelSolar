@@ -92,7 +92,7 @@ const performSearch = async (isLoadMore = false) => {
   }
 
   try {
-    const response = await $fetch('/api/admin/search-products', {
+    const response = await useNuxtApp().$apiFetch('/api/admin/search-products', {
       method: 'POST',
       body: {
         query: searchQuery.value,
@@ -179,7 +179,7 @@ const saveChanges = async () => {
       formData.append('newGalleryFiles', file)
     })
 
-    const response = await $fetch('/api/admin/update-product', {
+    const response = await useNuxtApp().$apiFetch('/api/admin/update-product', {
       method: 'POST',
       body: formData
     })
@@ -257,7 +257,7 @@ const deleteProduct = async () => {
   showDeleteConfirm.value = false
 
   try {
-    const response = await $fetch('/api/admin/delete-product', {
+    const response = await useNuxtApp().$apiFetch('/api/admin/delete-product', {
       method: 'POST',
       body: {
         productId: editForm.value.id,
@@ -284,7 +284,7 @@ useHead({
 
 const handleLogout = async () => {
   try {
-    await $fetch('/api/admin/auth/logout', { method: 'POST' })
+    await useNuxtApp().$apiFetch('/api/admin/auth/logout', { method: 'POST' })
     navigateTo('/admin/login')
   } catch (error) {
     console.error('Logout failed:', error)

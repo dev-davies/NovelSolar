@@ -24,7 +24,7 @@ const isProfileIncomplete = computed(() => {
 const fetchProfile = async () => {
   isLoadingProfile.value = true;
   try {
-    const data = await $fetch('/api/user/profile');
+    const data = await useNuxtApp().$apiFetch('/api/user/profile');
     profile.value = data;
     // Pre-fill form
     form.value = {
@@ -51,7 +51,7 @@ const handleUpdateProfile = async () => {
 
   isLoading.value = true;
   try {
-    await $fetch('/api/user/profile', {
+    await useNuxtApp().$apiFetch('/api/user/profile', {
       method: 'PUT',
       body: form.value
     });
@@ -68,7 +68,7 @@ const handleUpdateProfile = async () => {
 const handleLogout = async () => {
   isLoading.value = true;
   try {
-    await $fetch('/api/auth/logout', { method: 'POST' });
+    await useNuxtApp().$apiFetch('/api/auth/logout', { method: 'POST' });
     navigateTo('/login');
   } catch (error) {
     console.error('Logout error:', error);

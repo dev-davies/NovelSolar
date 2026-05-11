@@ -24,7 +24,7 @@ const handleLogin = async () => {
   errorMessage.value = ''
 
   try {
-    await $fetch('/api/admin/auth/login', {
+    await useNuxtApp().$apiFetch('/api/admin/auth/login', {
       method: 'POST',
       body: {
         email: email.value,
