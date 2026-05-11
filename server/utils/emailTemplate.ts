@@ -1,3 +1,5 @@
+import type { OrderDetails, ServiceBookingDetails } from '../types/database'
+
 function getEmailTemplateUrls() {
   const config = useRuntimeConfig();
   const siteUrl = config.public.baseUrl.replace(/\/$/, '');
@@ -9,7 +11,7 @@ function getEmailTemplateUrls() {
   };
 }
 
-export function generateOrderReceiptHtml(orderDetails: any) {
+export function generateOrderReceiptHtml(orderDetails: OrderDetails) {
   const { siteUrl, logoUrl, whatsappUrl } = getEmailTemplateUrls();
   const productsHtml = orderDetails.products.map((item: any) => `
     <tr>
@@ -149,7 +151,7 @@ export function generateOrderReceiptHtml(orderDetails: any) {
   `;
 }
 
-export function generateServiceBookingHtml(bookingDetails: any) {
+export function generateServiceBookingHtml(bookingDetails: ServiceBookingDetails) {
   const { siteUrl, logoUrl, whatsappUrl } = getEmailTemplateUrls();
   return `
   <!DOCTYPE html>

@@ -1,3 +1,4 @@
+import type { FailedBooking } from '../../types/database'
 export default defineEventHandler(async (event) => {
   try {
     const storage = useStorage('data:failed-bookings')
@@ -12,13 +13,13 @@ export default defineEventHandler(async (event) => {
     // Fetch the full data for each failed booking
     const failedBookings = await Promise.all(
       keys.map(async (key) => {
-        const bookingData = await storage.getItem(key)
+        const bookingData = await storage.getItem<FailedBooking>(key)
         return bookingData
       })
     )
 
     // Sort by timestamp (newest first)
-    failedBookings.sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    failedBookings.sort((a: FailedBooking, b: FailedBooking) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
 
     return {
       success: true,

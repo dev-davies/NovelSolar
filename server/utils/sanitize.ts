@@ -12,7 +12,7 @@ export const isValidEmail = (email: unknown): boolean => {
 }
 
 // Utility to escape potentially dangerous HTML characters
-const escapeHtml = (unsafe: string) => {
+const escapeHtml = (unsafe: string): string => {
   if (typeof unsafe !== 'string') return unsafe;
   return unsafe
     .replace(/&/g, "&amp;")
@@ -27,7 +27,7 @@ const escapeHtml = (unsafe: string) => {
  * This ensures that before saving payloads to the database or passing API data,
  * no malicious script payloads get processed.
  */
-export const sanitizePayload = (payload: any): any => {
+export const sanitizePayload = (payload: unknown): unknown => {
   if (typeof payload === 'string') {
     return escapeHtml(payload);
   }
@@ -37,8 +37,8 @@ export const sanitizePayload = (payload: any): any => {
   }
 
   if (payload !== null && typeof payload === 'object') {
-    const sanitizedObj: Record<string, any> = {};
-    for (const [key, value] of Object.entries(payload)) {
+    const sanitizedObj: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(payload as Record<string, unknown>)) {
       sanitizedObj[key] = sanitizePayload(value);
     }
     return sanitizedObj;

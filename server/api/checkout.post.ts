@@ -1,8 +1,10 @@
+import type { TrustedCartItem } from '../types/database'
 import nodemailer from 'nodemailer';
 import { z } from 'zod';
 import { generateOrderReceiptHtml } from '../utils/emailTemplate';
 import { fetchWithBitrixContext } from '../utils/bitrixAuth';
 import { normalizeProperty } from '../utils/normalizeProperty';
+import type { BitrixLeadResponse } from '../types/bitrix'
 
 type SubmittedCartItem = {
   id?: string | number;
@@ -64,7 +66,7 @@ async function resolveTrustedCart(event: any, submittedCart: SubmittedCartItem[]
       });
     }
 
-    const response = await fetchWithBitrixContext<{ result?: any }>(event, `crm.product.get?id=${encodeURIComponent(String(productId))}`);
+    const response = await fetchWithBitrixContext<{ result?: { ID: string | number; ACTIVE: string; NAME: string; PRICE: string | number; PROPERTY_102: any; PROPERTY_44?: any; PREVIEW_PICTURE?: any; DETAIL_PICTURE?: any; [key: string]: any } }>(event, `crm.product.get?id=${encodeURIComponent(String(productId))}`);
     const product = response?.result;
 
     if (!product || product.ACTIVE === 'N') {
@@ -148,7 +150,7 @@ export default defineEventHandler(async (event) => {
   };
 
   // 1. FORMAT CART FOR CRM
-  const orderDetailsList = cart.map((item: any) => `- ${item.quantity}x ${item.name} (₦${item.price.toLocaleString()})`).join('\n');
+   const orderDetailsList = cart.map((item: TrustedCartItem) => `- ${item.quantity}x ${item.name} (₦${item.price.toLocaleString()})`).join('\n');
   
   const crmComments = `
     NEW WEB ORDER (${orderId})
@@ -169,7 +171,7 @@ export default defineEventHandler(async (event) => {
     const normalizedBitrixUrl = bitrixUrl.endsWith('/') ? bitrixUrl : `${bitrixUrl}/`;
 
     console.log(`Attempting to send order ${orderId} to Bitrix...`);
-    const response: any = await $fetch(`${normalizedBitrixUrl}crm.lead.add`, {
+    const response = await $fetch<BitrixLeadResponse>(`${normalizedBitrixUrl}crm.lead.add`, {
       method: 'POST',
       body: {
         fields: {
@@ -215,7 +217,7 @@ export default defineEventHandler(async (event) => {
     subtotal: total,
     shipping: 0,
     total: total,
-    products: cart.map((item: any) => {
+     products: cart.map((item: TrustedCartItem) => {
       let finalImage = item.image || item.PROPERTY_102 || item.PREVIEW_PICTURE || 'https://novelsolar.ng/images/placeholder.png';
       if (typeof finalImage === 'string' && finalImage.startsWith('/')) {
         finalImage = `https://novelsolar.ng${finalImage}`;

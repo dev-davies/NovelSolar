@@ -1,3 +1,4 @@
+import type { FailedQuote } from '../../types/database'
 export default defineEventHandler(async (event) => {
   try {
     const storage = useStorage('data:failed-quotes')
@@ -12,13 +13,13 @@ export default defineEventHandler(async (event) => {
     // Fetch the full data for each failed quote
     const failedQuotes = await Promise.all(
       keys.map(async (key) => {
-        const quoteData = await storage.getItem(key)
+        const quoteData = await storage.getItem<FailedQuote>(key)
         return quoteData
       })
     )
 
     // Sort by timestamp (newest first)
-    failedQuotes.sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    failedQuotes.sort((a: FailedQuote, b: FailedQuote) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
 
     return {
       success: true,
