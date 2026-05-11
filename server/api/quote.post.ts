@@ -60,9 +60,24 @@ export default defineEventHandler(async (event) => {
     };
   } catch (error: any) {
     console.error('❌ Bitrix Lead Creation Error:', error);
+
+    // THE SAFETY NET: Save the quote request to Nitro's local storage
+    try {
+      const storage = useStorage('data:failed-quotes');
+      const quoteId = `QT-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+      await storage.setItem(quoteId, {
+        ...body,
+        timestamp: new Date().toISOString(),
+        id: quoteId,
+      });
+      console.log(`[QUOTE RECOVERY] Quote ${quoteId} saved to fallback queue.`);
+    } catch (storageError) {
+      console.error('[CRITICAL] Failed to save quote to fallback storage:', storageError);
+    }
+
     throw createError({
       statusCode: 500,
-      statusMessage: 'Failed to submit quote request. Please try again later.'
+      statusMessage: 'Failed to submit quote request. (Saved locally for retry)'
     });
   }
 });
