@@ -9,7 +9,7 @@ const syncSession = async () => {
   isSyncing.value = true
   
   try {
-    const response = await $fetch('/api/auth/session', {
+    const response = await useNuxtApp().$apiFetch('/api/auth/session', {
       method: 'POST'
     })
     

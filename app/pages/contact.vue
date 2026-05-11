@@ -215,7 +215,7 @@ const sendMessage = async () => {
   errorMessage.value = ''
 
   try {
-    await $fetch('/api/contact', {
+    await useNuxtApp().$apiFetch('/api/contact', {
       method: 'POST',
       body: form.value,
     })

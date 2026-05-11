@@ -21,6 +21,16 @@ function getSessionSecret() {
   )
 }
 
+function assertPersistentUserSessionStorage() {
+  if (process.env.NODE_ENV === 'production' && !process.env.KV_REST_API_URL) {
+    console.error('[AUTH] Persistent user session storage is not configured. Set KV_REST_API_URL or sessions may be lost in production.')
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Persistent user session storage is not configured.'
+    })
+  }
+}
+
 function signValue(value: string, secret: string) {
   return createHmac('sha256', secret).update(value).digest('base64url')
 }
@@ -61,6 +71,8 @@ function parseStatelessSessionToken(token: string): UserSessionRecord | null {
 }
 
 export async function createUserSession(params: { contactId: string, email: string }) {
+  assertPersistentUserSessionStorage()
+
   const token = `user_session_${randomUUID()}`
   const createdAt = Date.now()
   const expiresAt = createdAt + (USER_SESSION_MAX_AGE_SECONDS * 1000)

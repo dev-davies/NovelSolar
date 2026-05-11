@@ -668,7 +668,7 @@ const userInitials = computed(() => {
 
 const handleLogout = async () => {
   try {
-    await $fetch('/api/auth/logout', { method: 'POST' });
+    await useNuxtApp().$apiFetch('/api/auth/logout', { method: 'POST' });
     // Clear user data and redirect
     user.value = null;
     navigateTo('/login');

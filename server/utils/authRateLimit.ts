@@ -37,7 +37,7 @@ export async function enforceAuthRateLimit(
   const window = Math.floor(Date.now() / 1000 / config.windowSeconds)
   const key = `${config.prefix}:${ip}:${endpoint}:${window}`
 
-  const attempts: number = (await storage.getItem(key)) || 0
+  const attempts = (await storage.getItem<number>(key)) || 0
 
   if (attempts >= config.maxAttempts) {
     throw createError({
@@ -46,5 +46,5 @@ export async function enforceAuthRateLimit(
     })
   }
 
-  await storage.setItem(key, attempts + 1)
+  await storage.setItem(key, attempts + 1, { ttl: config.windowSeconds })
 }

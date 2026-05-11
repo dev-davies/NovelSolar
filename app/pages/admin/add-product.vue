@@ -42,7 +42,7 @@ onUnmounted(() => {
 
 onMounted(async () => {
   try {
-    const response = await $fetch('/api/admin/me')
+    const response = await useNuxtApp().$apiFetch('/api/admin/me')
     currentAdmin.value = response.admin
   } catch (error) {
     console.error('Failed to load current admin:', error)
@@ -93,7 +93,7 @@ const checkExistingProducts = async () => {
     
     if (productNames.length === 0) return
 
-    const response = await $fetch('/api/admin/check-duplicates', {
+    const response = await useNuxtApp().$apiFetch('/api/admin/check-duplicates', {
       method: 'POST',
       body: { productNames }
     })
@@ -266,7 +266,7 @@ const submitBatch = async () => {
       
       product.gallery.forEach(file => formData.append('galleryImages', file))
 
-      await $fetch('/api/admin/upload-product', { method: 'POST', body: formData })
+      await useNuxtApp().$apiFetch('/api/admin/upload-product', { method: 'POST', body: formData })
 
       uploadProgress.value[product.id] = 'success'
       uploadResults.value[product.id] = {
@@ -319,7 +319,7 @@ useHead({
 
 const handleLogout = async () => {
   try {
-    await $fetch('/api/admin/auth/logout', { method: 'POST' })
+    await useNuxtApp().$apiFetch('/api/admin/auth/logout', { method: 'POST' })
     navigateTo('/admin/login')
   } catch (error) {
     console.error('Logout failed:', error)

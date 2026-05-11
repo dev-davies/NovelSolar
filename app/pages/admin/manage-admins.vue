@@ -8,7 +8,7 @@ useHead({
 
 const handleLogout = async () => {
   try {
-    await $fetch('/api/admin/auth/logout', { method: 'POST' })
+    await useNuxtApp().$apiFetch('/api/admin/auth/logout', { method: 'POST' })
     await navigateTo('/admin/login')
   } catch (error) {
     console.error('Logout failed:', error)

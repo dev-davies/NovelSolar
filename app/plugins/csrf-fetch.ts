@@ -1,7 +1,7 @@
-export default defineNuxtPlugin((nuxtApp) => {
+export default defineNuxtPlugin(() => {
   const csrfToken = useCookie('csrf-token')
 
-  const $customFetch = $fetch.create({
+  const apiFetch = $fetch.create({
     async onRequest({ request, options }) {
       const method = options.method ? options.method.toUpperCase() : 'GET'
       // For mutating API requests, inject the CSRF token
@@ -15,16 +15,17 @@ export default defineNuxtPlugin((nuxtApp) => {
           csrfToken.value = useCookie('csrf-token').value
         }
         if (csrfToken.value) {
-          options.headers = {
-            ...options.headers,
-            'x-csrf-token': csrfToken.value
-          }
+          const headers = new Headers(options.headers as HeadersInit)
+          headers.set('x-csrf-token', csrfToken.value)
+          options.headers = headers
         }
       }
     }
   })
 
-  // Provide it so $fetch behavior in components uses this custom fetch
-  // but we can just override globalThis.$fetch so we don't have to refactor everything
-  globalThis.$fetch = $customFetch
+  return {
+    provide: {
+      apiFetch
+    }
+  }
 })

@@ -209,7 +209,7 @@ const confirmDelete = async () => {
   if (!originalSlug.value) return
   isDeleting.value = true
   try {
-    await $fetch('/api/admin/blog/delete', {
+    await useNuxtApp().$apiFetch('/api/admin/blog/delete', {
       method: 'POST',
       body: { slug: originalSlug.value },
     })

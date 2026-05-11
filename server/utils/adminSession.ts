@@ -9,7 +9,19 @@ interface AdminSessionRecord {
   expiresAt: number
 }
 
+function assertPersistentAdminSessionStorage() {
+  if (process.env.NODE_ENV === 'production' && !process.env.KV_REST_API_URL) {
+    console.error('[AUTH] Persistent admin session storage is not configured. Set KV_REST_API_URL or sessions may be lost in production.')
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Persistent admin session storage is not configured.'
+    })
+  }
+}
+
 export async function createAdminSession(user?: { userId?: string, email?: string | null }) {
+  assertPersistentAdminSessionStorage()
+
   const token = `admin_session_${globalThis.crypto.randomUUID()}`
   const createdAt = Date.now()
   const expiresAt = createdAt + (ADMIN_SESSION_MAX_AGE_SECONDS * 1000)

@@ -238,7 +238,7 @@ const deleteAdmin = async (targetUserId: string) => {
   deleteError.value = ''
 
   try {
-    await $fetch('/api/admin/delete-admin', {
+    await useNuxtApp().$apiFetch('/api/admin/delete-admin', {
       method: 'POST',
       body: { target_user_id: targetUserId }
     })
