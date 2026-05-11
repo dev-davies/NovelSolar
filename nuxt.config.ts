@@ -8,6 +8,7 @@ const FRAME_ANCESTORS = `'self' ${BITRIX_FRAME_ANCESTOR}`
 
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
+  srcDir: 'app',
   devtools: { enabled: true },
   modules: ["@nuxtjs/tailwindcss", "@nuxt/image", "@vueuse/nuxt", "@nuxt/content", "@nuxtjs/sitemap", "@nuxtjs/supabase"],
   site: {

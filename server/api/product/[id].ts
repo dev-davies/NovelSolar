@@ -1,5 +1,4 @@
-import { normalizeProperty } from '../../utils/normalizeProperty'
-import { fetchWithBitrixContext } from '../../utils/bitrixAuth'
+
 
 export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, 'id');
