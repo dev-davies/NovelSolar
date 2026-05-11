@@ -36,24 +36,16 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(event.request.url);
 
-  // API Requests: Network First, fallback to cache
+  // API Requests: Network only to avoid caching stale or sensitive data
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(
       fetch(event.request)
-        .then((response) => {
-          const clonedResponse = response.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, clonedResponse);
-          });
-          return response;
-        })
-        .catch(() => caches.match(event.request))
     );
     return;
   }
 
   // HTML Requests: Network First, fallback to offline.html
-  if (event.request.headers.get('accept').includes('text/html')) {
+  if ((event.request.headers.get('accept') || '').includes('text/html')) {
     event.respondWith(
       fetch(event.request).catch(() => {
         return caches.match(OFFLINE_URL);
