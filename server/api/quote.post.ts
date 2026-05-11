@@ -1,4 +1,5 @@
 import type { BitrixLeadResponse } from '../types/bitrix'
+import { logger } from '../utils/logger'
 export default defineEventHandler(async (event) => {
   const body = sanitizePayload(await readBody(event));
   const config = useRuntimeConfig();
@@ -31,6 +32,8 @@ export default defineEventHandler(async (event) => {
 
   try {
     // Format the data for Bitrix crm.lead.add
+    logger.info('Quote API', `Attempting to send quote request to Bitrix for ${body.email}`, { projectType: body.projectType });
+
     const response = await $fetch<BitrixLeadResponse>(`${normalizedUrl}crm.lead.add`, {
       method: 'POST',
       body: {
@@ -48,11 +51,11 @@ export default defineEventHandler(async (event) => {
     });
 
     if (response.error) {
-      console.error('Bitrix error response:', response);
+      logger.error('Quote API', 'Bitrix error response', { error: response.error, error_description: response.error_description, email: body.email });
       throw new Error(response.error_description || 'Unknown Bitrix error');
     }
 
-    console.log(`✅ Quote lead created in Bitrix (ID: ${response.result})`);
+    logger.info('Quote API', `✅ Quote lead created in Bitrix for ${body.email}`, { leadId: response.result, projectType: body.projectType });
 
     return {
       success: true,
@@ -60,7 +63,7 @@ export default defineEventHandler(async (event) => {
       message: 'Your quote request has been submitted successfully. Our team will contact you shortly.'
     };
   } catch (error: any) {
-    console.error('❌ Bitrix Lead Creation Error:', error);
+    logger.error('Quote API', '❌ Bitrix Lead Creation Error', { error: error, email: body.email });
 
     // THE SAFETY NET: Save the quote request to Nitro's local storage
     try {
@@ -71,9 +74,9 @@ export default defineEventHandler(async (event) => {
         timestamp: new Date().toISOString(),
         id: quoteId,
       });
-      console.log(`[QUOTE RECOVERY] Quote ${quoteId} saved to fallback queue.`);
+      logger.info('Quote API', `[QUOTE RECOVERY] Quote ${quoteId} saved to fallback queue.`);
     } catch (storageError) {
-      console.error('[CRITICAL] Failed to save quote to fallback storage:', storageError);
+      logger.error('Quote API', '[CRITICAL] Failed to save quote to fallback storage', { error: storageError });
     }
 
     throw createError({

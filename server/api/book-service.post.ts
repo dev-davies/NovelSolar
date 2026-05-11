@@ -1,4 +1,5 @@
 import type { BitrixLeadResponse } from '../types/bitrix'
+import { logger } from '../utils/logger'
 export default defineEventHandler(async (event) => {
   const body = sanitizePayload(await readBody(event))
   const config = useRuntimeConfig()
@@ -20,6 +21,8 @@ export default defineEventHandler(async (event) => {
 
   try {
     // Format the data for Bitrix crm.lead.add
+    logger.info('Book Service API', `Attempting to send booking request to Bitrix for ${body.email}`);
+
     const response = await $fetch<BitrixLeadResponse>(`${normalizedUrl}crm.lead.add`, {
       method: 'POST',
       body: {
@@ -38,12 +41,15 @@ export default defineEventHandler(async (event) => {
     })
 
     if (response.error) {
+      logger.error('Book Service API', 'Bitrix error response', { error: response.error, error_description: response.error_description });
       throw new Error(response.error_description)
     }
 
+    logger.info('Book Service API', `Successfully created Lead in Bitrix for ${body.email}`, { leadId: response.result });
+
     return { success: true, leadId: response.result }
   } catch (error: any) {
-    console.error('Bitrix Booking Error:', error?.data || error)
+    logger.error('Book Service API', 'Bitrix Booking Error', { error: error?.data || error, email: body.email });
 
     // THE SAFETY NET: Save the booking request to Nitro's local storage
     try {
@@ -54,9 +60,9 @@ export default defineEventHandler(async (event) => {
         timestamp: new Date().toISOString(),
         id: bookingId,
       });
-      console.log(`[BOOKING RECOVERY] Booking ${bookingId} saved to fallback queue.`);
+      logger.info('Book Service API', `Booking ${bookingId} saved to fallback queue.`);
     } catch (storageError) {
-      console.error('[CRITICAL] Failed to save booking to fallback storage:', storageError);
+      logger.error('Book Service API', '[CRITICAL] Failed to save booking to fallback storage', { error: storageError });
     }
 
     throw createError({ 
