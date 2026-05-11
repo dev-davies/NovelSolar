@@ -43,9 +43,24 @@ export default defineEventHandler(async (event) => {
     return { success: true, leadId: response.result }
   } catch (error: any) {
     console.error('Bitrix Booking Error:', error?.data || error)
+
+    // THE SAFETY NET: Save the booking request to Nitro's local storage
+    try {
+      const storage = useStorage('data:failed-bookings');
+      const bookingId = `BK-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+      await storage.setItem(bookingId, {
+        ...body,
+        timestamp: new Date().toISOString(),
+        id: bookingId,
+      });
+      console.log(`[BOOKING RECOVERY] Booking ${bookingId} saved to fallback queue.`);
+    } catch (storageError) {
+      console.error('[CRITICAL] Failed to save booking to fallback storage:', storageError);
+    }
+
     throw createError({ 
       statusCode: 500, 
-      statusMessage: 'Failed to submit booking request. Please try again later.' 
+      statusMessage: 'Failed to submit booking request. (Saved locally for retry)' 
     })
   }
 })

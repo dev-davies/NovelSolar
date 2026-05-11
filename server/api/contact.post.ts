@@ -54,9 +54,24 @@ export default defineEventHandler(async (event) => {
     };
   } catch (error: any) {
     console.error('Bitrix Contact Inquiry Error:', error?.data || error);
+
+    // THE SAFETY NET: Save the contact inquiry to Nitro's local storage
+    try {
+      const storage = useStorage('data:failed-contacts');
+      const contactId = `CONT-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+      await storage.setItem(contactId, {
+        ...body,
+        timestamp: new Date().toISOString(),
+        id: contactId,
+      });
+      console.log(`[CONTACT RECOVERY] Contact inquiry ${contactId} saved to fallback queue.`);
+    } catch (storageError) {
+      console.error('[CRITICAL] Failed to save contact inquiry to fallback storage:', storageError);
+    }
+
     throw createError({
       statusCode: 500,
-      statusMessage: 'Failed to send message.',
+      statusMessage: 'Failed to send message. (Saved locally for retry)',
     });
   }
 });
