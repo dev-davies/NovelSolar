@@ -1,17 +1,16 @@
 import { logger } from '../utils/logger'
 
 export default defineEventHandler(async (event) => {
-
   const query = getQuery(event)
-  const searchTerm = (query.q as string || '').trim().toLowerCase()
-  const brandFilter = (query.brand as string || '').trim()
+  const searchTerm = ((query.q as string) || '').trim().toLowerCase()
+  const brandFilter = ((query.brand as string) || '').trim()
   const parsedStart = Number.parseInt((query.start as string) || '0', 10)
   const startFrom = Number.isFinite(parsedStart) && parsedStart > 0 ? parsedStart : 0
   const PAGE_SIZE = 50
 
   try {
     // Build filter: brand + search (if provided) or all products
-    const filters: Record<string, any> = {}
+    const filters: Record<string, string> = {}
     filters.ACTIVE = 'Y'
     if (brandFilter && searchTerm) {
       filters['%NAME'] = `${brandFilter} ${searchTerm}`.trim()
@@ -21,8 +20,25 @@ export default defineEventHandler(async (event) => {
       filters['?NAME'] = searchTerm
     }
 
+    interface BitrixProduct {
+      ID?: string | number
+      NAME?: string
+      PRICE?: string | number
+      CURRENCY_ID?: string
+      DESCRIPTION?: unknown
+      QUANTITY?: string | number
+      ACTIVE?: string
+      PROPERTY_102?: unknown
+      PROPERTY_104?: unknown
+      PROPERTY_112?: unknown
+      PROPERTY_44?: unknown
+      PREVIEW_PICTURE?: unknown
+      DETAIL_PICTURE?: unknown
+      [key: string]: unknown
+    }
+
     const response = await fetchWithBitrixContext<{
-      result?: any[] | { products?: any[] }
+      result?: BitrixProduct[] | { products?: BitrixProduct[] }
       total?: number
       next?: number
       error?: string
@@ -44,7 +60,7 @@ export default defineEventHandler(async (event) => {
           'PROPERTY_44',
           'PROPERTY_102',
           'PROPERTY_104',
-          'PROPERTY_112'
+          'PROPERTY_112',
         ],
         order: { ID: 'DESC' },
         start: startFrom,
@@ -58,7 +74,9 @@ export default defineEventHandler(async (event) => {
 
     const bitrixProducts = Array.isArray(response?.result)
       ? response.result
-      : (Array.isArray(response?.result?.products) ? response.result.products : [])
+      : Array.isArray(response?.result?.products)
+        ? response.result.products
+        : []
 
     if (bitrixProducts.length === 0) {
       logger.warn('Products', 'No products returned from Bitrix')
@@ -70,7 +88,7 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    const products = bitrixProducts.map((product: any) => {
+    const products = bitrixProducts.map((product: BitrixProduct) => {
       let imageUrl = null
 
       // Image fallback chain: Cloudinary -> Bitrix legacy -> proxy -> placeholder
@@ -78,9 +96,10 @@ export default defineEventHandler(async (event) => {
       if (cloudinaryUrl) {
         imageUrl = cloudinaryUrl
       } else {
-        const bitrixImage = normalizeProperty(product.PROPERTY_44)
-          || normalizeProperty(product.PREVIEW_PICTURE)
-          || normalizeProperty(product.DETAIL_PICTURE)
+        const bitrixImage =
+          normalizeProperty(product.PROPERTY_44) ||
+          normalizeProperty(product.PREVIEW_PICTURE) ||
+          normalizeProperty(product.DETAIL_PICTURE)
 
         if (bitrixImage) {
           imageUrl = `/api/bitrix-image?url=${encodeURIComponent(bitrixImage)}`
@@ -102,9 +121,12 @@ export default defineEventHandler(async (event) => {
       }
     })
 
-    const nextStart = typeof response?.next === 'number'
-      ? response.next
-      : (startFrom + PAGE_SIZE < (response?.total || 0) ? startFrom + PAGE_SIZE : null)
+    const nextStart =
+      typeof response?.next === 'number'
+        ? response.next
+        : startFrom + PAGE_SIZE < (response?.total || 0)
+          ? startFrom + PAGE_SIZE
+          : null
 
     return {
       products,

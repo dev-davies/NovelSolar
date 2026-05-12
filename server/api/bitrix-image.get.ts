@@ -1,39 +1,39 @@
 import { logger } from '../utils/logger'
 
 export default defineEventHandler(async (event) => {
-  const config = useRuntimeConfig();
-  const url = getQuery(event).url as string;
+  const config = useRuntimeConfig()
+  const url = getQuery(event).url as string
   if (!url) {
-    throw createError({ statusCode: 400, statusMessage: 'Missing url parameter' });
+    throw createError({ statusCode: 400, statusMessage: 'Missing url parameter' })
   }
 
   try {
     // 1. Parse productId and fieldName from the incoming Bitrix URL
     // Example URL: .../download.php?productId=640&fieldName=DETAIL_PICTURE...
-    const urlObj = new URL(url);
-    const productId = urlObj.searchParams.get('productId');
-    const rawFieldName = urlObj.searchParams.get('fieldName');
+    const urlObj = new URL(url)
+    const productId = urlObj.searchParams.get('productId')
+    const rawFieldName = urlObj.searchParams.get('fieldName')
 
     if (!productId || !rawFieldName) {
-      logger.warn('BitrixImage', 'Could not parse productId or fieldName from URL', { url });
-      throw createError({ statusCode: 400, statusMessage: 'Invalid Bitrix image URL' });
+      logger.warn('BitrixImage', 'Could not parse productId or fieldName from URL', { url })
+      throw createError({ statusCode: 400, statusMessage: 'Invalid Bitrix image URL' })
     }
 
     // 2. Map Bitrix internal names to REST API field names
     const fieldMapping: Record<string, string> = {
-      'DETAIL_PICTURE': 'detailPicture',
-      'PREVIEW_PICTURE': 'previewPicture',
-      'PROPERTY_44': 'property44'
-    };
-
-    const fieldName = fieldMapping[rawFieldName] || rawFieldName;
-
-    const webhookUrl = config.bitrixWebhookUrl;
-    if (!webhookUrl) {
-      throw createError({ statusCode: 500, statusMessage: 'Server configuration error: Webhook missing' });
+      DETAIL_PICTURE: 'detailPicture',
+      PREVIEW_PICTURE: 'previewPicture',
+      PROPERTY_44: 'property44',
     }
 
-    const formattedWebhookUrl = webhookUrl.endsWith('/') ? webhookUrl : `${webhookUrl}/`;
+    const fieldName = fieldMapping[rawFieldName] || rawFieldName
+
+    const webhookUrl = config.bitrixWebhookUrl
+    if (!webhookUrl) {
+      throw createError({ statusCode: 500, statusMessage: 'Server configuration error: Webhook missing' })
+    }
+
+    const formattedWebhookUrl = webhookUrl.endsWith('/') ? webhookUrl : `${webhookUrl}/`
 
     // 4. Use the strict catalog.product.download REST API
     const response = await $fetch(`${formattedWebhookUrl}catalog.product.download`, {
@@ -41,24 +41,25 @@ export default defineEventHandler(async (event) => {
       body: {
         fields: {
           productId,
-          fieldName
-        }
+          fieldName,
+        },
       },
-      responseType: 'arrayBuffer'
-    });
+      responseType: 'arrayBuffer',
+    })
 
     // 5. Set headers and return the image buffer
     setHeaders(event, {
       'Content-Type': 'image/jpeg',
-      'Cache-Control': 'public, max-age=604800, immutable'
-    });
+      'Cache-Control': 'public, max-age=604800, immutable',
+    })
 
-    return response;
-  } catch (error: any) {
-    logger.error('BitrixImage', 'REST image download error', { error: error.data || error.message || error });
+    return response
+  } catch (error: unknown) {
+    const err = error as { data?: unknown; message?: string }
+    logger.error('BitrixImage', 'REST image download error', { error: err.data || err.message || error })
     throw createError({
       statusCode: 500,
-      statusMessage: 'Failed to download image via Bitrix REST API'
-    });
+      statusMessage: 'Failed to download image via Bitrix REST API',
+    })
   }
-});
+})

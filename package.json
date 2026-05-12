@@ -73,10 +73,10 @@
   "lint-staged": {
     "*.{ts,vue,mjs,cjs}": [
       "eslint --fix",
-      "prettier --write"
+      "npx prettier --write --ignore-unknown"
     ],
     "*.{json,md,css,html,yml,yaml}": [
-      "prettier --write"
+      "npx prettier --write --ignore-unknown"
     ]
   }
 }
