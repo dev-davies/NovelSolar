@@ -8,6 +8,11 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
+    "prepare": "husky",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
@@ -44,6 +49,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@nuxt/eslint-config": "^1.15.2",
     "@nuxt/test-utils": "^4.0.2",
     "@nuxtjs/sitemap": "^8.0.11",
     "@nuxtjs/tailwindcss": "^6.14.0",
@@ -53,9 +59,24 @@
     "@types/nodemailer": "^7.0.11",
     "@vue/test-utils": "^2.4.6",
     "autoprefixer": "^10.4.27",
+    "eslint": "^10.3.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
+    "husky": "^9.1.7",
     "jsdom": "^29.0.2",
+    "lint-staged": "^17.0.4",
     "postcss": "^8.5.8",
+    "prettier": "^3.8.3",
     "tailwindcss": "^3.4.19",
     "vitest": "^4.1.4"
+  },
+  "lint-staged": {
+    "*.{ts,vue,mjs,cjs}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,css,html,yml,yaml}": [
+      "prettier --write"
+    ]
   }
 }
