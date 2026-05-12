@@ -1,4 +1,4 @@
-
+import { logger } from '../../utils/logger'
 
 export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, 'id');
@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
     
     return product;
   } catch (error) {
-    console.error('Bitrix API Error:', error);
+    logger.error('Product', 'Bitrix API error', { error });
     throw createError({ statusCode: 404, statusMessage: 'Product not found' });
   }
 });

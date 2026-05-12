@@ -1,5 +1,6 @@
 import { configureCloudinary, uploadBufferToCloudinary, validateGalleryFiles, validateImageFile, type UploadedImageFile } from '../../utils/productMedia'
 import type { BitrixResponse } from '../../types/bitrix'
+import { logger } from '../../utils/logger'
 
 export default defineEventHandler(async (event) => {
   const contentType = getHeader(event, 'content-type') || ''
@@ -141,7 +142,7 @@ export default defineEventHandler(async (event) => {
       productId: updateResponse.result,
     };
   } catch (error) {
-    console.error('[UPDATE] Error:', error);
+    logger.error('UPDATE', 'Error updating product', { error });
     throw createError({
       statusCode: 500,
       statusMessage: error instanceof Error ? error.message : 'Failed to update product',

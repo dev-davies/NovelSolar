@@ -236,9 +236,9 @@ export default defineEventHandler(async (event) => {
         subject: `Your Novel Solar Order Confirmed: #${generatedOrderNumber}`,
         html: premiumHtmlEmail
       });
-      console.log('✅ Successfully sent Order Receipt Email!');
+      logger.info('Checkout API', 'Successfully sent order receipt email');
     } catch (error) {
-      console.error('❌ Email Error:', error);
+      logger.error('Checkout API', 'Email error', { error });
     }
   }
 

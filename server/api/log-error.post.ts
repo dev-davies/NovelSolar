@@ -1,5 +1,6 @@
 // filepath: server/api/log-error.post.ts
 import { createError, defineEventHandler, getHeader, readBody } from 'h3'
+import { logger } from '../utils/logger'
 
 interface ErrorLogEntry {
   message: string
@@ -39,7 +40,7 @@ export default defineEventHandler(async (event) => {
     }
 
     if (process.env.NODE_ENV !== 'production') {
-      console.log('[ErrorLog]', JSON.stringify(logEntry, null, 2))
+      logger.info('ErrorLog', 'Captured error log', logEntry)
     }
 
     let forwarded = false
@@ -63,10 +64,10 @@ export default defineEventHandler(async (event) => {
         forwarded = response.ok
 
         if (!response.ok) {
-          console.error('[ErrorLog] Webhook forwarding failed:', response.status, response.statusText)
+          logger.error('ErrorLog', 'Webhook forwarding failed', { status: response.status, statusText: response.statusText })
         }
       } catch (forwardError) {
-        console.error('[ErrorLog] Failed to forward error log:', forwardError)
+        logger.error('ErrorLog', 'Failed to forward error log', { error: forwardError })
       }
     }
 
@@ -80,7 +81,7 @@ export default defineEventHandler(async (event) => {
       throw error
     }
 
-    console.error('[ErrorLog] Failed to process error log:', error)
+    logger.error('ErrorLog', 'Failed to process error log', { error })
 
     throw createError({
       statusCode: 500,

@@ -1,4 +1,5 @@
 import { v2 as cloudinary, type UploadApiResponse } from 'cloudinary'
+import { logger } from './logger'
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif']
 const MAX_FILE_SIZE = 10 * 1024 * 1024
@@ -52,7 +53,7 @@ export async function uploadBufferToCloudinary(buffer: Buffer, folder = 'novel_s
       { folder },
       (error, result) => {
         if (error || !result) {
-          console.error('Cloudinary Upload Error:', error)
+          logger.error('Cloudinary', 'Upload error', { error })
           reject(error ?? new Error('Cloudinary returned no result'))
           return
         }

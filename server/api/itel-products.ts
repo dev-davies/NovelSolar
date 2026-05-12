@@ -1,4 +1,4 @@
-
+import { logger } from '../utils/logger'
 
 export default defineEventHandler(async (event) => {
 
@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
       itelProducts.push(...listResponse.result);
     }
   } catch (error) {
-    console.error('Bitrix API Error in /api/itel-products list phase:', error);
+    logger.error('Itel Products', 'Bitrix list phase failed', { error });
     return [];
   }
 

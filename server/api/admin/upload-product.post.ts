@@ -1,5 +1,6 @@
 import { configureCloudinary, uploadBufferToCloudinary, validateGalleryFiles, validateImageFile } from '../../utils/productMedia'
 import type { BitrixResponse } from '../../types/bitrix'
+import { logger } from '../../utils/logger'
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
@@ -97,7 +98,7 @@ export default defineEventHandler(async (event) => {
 
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
-    console.error('Product Upload Pipeline Error:', message);
+    logger.error('Upload Product', 'Pipeline error', { error: message });
     throw createError({
       statusCode: 500,
       statusMessage: message || 'Internal server error'

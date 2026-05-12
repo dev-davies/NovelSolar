@@ -1,3 +1,5 @@
+import { logger } from '../../utils/logger'
+
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   const { productId, productName } = body;
@@ -35,7 +37,7 @@ export default defineEventHandler(async (event) => {
       throw new Error('Delete failed in Bitrix');
     }
 
-    console.log(`[DELETE] Product ${productId} (${productName}) deleted successfully`);
+    logger.info('DELETE', 'Product deleted successfully', { productId, productName });
 
     return {
       success: true,
@@ -43,7 +45,7 @@ export default defineEventHandler(async (event) => {
       productId,
     };
   } catch (error) {
-    console.error('[DELETE] Error:', error);
+    logger.error('DELETE', 'Error deleting product', { error });
     throw createError({
       statusCode: 500,
       statusMessage: error instanceof Error ? error.message : 'Failed to delete product',

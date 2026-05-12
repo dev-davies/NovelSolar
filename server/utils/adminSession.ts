@@ -1,3 +1,5 @@
+import { logger } from './logger'
+
 // Use memory storage for session persistence across requests
 const ADMIN_SESSION_STORAGE = 'adminSessions'
 const ADMIN_SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 // 24 hours
@@ -11,7 +13,7 @@ interface AdminSessionRecord {
 
 function assertPersistentAdminSessionStorage() {
   if (process.env.NODE_ENV === 'production' && !process.env.KV_REST_API_URL) {
-    console.error('[AUTH] Persistent admin session storage is not configured. Set KV_REST_API_URL or sessions may be lost in production.')
+    logger.error('AUTH', 'Persistent admin session storage is not configured. Set KV_REST_API_URL or sessions may be lost in production.')
     throw createError({
       statusCode: 500,
       statusMessage: 'Persistent admin session storage is not configured.'

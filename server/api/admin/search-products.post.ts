@@ -1,3 +1,5 @@
+import { logger } from '../../utils/logger'
+
 interface BitrixRawProduct {
   ID: string | number
   NAME?: string
@@ -57,7 +59,7 @@ export default defineEventHandler(async (event) => {
 
     // Provide the "bulletproof" Bitrix error catch 
     if (response.error) {
-      console.error("Bitrix API Error:", response.error_description);
+      logger.error('Search Products', 'Bitrix API error', { error: response.error_description });
       throw new Error(response.error_description);
     }
 
@@ -95,7 +97,7 @@ export default defineEventHandler(async (event) => {
       count: products.length,
     };
   } catch (error) {
-    console.error('Search Route Error:', error);
+    logger.error('Search Products', 'Route error', { error });
     const message = error instanceof Error ? error.message : String(error)
     throw createError({
       statusCode: 500,

@@ -1,4 +1,5 @@
 import type { FailedBooking } from '../../types/database'
+import { logger } from '../../utils/logger'
 export default defineEventHandler(async (event) => {
   try {
     const storage = useStorage('data:failed-bookings')
@@ -24,7 +25,7 @@ export default defineEventHandler(async (event) => {
       bookings: failedBookings
     }
   } catch (error) {
-    console.error('Failed to fetch fallback bookings:', error)
+    logger.error('Failed Bookings', 'Could not fetch fallback queue', { error })
     throw createError({ statusCode: 500, statusMessage: 'Could not retrieve fallback bookings queue.' })
   }
 })

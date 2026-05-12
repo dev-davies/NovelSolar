@@ -1,5 +1,6 @@
 import { serverSupabaseUser, serverSupabaseClient } from '#supabase/server'
 import { createUserSession } from '../../utils/userSession'
+import { logger } from '../../utils/logger'
 
 export default defineEventHandler(async (event) => {
   const user = await serverSupabaseUser(event)
@@ -85,7 +86,7 @@ export default defineEventHandler(async (event) => {
     }
 
   } catch (error: any) {
-    console.error('[AUTH SESSION SYNC ERROR]:', error?.data || error)
+    logger.error('Auth Session', 'Sync error', { error: error?.data || error })
     
     // Fallback: Create a temporary session if CRM is down
     // This allows the user to at least see a "Valued Customer" profile
