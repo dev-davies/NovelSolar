@@ -38,10 +38,10 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
-      - run: npm ci
+      - run: npm install
 
       # nuxi typecheck exits non-zero when there are errors.
       # The project has a known baseline of ~26 errors (Supabase
@@ -90,10 +90,10 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
-      - run: npm ci
+      - run: npm install
 
       - name: Run Vitest
         run: npm run test:run -- --reporter=default --reporter=github-actions
@@ -111,10 +111,10 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
-      - run: npm ci
+      - run: npm install
 
       # Only install Chromium to keep CI fast (~400 MB vs ~1.5 GB)
       - name: Install Playwright (Chromium only)
