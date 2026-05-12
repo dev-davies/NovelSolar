@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger'
 import { assertValidSlug, relativeFilePathForSlug } from '../../../utils/blogContent'
 import {
   adminToCommitAuthor,
@@ -30,7 +31,7 @@ export default defineEventHandler(async (event) => {
   if (deployHookUrl) {
     // Fire and forget - don't await so we don't block the UI
     $fetch(deployHookUrl, { method: 'POST' }).catch(err => {
-      console.error('Failed to trigger Vercel deploy hook:', err)
+      logger.error('Blog Delete', 'Failed to trigger Vercel deploy hook', { error: err })
     })
   }
 

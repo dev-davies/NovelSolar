@@ -1,4 +1,5 @@
 import type { FailedQuote } from '../../types/database'
+import { logger } from '../../utils/logger'
 export default defineEventHandler(async (event) => {
   try {
     const storage = useStorage('data:failed-quotes')
@@ -24,7 +25,7 @@ export default defineEventHandler(async (event) => {
       quotes: failedQuotes
     }
   } catch (error) {
-    console.error('Failed to fetch fallback quotes:', error)
+    logger.error('Failed Quotes', 'Could not fetch fallback queue', { error })
     throw createError({ statusCode: 500, statusMessage: 'Could not retrieve fallback quotes queue.' })
   }
 })

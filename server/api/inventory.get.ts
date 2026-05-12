@@ -1,4 +1,4 @@
-
+import { logger } from '../utils/logger'
 
 export default defineCachedEventHandler(async (event) => {
 
@@ -32,7 +32,7 @@ export default defineCachedEventHandler(async (event) => {
       }
     }
   } catch (error) {
-    console.error('Error fetching inventory list:', error);
+    logger.error('Inventory', 'Error fetching list', { error });
     return allProducts;
   }
 

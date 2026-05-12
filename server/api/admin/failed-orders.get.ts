@@ -1,4 +1,5 @@
 import type { FailedOrder } from '../../types/database'
+import { logger } from '../../utils/logger'
 
 export default defineEventHandler(async (event) => {
   try {
@@ -25,7 +26,7 @@ export default defineEventHandler(async (event) => {
       orders: failedOrders
     }
   } catch (error) {
-    console.error('Failed to fetch fallback orders:', error)
+    logger.error('Failed Orders', 'Could not fetch fallback queue', { error })
     throw createError({ statusCode: 500, statusMessage: 'Could not retrieve fallback queue.' })
   }
 })

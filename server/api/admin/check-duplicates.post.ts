@@ -1,3 +1,5 @@
+import { logger } from '../../utils/logger'
+
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   const { productNames } = body;
@@ -12,7 +14,7 @@ export default defineEventHandler(async (event) => {
   try {
     const bitrixUrl = config.bitrixWebhookUrl;
     if (!bitrixUrl) {
-      console.warn('[DUPLICATE CHECK] Bitrix URL not configured');
+      logger.warn('DUPLICATE CHECK', 'Bitrix URL not configured');
       return { duplicates: [] };
     }
 
@@ -39,7 +41,7 @@ export default defineEventHandler(async (event) => {
           duplicates.push(name);
         }
       } catch (error) {
-        console.error(`[DUPLICATE CHECK] Error checking product "${name}":`, error);
+        logger.error('DUPLICATE CHECK', 'Error checking product', { name, error });
         // Continue checking other products even if one fails
       }
     }
@@ -53,7 +55,7 @@ export default defineEventHandler(async (event) => {
           : 'No duplicates found',
     };
   } catch (error) {
-    console.error('[DUPLICATE CHECK] Error:', error);
+    logger.error('DUPLICATE CHECK', 'Error', { error });
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to check for duplicates',

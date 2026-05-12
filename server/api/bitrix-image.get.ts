@@ -1,3 +1,5 @@
+import { logger } from '../utils/logger'
+
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
   const url = getQuery(event).url as string;
@@ -13,7 +15,7 @@ export default defineEventHandler(async (event) => {
     const rawFieldName = urlObj.searchParams.get('fieldName');
 
     if (!productId || !rawFieldName) {
-      console.warn('Could not parse productId or fieldName from URL:', url);
+      logger.warn('BitrixImage', 'Could not parse productId or fieldName from URL', { url });
       throw createError({ statusCode: 400, statusMessage: 'Invalid Bitrix image URL' });
     }
 
@@ -53,7 +55,7 @@ export default defineEventHandler(async (event) => {
 
     return response;
   } catch (error: any) {
-    console.error('Bitrix REST Image Download Error:', error.data || error.message || error);
+    logger.error('BitrixImage', 'REST image download error', { error: error.data || error.message || error });
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to download image via Bitrix REST API'

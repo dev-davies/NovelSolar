@@ -1,4 +1,5 @@
 import { getSupabaseAdminClient } from '../../../utils/supabaseAdmin'
+import { logger } from '../../../utils/logger'
 
 export default defineEventHandler(async (event) => {
   await enforceAuthRateLimit(event)
@@ -41,7 +42,7 @@ export default defineEventHandler(async (event) => {
       }
     }
   } catch (error) {
-    console.error('Admin password reset request failed:', error)
+    logger.error('Admin Password Reset', 'Request failed', { error })
   }
 
   return {

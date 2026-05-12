@@ -1,4 +1,4 @@
-
+import { logger } from '../utils/logger'
 
 export default defineEventHandler(async (event) => {
 
@@ -61,7 +61,7 @@ export default defineEventHandler(async (event) => {
       : (Array.isArray(response?.result?.products) ? response.result.products : [])
 
     if (bitrixProducts.length === 0) {
-      console.warn('No products returned from Bitrix')
+      logger.warn('Products', 'No products returned from Bitrix')
       return {
         products: [],
         next: null,
@@ -113,7 +113,7 @@ export default defineEventHandler(async (event) => {
       count: products.length,
     }
   } catch (error) {
-    console.error('Products API error:', error)
+    logger.error('Products', 'API error', { error })
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to fetch products',

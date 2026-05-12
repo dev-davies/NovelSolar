@@ -1,4 +1,5 @@
 import { configureCloudinary, uploadBufferToCloudinary, validateImageFile } from '../../../utils/productMedia'
+import { logger } from '../../../utils/logger'
 
 export default defineEventHandler(async (event) => {
   configureCloudinary()
@@ -24,7 +25,7 @@ export default defineEventHandler(async (event) => {
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
-    console.error('Blog image upload error:', message)
+    logger.error('Blog Upload Image', 'Upload error', { error: message })
     throw createError({
       statusCode: 500,
       statusMessage: message || 'Failed to upload blog cover image.',

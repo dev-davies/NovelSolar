@@ -1,5 +1,6 @@
 import { createAdminSession } from '../../../utils/adminSession'
 import { getSupabaseAdminClient } from '../../../utils/supabaseAdmin'
+import { logger } from '../../../utils/logger'
 
 export default defineEventHandler(async (event) => {
   await enforceAuthRateLimit(event)
@@ -24,7 +25,7 @@ export default defineEventHandler(async (event) => {
       process.env.SUPABASE_PUBLISHABLE_KEY
 
     if (!supabaseUrl || !supabaseAnonKey) {
-      console.error('Supabase authentication environment variables are not configured.')
+      logger.error('Admin Login', 'Supabase authentication environment variables are not configured')
       throw createError({ statusCode: 500, statusMessage: 'Server configuration error.' })
     }
 
@@ -78,7 +79,7 @@ export default defineEventHandler(async (event) => {
     const adminPasscode = process.env.ADMIN_UPLOAD_PASSCODE
 
     if (!adminPasscode) {
-      console.error('ADMIN_UPLOAD_PASSCODE environment variable is not set.')
+      logger.error('Admin Login', 'ADMIN_UPLOAD_PASSCODE environment variable is not set')
       throw createError({ statusCode: 500, statusMessage: 'Server configuration error.' })
     }
 

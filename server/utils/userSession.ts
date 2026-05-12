@@ -1,4 +1,5 @@
 import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto'
+import { logger } from './logger'
 
 const USER_SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 7 // 7 days
 const USER_SESSION_STORAGE = 'userSessions'
@@ -23,7 +24,7 @@ function getSessionSecret() {
 
 function assertPersistentUserSessionStorage() {
   if (process.env.NODE_ENV === 'production' && !process.env.KV_REST_API_URL) {
-    console.error('[AUTH] Persistent user session storage is not configured. Set KV_REST_API_URL or sessions may be lost in production.')
+    logger.error('AUTH', 'Persistent user session storage is not configured. Set KV_REST_API_URL or sessions may be lost in production.')
     throw createError({
       statusCode: 500,
       statusMessage: 'Persistent user session storage is not configured.'
@@ -93,7 +94,7 @@ export async function createUserSession(params: { contactId: string, email: stri
 
     return { token, maxAge: USER_SESSION_MAX_AGE_SECONDS }
   } catch (storageError: any) {
-    console.error('[AUTH] User session storage failed. Using stateless fallback:', storageError?.message || storageError)
+    logger.error('AUTH', 'User session storage failed. Using stateless fallback', { error: storageError?.message || storageError })
     const statelessToken = createStatelessSessionToken(record)
     return { token: statelessToken, maxAge: USER_SESSION_MAX_AGE_SECONDS }
   }
@@ -111,7 +112,7 @@ export async function getUserSession(token?: string | null) {
   try {
     session = await storage.getItem<UserSessionRecord | null>(token)
   } catch (storageError: any) {
-    console.error('[AUTH] User session read failed:', storageError?.message || storageError)
+    logger.error('AUTH', 'User session read failed', { error: storageError?.message || storageError })
     return null
   }
 
@@ -121,7 +122,7 @@ export async function getUserSession(token?: string | null) {
     try {
       await storage.removeItem(token)
     } catch (storageError: any) {
-      console.error('[AUTH] User session cleanup failed:', storageError?.message || storageError)
+      logger.error('AUTH', 'User session cleanup failed', { error: storageError?.message || storageError })
     }
     return null
   }
@@ -136,6 +137,6 @@ export async function destroyUserSession(token?: string | null) {
   try {
     await useStorage(USER_SESSION_STORAGE).removeItem(token)
   } catch (storageError: any) {
-    console.error('[AUTH] User session destroy failed:', storageError?.message || storageError)
+    logger.error('AUTH', 'User session destroy failed', { error: storageError?.message || storageError })
   }
 }

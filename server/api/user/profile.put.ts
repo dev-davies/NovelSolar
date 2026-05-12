@@ -1,4 +1,5 @@
 import { getUserSession, createUserSession } from '../../utils/userSession'
+import { logger } from '../../utils/logger'
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
@@ -32,7 +33,7 @@ export default defineEventHandler(async (event) => {
 
     if (isLocalSession) {
       // 1. Create a NEW contact for this previously local session
-      console.log(`[AUTH] Promoting local session for ${userSession.email} to real CRM contact`);
+      logger.info('AUTH', 'Promoting local session to real CRM contact', { email: userSession.email });
       const createResponse = await $fetch<{ result: string }>(`${normalizedBitrixUrl}crm.contact.add`, {
         method: 'POST',
         body: {
@@ -84,7 +85,7 @@ export default defineEventHandler(async (event) => {
       contactId: finalContactId
     };
   } catch (error: any) {
-    console.error('Bitrix Profile Update/Promotion Error:', error?.data || error);
+    logger.error('Profile Update', 'Bitrix update/promotion error', { error: error?.data || error });
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to synchronize profile with CRM',

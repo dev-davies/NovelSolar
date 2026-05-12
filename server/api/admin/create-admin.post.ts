@@ -1,4 +1,5 @@
 import { getSupabaseAdminClient } from '../../utils/supabaseAdmin'
+import { logger } from '../../utils/logger'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody<{ admin_email?: string, admin_username?: string }>(event)
@@ -110,7 +111,7 @@ export default defineEventHandler(async (event) => {
       redirectTo: `${redirectBaseUrl}/admin/login`
     }
   }).catch((error) => {
-    console.error('Failed to generate recovery link:', error)
+    logger.error('CREATE-ADMIN', 'Failed to generate recovery link', { error })
   })
 
   return {

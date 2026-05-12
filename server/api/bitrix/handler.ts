@@ -1,5 +1,6 @@
 import { readBody, sendRedirect, setCookie, createError } from 'h3'
 import { getSupabaseAdminClient } from '../../utils/supabaseAdmin'
+import { logger } from '../../utils/logger'
 
 interface BitrixUserCurrentResponse {
   result?: {
@@ -128,7 +129,7 @@ export default defineEventHandler(async (event) => {
     return sendRedirect(event, redirectUrl)
     
   } catch (error) {
-    console.error('Bitrix24 Auth Handler Error:', error)
+    logger.error('Bitrix Auth', 'Handler error', { error })
     throw createError({
       statusCode: 500,
       statusMessage: 'Authentication failed',

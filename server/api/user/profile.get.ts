@@ -1,4 +1,5 @@
 import { getUserSession } from '../../utils/userSession'
+import { logger } from '../../utils/logger'
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
@@ -73,7 +74,7 @@ export default defineEventHandler(async (event) => {
 
     return profileData;
   } catch (error) {
-    console.error(`[PROFILE] Fetch Error for ${contactId}:`, error);
+    logger.error('PROFILE', 'Fetch error', { contactId, error });
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to fetch user profile from CRM',

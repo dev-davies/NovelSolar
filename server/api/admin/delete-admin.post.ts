@@ -1,4 +1,5 @@
 import { getSupabaseAdminClient } from '../../utils/supabaseAdmin'
+import { logger } from '../../utils/logger'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody<{ target_user_id?: string }>(event)
@@ -72,11 +73,11 @@ export default defineEventHandler(async (event) => {
   const { error: authDeleteError } = await supabase.auth.admin.deleteUser(body.target_user_id)
 
   if (authDeleteError) {
-    console.error('[DELETE-ADMIN] Auth delete failed after profile delete:', authDeleteError)
+    logger.error('DELETE-ADMIN', 'Auth delete failed after profile delete', { error: authDeleteError })
     // Profile is gone but auth user remains — still return success since access is revoked
   }
 
-  console.log(`[DELETE-ADMIN] Admin "${targetAdmin.admin_username}" (${body.target_user_id}) deleted by ${currentUserId}`)
+  logger.info('DELETE-ADMIN', 'Admin deleted', { username: targetAdmin.admin_username, targetUserId: body.target_user_id, deletedBy: currentUserId })
 
   return {
     success: true,
