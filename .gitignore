@@ -44,3 +44,6 @@ blob-report
 # Custom Logs
 clean-error.txt
 *.log
+
+# Local status / scratch notes
+status.md
