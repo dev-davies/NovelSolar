@@ -1,5 +1,6 @@
 import { readBody, sendRedirect, setCookie, createError } from 'h3'
 import { getSupabaseAdminClient } from '../../utils/supabaseAdmin'
+import { verifyBitrixApplicationToken } from '../../utils/bitrixWebhookVerify'
 import { logger } from '../../utils/logger'
 
 interface BitrixUserCurrentResponse {
@@ -35,6 +36,15 @@ export default defineEventHandler(async (event) => {
   }
 
   const body = await readBody(event)
+
+  // Defence-in-depth: verify Bitrix application_token before processing.
+  // This endpoint is exempt from CSRF and admin guards, so the token is the
+  // only proof that the request originated from our Bitrix24 portal.
+  const { bitrixApplicationToken } = useRuntimeConfig()
+  const tokenCheck = verifyBitrixApplicationToken(body ?? {}, bitrixApplicationToken as string)
+  if (!tokenCheck.valid) {
+    throw createError({ statusCode: 403, statusMessage: 'Forbidden: invalid Bitrix application token' })
+  }
   
   const member_id = body?.member_id
   const AUTH_ID = body?.AUTH_ID

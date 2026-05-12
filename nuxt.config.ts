@@ -57,6 +57,7 @@ export default defineNuxtConfig({
     bitrixWebhookUrl: process.env.BITRIX_WEBHOOK_URL,
     otpSecret: process.env.OTP_SECRET,
     authSessionSecret: process.env.AUTH_SESSION_SECRET,
+    bitrixApplicationToken: process.env.BITRIX_APPLICATION_TOKEN,
     smtpHost: process.env.SMTP_HOST,
     smtpPort: process.env.SMTP_PORT,
     smtpUser: process.env.SMTP_USER,
