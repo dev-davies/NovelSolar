@@ -1,4 +1,5 @@
-import { configureCloudinary, uploadBufferToCloudinary, validateGalleryFiles, validateImageFile } from '../../utils/productMedia'
+import { configureCloudinary, uploadBufferToCloudinary, validateGalleryFiles, validateImageFile, type UploadedImageFile } from '../../utils/productMedia'
+import type { BitrixResponse } from '../../types/bitrix'
 
 export default defineEventHandler(async (event) => {
   const contentType = getHeader(event, 'content-type') || ''
@@ -14,8 +15,8 @@ export default defineEventHandler(async (event) => {
   let mainImageUrl: string | null = null
   let galleryUrls: string[] = []
   let removeMainImage = false
-  let mainImageFile: any = null
-  let newGalleryFiles: any[] = []
+  let mainImageFile: UploadedImageFile | undefined = undefined
+  let newGalleryFiles: UploadedImageFile[] = []
 
   if (isMultipart) {
     configureCloudinary()
@@ -61,7 +62,7 @@ export default defineEventHandler(async (event) => {
 
     if (mainImageFile) {
       validateImageFile(mainImageFile, 'Main image')
-      const uploadedMainImage: any = await uploadBufferToCloudinary(mainImageFile.data)
+      const uploadedMainImage = await uploadBufferToCloudinary(mainImageFile.data)
       mainImageUrl = uploadedMainImage.secure_url
     } else if (removeMainImage) {
       mainImageUrl = ''
@@ -73,7 +74,7 @@ export default defineEventHandler(async (event) => {
       const uploadedGallery = await Promise.all(
         newGalleryFiles.map((file) => uploadBufferToCloudinary(file.data))
       )
-      galleryUrls = [...galleryUrls, ...uploadedGallery.map((item: any) => item.secure_url)]
+      galleryUrls = [...galleryUrls, ...uploadedGallery.map((item) => item.secure_url)]
     }
   } else {
     const body = sanitizePayload(await readBody(event))
@@ -119,7 +120,7 @@ export default defineEventHandler(async (event) => {
     }
 
     // Update product in Bitrix
-    const updateResponse = await $fetch<{ result: any }>(
+    const updateResponse = await $fetch<BitrixResponse<number | string | boolean>>(
       `${formattedBitrixUrl}crm.product.update`,
       {
         method: 'POST',

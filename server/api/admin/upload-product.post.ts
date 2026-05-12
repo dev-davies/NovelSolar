@@ -1,4 +1,5 @@
 import { configureCloudinary, uploadBufferToCloudinary, validateGalleryFiles, validateImageFile } from '../../utils/productMedia'
+import type { BitrixResponse } from '../../types/bitrix'
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
@@ -46,13 +47,13 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const cloudinaryResult: any = await uploadBufferToCloudinary(imageFile.data)
+    const cloudinaryResult = await uploadBufferToCloudinary(imageFile.data)
     const imageUrl = cloudinaryResult.secure_url
 
     // 4.5. Gallery Uploads: Process additional images
     const galleryUploadPromises = galleryImages.map(img => uploadBufferToCloudinary(img.data))
-    const galleryResults: any = await Promise.all(galleryUploadPromises)
-    const galleryUrls = galleryResults.map((r: any) => r.secure_url)
+    const galleryResults = await Promise.all(galleryUploadPromises)
+    const galleryUrls = galleryResults.map(r => r.secure_url)
 
     // 5. Bitrix Upload: Add product with Cloudinary image URL in PROPERTY_44
     const webhookUrl = config.bitrixWebhookUrl;
@@ -62,7 +63,7 @@ export default defineEventHandler(async (event) => {
     // Determine MEASURE based on productType
     const measureId = productType === 'meter' ? 6 : 5;
 
-    const bitrixResponse: any = await $fetch(`${formattedWebhookUrl}crm.product.add`, {
+    const bitrixResponse = await $fetch<BitrixResponse<number | string>>(`${formattedWebhookUrl}crm.product.add`, {
       method: 'POST',
       body: {
         fields: {
@@ -94,11 +95,12 @@ export default defineEventHandler(async (event) => {
       cloudinaryUrl: imageUrl
     };
 
-  } catch (error: any) {
-    console.error('Product Upload Pipeline Error:', error.message || error);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    console.error('Product Upload Pipeline Error:', message);
     throw createError({
       statusCode: 500,
-      statusMessage: error.message || 'Internal server error'
+      statusMessage: message || 'Internal server error'
     });
   }
 });

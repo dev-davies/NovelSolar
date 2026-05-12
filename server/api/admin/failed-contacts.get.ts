@@ -11,22 +11,19 @@ export default defineEventHandler(async (event) => {
     }
 
     // Fetch the full data for each failed contact
-    const failedContacts = await Promise.all(
-      keys.map(async (key) => {
-        const contactData = await storage.getItem<FailedContact>(key)
-        return contactData
-      })
-    )
+    const failedContacts = (await Promise.all(
+      keys.map((key) => storage.getItem<FailedContact>(key))
+    )).filter((c): c is FailedContact => c !== null)
 
     // Sort by timestamp (newest first)
-    failedContacts.sort((a: FailedContact, b: FailedContact) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    failedContacts.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
 
     return {
       success: true,
       count: failedContacts.length,
       contacts: failedContacts
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error('Failed to fetch fallback contacts:', error)
     throw createError({ statusCode: 500, statusMessage: 'Could not retrieve fallback contacts queue.' })
   }

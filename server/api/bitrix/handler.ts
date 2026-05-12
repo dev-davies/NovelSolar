@@ -1,6 +1,33 @@
 import { readBody, sendRedirect, setCookie, createError } from 'h3'
 import { getSupabaseAdminClient } from '../../utils/supabaseAdmin'
 
+interface BitrixUserCurrentResponse {
+  result?: {
+    ID?: string | number
+    ADMIN?: boolean | string
+    [key: string]: unknown
+  }
+  error?: string | boolean
+  error_description?: string
+}
+
+interface AuthSessionRow {
+  id: string
+}
+
+interface AuthSessionUpdate {
+  domain: string
+  auth_id: string
+  refresh_id?: string
+  expires_at: string
+  updated_at?: string
+}
+
+interface AuthSessionInsert extends AuthSessionUpdate {
+  bitrix_user_id: string
+  member_id: string
+}
+
 export default defineEventHandler(async (event) => {
   if (event.method !== 'POST') {
     throw createError({ statusCode: 405, statusMessage: 'Method Not Allowed' })
@@ -19,7 +46,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     // 1. Fetch user profile to get bitrix_user_id and check admin status
-    const userResponse = await $fetch<any>(`https://${DOMAIN}/rest/user.current?auth=${AUTH_ID}`)
+    const userResponse = await $fetch<BitrixUserCurrentResponse>(`https://${DOMAIN}/rest/user.current?auth=${AUTH_ID}`)
     
     if (!userResponse || !userResponse.result) {
       throw new Error('Failed to retrieve user profile from Bitrix24')
@@ -34,51 +61,57 @@ export default defineEventHandler(async (event) => {
     const authExpires = parseInt(body.AUTH_EXPIRES || '3600', 10)
     expiresAt.setSeconds(expiresAt.getSeconds() + authExpires)
 
-    // 2. Store credentials in Supabase auth_sessions
+    // 2. Store credentials in Supabase auth_sessions.
+    // `supabase` is untyped (no Database generic configured) so we narrow the
+    // returned shape per query rather than casting the whole client.
     const supabase = getSupabaseAdminClient()
-    
-    const { data: existingSession } = await (supabase as any)
-      .from('auth_sessions')
+    const authSessions = supabase.from('auth_sessions')
+
+    const { data: existingSession } = await authSessions
       .select('id')
       .eq('member_id', member_id || '')
       .eq('bitrix_user_id', bitrixUserId || '')
-      .single()
-      
+      .single<AuthSessionRow>()
+
     let sessionId: string
-    
+
     if (existingSession?.id) {
       // Update
-      const { data, error } = await (supabase as any)
+      const updatePayload: AuthSessionUpdate = {
+        domain: DOMAIN,
+        auth_id: AUTH_ID,
+        refresh_id: REFRESH_ID,
+        expires_at: expiresAt.toISOString(),
+        updated_at: new Date().toISOString()
+      }
+      const { data, error } = await supabase
         .from('auth_sessions')
-        .update({
-          domain: DOMAIN,
-          auth_id: AUTH_ID,
-          refresh_id: REFRESH_ID,
-          expires_at: expiresAt.toISOString(),
-          updated_at: new Date().toISOString()
-        })
+        .update(updatePayload as never)
         .eq('id', existingSession.id)
         .select('id')
-        .single()
-        
+        .single<AuthSessionRow>()
+
       if (error) throw error
+      if (!data) throw new Error('Supabase returned no row after update')
       sessionId = data.id
     } else {
       // Insert
-      const { data, error } = await (supabase as any)
+      const insertPayload: AuthSessionInsert = {
+        bitrix_user_id: bitrixUserId || '',
+        member_id: member_id || '',
+        domain: DOMAIN,
+        auth_id: AUTH_ID,
+        refresh_id: REFRESH_ID,
+        expires_at: expiresAt.toISOString()
+      }
+      const { data, error } = await supabase
         .from('auth_sessions')
-        .insert({
-          bitrix_user_id: bitrixUserId || '',
-          member_id: member_id || '',
-          domain: DOMAIN,
-          auth_id: AUTH_ID,
-          refresh_id: REFRESH_ID,
-          expires_at: expiresAt.toISOString()
-        })
+        .insert(insertPayload as never)
         .select('id')
-        .single()
-        
+        .single<AuthSessionRow>()
+
       if (error) throw error
+      if (!data) throw new Error('Supabase returned no row after insert')
       sessionId = data.id
     }
 
@@ -94,12 +127,12 @@ export default defineEventHandler(async (event) => {
     const redirectUrl = isAdmin ? '/admin' : '/'
     return sendRedirect(event, redirectUrl)
     
-  } catch (error: any) {
+  } catch (error) {
     console.error('Bitrix24 Auth Handler Error:', error)
-    throw createError({ 
-      statusCode: 500, 
+    throw createError({
+      statusCode: 500,
       statusMessage: 'Authentication failed',
-      data: error.message
+      data: error instanceof Error ? error.message : String(error)
     })
   }
 })
