@@ -4,11 +4,11 @@ import { logger } from '../../utils/logger'
 
 export default defineEventHandler(async (event) => {
   const user = await serverSupabaseUser(event)
-  
+
   if (!user) {
     throw createError({
       statusCode: 401,
-      statusMessage: 'Unauthorized. No Supabase session found.'
+      statusMessage: 'Unauthorized. No Supabase session found.',
     })
   }
 
@@ -16,17 +16,17 @@ export default defineEventHandler(async (event) => {
   if (!email) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'User email not found in Supabase session.'
+      statusMessage: 'User email not found in Supabase session.',
     })
   }
 
   const config = useRuntimeConfig()
   const bitrixUrl = config.bitrixWebhookUrl
-  
+
   if (!bitrixUrl) {
     throw createError({
       statusCode: 500,
-      statusMessage: 'CRM Configuration missing'
+      statusMessage: 'CRM Configuration missing',
     })
   }
 
@@ -35,16 +35,16 @@ export default defineEventHandler(async (event) => {
 
   try {
     // 1. Check if contact exists in Bitrix
-    const searchResponse = await $fetch<{ result: any[] }>(`${normalizedBitrixUrl}crm.contact.list`, {
+    const searchResponse = await $fetch<{ result: { ID: string }[] }>(`${normalizedBitrixUrl}crm.contact.list`, {
       method: 'POST',
       body: {
         filter: { EMAIL: email },
-        select: ['ID', 'NAME', 'LAST_NAME']
-      }
+        select: ['ID', 'NAME', 'LAST_NAME'],
+      },
     })
 
     if (searchResponse.result && searchResponse.result.length > 0) {
-      contactId = searchResponse.result[0].ID
+      contactId = searchResponse.result[0]!.ID
     } else {
       // 2. Create a placeholder contact if not found
       const createResponse = await $fetch<{ result: string }>(`${normalizedBitrixUrl}crm.contact.add`, {
@@ -54,9 +54,9 @@ export default defineEventHandler(async (event) => {
             NAME: email.split('@')[0],
             EMAIL: [{ VALUE: email, VALUE_TYPE: 'WORK' }],
             TYPE_ID: 'CLIENT',
-            SOURCE_ID: 'WEB'
-          }
-        }
+            SOURCE_ID: 'WEB',
+          },
+        },
       })
       contactId = createResponse.result
     }
@@ -68,7 +68,7 @@ export default defineEventHandler(async (event) => {
     // 3. Create the custom session
     const { token, maxAge } = await createUserSession({
       contactId,
-      email
+      email,
     })
 
     // 4. Set the auth_token cookie
@@ -77,22 +77,22 @@ export default defineEventHandler(async (event) => {
       path: '/',
       httpOnly: true,
       sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production'
+      secure: process.env.NODE_ENV === 'production',
     })
 
-    return { 
+    return {
       success: true,
-      redirect: '/account'
+      redirect: '/account',
     }
+  } catch (error: unknown) {
+    const err = error as { data?: unknown }
+    logger.error('Auth Session', 'Sync error', { error: err.data || error })
 
-  } catch (error: any) {
-    logger.error('Auth Session', 'Sync error', { error: error?.data || error })
-    
     // Fallback: Create a temporary session if CRM is down
     // This allows the user to at least see a "Valued Customer" profile
     const { token, maxAge } = await createUserSession({
       contactId: `local_${Date.now()}`,
-      email
+      email,
     })
 
     setCookie(event, 'auth_token', token, {
@@ -100,13 +100,13 @@ export default defineEventHandler(async (event) => {
       path: '/',
       httpOnly: true,
       sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production'
+      secure: process.env.NODE_ENV === 'production',
     })
 
-    return { 
+    return {
       success: true,
       message: 'Logged in with local session (CRM offline)',
-      redirect: '/account'
+      redirect: '/account',
     }
   }
 })
