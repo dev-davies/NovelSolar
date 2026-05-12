@@ -129,4 +129,12 @@ export default defineNuxtConfig({
       },
     }
   },
+  typescript: {
+    tsConfig: {
+      exclude: [
+        '../server/**/*.test.ts',
+        '../e2e/**',
+      ]
+    }
+  },
 });
