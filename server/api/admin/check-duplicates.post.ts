@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
 
     for (const name of productNames) {
       try {
-        const response = await $fetch<{ result: any[] }>(
+        const response = await $fetch<{ result: Array<{ ID: string | number; NAME: string }> }>(
           `${formattedBitrixUrl}crm.product.list`,
           {
             method: 'POST',

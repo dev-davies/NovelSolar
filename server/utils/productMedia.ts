@@ -1,4 +1,4 @@
-import { v2 as cloudinary } from 'cloudinary'
+import { v2 as cloudinary, type UploadApiResponse } from 'cloudinary'
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif']
 const MAX_FILE_SIZE = 10 * 1024 * 1024
@@ -46,14 +46,14 @@ export function configureCloudinary() {
   })
 }
 
-export async function uploadBufferToCloudinary(buffer: Buffer, folder = 'novel_solar_products') {
-  return new Promise<any>((resolve, reject) => {
+export async function uploadBufferToCloudinary(buffer: Buffer, folder = 'novel_solar_products'): Promise<UploadApiResponse> {
+  return new Promise<UploadApiResponse>((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       { folder },
       (error, result) => {
-        if (error) {
+        if (error || !result) {
           console.error('Cloudinary Upload Error:', error)
-          reject(error)
+          reject(error ?? new Error('Cloudinary returned no result'))
           return
         }
 

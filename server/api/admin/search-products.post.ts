@@ -1,4 +1,27 @@
+interface BitrixRawProduct {
+  ID: string | number
+  NAME?: string
+  PRICE?: string | number
+  CURRENCY_ID?: string
+  DESCRIPTION?: string
+  DESCRIPTION_TYPE?: string
+  MEASURE?: string | number
+  ACTIVE?: string
+  PROPERTY_102?: unknown
+  PROPERTY_104?: unknown
+  PROPERTY_112?: unknown
+  PROPERTY_44?: unknown
+  DETAIL_PICTURE?: unknown
+  PREVIEW_PICTURE?: unknown
+}
 
+interface BitrixSearchResponse {
+  result?: BitrixRawProduct[]
+  next?: number
+  total?: number
+  error?: string | boolean
+  error_description?: string
+}
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
@@ -18,7 +41,7 @@ export default defineEventHandler(async (event) => {
     const formattedBitrixUrl = (bitrixUrl as string).endsWith('/') ? bitrixUrl : `${bitrixUrl}/`;
 
     // Search products (all if query is empty)
-    const response = await $fetch<any>(
+    const response = await $fetch<BitrixSearchResponse>(
       `${formattedBitrixUrl}crm.product.list`,
       {
         method: 'POST',
@@ -39,7 +62,7 @@ export default defineEventHandler(async (event) => {
     }
 
     // Safely result mapping with fallback for images
-    const products = (response.result || []).map((p: any) => {
+    const products = (response.result || []).map((p) => {
       const cloudinaryUrl = normalizeProperty(p.PROPERTY_102);
       const legacyImageId = p.DETAIL_PICTURE || p.PREVIEW_PICTURE || normalizeProperty(p.PROPERTY_44);
 
@@ -71,11 +94,12 @@ export default defineEventHandler(async (event) => {
       total: response.total || 0,
       count: products.length,
     };
-  } catch (error: any) {
+  } catch (error) {
     console.error('Search Route Error:', error);
+    const message = error instanceof Error ? error.message : String(error)
     throw createError({
       statusCode: 500,
-      statusMessage: error.message || 'Failed to search Bitrix database.',
+      statusMessage: message || 'Failed to search Bitrix database.',
     });
   }
 });

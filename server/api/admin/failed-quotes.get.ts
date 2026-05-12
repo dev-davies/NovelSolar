@@ -11,22 +11,19 @@ export default defineEventHandler(async (event) => {
     }
 
     // Fetch the full data for each failed quote
-    const failedQuotes = await Promise.all(
-      keys.map(async (key) => {
-        const quoteData = await storage.getItem<FailedQuote>(key)
-        return quoteData
-      })
-    )
+    const failedQuotes = (await Promise.all(
+      keys.map((key) => storage.getItem<FailedQuote>(key))
+    )).filter((q): q is FailedQuote => q !== null)
 
     // Sort by timestamp (newest first)
-    failedQuotes.sort((a: FailedQuote, b: FailedQuote) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    failedQuotes.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
 
     return {
       success: true,
       count: failedQuotes.length,
       quotes: failedQuotes
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error('Failed to fetch fallback quotes:', error)
     throw createError({ statusCode: 500, statusMessage: 'Could not retrieve fallback quotes queue.' })
   }

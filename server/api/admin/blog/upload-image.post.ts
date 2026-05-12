@@ -16,17 +16,18 @@ export default defineEventHandler(async (event) => {
   validateImageFile(imageFile, 'Cover image')
 
   try {
-    const result: any = await uploadBufferToCloudinary(imageFile.data, 'novel_solar_blog')
+    const result = await uploadBufferToCloudinary(imageFile.data, 'novel_solar_blog')
     return {
       success: true,
       url: result.secure_url,
       publicId: result.public_id,
     }
-  } catch (error: any) {
-    console.error('Blog image upload error:', error?.message || error)
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    console.error('Blog image upload error:', message)
     throw createError({
       statusCode: 500,
-      statusMessage: error?.message || 'Failed to upload blog cover image.',
+      statusMessage: message || 'Failed to upload blog cover image.',
     })
   }
 })

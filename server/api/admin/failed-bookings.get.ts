@@ -11,22 +11,19 @@ export default defineEventHandler(async (event) => {
     }
 
     // Fetch the full data for each failed booking
-    const failedBookings = await Promise.all(
-      keys.map(async (key) => {
-        const bookingData = await storage.getItem<FailedBooking>(key)
-        return bookingData
-      })
-    )
+    const failedBookings = (await Promise.all(
+      keys.map((key) => storage.getItem<FailedBooking>(key))
+    )).filter((b): b is FailedBooking => b !== null)
 
     // Sort by timestamp (newest first)
-    failedBookings.sort((a: FailedBooking, b: FailedBooking) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    failedBookings.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
 
     return {
       success: true,
       count: failedBookings.length,
       bookings: failedBookings
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error('Failed to fetch fallback bookings:', error)
     throw createError({ statusCode: 500, statusMessage: 'Could not retrieve fallback bookings queue.' })
   }
