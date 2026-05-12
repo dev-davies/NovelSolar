@@ -1,128 +1,165 @@
 <template>
-  <div>
+  <div class="bg-slate-50 min-h-screen">
     <!-- Hero Section -->
-    <section class="@container">
-      <div class="p-0 @[480px]:p-4 max-w-7xl mx-auto">
-        <div class="flex min-h-[520px] flex-col gap-6 bg-cover bg-center bg-no-repeat @[480px]:gap-8 @[480px]:rounded-xl items-center justify-center p-6 text-center" data-alt="Solar panels reflecting sunlight on a Nigerian roof" style='background-image: linear-gradient(rgba(13, 57, 140, 0.7) 0%, rgba(13, 57, 140, 0.9) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuAUleS9NdbgEzcALMpvnOo5_pYgzqwwNam92Nvbi180gu4G8da_8xZtBEYOnEMH1RPXg_1Tzu_tZTwfzI1V9XhHVJ21vgWpFjftmEU6WeR1vYjTDZZqu164jeIhi5-QgQrJLv39VzP7awFCBikooEaiuvlhxOpHZQq6mcEgMOR8DLq1B6cSAJHR3KNEniu_i4_ZnOJwtm4w0DjvO0yBRDy2Ap_2DydIHGW3AKKe7LM_56Q7kQWLlo5hgXkppm6wwLOwxlOYHKwVhFw");'>
-          <div class="flex flex-col gap-4 max-w-3xl">
-            <h1 class="text-white text-4xl font-black leading-tight tracking-[-0.033em] @[480px]:text-6xl">
-              Empowering Nigeria with sustainable energy solutions.
-            </h1>
-            <p class="text-white/90 text-lg font-normal leading-relaxed @[480px]:text-xl">
-              Leading the charge towards a greener, brighter future for every Nigerian home and business.
+    <section class="relative bg-[#002888] py-24 lg:py-32 overflow-hidden">
+      <div class="absolute inset-0 opacity-10 pointer-events-none">
+        <div class="absolute top-0 left-0 w-72 h-72 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
+        <div
+          class="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2 blur-3xl"
+        />
+      </div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight mb-6">About Novel Solar</h1>
+        <p class="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto leading-relaxed font-medium">
+          Empowering households and businesses across the nation to generate their own clean energy.
+        </p>
+      </div>
+    </section>
+
+    <!-- Our Network Section -->
+    <section class="py-20 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+          <div>
+            <h2 class="text-[#002888] text-sm font-black uppercase tracking-widest mb-3">Our Network</h2>
+            <h3 class="text-3xl md:text-4xl font-black text-slate-900 mb-6 leading-tight">
+              Empowering clean energy generation nationwide.
+            </h3>
+            <p class="text-slate-600 text-lg leading-relaxed mb-6">
+              Our mission is to empower households and businesses across the nation to generate their own clean energy
+              through solar power. We are dedicated to achieving this goal by assisting each customer individually.
+            </p>
+            <p class="text-slate-600 text-lg leading-relaxed">
+              With a network of over <strong>30 stores</strong> strategically located throughout Nigeria, a team of
+              customer service professionals, and a group of highly trained engineers, we are fully committed to
+              delivering exceptional value through our premium products and services.
             </p>
           </div>
-          <div class="flex flex-wrap gap-4 justify-center">
-            <button class="flex min-w-[140px] cursor-pointer items-center justify-center rounded-lg h-12 px-6 bg-white text-primary text-base font-bold transition-transform active:scale-95">
-              Our Mission
-            </button>
-            <button class="flex min-w-[140px] cursor-pointer items-center justify-center rounded-lg h-12 px-6 bg-primary/20 border border-white/30 text-white text-base font-bold backdrop-blur-sm">
-              View Impact
-            </button>
+          <div class="relative">
+            <div class="aspect-square bg-slate-100 rounded-3xl overflow-hidden shadow-xl shadow-slate-200">
+              <img src="/images/PowerAuditEngineer.png" alt="Novel Solar Network" class="w-full h-full object-cover" />
+            </div>
+            <div
+              class="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl border border-slate-100 hidden lg:flex flex-col gap-1 items-center justify-center min-w-[140px]"
+            >
+              <span class="text-[#ea580c] font-black text-4xl">30+</span>
+              <span class="text-slate-500 font-bold text-xs uppercase tracking-wider">Stores Nationwide</span>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Our Story Section -->
-    <section class="max-w-7xl mx-auto px-4 py-16 md:py-24">
-      <div class="grid md:grid-cols-2 gap-12 items-center">
-        <div class="order-2 md:order-1">
-          <h2 class="text-primary text-sm font-bold uppercase tracking-widest mb-3">Our Journey</h2>
-          <h3 class="text-3xl md:text-4xl font-extrabold mb-6 leading-tight">A decade of lighting up Nigeria</h3>
-          <p class="text-slate-600 dark:text-slate-400 text-lg mb-6">
-            Founded with a vision to tackle Nigeria's energy challenges, Novel Solar has grown from a small startup to a leader in renewable energy. Our journey began with a single installation in Lagos and has since expanded nationwide.
+    <!-- Our Services Section -->
+    <section class="py-20 bg-slate-50">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-[#002888] text-sm font-black uppercase tracking-widest mb-3">Our Services</h2>
+        <h3 class="text-3xl md:text-4xl font-black text-slate-900 mb-6 leading-tight">
+          Reliable and sustainable energy solutions
+        </h3>
+
+        <div class="space-y-6 text-slate-600 text-lg leading-relaxed text-left">
+          <p>
+            Our solar company is committed to providing reliable and sustainable energy solutions to our customers. We
+            believe that every individual and business should have access to affordable and clean energy, and we strive
+            to make this a reality for all.
           </p>
-          <p class="text-slate-600 dark:text-slate-400 text-lg">
-            We are driven by a passion for innovation and a commitment to sustainable development. Today, we don't just sell solar panels; we provide energy independence to thousands of families and businesses across the continent.
+          <p>
+            Our team of engineers and experts are well-equipped to provide customized solutions tailored to meet the
+            specific energy needs of our customers. We offer a range of products and services, including solar panels,
+            inverters, and batteries, all of which are designed to deliver maximum efficiency and reliability.
           </p>
-        </div>
-        <div class="order-1 md:order-2 relative">
-          <div class="aspect-square bg-primary/10 rounded-2xl overflow-hidden">
-            <img loading="lazy" alt="Engineers working on a solar farm" class="w-full h-full object-cover" data-alt="Engineers installing high-efficiency solar panels" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAp9i-W1AJUW5HVrRnO3eV4M7iTNUBhCbNe5Cj8ZPb3Z8MXKKK9d8is90qGRULlQqPUqcRSdQ6nfFf7A32_tHVLaN2-XyN68cmuQRDHmNEij3NWKaClUQI0nnOOkrJZr2UiVFiqcjxseyvrTsitQqc_18k7LnITZ1HjoDuLf4q-e5mSVplpojU2UDEJUfrZubdm-GvWVsFLWK1O5F3zx8JeYLckyt2_K5E3aRPhJU-OtDkGVhlxL2qAE9wft3OTBkXmbLIkHfR9Tyw"/>
-          </div>
-          <div class="absolute -bottom-6 -left-6 bg-white dark:bg-slate-800 p-6 rounded-xl shadow-xl hidden lg:block">
-            <div class="text-primary font-bold text-4xl">10+</div>
-            <div class="text-slate-500 text-sm">Years of Excellence</div>
-          </div>
+          <p>
+            At our solar company, we understand that transitioning to solar energy can be a significant decision. That's
+            why we are dedicated to providing comprehensive support to our customers every step of the way. From initial
+            consultations to installation and maintenance, our team is here to ensure that the transition is seamless
+            and stress-free.
+          </p>
         </div>
       </div>
     </section>
 
-    <!-- Impact Stats -->
-    <section class="bg-[#002888] py-16">
-      <div class="max-w-7xl mx-auto px-4">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-          <div class="flex flex-col gap-2">
-            <span class="text-white text-4xl md:text-5xl font-black">5,000+</span>
-            <span class="text-white/70 text-sm font-medium uppercase tracking-wider">Installations</span>
-          </div>
-          <div class="flex flex-col gap-2">
-            <span class="text-white text-4xl md:text-5xl font-black">12MW</span>
-            <span class="text-white/70 text-sm font-medium uppercase tracking-wider">Energy Generated</span>
-          </div>
-          <div class="flex flex-col gap-2">
-            <span class="text-white text-4xl md:text-5xl font-black">25k</span>
-            <span class="text-white/70 text-sm font-medium uppercase tracking-wider">Tons CO2 Saved</span>
-          </div>
-          <div class="flex flex-col gap-2">
-            <span class="text-white text-4xl md:text-5xl font-black">36</span>
-            <span class="text-white/70 text-sm font-medium uppercase tracking-wider">States Reached</span>
-          </div>
+    <!-- Why Choose Us Section -->
+    <section class="py-20 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">Why Choose Us?</h2>
         </div>
-      </div>
-    </section>
 
-    <!-- Core Values -->
-    <section class="max-w-7xl mx-auto px-4 py-16 md:py-24">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl md:text-4xl font-extrabold mb-4">Our Core Values</h2>
-        <div class="w-20 h-1.5 bg-primary mx-auto rounded-full"></div>
-      </div>
-      <div class="grid md:grid-cols-3 gap-8">
-        <!-- Value 1 -->
-        <div class="bg-white dark:bg-slate-800/50 p-8 rounded-xl border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
-          <div class="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-6">
-            <span class="material-symbols-outlined text-3xl">eco</span>
+        <div class="grid md:grid-cols-3 gap-8">
+          <!-- Reason 1 -->
+          <div
+            class="bg-slate-50 p-8 rounded-3xl border border-slate-100 hover:shadow-lg transition-shadow duration-300"
+          >
+            <div class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-[#002888] mb-6">
+              <span class="material-symbols-outlined text-3xl">engineering</span>
+            </div>
+            <h4 class="text-xl font-black text-slate-900 mb-3">Highly Trained Engineers</h4>
+            <p class="text-slate-600 leading-relaxed">
+              Our team comprises skilled engineers with technical expertise in solar energy and installation, supported
+              by excellent customer service professionals.
+            </p>
           </div>
-          <h4 class="text-xl font-bold mb-3">Sustainability</h4>
-          <p class="text-slate-600 dark:text-slate-400">
-            We prioritize environmental health and long-term viability in every project we undertake.
-          </p>
-        </div>
-        <!-- Value 2 -->
-        <div class="bg-white dark:bg-slate-800/50 p-8 rounded-xl border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
-          <div class="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-6">
-            <span class="material-symbols-outlined text-3xl">lightbulb</span>
+
+          <!-- Reason 2 -->
+          <div
+            class="bg-slate-50 p-8 rounded-3xl border border-slate-100 hover:shadow-lg transition-shadow duration-300"
+          >
+            <div class="w-14 h-14 bg-orange-100 rounded-2xl flex items-center justify-center text-[#ea580c] mb-6">
+              <span class="material-symbols-outlined text-3xl">support_agent</span>
+            </div>
+            <h4 class="text-xl font-black text-slate-900 mb-3">Experienced Post-Sales</h4>
+            <p class="text-slate-600 leading-relaxed">
+              With our experienced sales team and comprehensive post-sales services, we are committed to providing
+              continued support and assistance even after purchase.
+            </p>
           </div>
-          <h4 class="text-xl font-bold mb-3">Innovation</h4>
-          <p class="text-slate-600 dark:text-slate-400">
-            Constantly seeking better technologies to improve energy efficiency for the African market.
-          </p>
-        </div>
-        <!-- Value 3 -->
-        <div class="bg-white dark:bg-slate-800/50 p-8 rounded-xl border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
-          <div class="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-6">
-            <span class="material-symbols-outlined text-3xl">verified</span>
+
+          <!-- Reason 3 -->
+          <div
+            class="bg-slate-50 p-8 rounded-3xl border border-slate-100 hover:shadow-lg transition-shadow duration-300"
+          >
+            <div class="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center text-emerald-600 mb-6">
+              <span class="material-symbols-outlined text-3xl">verified</span>
+            </div>
+            <h4 class="text-xl font-black text-slate-900 mb-3">Reliable Warranty</h4>
+            <p class="text-slate-600 leading-relaxed">
+              To offer our customers additional assurance and protection, we provide reliable warranty coverage for all
+              our products and installations.
+            </p>
           </div>
-          <h4 class="text-xl font-bold mb-3">Integrity</h4>
-          <p class="text-slate-600 dark:text-slate-400">
-            Transparent processes and honest communication form the foundation of our client relationships.
-          </p>
         </div>
       </div>
     </section>
 
     <!-- CTA Section -->
-    <section class="max-w-7xl mx-auto px-4 pb-24">
-      <div class="bg-primary/5 dark:bg-primary/10 rounded-3xl p-8 md:p-16 flex flex-col items-center text-center">
-        <h2 class="text-3xl md:text-4xl font-black mb-6">Ready to switch to clean energy?</h2>
-        <p class="text-slate-600 dark:text-slate-400 text-lg mb-8 max-w-2xl">
-          Join thousands of Nigerians who have already secured their energy future with Novel Solar.
-        </p>
-        <div class="flex gap-4">
-          <button class="bg-primary text-white px-8 py-4 rounded-xl font-bold hover:opacity-90 transition-opacity">Contact Sales</button>
-          <button class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-8 py-4 rounded-xl font-bold">Learn More</button>
+    <section class="py-20 lg:py-24 bg-slate-50">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div
+          class="bg-[#002888] rounded-3xl p-10 md:p-16 text-center shadow-xl shadow-blue-900/20 relative overflow-hidden"
+        >
+          <div
+            class="absolute inset-0 opacity-10"
+            style="background-image: radial-gradient(white 1px, transparent 1px); background-size: 24px 24px"
+          />
+
+          <div class="relative z-10">
+            <h2 class="text-3xl md:text-4xl font-black text-white mb-6 tracking-tight">
+              Want to Switch to Solar Energy?
+            </h2>
+            <p class="text-blue-100 text-lg md:text-xl mb-10 max-w-2xl mx-auto">
+              Make the transition seamless and stress-free. Let our team of experts guide you every step of the way.
+            </p>
+
+            <NuxtLink
+              to="/contact"
+              class="inline-flex items-center justify-center gap-2 bg-white text-[#002888] px-10 py-4 rounded-xl font-black uppercase tracking-wider hover:bg-slate-50 transition-all shadow-md active:scale-95"
+            >
+              Contact Us Today
+              <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </NuxtLink>
+          </div>
         </div>
       </div>
     </section>
@@ -130,19 +167,16 @@
 </template>
 
 <script setup lang="ts">
+import { useHead } from '#imports'
+
 useHead({
-  title: 'About Us',
+  title: 'About Us | Novel Solar',
   meta: [
-    { name: 'description', content: 'Empowering Nigeria with sustainable energy solutions. Leading the charge towards a greener, brighter future.' }
-  ]
+    {
+      name: 'description',
+      content:
+        'Our mission is to empower households and businesses across Nigeria to generate their own clean energy through solar power.',
+    },
+  ],
 })
 </script>
-
-<style scoped>
-.bg-primary {
-  background-color: #0d398c;
-}
-.text-primary {
-  color: #0d398c;
-}
-</style>
