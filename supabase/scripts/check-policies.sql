@@ -1,4 +1,4 @@
--- Check all RLS policies
+-- Diagnostic: list all RLS policies in the public schema
 SELECT 
     schemaname,
     tablename,
