@@ -1,4 +1,4 @@
--- Check RLS status on all tables
+-- Diagnostic: check RLS enabled/disabled status on all public tables
 SELECT 
     schemaname,
     tablename,
