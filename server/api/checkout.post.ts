@@ -60,6 +60,20 @@ const checkoutSchema = z.object({
   paymentMethod: z.string().trim().min(2).max(80).optional().default('Bank Transfer'),
 })
 
+type BitrixProductResult = {
+  result?: {
+    ID: string | number
+    ACTIVE: string
+    NAME: string
+    PRICE: string | number
+    PROPERTY_102: unknown
+    PROPERTY_44?: unknown
+    PREVIEW_PICTURE?: unknown
+    DETAIL_PICTURE?: unknown
+    [key: string]: unknown
+  }
+}
+
 async function resolveTrustedCart(event: H3Event, submittedCart: SubmittedCartItem[]) {
   if (!Array.isArray(submittedCart) || submittedCart.length === 0) {
     throw createError({
@@ -68,9 +82,8 @@ async function resolveTrustedCart(event: H3Event, submittedCart: SubmittedCartIt
     })
   }
 
-  const trustedCart: TrustedCartItem[] = []
-
-  for (const item of submittedCart) {
+  // Validate all items before making any network calls
+  const validatedItems = submittedCart.map((item) => {
     const productId = item?.id || item?.ID
     const quantity = Number(item?.quantity)
 
@@ -81,19 +94,18 @@ async function resolveTrustedCart(event: H3Event, submittedCart: SubmittedCartIt
       })
     }
 
-    const response = await fetchWithBitrixContext<{
-      result?: {
-        ID: string | number
-        ACTIVE: string
-        NAME: string
-        PRICE: string | number
-        PROPERTY_102: unknown
-        PROPERTY_44?: unknown
-        PREVIEW_PICTURE?: unknown
-        DETAIL_PICTURE?: unknown
-        [key: string]: unknown
-      }
-    }>(event, `crm.product.get?id=${encodeURIComponent(String(productId))}`)
+    return { productId, quantity }
+  })
+
+  // Fetch all products in parallel instead of serially
+  const responses = await Promise.all(
+    validatedItems.map(({ productId }) =>
+      fetchWithBitrixContext<BitrixProductResult>(event, `crm.product.get?id=${encodeURIComponent(String(productId))}`),
+    ),
+  )
+
+  const trustedCart: TrustedCartItem[] = responses.map((response, index) => {
+    const { productId, quantity } = validatedItems[index]!
     const product = response?.result
 
     if (!product || product.ACTIVE === 'N') {
@@ -121,14 +133,14 @@ async function resolveTrustedCart(event: H3Event, submittedCart: SubmittedCartIt
       cloudinaryUrl ||
       (bitrixImage ? `/api/bitrix-image?url=${encodeURIComponent(bitrixImage)}` : '/images/placeholder.png')
 
-    trustedCart.push({
+    return {
       id: product.ID || productId,
       name: product.NAME || `Product ${productId}`,
       price,
       image,
       quantity,
-    })
-  }
+    }
+  })
 
   const total = trustedCart.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
