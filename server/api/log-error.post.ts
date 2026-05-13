@@ -13,6 +13,18 @@ interface ErrorLogEntry {
 }
 
 export default defineEventHandler(async (event) => {
+  // Require a pre-shared token to prevent unauthenticated abuse of this endpoint.
+  // Set LOG_ERROR_TOKEN in your environment. If unset, the endpoint is disabled.
+  const expectedToken = process.env.LOG_ERROR_TOKEN
+  if (!expectedToken) {
+    throw createError({ statusCode: 403, message: 'Error logging is not configured.' })
+  }
+
+  const providedToken = getHeader(event, 'x-log-token')
+  if (!providedToken || providedToken !== expectedToken) {
+    throw createError({ statusCode: 401, message: 'Invalid or missing log token.' })
+  }
+
   const webhookUrl = process.env.ERROR_LOGGING_WEBHOOK_URL
   const authHeader = process.env.ERROR_LOGGING_WEBHOOK_AUTH_HEADER
   const webhookToken = process.env.ERROR_LOGGING_WEBHOOK_TOKEN
@@ -24,7 +36,7 @@ export default defineEventHandler(async (event) => {
     if (!body?.message || !body?.timestamp || !body?.level) {
       throw createError({
         statusCode: 400,
-        message: 'Invalid error log entry'
+        message: 'Invalid error log entry',
       })
     }
 
@@ -35,8 +47,8 @@ export default defineEventHandler(async (event) => {
       request: {
         path: event.path,
         ipAddress: getHeader(event, 'x-forwarded-for') || getHeader(event, 'x-real-ip'),
-        userAgent: body.userAgent || getHeader(event, 'user-agent')
-      }
+        userAgent: body.userAgent || getHeader(event, 'user-agent'),
+      },
     }
 
     if (process.env.NODE_ENV !== 'production') {
@@ -48,7 +60,7 @@ export default defineEventHandler(async (event) => {
     if (webhookUrl) {
       try {
         const headers: Record<string, string> = {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         }
 
         if (authHeader && webhookToken) {
@@ -58,13 +70,16 @@ export default defineEventHandler(async (event) => {
         const response = await fetch(webhookUrl, {
           method: 'POST',
           headers,
-          body: JSON.stringify(logEntry)
+          body: JSON.stringify(logEntry),
         })
 
         forwarded = response.ok
 
         if (!response.ok) {
-          logger.error('ErrorLog', 'Webhook forwarding failed', { status: response.status, statusText: response.statusText })
+          logger.error('ErrorLog', 'Webhook forwarding failed', {
+            status: response.status,
+            statusText: response.statusText,
+          })
         }
       } catch (forwardError) {
         logger.error('ErrorLog', 'Failed to forward error log', { error: forwardError })
@@ -74,7 +89,7 @@ export default defineEventHandler(async (event) => {
     return {
       success: true,
       id: `err_${Date.now()}`,
-      forwarded
+      forwarded,
     }
   } catch (error: unknown) {
     if (error && typeof error === 'object' && 'statusCode' in error) {
@@ -85,7 +100,7 @@ export default defineEventHandler(async (event) => {
 
     throw createError({
       statusCode: 500,
-      message: 'Failed to log error'
+      message: 'Failed to log error',
     })
   }
 })

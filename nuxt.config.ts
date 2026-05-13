@@ -7,25 +7,32 @@ const BITRIX_FRAME_ANCESTOR = process.env.BITRIX_FRAME_ANCESTOR || 'https://*.bi
 const FRAME_ANCESTORS = `'self' ${BITRIX_FRAME_ANCESTOR}`
 
 export default defineNuxtConfig({
-  compatibilityDate: "2025-07-15",
+  compatibilityDate: '2025-07-15',
   srcDir: 'app',
   devtools: { enabled: true },
-  modules: ["@nuxtjs/tailwindcss", "@nuxt/image", "@vueuse/nuxt", "@nuxt/content", "@nuxtjs/sitemap", "@nuxtjs/supabase"],
+  modules: [
+    '@nuxtjs/tailwindcss',
+    '@nuxt/image',
+    '@vueuse/nuxt',
+    '@nuxt/content',
+    '@nuxtjs/sitemap',
+    '@nuxtjs/supabase',
+  ],
   site: {
     url: 'https://novelsolar.com',
-    name: 'Novel Solar'
+    name: 'Novel Solar',
   },
   sitemap: {
     strictNuxtContentPaths: true,
     exclude: [
       '/admin/**', // Keep the admin dashboard out of Google
       '/checkout',
-      '/thank-you'
-    ]
+      '/thank-you',
+    ],
   },
   image: {
-    domains: ["nisl.bitrix24.com", "res.cloudinary.com"],
-    format: ["webp", "avif"],
+    domains: ['nisl.bitrix24.com', 'res.cloudinary.com'],
+    format: ['webp', 'avif'],
     quality: 80,
     screens: {
       xs: 320,
@@ -36,24 +43,23 @@ export default defineNuxtConfig({
       xxl: 1536,
     },
     sanity: {
-      projectId: 'u2k0ma15'
-    }
+      projectId: 'u2k0ma15',
+    },
   },
-  css: ["~/assets/css/main.css"],
+  css: ['~/assets/css/main.css'],
   app: {
     head: {
       title: 'Novel Solar: Leading Solar Energy Company in Nigeria - novelsolar',
       link: [
         { rel: 'icon', type: 'image/png', href: '/favicon.png' },
-        { 
-          rel: 'stylesheet', 
-          href: 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block' 
-        }
-      ]
-    }
+        {
+          rel: 'stylesheet',
+          href: 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block',
+        },
+      ],
+    },
   },
   runtimeConfig: {
-    adminUploadPasscode: process.env.ADMIN_UPLOAD_PASSCODE,
     bitrixWebhookUrl: process.env.BITRIX_WEBHOOK_URL,
     otpSecret: process.env.OTP_SECRET,
     authSessionSecret: process.env.AUTH_SESSION_SECRET,
@@ -82,7 +88,7 @@ export default defineNuxtConfig({
         process.env.SUPABASE_ANON_KEY ||
         process.env.SUPABASE_PUBLISHABLE_KEY ||
         '',
-    }
+    },
   },
   supabase: {
     url: process.env.NUXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL,
@@ -115,26 +121,23 @@ export default defineNuxtConfig({
   nitro: {
     storage: {
       rateLimit: {
-        driver: (process.env.NODE_ENV === 'production' && process.env.KV_REST_API_URL) ? 'vercel-kv' : 'memory',
+        driver: process.env.NODE_ENV === 'production' && process.env.KV_REST_API_URL ? 'vercel-kv' : 'memory',
       },
       // The 'otp' namespace will automatically use Vercel KV in production if linked
       otp: {
-        driver: (process.env.NODE_ENV === 'production' && process.env.KV_REST_API_URL) ? 'vercel-kv' : 'memory',
+        driver: process.env.NODE_ENV === 'production' && process.env.KV_REST_API_URL ? 'vercel-kv' : 'memory',
       },
       adminSessions: {
-        driver: (process.env.NODE_ENV === 'production' && process.env.KV_REST_API_URL) ? 'vercel-kv' : 'memory',
+        driver: process.env.NODE_ENV === 'production' && process.env.KV_REST_API_URL ? 'vercel-kv' : 'memory',
       },
       userSessions: {
-        driver: (process.env.NODE_ENV === 'production' && process.env.KV_REST_API_URL) ? 'vercel-kv' : 'memory',
+        driver: process.env.NODE_ENV === 'production' && process.env.KV_REST_API_URL ? 'vercel-kv' : 'memory',
       },
-    }
+    },
   },
   typescript: {
     tsConfig: {
-      exclude: [
-        '../server/**/*.test.ts',
-        '../e2e/**',
-      ]
-    }
+      exclude: ['../server/**/*.test.ts', '../e2e/**'],
+    },
   },
-});
+})
