@@ -1,8 +1,8 @@
 import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto'
 import { logger } from './logger'
+import { getSupabaseAdminClient } from './supabaseAdmin'
 
 const USER_SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 7 // 7 days
-const USER_SESSION_STORAGE = 'userSessions'
 const USER_STATELESS_PREFIX = 'user_stateless_'
 
 export interface UserSessionRecord {
@@ -22,19 +22,6 @@ function getSessionSecret(): string {
     })
   }
   return String(secret)
-}
-
-function assertPersistentUserSessionStorage() {
-  if (process.env.NODE_ENV === 'production' && !process.env.KV_REST_API_URL) {
-    logger.error(
-      'AUTH',
-      'Persistent user session storage is not configured. Set KV_REST_API_URL or sessions may be lost in production.',
-    )
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Persistent user session storage is not configured.',
-    })
-  }
 }
 
 function signValue(value: string, secret: string) {
@@ -77,8 +64,6 @@ function parseStatelessSessionToken(token: string): UserSessionRecord | null {
 }
 
 export async function createUserSession(params: { contactId: string; email: string }) {
-  assertPersistentUserSessionStorage()
-
   const token = `user_session_${randomUUID()}`
   const createdAt = Date.now()
   const expiresAt = createdAt + USER_SESSION_MAX_AGE_SECONDS * 1000
@@ -91,9 +76,16 @@ export async function createUserSession(params: { contactId: string; email: stri
   }
 
   try {
-    await useStorage(USER_SESSION_STORAGE).setItem<UserSessionRecord>(token, record, {
-      ttl: USER_SESSION_MAX_AGE_SECONDS,
+    const supabase = getSupabaseAdminClient()
+    const { error } = await supabase.from('user_sessions').insert({
+      token,
+      contact_id: record.contactId,
+      email: record.email,
+      created_at: record.createdAt,
+      expires_at: record.expiresAt,
     })
+
+    if (error) throw error
 
     return { token, maxAge: USER_SESSION_MAX_AGE_SECONDS }
   } catch (storageError: any) {
@@ -105,34 +97,48 @@ export async function createUserSession(params: { contactId: string; email: stri
   }
 }
 
-export async function getUserSession(token?: string | null) {
+export async function getUserSession(token?: string | null): Promise<UserSessionRecord | null> {
   if (!token) return null
 
+  // Stateless tokens are self-contained — no DB lookup needed
   const statelessSession = parseStatelessSessionToken(token)
   if (statelessSession) return statelessSession
 
-  const storage = useStorage(USER_SESSION_STORAGE)
-  let session: UserSessionRecord | null = null
-
   try {
-    session = await storage.getItem<UserSessionRecord | null>(token)
+    const supabase = getSupabaseAdminClient()
+    const { data, error } = await supabase
+      .from('user_sessions')
+      .select('contact_id, email, created_at, expires_at')
+      .eq('token', token)
+      .maybeSingle()
+
+    if (error) {
+      logger.error('AUTH', 'User session read failed', { error: error.message })
+      return null
+    }
+
+    if (!data) return null
+
+    if (Date.now() > data.expires_at) {
+      // Clean up expired session in the background
+      supabase
+        .from('user_sessions')
+        .delete()
+        .eq('token', token)
+        .then(() => {})
+      return null
+    }
+
+    return {
+      contactId: data.contact_id,
+      email: data.email,
+      createdAt: data.created_at,
+      expiresAt: data.expires_at,
+    }
   } catch (storageError: any) {
     logger.error('AUTH', 'User session read failed', { error: storageError?.message || storageError })
     return null
   }
-
-  if (!session) return null
-
-  if (Date.now() > session.expiresAt) {
-    try {
-      await storage.removeItem(token)
-    } catch (storageError: any) {
-      logger.error('AUTH', 'User session cleanup failed', { error: storageError?.message || storageError })
-    }
-    return null
-  }
-
-  return session
 }
 
 export async function destroyUserSession(token?: string | null) {
@@ -140,7 +146,8 @@ export async function destroyUserSession(token?: string | null) {
   if (token.startsWith(USER_STATELESS_PREFIX)) return
 
   try {
-    await useStorage(USER_SESSION_STORAGE).removeItem(token)
+    const supabase = getSupabaseAdminClient()
+    await supabase.from('user_sessions').delete().eq('token', token)
   } catch (storageError: any) {
     logger.error('AUTH', 'User session destroy failed', { error: storageError?.message || storageError })
   }
