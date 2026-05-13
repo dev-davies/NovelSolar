@@ -85,12 +85,6 @@ export interface BlogPost {
   excerpt?: string
 }
 
-/** Portable text image value (Sanity) */
-export interface PortableTextImageValue {
-  asset?: { _ref?: string; url?: string }
-  [key: string]: unknown
-}
-
 /** Nigerian state for checkout state selector */
 export interface NigerianState {
   name: string

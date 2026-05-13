@@ -42,9 +42,6 @@ export default defineNuxtConfig({
       xl: 1280,
       xxl: 1536,
     },
-    sanity: {
-      projectId: 'u2k0ma15',
-    },
   },
   css: ['~/assets/css/main.css'],
   app: {
