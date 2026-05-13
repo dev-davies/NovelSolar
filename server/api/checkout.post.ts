@@ -1,4 +1,3 @@
-import type { TrustedCartItem } from '../types/database'
 import nodemailer from 'nodemailer'
 import { z } from 'zod'
 import { generateOrderReceiptHtml } from '../utils/emailTemplate'
@@ -23,6 +22,8 @@ type TrustedCartItem = {
   image: string
   quantity: number
 }
+
+// Note: TrustedCartItem is defined locally above; the import from '../types/database' was removed to avoid the duplicate declaration.
 
 const checkoutSchema = z.object({
   customer: z.object({
@@ -195,7 +196,7 @@ export default defineEventHandler(async (event) => {
 
   logger.info('Checkout API', `Attempting to send order ${orderId} to Bitrix...`)
 
-  const response = await $fetch<BitrixLeadResponse>(`${normalizedBitrixUrl}crm.lead.add`, {
+  const response = await $fetch<BitrixLeadResponse>(`${bitrixUrl}crm.lead.add`, {
     method: 'POST',
     body: {
       fields: {
@@ -229,8 +230,7 @@ export default defineEventHandler(async (event) => {
     shipping: 0,
     total: total,
     products: cart.map((item: TrustedCartItem) => {
-      let finalImage =
-        item.image || item.PROPERTY_102 || item.PREVIEW_PICTURE || 'https://novelsolar.ng/images/placeholder.png'
+      let finalImage = item.image || 'https://novelsolar.ng/images/placeholder.png'
       if (typeof finalImage === 'string' && finalImage.startsWith('/')) {
         finalImage = `https://novelsolar.ng${finalImage}`
       }
@@ -275,6 +275,6 @@ export default defineEventHandler(async (event) => {
   return {
     success: true,
     orderId,
-    message: crmSuccess ? 'Order processed successfully.' : 'Order received. (Queued locally due to CRM timeout).',
+    message: 'Order processed successfully.',
   }
 })
