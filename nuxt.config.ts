@@ -117,19 +117,15 @@ export default defineNuxtConfig({
   },
   nitro: {
     storage: {
+      // Rate limiting uses memory in dev, Vercel KV in production if available
       rateLimit: {
         driver: process.env.NODE_ENV === 'production' && process.env.KV_REST_API_URL ? 'vercel-kv' : 'memory',
       },
-      // The 'otp' namespace will automatically use Vercel KV in production if linked
+      // OTP codes use memory in dev, Vercel KV in production if available
       otp: {
         driver: process.env.NODE_ENV === 'production' && process.env.KV_REST_API_URL ? 'vercel-kv' : 'memory',
       },
-      adminSessions: {
-        driver: process.env.NODE_ENV === 'production' && process.env.KV_REST_API_URL ? 'vercel-kv' : 'memory',
-      },
-      userSessions: {
-        driver: process.env.NODE_ENV === 'production' && process.env.KV_REST_API_URL ? 'vercel-kv' : 'memory',
-      },
+      // Sessions are now stored in Supabase — these drivers are no longer used
     },
   },
   typescript: {

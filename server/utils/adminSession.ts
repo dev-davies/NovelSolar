@@ -1,7 +1,6 @@
 import { logger } from './logger'
+import { getSupabaseAdminClient } from './supabaseAdmin'
 
-// Use memory storage for session persistence across requests
-const ADMIN_SESSION_STORAGE = 'adminSessions'
 const ADMIN_SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 // 24 hours
 
 interface AdminSessionRecord {
@@ -11,51 +10,65 @@ interface AdminSessionRecord {
   expiresAt: number
 }
 
-function assertPersistentAdminSessionStorage() {
-  if (process.env.NODE_ENV === 'production' && !process.env.KV_REST_API_URL) {
-    logger.error('AUTH', 'Persistent admin session storage is not configured. Set KV_REST_API_URL or sessions may be lost in production.')
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Persistent admin session storage is not configured.'
-    })
-  }
-}
-
-export async function createAdminSession(user?: { userId?: string, email?: string | null }) {
-  assertPersistentAdminSessionStorage()
-
+export async function createAdminSession(user?: { userId?: string; email?: string | null }) {
   const token = `admin_session_${globalThis.crypto.randomUUID()}`
   const createdAt = Date.now()
-  const expiresAt = createdAt + (ADMIN_SESSION_MAX_AGE_SECONDS * 1000)
+  const expiresAt = createdAt + ADMIN_SESSION_MAX_AGE_SECONDS * 1000
 
-  await useStorage(ADMIN_SESSION_STORAGE).setItem<AdminSessionRecord>(
+  const supabase = getSupabaseAdminClient()
+  const { error } = await supabase.from('admin_sessions').insert({
     token,
-    {
-      userId: user?.userId,
-      email: user?.email ?? null,
-      createdAt,
-      expiresAt
-    },
-    { ttl: ADMIN_SESSION_MAX_AGE_SECONDS }
-  )
+    user_id: user?.userId ?? null,
+    email: user?.email ?? null,
+    created_at: createdAt,
+    expires_at: expiresAt,
+  })
+
+  if (error) {
+    logger.error('AUTH', 'Admin session storage failed', { error: error.message })
+    throw createError({ statusCode: 500, statusMessage: 'Failed to create admin session.' })
+  }
 
   return { token, maxAge: ADMIN_SESSION_MAX_AGE_SECONDS }
 }
 
-export async function getAdminSession(token?: string | null) {
+export async function getAdminSession(token?: string | null): Promise<AdminSessionRecord | null> {
   if (!token) return null
 
-  const storage = useStorage(ADMIN_SESSION_STORAGE)
-  const session = await storage.getItem<AdminSessionRecord | null>(token)
-  
-  if (!session) return null
+  try {
+    const supabase = getSupabaseAdminClient()
+    const { data, error } = await supabase
+      .from('admin_sessions')
+      .select('user_id, email, created_at, expires_at')
+      .eq('token', token)
+      .maybeSingle()
 
-  if (Date.now() > session.expiresAt) {
-    await storage.removeItem(token)
+    if (error) {
+      logger.error('AUTH', 'Admin session read failed', { error: error.message })
+      return null
+    }
+
+    if (!data) return null
+
+    if (Date.now() > data.expires_at) {
+      supabase
+        .from('admin_sessions')
+        .delete()
+        .eq('token', token)
+        .then(() => {})
+      return null
+    }
+
+    return {
+      userId: data.user_id ?? undefined,
+      email: data.email ?? null,
+      createdAt: data.created_at,
+      expiresAt: data.expires_at,
+    }
+  } catch (storageError: any) {
+    logger.error('AUTH', 'Admin session read failed', { error: storageError?.message || storageError })
     return null
   }
-
-  return session
 }
 
 export async function validateAdminSession(token?: string | null) {
@@ -65,5 +78,11 @@ export async function validateAdminSession(token?: string | null) {
 
 export async function destroyAdminSession(token?: string | null) {
   if (!token) return
-  await useStorage(ADMIN_SESSION_STORAGE).removeItem(token)
+
+  try {
+    const supabase = getSupabaseAdminClient()
+    await supabase.from('admin_sessions').delete().eq('token', token)
+  } catch (storageError: any) {
+    logger.error('AUTH', 'Admin session destroy failed', { error: storageError?.message || storageError })
+  }
 }
