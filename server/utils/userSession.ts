@@ -12,22 +12,27 @@ export interface UserSessionRecord {
   expiresAt: number
 }
 
-function getSessionSecret() {
+function getSessionSecret(): string {
   const config = useRuntimeConfig()
-  return String(
-    config.authSessionSecret
-    || config.otpSecret
-    || config.smtpPass
-    || 'novel-solar-session-secret'
-  )
+  const secret = config.authSessionSecret
+  if (!secret) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'AUTH_SESSION_SECRET environment variable is not configured.',
+    })
+  }
+  return String(secret)
 }
 
 function assertPersistentUserSessionStorage() {
   if (process.env.NODE_ENV === 'production' && !process.env.KV_REST_API_URL) {
-    logger.error('AUTH', 'Persistent user session storage is not configured. Set KV_REST_API_URL or sessions may be lost in production.')
+    logger.error(
+      'AUTH',
+      'Persistent user session storage is not configured. Set KV_REST_API_URL or sessions may be lost in production.',
+    )
     throw createError({
       statusCode: 500,
-      statusMessage: 'Persistent user session storage is not configured.'
+      statusMessage: 'Persistent user session storage is not configured.',
     })
   }
 }
@@ -71,12 +76,12 @@ function parseStatelessSessionToken(token: string): UserSessionRecord | null {
   }
 }
 
-export async function createUserSession(params: { contactId: string, email: string }) {
+export async function createUserSession(params: { contactId: string; email: string }) {
   assertPersistentUserSessionStorage()
 
   const token = `user_session_${randomUUID()}`
   const createdAt = Date.now()
-  const expiresAt = createdAt + (USER_SESSION_MAX_AGE_SECONDS * 1000)
+  const expiresAt = createdAt + USER_SESSION_MAX_AGE_SECONDS * 1000
 
   const record: UserSessionRecord = {
     contactId: params.contactId,
@@ -86,15 +91,15 @@ export async function createUserSession(params: { contactId: string, email: stri
   }
 
   try {
-    await useStorage(USER_SESSION_STORAGE).setItem<UserSessionRecord>(
-      token,
-      record,
-      { ttl: USER_SESSION_MAX_AGE_SECONDS }
-    )
+    await useStorage(USER_SESSION_STORAGE).setItem<UserSessionRecord>(token, record, {
+      ttl: USER_SESSION_MAX_AGE_SECONDS,
+    })
 
     return { token, maxAge: USER_SESSION_MAX_AGE_SECONDS }
   } catch (storageError: any) {
-    logger.error('AUTH', 'User session storage failed. Using stateless fallback', { error: storageError?.message || storageError })
+    logger.error('AUTH', 'User session storage failed. Using stateless fallback', {
+      error: storageError?.message || storageError,
+    })
     const statelessToken = createStatelessSessionToken(record)
     return { token: statelessToken, maxAge: USER_SESSION_MAX_AGE_SECONDS }
   }
