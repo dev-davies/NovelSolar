@@ -1,5 +1,5 @@
 // filepath: app/composables/useErrorLogger.ts
-import { useRuntimeConfig } from '#app'
+import { useCookie, useRuntimeConfig } from '#app'
 
 export interface ErrorLogEntry {
   message: string
@@ -27,7 +27,7 @@ export function useErrorLogger(options: ErrorLoggerOptions = {}) {
     enabled: options.enabled ?? config.public.errorLoggingEnabled !== false,
     endpoint: options.endpoint ?? config.public.errorLoggingEndpoint ?? '/api/log-error',
     environment: options.environment ?? (baseUrl.includes('localhost') ? 'development' : 'production'),
-    release: options.release ?? config.public.appVersion ?? '1.0.0'
+    release: options.release ?? config.public.appVersion ?? '1.0.0',
   }
 
   const sendEntry = async (entry: ErrorLogEntry) => {
@@ -41,12 +41,18 @@ export function useErrorLogger(options: ErrorLoggerOptions = {}) {
     if (!isClient) return
 
     try {
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      }
+
+      const csrfToken = useCookie('csrf-token').value
+      if (csrfToken) headers['x-csrf-token'] = csrfToken
+
       await fetch(loggerConfig.endpoint, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(entry)
+        headers,
+        body: JSON.stringify(entry),
+        credentials: 'same-origin',
       })
     } catch (err) {
       console.error('[ErrorLogger] Failed to send error log:', err)
@@ -62,7 +68,7 @@ export function useErrorLogger(options: ErrorLoggerOptions = {}) {
   const createEntry = (
     error: Error | string | unknown,
     level: ErrorLogEntry['level'],
-    context?: Record<string, unknown>
+    context?: Record<string, unknown>,
   ): ErrorLogEntry => {
     const normalizedError = normalizeError(error)
 
@@ -73,7 +79,7 @@ export function useErrorLogger(options: ErrorLoggerOptions = {}) {
       url: isClient ? window.location.href : undefined,
       timestamp: new Date().toISOString(),
       userAgent: isClient ? navigator.userAgent : undefined,
-      level
+      level,
     }
   }
 
@@ -108,13 +114,13 @@ export function useErrorLogger(options: ErrorLoggerOptions = {}) {
         filename: event.filename,
         lineno: event.lineno,
         colno: event.colno,
-        type: 'uncaught_error'
+        type: 'uncaught_error',
       })
     }
 
     const handleRejection = (event: PromiseRejectionEvent) => {
       void logError(event.reason || 'Unhandled promise rejection', {
-        type: 'unhandled_promise_rejection'
+        type: 'unhandled_promise_rejection',
       })
     }
 
@@ -130,14 +136,14 @@ export function useErrorLogger(options: ErrorLoggerOptions = {}) {
   const trackVueError = (error: Error, info: string) => {
     return logError(error, {
       type: 'vue_error',
-      componentInfo: info
+      componentInfo: info,
     })
   }
 
   const trackNuxtError = (error: Error | string | unknown, context?: Record<string, unknown>) => {
     return logError(error, {
       type: 'nuxt_error',
-      ...context
+      ...context,
     })
   }
 
@@ -148,6 +154,6 @@ export function useErrorLogger(options: ErrorLoggerOptions = {}) {
     setupGlobalErrorHandler,
     trackVueError,
     trackNuxtError,
-    config: loggerConfig
+    config: loggerConfig,
   }
 }
