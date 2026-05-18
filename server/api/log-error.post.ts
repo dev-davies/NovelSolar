@@ -13,18 +13,10 @@ interface ErrorLogEntry {
 }
 
 export default defineEventHandler(async (event) => {
-  // Require a pre-shared token to prevent unauthenticated abuse of this endpoint.
-  // Set LOG_ERROR_TOKEN in your environment. If unset, the endpoint is disabled.
-  const expectedToken = process.env.LOG_ERROR_TOKEN
-  if (!expectedToken) {
-    throw createError({ statusCode: 403, message: 'Error logging is not configured.' })
-  }
-
-  const providedToken = getHeader(event, 'x-log-token')
-  if (!providedToken || providedToken !== expectedToken) {
-    throw createError({ statusCode: 401, message: 'Invalid or missing log token.' })
-  }
-
+  // Browser callers are gated by the global CSRF middleware (2.csrf.ts), which
+  // requires a same-origin cookie + matching header on POSTs. No pre-shared
+  // token is needed: a "secret" that has to ship to the browser would be
+  // public anyway.
   const webhookUrl = process.env.ERROR_LOGGING_WEBHOOK_URL
   const authHeader = process.env.ERROR_LOGGING_WEBHOOK_AUTH_HEADER
   const webhookToken = process.env.ERROR_LOGGING_WEBHOOK_TOKEN
