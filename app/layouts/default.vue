@@ -990,6 +990,7 @@ onMounted(() => {
       if (typeof (window as any).BX24 !== 'undefined') {
         clearInterval(checkBX24)
         ;(window as any).BX24.init()
+        ;(window as any).BX24.installFinish()
         initBitrixNavigation() // Start navigation sync once BX24 is ready
       }
     }, 100)
