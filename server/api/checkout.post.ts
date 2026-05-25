@@ -208,27 +208,46 @@ export default defineEventHandler(async (event) => {
 
   logger.info('Checkout API', `Attempting to send order ${orderId} to Bitrix...`)
 
-  const response = await $fetch<BitrixLeadResponse>(`${bitrixUrl}crm.lead.add`, {
-    method: 'POST',
-    body: {
-      fields: {
-        TITLE: `Web Order: ${customer.firstName || 'Guest'} ${customer.lastName || ''} (${orderId})`,
-        NAME: customer.firstName || 'Guest',
-        LAST_NAME: customer.lastName || '',
-        EMAIL: [{ VALUE: customer.email, VALUE_TYPE: 'WORK' }],
-        PHONE: [{ VALUE: customer.phone || '0000000000', VALUE_TYPE: 'WORK' }],
-        ADDRESS: customer.address || customer.streetAddress || '',
-        OPPORTUNITY: total,
-        CURRENCY_ID: 'NGN',
-        COMMENTS: crmComments,
-        SOURCE_ID: 'WEB',
+  let crmSuccess = false
+  try {
+    const response = await $fetch<BitrixLeadResponse>(`${bitrixUrl}crm.lead.add`, {
+      method: 'POST',
+      body: {
+        fields: {
+          TITLE: `Web Order: ${customer.firstName || 'Guest'} ${customer.lastName || ''} (${orderId})`,
+          NAME: customer.firstName || 'Guest',
+          LAST_NAME: customer.lastName || '',
+          EMAIL: [{ VALUE: customer.email, VALUE_TYPE: 'WORK' }],
+          PHONE: [{ VALUE: customer.phone || '0000000000', VALUE_TYPE: 'WORK' }],
+          ADDRESS: customer.address || customer.streetAddress || '',
+          OPPORTUNITY: total,
+          CURRENCY_ID: 'NGN',
+          COMMENTS: crmComments,
+          SOURCE_ID: 'WEB',
+        },
       },
-    },
-  })
+    })
 
-  if (response.error) throw new Error(response.error_description)
+    if (response.error) throw new Error(response.error_description)
 
-  logger.info('Checkout API', `✅ Successfully created Lead in Bitrix for order ${orderId}`, { orderId })
+    crmSuccess = true
+    logger.info('Checkout API', `✅ Successfully created Lead in Bitrix for order ${orderId}`, { orderId })
+  } catch (error: unknown) {
+    const err = error as { data?: unknown }
+    logger.error('Checkout API', 'Bitrix order submission failed', { error: err.data || error, orderId })
+
+    // SAFETY NET: persist the order so it isn't lost while Bitrix is down.
+    try {
+      const storage = useStorage('data:failed-orders')
+      await storage.setItem(orderId, orderPayload)
+      logger.info('Checkout API', `Order ${orderId} saved to fallback queue.`)
+    } catch (storageError) {
+      logger.error('Checkout API', '[CRITICAL] Failed to save order to fallback storage', {
+        error: storageError,
+        orderId,
+      })
+    }
+  }
 
   // 3. GENERATE PREMIUM EMAIL HTML (always runs regardless of CRM status)
   const generatedOrderNumber = 'NS-' + Math.floor(100000 + Math.random() * 900000)
@@ -287,6 +306,7 @@ export default defineEventHandler(async (event) => {
   return {
     success: true,
     orderId,
-    message: 'Order processed successfully.',
+    crmSuccess,
+    message: crmSuccess ? 'Order processed successfully.' : 'Order received. (Saved locally for retry)',
   }
 })
