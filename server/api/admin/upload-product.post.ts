@@ -76,7 +76,7 @@ export default defineEventHandler(async (event) => {
         fields: {
           NAME: productName,
           PRICE: productPrice,
-          PURCHASE_PRICE: productDealerPrice || '',
+          PROPERTY_116: productDealerPrice || '',
           CURRENCY_ID: 'NGN',
           ACTIVE: 'Y',
           MEASURE: measureId,

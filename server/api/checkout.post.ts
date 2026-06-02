@@ -67,7 +67,7 @@ type BitrixProductResult = {
     ACTIVE: string
     NAME: string
     PRICE: string | number
-    PURCHASE_PRICE?: string | number
+    PROPERTY_116?: unknown
     PROPERTY_102: unknown
     PROPERTY_44?: unknown
     PREVIEW_PICTURE?: unknown
@@ -137,8 +137,8 @@ async function resolveTrustedCart(event: H3Event, submittedCart: SubmittedCartIt
     }
 
     let price = Number(product.PRICE)
-    if (isDealer && product.PURCHASE_PRICE !== undefined) {
-      price = Number(product.PURCHASE_PRICE)
+    if (isDealer && product.PROPERTY_116 !== undefined) {
+      price = Number(product.PROPERTY_116)
     }
 
     if (!Number.isFinite(price) || price < 0) {

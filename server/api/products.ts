@@ -44,7 +44,7 @@ export default defineEventHandler(async (event) => {
       ID?: string | number
       NAME?: string
       PRICE?: string | number
-      PURCHASE_PRICE?: string | number
+      PROPERTY_116?: unknown
       CURRENCY_ID?: string
       DESCRIPTION?: unknown
       QUANTITY?: string | number
@@ -72,7 +72,7 @@ export default defineEventHandler(async (event) => {
           'ID',
           'NAME',
           'PRICE',
-          'PURCHASE_PRICE',
+          'PROPERTY_116',
           'CURRENCY_ID',
           'DESCRIPTION',
           'QUANTITY',
@@ -142,8 +142,8 @@ export default defineEventHandler(async (event) => {
         PROPERTY_112: normalizeProperty(product.PROPERTY_112), // Gallery
       }
 
-      if (isDealer && product.PURCHASE_PRICE !== undefined) {
-        productObj.dealerPrice = Number(product.PURCHASE_PRICE)
+      if (isDealer && product.PROPERTY_116 !== undefined) {
+        productObj.dealerPrice = Number(product.PROPERTY_116)
       }
 
       return productObj

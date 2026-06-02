@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
   try {
     interface BitrixProduct {
       ACTIVE?: string
-      PURCHASE_PRICE?: string | number
+      PROPERTY_116?: unknown
       PROPERTY_102?: unknown
       PROPERTY_104?: unknown
       PROPERTY_112?: unknown
@@ -45,12 +45,12 @@ export default defineEventHandler(async (event) => {
       product.PROPERTY_104 = normalizeProperty(product.PROPERTY_104)
       product.PROPERTY_112 = normalizeProperty(product.PROPERTY_112)
 
-      if (isDealer && product.PURCHASE_PRICE !== undefined) {
-        product.dealerPrice = Number(product.PURCHASE_PRICE)
+      if (isDealer && product.PROPERTY_116 !== undefined) {
+        product.dealerPrice = Number(product.PROPERTY_116)
       }
 
-      // Always strip the raw PURCHASE_PRICE so it doesn't leak
-      delete product.PURCHASE_PRICE
+      // Always strip the raw PROPERTY_116 so it doesn't leak
+      delete product.PROPERTY_116
     }
 
     return product

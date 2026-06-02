@@ -114,7 +114,7 @@ export default defineEventHandler(async (event) => {
     const fields: Record<string, unknown> = {
       NAME: productName,
       PRICE: productPrice,
-      PURCHASE_PRICE: productDealerPrice || '',
+      PROPERTY_116: productDealerPrice || '',
       DESCRIPTION: productDescription || '',
       DESCRIPTION_TYPE: 'html',
       ACTIVE: productDisabled ? 'N' : 'Y',
