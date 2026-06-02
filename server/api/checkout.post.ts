@@ -2,6 +2,7 @@ import nodemailer from 'nodemailer'
 import { z } from 'zod'
 import { generateOrderReceiptHtml } from '../utils/emailTemplate'
 import { fetchWithBitrixContext } from '../utils/bitrixAuth'
+import { serverSupabaseUser, serverSupabaseClient } from '#supabase/server'
 import { normalizeProperty } from '../utils/normalizeProperty'
 import type { BitrixLeadResponse } from '../types/bitrix'
 import { logger } from '../utils/logger'
@@ -66,6 +67,7 @@ type BitrixProductResult = {
     ACTIVE: string
     NAME: string
     PRICE: string | number
+    PURCHASE_PRICE?: string | number
     PROPERTY_102: unknown
     PROPERTY_44?: unknown
     PREVIEW_PICTURE?: unknown
@@ -75,6 +77,25 @@ type BitrixProductResult = {
 }
 
 async function resolveTrustedCart(event: H3Event, submittedCart: SubmittedCartItem[]) {
+  let isDealer = false
+  try {
+    const user = await serverSupabaseUser(event)
+    if (user) {
+      const supabase = await serverSupabaseClient(event)
+      const { data: profile } = (await supabase
+        .from('profiles')
+        .select('role, dealer_status')
+        .eq('user_id', user.id)
+        .single()) as { data: { role: string; dealer_status: string } | null }
+
+      if (profile && profile.role === 'dealer' && profile.dealer_status === 'approved') {
+        isDealer = true
+      }
+    }
+  } catch (err) {
+    // Ignore errors
+  }
+
   if (!Array.isArray(submittedCart) || submittedCart.length === 0) {
     throw createError({
       statusCode: 400,
@@ -115,7 +136,10 @@ async function resolveTrustedCart(event: H3Event, submittedCart: SubmittedCartIt
       })
     }
 
-    const price = Number(product.PRICE)
+    let price = Number(product.PRICE)
+    if (isDealer && product.PURCHASE_PRICE !== undefined) {
+      price = Number(product.PURCHASE_PRICE)
+    }
 
     if (!Number.isFinite(price) || price < 0) {
       throw createError({
@@ -219,7 +243,7 @@ export default defineEventHandler(async (event) => {
           LAST_NAME: customer.lastName || '',
           EMAIL: [{ VALUE: customer.email, VALUE_TYPE: 'WORK' }],
           PHONE: [{ VALUE: customer.phone || '0000000000', VALUE_TYPE: 'WORK' }],
-          ADDRESS: customer.address || customer.streetAddress || '',
+          ADDRESS: customer.address || '',
           OPPORTUNITY: total,
           CURRENCY_ID: 'NGN',
           COMMENTS: crmComments,
