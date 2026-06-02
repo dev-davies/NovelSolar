@@ -36,23 +36,7 @@ const handleLogout = async () => {
   }
 }
 
-const renewInvite = async (applicationId: string) => {
-  isActionLoading.value[applicationId] = true
-  try {
-    await useNuxtApp().$apiFetch('/api/admin/renew-invite', {
-      method: 'POST',
-      body: { applicationId },
-    })
-    addToast('Success', 'Invitation renewed and sent to dealer', 'success')
-    await fetchDealers()
-  } catch (err: unknown) {
-    const error = err as { statusMessage?: string }
-    addToast('Error', error.statusMessage || 'Failed to renew invitation', 'error')
-  } finally {
-    isActionLoading.value[applicationId] = false
-  }
-}
-
+// Invitation flow has been removed in favor of passwordless OTP
 const approveDealer = async (applicationId: string) => {
   isActionLoading.value[applicationId] = true
   try {
@@ -124,7 +108,6 @@ const isExpired = (invitation: Record<string, unknown> | null | undefined) => {
                 <th class="p-4 text-xs font-black text-slate-500 uppercase tracking-widest">Business</th>
                 <th class="p-4 text-xs font-black text-slate-500 uppercase tracking-widest">Contact</th>
                 <th class="p-4 text-xs font-black text-slate-500 uppercase tracking-widest">Status</th>
-                <th class="p-4 text-xs font-black text-slate-500 uppercase tracking-widest">Invitation Status</th>
                 <th class="p-4 text-xs font-black text-slate-500 uppercase tracking-widest text-right">Actions</th>
               </tr>
             </thead>
@@ -152,29 +135,6 @@ const isExpired = (invitation: Record<string, unknown> | null | undefined) => {
                     {{ dealer.status }}
                   </span>
                 </td>
-                <td class="p-4">
-                  <div v-if="dealer.status === 'approved'">
-                    <span v-if="!dealer.invitation" class="text-xs font-bold text-slate-500">Not Sent</span>
-                    <span
-                      v-else-if="dealer.invitation.used"
-                      class="px-2.5 py-1 text-xs font-black uppercase tracking-wider rounded-full bg-blue-100 text-blue-700"
-                      >Account Active</span
-                    >
-                    <span
-                      v-else-if="isExpired(dealer.invitation)"
-                      class="px-2.5 py-1 text-xs font-black uppercase tracking-wider rounded-full bg-red-100 text-red-700"
-                      >Expired</span
-                    >
-                    <span
-                      v-else
-                      class="px-2.5 py-1 text-xs font-black uppercase tracking-wider rounded-full bg-amber-100 text-amber-700"
-                      >Pending Setup</span
-                    >
-                  </div>
-                  <div v-else>
-                    <span class="text-xs text-slate-400 font-medium">-</span>
-                  </div>
-                </td>
                 <td class="p-4 text-right">
                   <div v-if="dealer.status === 'pending'" class="flex items-center justify-end">
                     <button
@@ -196,27 +156,7 @@ const isExpired = (invitation: Record<string, unknown> | null | undefined) => {
                       Reject
                     </button>
                   </div>
-
-                  <div
-                    v-else-if="
-                      dealer.status === 'approved' &&
-                      dealer.invitation &&
-                      !dealer.invitation.used &&
-                      isExpired(dealer.invitation)
-                    "
-                  >
-                    <button
-                      :disabled="isActionLoading[dealer.id]"
-                      class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#002888] hover:bg-blue-900 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-all disabled:opacity-50 shadow-sm"
-                      @click="renewInvite(dealer.id)"
-                    >
-                      <span
-                        v-if="isActionLoading[dealer.id]"
-                        class="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin"
-                      />
-                      Renew Invite
-                    </button>
-                  </div>
+                  <div v-else class="text-xs text-slate-400 font-medium italic">Account Active</div>
                 </td>
               </tr>
             </tbody>

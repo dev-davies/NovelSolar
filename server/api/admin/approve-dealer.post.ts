@@ -13,15 +13,15 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'Missing applicationId' })
   }
 
-  const supabase = serverSupabaseServiceRole(event)
+  const supabase = await serverSupabaseServiceRole(event)
 
   try {
     // 1. Fetch the application to get the email
-    const { data: appData, error: fetchError } = await supabase
+    const { data: appData, error: fetchError } = (await supabase
       .from('dealer_applications')
       .select('email, business_name, contact_name, status')
       .eq('id', applicationId)
-      .single()
+      .single()) as { data: any; error: any }
 
     if (fetchError || !appData) {
       throw createError({ statusCode: 404, statusMessage: 'Application not found' })
@@ -34,26 +34,49 @@ export default defineEventHandler(async (event) => {
     // 2. Update status to 'approved'
     const { error: updateError } = await supabase
       .from('dealer_applications')
-      .update({ status: 'approved' })
+      .update({ status: 'approved' } as any)
       .eq('id', applicationId)
 
     if (updateError) throw updateError
 
-    // 3. Generate secure, unique token & expiration (3 days from now)
-    const token = crypto.randomUUID()
-    const expiresAt = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString()
+    // 3. Check if user exists & provision
+    let userId: string | null = null
 
-    // 4. Insert into dealer_invitations
-    const { error: inviteError } = await supabase.from('dealer_invitations').insert({
+    const { data: newUser, error: authError } = await supabase.auth.admin.createUser({
       email: appData.email,
-      token: token,
-      expires_at: expiresAt,
-      used: false,
+      email_confirm: true,
     })
 
-    if (inviteError) throw inviteError
+    if (authError) {
+      if (authError.message.toLowerCase().includes('already')) {
+        // User exists. Fetch their ID securely
+        const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
+          type: 'magiclink',
+          email: appData.email,
+        })
+        if (linkError || !linkData?.user?.id) throw authError
+        userId = linkData.user.id
+      } else {
+        throw authError
+      }
+    } else {
+      userId = newUser.user.id
+    }
 
-    // 5. Send approval email
+    if (!userId) {
+      throw createError({ statusCode: 400, statusMessage: 'Failed to provision user ID' })
+    }
+
+    // 4. Upsert the profile
+    const { error: profileError } = await supabase.from('profiles').upsert({
+      user_id: userId,
+      role: 'dealer',
+      dealer_status: 'approved',
+    } as any)
+
+    if (profileError) throw profileError
+
+    // 5. Send approval email (passwordless version)
     const config = useRuntimeConfig()
     if (config.smtpUser && config.smtpPass) {
       const transporter = nodemailer.createTransport({
@@ -69,18 +92,17 @@ export default defineEventHandler(async (event) => {
       })
 
       const domain = config.public.baseUrl ? config.public.baseUrl.replace(/\/$/, '') : 'https://novelsolar.ng'
-      const setupLink = `${domain}/dealer/setup-account?token=${token}`
+      const setupLink = `${domain}/login`
 
       const emailHtml = `
         <div style="font-family: sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; color: #333;">
           <h2 style="color: #002888;">Congratulations! Your Application is Approved</h2>
           <p>Hello ${appData.contact_name},</p>
           <p>We are thrilled to welcome <strong>${appData.business_name}</strong> to the NovelSolar Authorized Dealer Network!</p>
-          <p>To access your wholesale pricing, resources, and complete your registration, please set up your account password using the secure link below:</p>
+          <p>Your wholesale pricing account has been activated. You can now log into our storefront using your email address (no password required):</p>
           <div style="margin: 30px 0; text-align: center;">
-            <a href="${setupLink}" style="background-color: #002888; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">Set Up My Account</a>
+            <a href="${setupLink}" style="background-color: #002888; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">Log In to Your Account</a>
           </div>
-          <p style="color: #d32f2f; font-weight: bold;">Important: This setup link will expire in exactly 3 days and can only be used once.</p>
           <p>If you have any questions, please reply to this email or contact our support team.</p>
           <p>Best regards,<br>The NovelSolar Team</p>
         </div>
@@ -90,19 +112,19 @@ export default defineEventHandler(async (event) => {
         .sendMail({
           from: config.smtpFrom,
           to: appData.email,
-          subject: 'Welcome to NovelSolar! Set up your Dealer Account',
+          subject: 'Welcome to NovelSolar! Your Dealer Account is Ready',
           html: emailHtml,
         })
         .catch((e) => logger.error('Dealer Approval API', 'Email send failed', { error: e }))
     }
 
-    return { success: true, message: 'Dealer approved and invitation sent' }
+    return { success: true, message: 'Dealer approved and email sent' }
   } catch (err: unknown) {
     const error = err as { statusCode?: number; statusMessage?: string; message?: string }
     logger.error('Dealer Approval API', 'Error approving dealer', { error })
     throw createError({
-      statusCode: error.statusCode || 500,
-      statusMessage: error.statusMessage || error.message || 'Internal server error',
+      statusCode: error.statusCode || 400,
+      statusMessage: error.message || error.statusMessage || 'Internal server error',
     })
   }
 })
