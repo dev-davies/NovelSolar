@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onUnmounted } from 'vue'
+const { addToast } = useToast()
 definePageMeta({ middleware: 'admin' })
 
 const isUploading = ref(false)
@@ -234,7 +235,7 @@ const validateBatch = () => {
 const submitBatch = async () => {
   const errors = validateBatch()
   if (errors.length > 0) {
-    alert(`Validation errors:\n${errors.join('\n')}`)
+    addToast('Validation Error', errors.join('\n'), 'error')
     return
   }
 
@@ -296,7 +297,7 @@ const submitBatch = async () => {
   showResults.value = true
 
   if (failureCount === 0) {
-    alert(`Success! ${successCount} products uploaded. Clearing form...`)
+    addToast('Success', `${successCount} products uploaded. Clearing form...`, 'success')
     products.value.forEach((p) => {
       revokeUrls(p.image)
       revokeUrls(p.gallery)
@@ -318,7 +319,7 @@ const submitBatch = async () => {
     ]
     existingProducts.value = {}
   } else {
-    alert(`Batch Complete: ${successCount} Success, ${failureCount} Failed`)
+    addToast('Batch Complete', `${successCount} Success, ${failureCount} Failed`, 'info')
   }
 }
 

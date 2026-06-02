@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const { addToast } = useToast()
 definePageMeta({ middleware: 'admin' })
 
 const searchQuery = ref('')
@@ -111,11 +112,11 @@ const performSearch = async (isLoadMore = false) => {
     totalProducts.value = response.total || 0
 
     if (searchResults.value.length === 0 && !isLoadMore) {
-      alert('No products found')
+      addToast('Search', 'No products found matching your query.', 'info')
     }
   } catch (error) {
     console.error('Search failed:', error)
-    alert(error.data?.statusMessage || 'Search failed')
+    addToast('Search Error', error.data?.statusMessage || 'Search failed', 'error')
   } finally {
     isSearching.value = false
     isLoadingMore.value = false
@@ -155,7 +156,7 @@ const removeSpecRow = (index) => {
 
 const saveChanges = async () => {
   if (!editForm.value.name || !editForm.value.price) {
-    alert('Name and price are required')
+    addToast('Validation', 'Name and price are required', 'error')
     return
   }
 
@@ -190,13 +191,13 @@ const saveChanges = async () => {
       body: formData,
     })
 
-    alert('Product updated successfully!')
+    addToast('Success', 'Product updated successfully!', 'success')
     isEditing.value = false
     selectedProduct.value = null
     performSearch()
   } catch (error) {
     console.error('Update failed:', error)
-    alert(error.data?.statusMessage || 'Update failed')
+    addToast('Update Failed', error.data?.statusMessage || 'Update failed', 'error')
   } finally {
     isSaving.value = false
   }
@@ -255,7 +256,7 @@ const removeNewGalleryImage = (index) => {
 
 const deleteProduct = async () => {
   if (!editForm.value.id) {
-    alert('Missing required information')
+    addToast('Validation', 'Missing required information', 'error')
     return
   }
 
@@ -271,13 +272,13 @@ const deleteProduct = async () => {
       },
     })
 
-    alert(`✓ ${response.message}`)
+    addToast('Deleted', response.message, 'success')
     isEditing.value = false
     selectedProduct.value = null
     resetSearch()
   } catch (error) {
     console.error('Delete failed:', error)
-    alert(error.data?.statusMessage || 'Delete failed')
+    addToast('Delete Failed', error.data?.statusMessage || 'Delete failed', 'error')
   } finally {
     isDeleting.value = false
   }
