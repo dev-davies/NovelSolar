@@ -43,7 +43,7 @@ const iconName = computed(() => {
       <h4 v-if="toast.title" class="font-semibold text-sm">{{ toast.title }}</h4>
       <p class="text-sm mt-0.5 opacity-90">{{ toast.message }}</p>
     </div>
-    <button @click="removeToast(toast.id)" class="ml-4 opacity-50 hover:opacity-100 transition-opacity">
+    <button class="ml-4 opacity-50 hover:opacity-100 transition-opacity" @click="removeToast(toast.id)">
       <span class="material-symbols-outlined text-lg">close</span>
     </button>
   </div>

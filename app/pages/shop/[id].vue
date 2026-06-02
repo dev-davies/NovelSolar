@@ -4,7 +4,10 @@ const { addToCart } = useCart();
 const { getProductImage } = useProductImage()
 const { public: { whatsappNumber } } = useRuntimeConfig()
 const whatsappUrl = computed(() => `https://wa.me/${whatsappNumber}`)
-const { data: product, pending, error } = await useFetch(`/api/product/${route.params.id}`);
+const user = useSupabaseUser();
+const { data: product, pending, error } = await useFetch(`/api/product/${route.params.id}`, {
+  key: `product-${route.params.id}-${user.value?.id || 'guest'}`
+});
 const quantity = ref(1);
 const activeTab = ref('description');
 const selectedImage = ref(null);
@@ -81,7 +84,7 @@ useHead({
 <template>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 mb-20">
     <div v-if="pending" class="py-20 text-center text-slate-500 flex flex-col items-center gap-4">
-      <div class="w-12 h-12 border-4 border-blue-100 border-t-[#002888] rounded-full animate-spin"></div>
+      <div class="w-12 h-12 border-4 border-blue-100 border-t-[#002888] rounded-full animate-spin"/>
       <p class="font-bold text-lg">Loading amazing products...</p>
     </div>
 
@@ -91,7 +94,7 @@ useHead({
         <h2 class="text-2xl font-bold text-slate-900 mb-2">Product Not Found</h2>
         <p class="text-slate-500">The product you are looking for might have been relocated or removed.</p>
       </div>
-      <button @click="$router.back()" class="bg-[#002888] text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-900 transition-all">
+      <button class="bg-[#002888] text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-900 transition-all" @click="$router.back()">
         Back to Shop
       </button>
     </div>
@@ -99,7 +102,7 @@ useHead({
     <div v-else>
       <!-- Breadcrumb / Back -->
       <nav class="flex text-sm text-slate-500 mb-8 items-center gap-2">
-        <button @click="$router.back()" class="hover:text-[#002888] flex items-center gap-1 font-medium transition-colors group">
+        <button class="hover:text-[#002888] flex items-center gap-1 font-medium transition-colors group" @click="$router.back()">
           <span class="material-symbols-outlined text-sm transition-transform group-hover:-translate-x-1">arrow_back</span>
           Back to Shop
         </button>
@@ -115,7 +118,7 @@ useHead({
               :alt="product.NAME"
               class="w-full h-full object-contain p-4 transition-all duration-500 animate-fadeIn"
               loading="lazy"
-            />
+            >
             <div class="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-2 rounded-full shadow-sm text-[#002888]">
               <span class="material-symbols-outlined">zoom_in</span>
             </div>
@@ -124,22 +127,22 @@ useHead({
           <div v-if="galleryImages.length > 0" class="grid grid-cols-4 gap-4">
             <!-- First thumbnail is the main image -->
             <div 
-              @click="selectedImage = getProductImage(product)"
               class="aspect-square rounded-xl bg-white border-2 flex items-center justify-center cursor-pointer overflow-hidden transition-all"
               :class="(!selectedImage || selectedImage === getProductImage(product)) ? 'border-[#002888] shadow-md' : 'border-slate-200 opacity-60 hover:opacity-100'"
+              @click="selectedImage = getProductImage(product)"
             >
-              <img loading="lazy" :src="getProductImage(product)" class="w-full h-full object-cover" />
+              <img loading="lazy" :src="getProductImage(product)" class="w-full h-full object-cover" >
             </div>
 
             <!-- Loop through extra gallery images -->
             <div 
               v-for="(img, index) in galleryImages" 
               :key="index"
-              @click="selectedImage = img"
               class="aspect-square rounded-xl bg-white border-2 flex items-center justify-center cursor-pointer overflow-hidden transition-all"
               :class="selectedImage === img ? 'border-[#002888] shadow-md' : 'border-slate-200 opacity-60 hover:opacity-100'"
+              @click="selectedImage = img"
             >
-              <img loading="lazy" :src="img" class="w-full h-full object-cover" />
+              <img loading="lazy" :src="img" class="w-full h-full object-cover" >
             </div>
           </div>
         </div>
@@ -152,7 +155,7 @@ useHead({
             
             <div class="flex items-center gap-3 mb-6">
               <div class="flex text-yellow-500 bg-yellow-50 px-2 py-1 rounded-lg">
-                <span class="material-symbols-outlined text-lg fill-current" v-for="i in 5" :key="i">star</span>
+                <span v-for="i in 5" :key="i" class="material-symbols-outlined text-lg fill-current">star</span>
               </div>
               <span class="text-sm text-slate-400 font-bold border-l pl-3 border-slate-200">124 REVIEWS</span>
             </div>
@@ -165,13 +168,13 @@ useHead({
             <div class="flex flex-col sm:flex-row gap-4">
               <!-- Quantity Selector -->
               <div class="flex items-center border-2 border-slate-100 rounded-2xl overflow-hidden bg-slate-50 h-16">
-                <button @click="quantity > 1 ? quantity-- : null" class="px-6 h-full hover:bg-white hover:text-[#002888] transition-colors font-black text-xl">-</button>
-                <input v-model="quantity" type="number" class="w-14 text-center border-none bg-transparent focus:ring-0 font-black text-lg text-slate-900" readonly />
-                <button @click="quantity++" class="px-6 h-full hover:bg-white hover:text-[#002888] transition-colors font-black text-xl">+</button>
+                <button class="px-6 h-full hover:bg-white hover:text-[#002888] transition-colors font-black text-xl" @click="quantity > 1 ? quantity-- : null">-</button>
+                <input v-model="quantity" type="number" class="w-14 text-center border-none bg-transparent focus:ring-0 font-black text-lg text-slate-900" readonly >
+                <button class="px-6 h-full hover:bg-white hover:text-[#002888] transition-colors font-black text-xl" @click="quantity++">+</button>
               </div>
 
               <!-- CTA Button -->
-              <button @click="addToCart(product, quantity)" class="flex-1 bg-[#002888] text-white h-16 rounded-2xl font-black text-lg shadow-xl shadow-blue-900/20 hover:bg-blue-900 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3 active:scale-95">
+              <button class="flex-1 bg-[#002888] text-white h-16 rounded-2xl font-black text-lg shadow-xl shadow-blue-900/20 hover:bg-blue-900 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3 active:scale-95" @click="addToCart(product, quantity)">
                 <span class="material-symbols-outlined">shopping_cart</span> 
                 ADD TO CART
               </button>
@@ -194,23 +197,23 @@ useHead({
           <div class="mt-12 border-t border-slate-100 pt-8">
             <div class="flex gap-8 mb-6 border-b border-slate-50">
               <button 
-                @click="activeTab = 'description'"
                 class="pb-4 text-sm font-black uppercase transition-all duration-200"
                 :class="activeTab === 'description' ? 'border-b-2 border-[#002888] text-slate-900' : 'text-slate-400 hover:text-slate-600'"
+                @click="activeTab = 'description'"
               >
                 Description
               </button>
               <button 
-                @click="activeTab = 'specs'"
                 class="pb-4 text-sm font-black uppercase transition-all duration-200"
                 :class="activeTab === 'specs' ? 'border-b-2 border-[#002888] text-slate-900' : 'text-slate-400 hover:text-slate-600'"
+                @click="activeTab = 'specs'"
               >
                 Specifications
               </button>
               <button 
-                @click="activeTab = 'downloads'"
                 class="pb-4 text-sm font-black uppercase transition-all duration-200"
                 :class="activeTab === 'downloads' ? 'border-b-2 border-[#002888] text-slate-900' : 'text-slate-400 hover:text-slate-600'"
+                @click="activeTab = 'downloads'"
               >
                 Downloads
               </button>
@@ -218,7 +221,7 @@ useHead({
             
             <!-- Description Tab -->
             <div v-if="activeTab === 'description'" class="animate-fadeIn">
-              <div class="prose max-w-none text-slate-600 text-sm md:text-base leading-relaxed mb-8" v-html="product?.DESCRIPTION || product?.DETAIL_TEXT || 'Full product description coming soon.'"></div>
+              <div class="prose max-w-none text-slate-600 text-sm md:text-base leading-relaxed mb-8" v-html="product?.DESCRIPTION || product?.DETAIL_TEXT || 'Full product description coming soon.'"/>
             </div>
 
             <!-- Specifications Tab -->
@@ -268,7 +271,7 @@ useHead({
           <div class="bg-gradient-to-br from-[#002888] to-blue-900 p-10 rounded-3xl text-center flex flex-col justify-center text-white shadow-xl shadow-blue-900/10">
             <p class="text-7xl font-black mb-2 tracking-tighter">4.8</p>
             <div class="flex justify-center text-blue-200 mb-3">
-              <span class="material-symbols-outlined text-2xl fill-current" v-for="i in 5" :key="i">star</span>
+              <span v-for="i in 5" :key="i" class="material-symbols-outlined text-2xl fill-current">star</span>
             </div>
             <p class="text-blue-100 font-bold uppercase tracking-widest text-xs">Based on 124 ratings</p>
           </div>
@@ -282,7 +285,7 @@ useHead({
                   <div>
                     <h4 class="font-black text-slate-900 uppercase text-xs tracking-wider">Verified Buyer</h4>
                     <div class="flex text-yellow-500 text-xs">
-                      <span class="material-symbols-outlined text-sm fill-current" v-for="s in 5" :key="s">star</span>
+                      <span v-for="s in 5" :key="s" class="material-symbols-outlined text-sm fill-current">star</span>
                     </div>
                   </div>
                 </div>

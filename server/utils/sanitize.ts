@@ -7,7 +7,7 @@ export const isValidEmail = (email: unknown): boolean => {
   const trimmed = email.trim()
   if (trimmed.length > 254) return false
   // RFC 5322 simplified: local part, @, domain with at least one dot in TLD
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+  const emailRegex = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]{2,}$/
   return emailRegex.test(trimmed)
 }
 

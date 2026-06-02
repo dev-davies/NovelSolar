@@ -228,9 +228,9 @@ onMounted(async () => {
           <!-- Fulfillment Toggle -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <button 
-              @click="selectedFulfillment = 'delivery'"
               class="p-6 rounded-2xl border-2 transition-all flex items-center gap-4 text-left"
               :class="selectedFulfillment === 'delivery' ? 'border-[#002888] bg-blue-50/30' : 'border-gray-100 bg-white hover:border-gray-200'"
+              @click="selectedFulfillment = 'delivery'"
             >
               <div class="w-12 h-12 rounded-xl bg-[#002888] text-white flex items-center justify-center">
                 <span class="material-symbols-outlined">local_shipping</span>
@@ -241,9 +241,9 @@ onMounted(async () => {
               </div>
             </button>
             <button 
-              @click="selectedFulfillment = 'pickup'"
               class="p-6 rounded-2xl border-2 transition-all flex items-center gap-4 text-left"
               :class="selectedFulfillment === 'pickup' ? 'border-[#002888] bg-blue-50/30' : 'border-gray-100 bg-white hover:border-gray-200'"
+              @click="selectedFulfillment = 'pickup'"
             >
               <div class="w-12 h-12 rounded-xl bg-orange-500 text-white flex items-center justify-center">
                 <span class="material-symbols-outlined">storefront</span>
@@ -287,7 +287,7 @@ onMounted(async () => {
                 class="flex items-center gap-4 p-5 rounded-xl border cursor-pointer transition-all hover:shadow-md"
                 :class="selectedBranch?.name === branch.name ? 'border-[#002888] bg-blue-50/30 ring-1 ring-[#002888]' : 'border-gray-100 bg-white'"
               >
-                <input type="radio" v-model="selectedBranch" :value="branch" class="w-5 h-5 text-[#002888] border-gray-300 focus:ring-[#002888]">
+                <input v-model="selectedBranch" type="radio" :value="branch" class="w-5 h-5 text-[#002888] border-gray-300 focus:ring-[#002888]">
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center gap-2 mb-0.5">
                     <p class="font-bold text-slate-900 truncate uppercase text-sm">{{ branch.name }}</p>
@@ -313,7 +313,7 @@ onMounted(async () => {
           </div>
           <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
             <label class="flex items-center gap-4 p-6 cursor-pointer hover:bg-gray-50 transition-colors border-b border-gray-100">
-              <input type="radio" v-model="paymentMethod" value="Cash on Delivery" class="w-5 h-5 text-[#002888] border-gray-300 focus:ring-[#002888]">
+              <input v-model="paymentMethod" type="radio" value="Cash on Delivery" class="w-5 h-5 text-[#002888] border-gray-300 focus:ring-[#002888]">
               <div class="flex-1">
                 <p class="font-bold text-slate-900 uppercase text-sm tracking-wide">Cash on Delivery</p>
                 <p class="text-xs text-slate-500">Pay when your items arrive</p>
@@ -321,7 +321,7 @@ onMounted(async () => {
               <span class="material-symbols-outlined text-gray-400">payments</span>
             </label>
             <label class="flex items-center gap-4 p-6 cursor-pointer hover:bg-gray-50 transition-colors">
-              <input type="radio" v-model="paymentMethod" value="Financing / Installment" class="w-5 h-5 text-[#002888] border-gray-300 focus:ring-[#002888]">
+              <input v-model="paymentMethod" type="radio" value="Financing / Installment" class="w-5 h-5 text-[#002888] border-gray-300 focus:ring-[#002888]">
               <div class="flex-1">
                 <p class="font-bold text-slate-900 uppercase text-sm tracking-wide">Financing / Installment</p>
                 <p class="text-xs text-slate-500">Flexible payment plans available</p>
@@ -343,17 +343,17 @@ onMounted(async () => {
               rows="3" 
               placeholder="Any additional notes for delivery..."
               class="rounded-lg border-slate-200 bg-slate-50 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888] p-3 w-full transition-all outline-none resize-none"
-            ></textarea>
+            />
           </div>
         </section>
 
         <!-- Submit Button -->
         <button 
-          @click="submitOrder"
           :disabled="isSubmitting"
           class="w-full bg-[#002888] text-white font-bold py-5 rounded-2xl shadow-xl hover:bg-blue-900 transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-[0.98]"
+          @click="submitOrder"
         >
-          <span v-if="isSubmitting" class="animate-spin border-2 border-white/30 border-t-white w-5 h-5 rounded-full"></span>
+          <span v-if="isSubmitting" class="animate-spin border-2 border-white/30 border-t-white w-5 h-5 rounded-full"/>
           {{ isSubmitting ? 'Processing Order...' : 'Complete Order' }}
           <span v-if="!isSubmitting" class="material-symbols-outlined">arrow_forward</span>
           <span v-else class="material-symbols-outlined animate-spin">sync</span>
@@ -374,11 +374,12 @@ onMounted(async () => {
               <div v-for="item in cart" :key="item.id" class="flex gap-4">
                 <div class="relative w-16 h-16 shrink-0 mt-2 mr-2">
                   <div class="w-full h-full bg-slate-50 rounded-xl flex items-center justify-center border border-slate-100 overflow-hidden">
-                    <img loading="lazy" 
+                    <img
+loading="lazy" 
                       :src="item.PROPERTY_102 || item.image || item.PREVIEW_PICTURE || '/images/placeholder.png'" 
                       :alt="item.name"
                       class="w-full h-full object-cover"
-                    />
+                    >
                   </div>
                   <span class="absolute -top-1 -right-1 bg-[#002888] text-white text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full border-2 border-white z-10">
                     {{ item.quantity }}

@@ -1,16 +1,16 @@
 import { describe, it, expect, vi } from 'vitest'
 
-vi.stubGlobal('createError', (opts: { statusCode: number, statusMessage: string }) => {
-  const err = new Error(opts.statusMessage) as any
-  err.statusCode = opts.statusCode
-  return err
-})
-
 import {
   isValidSlug,
   parseMarkdownFile,
   serializePost,
 } from './blogContent'
+
+vi.stubGlobal('createError', (opts: { statusCode: number, statusMessage: string }) => {
+  const err = new Error(opts.statusMessage) as any
+  err.statusCode = opts.statusCode
+  return err
+})
 
 describe('isValidSlug', () => {
   it('accepts lowercase dash-separated slugs', () => {

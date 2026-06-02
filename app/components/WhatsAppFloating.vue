@@ -6,7 +6,7 @@
     aria-label="Chat with us on WhatsApp"
   >
     <!-- Background pulsing effect -->
-    <span class="absolute inset-0 rounded-full bg-[#25D366] animate-ping opacity-20 group-hover:opacity-30"></span>
+    <span class="absolute inset-0 rounded-full bg-[#25D366] animate-ping opacity-20 group-hover:opacity-30"/>
     
     <!-- WhatsApp Icon (SVG) -->
     <svg 

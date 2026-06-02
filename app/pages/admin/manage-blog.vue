@@ -301,7 +301,7 @@ await loadPosts()
           <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
             <div>
               <h2 class="text-lg font-black text-slate-900">{{ isEditing ? 'Edit Post' : 'New Post' }}</h2>
-              <p class="text-xs text-slate-500 mt-1" v-if="isEditing">Editing <code class="text-slate-700">{{ originalSlug }}</code></p>
+              <p v-if="isEditing" class="text-xs text-slate-500 mt-1">Editing <code class="text-slate-700">{{ originalSlug }}</code></p>
             </div>
             <div class="flex items-center gap-2">
               <button
@@ -348,7 +348,7 @@ await loadPosts()
 
           <div v-else-if="previewMode" class="space-y-6">
             <div class="aspect-video bg-slate-100 rounded-2xl overflow-hidden">
-              <img v-if="form.image" :src="form.image" :alt="form.title" class="w-full h-full object-cover" />
+              <img v-if="form.image" :src="form.image" :alt="form.title" class="w-full h-full object-cover" >
             </div>
             <div>
               <span v-if="form.category" class="bg-blue-50 text-[#002888] text-xs font-black px-3 py-1 rounded-md uppercase tracking-widest">{{ form.category }}</span>
@@ -361,7 +361,7 @@ await loadPosts()
           <form v-else class="grid grid-cols-1 md:grid-cols-2 gap-5" @submit.prevent="savePost">
             <label class="block md:col-span-2">
               <span class="text-xs font-black uppercase tracking-widest text-slate-500">Title</span>
-              <input v-model="form.title" type="text" class="mt-2 w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all bg-slate-50/30" placeholder="A compelling headline" />
+              <input v-model="form.title" type="text" class="mt-2 w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all bg-slate-50/30" placeholder="A compelling headline" >
             </label>
 
             <label class="block">
@@ -373,24 +373,24 @@ await loadPosts()
                 :class="slugIsValid ? 'border-slate-100 focus:border-purple-500 focus:ring-purple-500/10' : 'border-red-200 focus:border-red-400 focus:ring-red-500/10'"
                 placeholder="lowercase-with-dashes"
                 @input="onSlugInput"
-              />
+              >
               <span v-if="!slugIsValid" class="text-xs text-red-600 mt-1 block">Lowercase letters, numbers, dashes only.</span>
               <span v-else class="text-xs text-slate-400 mt-1 block">Public URL: /blog/{{ form.slug || '…' }}</span>
             </label>
 
             <label class="block">
               <span class="text-xs font-black uppercase tracking-widest text-slate-500">Date</span>
-              <input v-model="form.date" type="date" class="mt-2 w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all bg-slate-50/30" />
+              <input v-model="form.date" type="date" class="mt-2 w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all bg-slate-50/30" >
             </label>
 
             <label class="block">
               <span class="text-xs font-black uppercase tracking-widest text-slate-500">Category</span>
-              <input v-model="form.category" type="text" class="mt-2 w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all bg-slate-50/30" placeholder="e.g. Inverter" />
+              <input v-model="form.category" type="text" class="mt-2 w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all bg-slate-50/30" placeholder="e.g. Inverter" >
             </label>
 
             <label class="block">
               <span class="text-xs font-black uppercase tracking-widest text-slate-500">Author</span>
-              <input v-model="form.author" type="text" class="mt-2 w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all bg-slate-50/30" placeholder="Novel Solar Editorial" />
+              <input v-model="form.author" type="text" class="mt-2 w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all bg-slate-50/30" placeholder="Novel Solar Editorial" >
             </label>
 
             <label class="block md:col-span-2">
@@ -405,13 +405,13 @@ await loadPosts()
 
             <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-[200px_1fr] gap-4 items-start">
               <div class="aspect-video w-full rounded-2xl bg-slate-100 overflow-hidden border border-slate-200">
-                <img v-if="form.image" :src="form.image" :alt="form.title" class="w-full h-full object-cover" />
+                <img v-if="form.image" :src="form.image" :alt="form.title" class="w-full h-full object-cover" >
                 <div v-else class="w-full h-full flex items-center justify-center text-slate-400 text-xs">No cover</div>
               </div>
               <div class="space-y-3">
                 <label class="block">
                   <span class="text-xs font-black uppercase tracking-widest text-slate-500">Cover image URL</span>
-                  <input v-model="form.image" type="text" class="mt-2 w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all bg-slate-50/30 font-mono text-sm" placeholder="/images/foo.jpg or https://res.cloudinary.com/..." />
+                  <input v-model="form.image" type="text" class="mt-2 w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all bg-slate-50/30 font-mono text-sm" placeholder="/images/foo.jpg or https://res.cloudinary.com/..." >
                 </label>
                 <label class="block">
                   <span class="text-xs font-black uppercase tracking-widest text-slate-500">Or upload a new cover</span>
@@ -421,7 +421,7 @@ await loadPosts()
                     class="mt-2 block w-full text-sm text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
                     :disabled="isUploading"
                     @change="onCoverFileChange"
-                  />
+                  >
                   <span v-if="isUploading" class="text-xs text-slate-500 mt-1 block">Uploading…</span>
                 </label>
               </div>

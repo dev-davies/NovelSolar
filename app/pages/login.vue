@@ -62,7 +62,7 @@ useHead({
           <div 
             class="h-full bg-[#a9001d] transition-all duration-500 ease-out"
             :style="{ width: isSuccess ? '100%' : '50%' }"
-          ></div>
+          />
         </div>
 
         <!-- Magic Link Flow -->
@@ -73,7 +73,7 @@ useHead({
               <p class="text-slate-500 font-medium">Enter your email and we'll send you a magic link. No password needed — and you don't need an account to shop.</p>
             </div>
 
-            <form @submit.prevent="handleLogin" class="space-y-6">
+            <form class="space-y-6" @submit.prevent="handleLogin">
               <div>
                 <label class="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">Email Address</label>
                 <div class="relative">
@@ -85,7 +85,7 @@ useHead({
                     required
                     class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 pl-12 pr-4 text-slate-900 font-medium outline-none focus:border-[#3c59b0] focus:ring-4 focus:ring-blue-100 transition-all placeholder:text-slate-300"
                     :disabled="isLoading"
-                  />
+                  >
                 </div>
                 <p class="text-[11px] text-slate-400 mt-2 font-medium">If you don't have an account, we will securely create one for you.</p>
               </div>
@@ -100,7 +100,7 @@ useHead({
                 :disabled="isLoading"
                 class="w-full bg-[#3c59b0] text-white py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-900 transition-all shadow-lg shadow-blue-900/10 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                <span v-if="isLoading" class="animate-spin border-2 border-white/30 border-t-white w-4 h-4 rounded-full"></span>
+                <span v-if="isLoading" class="animate-spin border-2 border-white/30 border-t-white w-4 h-4 rounded-full"/>
                 {{ isLoading ? 'Sending Link...' : 'Send Magic Link' }}
                 <span v-if="!isLoading" class="material-symbols-outlined text-lg">bolt</span>
               </button>
@@ -123,8 +123,8 @@ useHead({
               </p>
             </div>
             <button 
-              @click="isSuccess = false; email = '';" 
-              class="text-sm font-bold text-[#3c59b0] hover:underline uppercase tracking-widest"
+              class="text-sm font-bold text-[#3c59b0] hover:underline uppercase tracking-widest" 
+              @click="isSuccess = false; email = '';"
             >
               Back to Login
             </button>

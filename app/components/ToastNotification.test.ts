@@ -1,13 +1,13 @@
 import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 
+import ToastNotification from './ToastNotification.vue'
+
 vi.mock('~/composables/useToast', () => ({
   useToast: vi.fn().mockReturnValue({
     removeToast: vi.fn()
   })
 }))
-
-import ToastNotification from './ToastNotification.vue'
 
 describe('ToastNotification', () => {
   it('renders toast title', () => {

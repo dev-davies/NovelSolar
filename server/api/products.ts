@@ -1,5 +1,5 @@
 import { logger } from '../utils/logger'
-import { serverSupabaseUser, serverSupabaseClient } from '#supabase/server'
+import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
   try {
     const user = await serverSupabaseUser(event)
     if (user) {
-      const supabase = await serverSupabaseClient(event)
+      const supabase = await serverSupabaseServiceRole(event)
       const { data: profile } = (await supabase
         .from('profiles')
         .select('role, dealer_status')

@@ -28,7 +28,7 @@
 
       <!-- Form State -->
       <div v-else class="bg-white rounded-3xl shadow-xl border border-slate-100 p-8 md:p-12 relative overflow-hidden">
-        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#00AEEF] to-[#002888]"></div>
+        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#00AEEF] to-[#002888]"/>
         
         <!-- Error Message -->
         <div v-if="errorMessage" class="mb-8 p-4 bg-red-50 text-red-700 rounded-xl border border-red-100 font-bold text-sm flex items-center gap-2">
@@ -39,7 +39,7 @@
         </div>
 
         <!-- Form -->
-        <form @submit.prevent="submitQuote" class="space-y-6">
+        <form class="space-y-6" @submit.prevent="submitQuote">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">First Name</label>
@@ -49,7 +49,7 @@
                 required
                 :disabled="isSubmitting"
                 class="w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:ring-4 focus:ring-blue-500/10 focus:border-[#002888] outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed" 
-              />
+              >
             </div>
             <div>
               <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Last Name</label>
@@ -59,7 +59,7 @@
                 required
                 :disabled="isSubmitting"
                 class="w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:ring-4 focus:ring-blue-500/10 focus:border-[#002888] outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed" 
-              />
+              >
             </div>
           </div>
 
@@ -72,7 +72,7 @@
                 required
                 :disabled="isSubmitting"
                 class="w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:ring-4 focus:ring-blue-500/10 focus:border-[#002888] outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed" 
-              />
+              >
             </div>
             <div>
               <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Phone Number</label>
@@ -82,7 +82,7 @@
                 required
                 :disabled="isSubmitting"
                 class="w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:ring-4 focus:ring-blue-500/10 focus:border-[#002888] outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed" 
-              />
+              >
             </div>
           </div>
 
@@ -111,7 +111,7 @@
               placeholder="Please describe your current power setup or what you are looking to achieve..."
               :disabled="isSubmitting"
               class="w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:ring-4 focus:ring-blue-500/10 focus:border-[#002888] outline-none transition-all resize-none disabled:opacity-50 disabled:cursor-not-allowed"
-            ></textarea>
+            />
           </div>
 
           <button 
@@ -119,7 +119,7 @@
             :disabled="isSubmitting" 
             class="w-full bg-[#002888] text-white py-5 rounded-2xl font-black text-lg uppercase tracking-widest hover:bg-blue-900 transition-all shadow-xl active:scale-95 disabled:opacity-70 disabled:active:scale-100 disabled:hover:bg-[#002888] flex items-center justify-center gap-3"
           >
-            <svg v-if="isSubmitting" class="animate-spin border-2 border-white/30 border-t-white w-5 h-5 rounded-full" viewBox="0 0 24 24"></svg>
+            <svg v-if="isSubmitting" class="animate-spin border-2 border-white/30 border-t-white w-5 h-5 rounded-full" viewBox="0 0 24 24"/>
             {{ isSubmitting ? 'Sending Request...' : 'Submit Quote Request' }}
           </button>
         </form>

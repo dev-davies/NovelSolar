@@ -38,7 +38,7 @@
           </div>
           <div class="relative">
             <div class="aspect-square bg-slate-100 rounded-3xl overflow-hidden shadow-xl shadow-slate-200">
-              <img src="/images/PowerAuditEngineer.png" alt="Novel Solar Network" class="w-full h-full object-cover" />
+              <img src="/images/PowerAuditEngineer.png" alt="Novel Solar Network" class="w-full h-full object-cover" >
             </div>
             <div
               class="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl border border-slate-100 hidden lg:flex flex-col gap-1 items-center justify-center min-w-[140px]"

@@ -51,9 +51,9 @@ const requestReset = async () => {
       </div>
 
       <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 p-8 sm:p-10 relative overflow-hidden">
-        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 to-red-400"></div>
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 to-red-400"/>
 
-        <form @submit.prevent="requestReset" class="space-y-6">
+        <form class="space-y-6" @submit.prevent="requestReset">
           <div>
             <label for="email" class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Admin Email</label>
             <div class="relative">
@@ -67,7 +67,7 @@ const requestReset = async () => {
                 class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 pl-12 pr-4 text-slate-900 font-medium outline-none focus:border-red-500 focus:ring-4 focus:ring-red-100 transition-all"
                 :disabled="isLoading"
                 autocomplete="email"
-              />
+              >
             </div>
           </div>
 
@@ -86,7 +86,7 @@ const requestReset = async () => {
             :disabled="isLoading"
             class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/20 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-4"
           >
-            <span v-if="isLoading" class="animate-spin border-2 border-white/30 border-t-white w-5 h-5 rounded-full"></span>
+            <span v-if="isLoading" class="animate-spin border-2 border-white/30 border-t-white w-5 h-5 rounded-full"/>
             {{ isLoading ? 'Sending...' : 'Send Reset Link' }}
           </button>
 

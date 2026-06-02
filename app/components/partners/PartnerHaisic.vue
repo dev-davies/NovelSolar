@@ -2,28 +2,29 @@
   <div class="min-h-screen bg-white font-sans selection:bg-blue-500/30">
     <!-- 1. Top Partner Banner -->
     <div class="bg-white w-full py-6 flex justify-center items-center border-b border-gray-100">
-      <img loading="lazy" 
+      <img
+loading="lazy" 
         src="/images/Haisic_partner.png" 
         alt="Novel Solar x Haisic Partnership" 
         class="h-12 md:h-16 w-auto object-contain mx-auto"
-      />
+      >
     </div>
 
     <!-- 2. Hero Section -->
     <section class="relative bg-slate-950 py-24 md:py-32 overflow-hidden">
       <!-- Background Glow -->
-      <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] -mr-64 -mt-64"></div>
-      <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-900/10 rounded-full blur-[120px] -ml-64 -mb-64"></div>
+      <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] -mr-64 -mt-64"/>
+      <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-900/10 rounded-full blur-[120px] -ml-64 -mb-64"/>
 
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div class="grid lg:grid-cols-2 gap-16 items-center text-left">
           <div>
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-widest mb-8">
-              <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+              <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"/>
               New Partnership
             </div>
             <h1 class="text-5xl md:text-7xl font-black text-white mb-6 tracking-tight leading-[1.1]">
-              Power That Never Quits.<br />
+              Power That Never Quits.<br >
               <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600 italic">Welcome to the Haisic Era.</span>
             </h1>
             <p class="text-xl text-slate-400 max-w-xl mb-12 leading-relaxed font-medium">
@@ -40,12 +41,13 @@
             </NuxtLink>
           </div>
           <div class="relative hidden lg:block">
-            <div class="absolute inset-0 bg-blue-600/20 rounded-full blur-[100px] -z-10 animate-pulse"></div>
-            <img loading="lazy" 
+            <div class="absolute inset-0 bg-blue-600/20 rounded-full blur-[100px] -z-10 animate-pulse"/>
+            <img
+loading="lazy" 
               src="/images/haisic_aa_4.png" 
               alt="Haisic Enterprise Solution" 
               class="w-full h-auto drop-shadow-[0_20px_50px_rgba(37,99,235,0.3)] hover:scale-105 transition-transform duration-700"
-            />
+            >
           </div>
         </div>
       </div>
@@ -55,7 +57,7 @@
     <section class="py-24 bg-white">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-20">
         <h2 class="text-4xl font-black text-slate-900 tracking-tight uppercase italic mb-4">Why Choose Haisic?</h2>
-        <div class="w-20 h-1.5 bg-blue-600 mx-auto rounded-full"></div>
+        <div class="w-20 h-1.5 bg-blue-600 mx-auto rounded-full"/>
       </div>
       
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -109,7 +111,7 @@
         <div class="grid md:grid-cols-2 gap-16 items-center">
           <div class="order-2 md:order-1">
             <div class="inline-block px-3 py-1 rounded bg-blue-100 text-blue-700 text-[10px] font-black uppercase tracking-widest mb-6 italic">Performance Core</div>
-            <h2 class="text-4xl font-black text-slate-900 mb-6 leading-tight">Built for the <br /><span class="text-blue-600">Toughest Conditions.</span></h2>
+            <h2 class="text-4xl font-black text-slate-900 mb-6 leading-tight">Built for the <br ><span class="text-blue-600">Toughest Conditions.</span></h2>
             <p class="text-lg text-slate-600 font-medium leading-relaxed mb-8">
               Engineered with IP55 protection and advanced heat tolerance, Haisic systems are purpose-built for the Nigerian climate, ensuring peak performance even in extreme temperatures.
             </p>
@@ -118,7 +120,7 @@
                 <div class="text-3xl font-black text-blue-600">IP55</div>
                 <div class="text-xs font-bold text-slate-400 uppercase tracking-tighter">Protection</div>
               </div>
-              <div class="w-px h-10 bg-slate-200"></div>
+              <div class="w-px h-10 bg-slate-200"/>
               <div class="text-center">
                 <div class="text-3xl font-black text-blue-600">50°C</div>
                 <div class="text-xs font-bold text-slate-400 uppercase tracking-tighter">Operation</div>
@@ -127,12 +129,13 @@
           </div>
           <div class="order-1 md:order-2">
             <div class="relative">
-              <div class="absolute inset-0 bg-blue-600/5 translate-x-4 translate-y-4 rounded-3xl"></div>
-              <img loading="lazy" 
+              <div class="absolute inset-0 bg-blue-600/5 translate-x-4 translate-y-4 rounded-3xl"/>
+              <img
+loading="lazy" 
                 src="/images/haisic_aa_1.png" 
                 alt="Haisic Heavy Duty Inverter" 
                 class="rounded-3xl shadow-xl w-full object-cover relative z-10 hover:-translate-y-2 transition-transform duration-500"
-              />
+              >
             </div>
           </div>
         </div>
@@ -143,17 +146,18 @@
         <div class="grid md:grid-cols-2 gap-16 items-center md:flex-row-reverse">
           <div class="md:order-1">
             <div class="relative">
-              <div class="absolute inset-0 bg-blue-600/5 -translate-x-4 translate-y-4 rounded-3xl"></div>
-              <img loading="lazy" 
+              <div class="absolute inset-0 bg-blue-600/5 -translate-x-4 translate-y-4 rounded-3xl"/>
+              <img
+loading="lazy" 
                 src="/images/haisic_aa_2.png" 
                 alt="Haisic Stackable Battery System" 
                 class="rounded-3xl shadow-xl w-full object-cover relative z-10 hover:-translate-y-2 transition-transform duration-500"
-              />
+              >
             </div>
           </div>
           <div class="md:order-2">
             <div class="inline-block px-3 py-1 rounded bg-blue-100 text-blue-700 text-[10px] font-black uppercase tracking-widest mb-6 italic">Sustainability</div>
-            <h2 class="text-4xl font-black text-slate-900 mb-6 leading-tight">All-in-One <br /><span class="text-blue-600">Solar Generators.</span></h2>
+            <h2 class="text-4xl font-black text-slate-900 mb-6 leading-tight">All-in-One <br ><span class="text-blue-600">Solar Generators.</span></h2>
             <p class="text-lg text-slate-600 font-medium leading-relaxed mb-8">
               Future-proof your energy with modular designs. Haisic allows for effortless scaling, with stackable capacities ranging from 4kWh to 15kWh to grow with your family.
             </p>
@@ -162,7 +166,7 @@
                 <div class="text-3xl font-black text-blue-600">4-15</div>
                 <div class="text-xs font-bold text-slate-400 uppercase tracking-tighter">kWh Range</div>
               </div>
-              <div class="w-px h-10 bg-slate-200"></div>
+              <div class="w-px h-10 bg-slate-200"/>
               <div class="text-center">
                 <div class="text-3xl font-black text-blue-600">LiFePO4</div>
                 <div class="text-xs font-bold text-slate-400 uppercase tracking-tighter">Chemistry</div>
@@ -193,17 +197,17 @@
         <div class="grid md:grid-cols-3 gap-8">
           <div class="group cursor-pointer">
             <div class="overflow-hidden rounded-2xl aspect-square bg-white border border-slate-200">
-              <img loading="lazy" src="/images/haisic_aa_3.png" alt="Haisic Core Components" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+              <img loading="lazy" src="/images/haisic_aa_3.png" alt="Haisic Core Components" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" >
             </div>
           </div>
           <div class="group cursor-pointer">
             <div class="overflow-hidden rounded-2xl aspect-square bg-white border border-slate-200">
-              <img loading="lazy" src="/images/haisic_aa_5.png" alt="Haisic Smart BMS Interface" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+              <img loading="lazy" src="/images/haisic_aa_5.png" alt="Haisic Smart BMS Interface" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" >
             </div>
           </div>
           <div class="group cursor-pointer">
             <div class="overflow-hidden rounded-2xl aspect-square bg-white border border-slate-200">
-              <img loading="lazy" src="/images/haisic_aa_6.png" alt="Haisic Modular Scaling" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+              <img loading="lazy" src="/images/haisic_aa_6.png" alt="Haisic Modular Scaling" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" >
             </div>
           </div>
         </div>
@@ -213,8 +217,8 @@
     <!-- 6. Bottom CTA -->
     <section class="py-24 bg-blue-600 relative overflow-hidden">
       <!-- Decor -->
-      <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -mr-48 -mt-48 blur-3xl"></div>
-      <div class="absolute bottom-0 left-0 w-96 h-96 bg-white/10 rounded-full -ml-48 -mb-48 blur-3xl"></div>
+      <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -mr-48 -mt-48 blur-3xl"/>
+      <div class="absolute bottom-0 left-0 w-96 h-96 bg-white/10 rounded-full -ml-48 -mb-48 blur-3xl"/>
 
       <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
         <h2 class="text-4xl md:text-6xl font-black text-white mb-8 tracking-tighter uppercase italic">Ready to upgrade your power?</h2>

@@ -2,11 +2,12 @@
   <div class="min-h-screen bg-white font-sans">
     <!-- 1. Top Partner Banner -->
     <div class="bg-white w-full py-6 flex justify-center items-center border-b border-gray-100">
-      <img loading="lazy" 
+      <img
+loading="lazy" 
         src="/images/yinergy_partner.png" 
         alt="Novel Solar x Yinergy Partnership" 
         class="h-12 md:h-16 w-auto object-contain mx-auto"
-      />
+      >
     </div>
 
     <!-- 2. Hero Section -->
@@ -15,7 +16,7 @@
       style="background: linear-gradient(to right, #062414 0%, #2CA84A 100%);"
     >
       <!-- Background Decor -->
-      <div class="absolute top-0 right-0 w-[800px] h-[800px] bg-emerald-500/10 rounded-full blur-[120px] -mr-64 -mt-64"></div>
+      <div class="absolute top-0 right-0 w-[800px] h-[800px] bg-emerald-500/10 rounded-full blur-[120px] -mr-64 -mt-64"/>
       
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div class="grid lg:grid-cols-2 gap-16 items-center text-left">
@@ -23,12 +24,12 @@
             <!-- Badge -->
             <div class="inline-flex items-center gap-3 px-4 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white/60 text-[10px] font-black uppercase tracking-[0.2em] mb-10">
               <span>Global Partnership</span>
-              <span class="w-px h-3 bg-white/20"></span>
+              <span class="w-px h-3 bg-white/20"/>
               <span>Innovation Leader</span>
             </div>
             
             <h1 class="text-6xl md:text-8xl font-black text-white mb-8 tracking-tight leading-[0.95]">
-              Novel Solar <span class="text-[#2CA84A]">x</span><br />
+              Novel Solar <span class="text-[#2CA84A]">x</span><br >
               <span class="text-white">Yinergy</span>
             </h1>
             
@@ -74,13 +75,14 @@
           <div class="relative">
              <!-- Product Card -->
             <div class="relative group">
-              <div class="absolute inset-0 bg-emerald-500/20 rounded-[40px] blur-3xl -z-10 animate-pulse"></div>
+              <div class="absolute inset-0 bg-emerald-500/20 rounded-[40px] blur-3xl -z-10 animate-pulse"/>
               <div class="bg-white/95 backdrop-blur-sm p-4 rounded-[40px] shadow-2xl transform rotate-2 group-hover:rotate-0 transition-transform duration-700 overflow-hidden">
-                <img loading="lazy" 
+                <img
+loading="lazy" 
                   src="/images/yinergy4.png" 
                   alt="Yinergy Industrial Solution" 
                   class="w-full h-auto object-contain rounded-[30px]"
-                />
+                >
               </div>
             </div>
           </div>
@@ -91,7 +93,7 @@
     <section class="py-24 bg-white">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-20">
         <h2 class="text-4xl font-black text-slate-900 tracking-tight uppercase italic mb-4">Why Choose Yinergy?</h2>
-        <div class="w-20 h-1.5 bg-[#2CA84A] mx-auto rounded-full"></div>
+        <div class="w-20 h-1.5 bg-[#2CA84A] mx-auto rounded-full"/>
       </div>
       
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -139,7 +141,7 @@
         <div class="grid md:grid-cols-2 gap-16 items-center">
           <div class="order-2 md:order-1">
             <div class="inline-block px-3 py-1 rounded bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-widest mb-6 italic">Yi-Hybrid Series</div>
-            <h2 class="text-4xl font-black text-slate-900 mb-6 leading-tight">Intelligent <br /><span class="text-[#2CA84A]">Power Conversion.</span></h2>
+            <h2 class="text-4xl font-black text-slate-900 mb-6 leading-tight">Intelligent <br ><span class="text-[#2CA84A]">Power Conversion.</span></h2>
             <p class="text-lg text-slate-600 font-medium leading-relaxed mb-8">
               Experience industry-leading efficiency and smart routing technology designed to optimize every watt of energy your system generates.
             </p>
@@ -148,7 +150,7 @@
                 <div class="text-3xl font-black text-[#2CA84A]">98.4%</div>
                 <div class="text-xs font-bold text-slate-400 uppercase tracking-tighter">Efficiency</div>
               </div>
-              <div class="w-px h-10 bg-slate-200"></div>
+              <div class="w-px h-10 bg-slate-200"/>
               <div class="text-center">
                 <div class="text-3xl font-black text-[#2CA84A]">Smart</div>
                 <div class="text-xs font-bold text-slate-400 uppercase tracking-tighter">Routing</div>
@@ -157,12 +159,13 @@
           </div>
           <div class="order-1 md:order-2">
             <div class="relative">
-              <div class="absolute inset-0 bg-emerald-600/5 translate-x-4 translate-y-4 rounded-3xl"></div>
-              <img loading="lazy" 
+              <div class="absolute inset-0 bg-emerald-600/5 translate-x-4 translate-y-4 rounded-3xl"/>
+              <img
+loading="lazy" 
                 src="/images/Yinergy2.png" 
                 alt="Yinergy Hybrid Inverter" 
                 class="rounded-3xl shadow-xl w-full object-cover relative z-10 hover:-translate-y-2 transition-transform duration-500"
-              />
+              >
             </div>
           </div>
         </div>
@@ -173,17 +176,18 @@
         <div class="grid md:grid-cols-2 gap-16 items-center md:flex-row-reverse">
           <div class="md:order-1">
             <div class="relative">
-              <div class="absolute inset-0 bg-emerald-600/5 -translate-x-4 translate-y-4 rounded-3xl"></div>
-              <img loading="lazy" 
+              <div class="absolute inset-0 bg-emerald-600/5 -translate-x-4 translate-y-4 rounded-3xl"/>
+              <img
+loading="lazy" 
                 src="/images/yinergy3.png" 
                 alt="Yinergy Energy Storage" 
                 class="rounded-3xl shadow-xl w-full object-cover relative z-10 hover:-translate-y-2 transition-transform duration-500"
-              />
+              >
             </div>
           </div>
           <div class="md:order-2">
             <div class="inline-block px-3 py-1 rounded bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-widest mb-6 italic">Yi-Storage Pro</div>
-            <h2 class="text-4xl font-black text-slate-900 mb-6 leading-tight">High-Density <br /><span class="text-[#2CA84A]">Energy Storage.</span></h2>
+            <h2 class="text-4xl font-black text-slate-900 mb-6 leading-tight">High-Density <br ><span class="text-[#2CA84A]">Energy Storage.</span></h2>
             <p class="text-lg text-slate-600 font-medium leading-relaxed mb-8">
               Future-proof your energy with Yinergy's high-cycle LFP technology, offering unmatched durability and safety for large-scale energy requirements.
             </p>
@@ -192,7 +196,7 @@
                 <div class="text-3xl font-black text-[#2CA84A]">10k+</div>
                 <div class="text-xs font-bold text-slate-400 uppercase tracking-tighter">Life Cycles</div>
               </div>
-              <div class="w-px h-10 bg-slate-200"></div>
+              <div class="w-px h-10 bg-slate-200"/>
               <div class="text-center">
                 <div class="text-3xl font-black text-[#2CA84A]">LFP</div>
                 <div class="text-xs font-bold text-slate-400 uppercase tracking-tighter">Chemistry</div>
@@ -222,17 +226,17 @@
         <div class="grid md:grid-cols-3 gap-8">
           <div class="group cursor-pointer">
             <div class="overflow-hidden rounded-2xl aspect-square bg-white border border-slate-200">
-              <img loading="lazy" src="/images/yinergy1.png" alt="Yinergy Core Technology" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+              <img loading="lazy" src="/images/yinergy1.png" alt="Yinergy Core Technology" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" >
             </div>
           </div>
           <div class="group cursor-pointer">
             <div class="overflow-hidden rounded-2xl aspect-square bg-white border border-slate-200">
-              <img loading="lazy" src="/images/yinergy5.png" alt="Yinergy Smart Interface" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+              <img loading="lazy" src="/images/yinergy5.png" alt="Yinergy Smart Interface" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" >
             </div>
           </div>
           <div class="group cursor-pointer">
             <div class="overflow-hidden rounded-2xl aspect-square bg-white border border-slate-200">
-              <img loading="lazy" src="/images/yinergy1.png" alt="Yinergy Industrial Scale" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+              <img loading="lazy" src="/images/yinergy1.png" alt="Yinergy Industrial Scale" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" >
             </div>
           </div>
         </div>
@@ -245,8 +249,8 @@
       style="background-color: #2CA84A;"
     >
       <!-- Decor -->
-      <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -mr-48 -mt-48 blur-3xl"></div>
-      <div class="absolute bottom-0 left-0 w-96 h-96 bg-white/10 rounded-full -ml-48 -mb-48 blur-3xl"></div>
+      <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -mr-48 -mt-48 blur-3xl"/>
+      <div class="absolute bottom-0 left-0 w-96 h-96 bg-white/10 rounded-full -ml-48 -mb-48 blur-3xl"/>
 
       <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
         <h2 class="text-4xl md:text-6xl font-black text-white mb-8 tracking-tighter uppercase italic">Ready to upgrade your power?</h2>

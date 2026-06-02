@@ -2,8 +2,8 @@
   <div class="min-h-screen bg-slate-50">
     <section class="bg-[#002888] py-16 md:py-24 relative overflow-hidden">
       <div class="absolute inset-0 opacity-10 pointer-events-none">
-        <div class="absolute top-0 left-0 w-72 h-72 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl"></div>
-        <div class="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2 blur-3xl"></div>
+        <div class="absolute top-0 left-0 w-72 h-72 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl"/>
+        <div class="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2 blur-3xl"/>
       </div>
 
       <div class="max-w-7xl mx-auto px-4 relative z-10">
@@ -66,7 +66,7 @@
                 type="text"
                 required
                 class="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-[#002888] focus:ring-4 focus:ring-blue-100 outline-none transition-all"
-              />
+              >
             </div>
 
             <div class="space-y-2">
@@ -76,7 +76,7 @@
                 type="text"
                 required
                 class="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-[#002888] focus:ring-4 focus:ring-blue-100 outline-none transition-all"
-              />
+              >
             </div>
 
             <div class="space-y-2">
@@ -86,7 +86,7 @@
                 type="email"
                 required
                 class="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-[#002888] focus:ring-4 focus:ring-blue-100 outline-none transition-all"
-              />
+              >
             </div>
 
             <div class="space-y-2">
@@ -96,7 +96,7 @@
                 type="tel"
                 required
                 class="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-[#002888] focus:ring-4 focus:ring-blue-100 outline-none transition-all"
-              />
+              >
             </div>
 
             <div class="space-y-2 md:col-span-2">
@@ -120,7 +120,7 @@
                 type="url"
                 placeholder="https://"
                 class="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-[#002888] focus:ring-4 focus:ring-blue-100 outline-none transition-all"
-              />
+              >
             </div>
 
             <div class="space-y-2 md:col-span-2">
@@ -131,7 +131,7 @@
                 required
                 placeholder="Tell us about your market coverage, product focus, and what you are looking to build with Novel Solar."
                 class="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-[#002888] focus:ring-4 focus:ring-blue-100 outline-none transition-all resize-none"
-              ></textarea>
+              />
             </div>
 
             <div class="md:col-span-2 flex flex-col sm:flex-row gap-4 pt-2">
@@ -143,7 +143,7 @@
                 <span
                   v-if="isSubmitting"
                   class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"
-                ></span>
+                />
                 {{ isSubmitting ? 'Submitting...' : 'Submit Application' }}
               </button>
               <NuxtLink

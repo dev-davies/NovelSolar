@@ -10,18 +10,18 @@
         <div class="space-y-8">
           <div>
             <h3 class="font-bold text-slate-900 mb-3 text-sm uppercase tracking-wider">Search</h3>
-            <input v-model="searchQuery" type="text" placeholder="Search..." class="w-full rounded-xl border-slate-200 bg-slate-50 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888] p-3 outline-none" />
+            <input v-model="searchQuery" type="text" placeholder="Search..." class="w-full rounded-xl border-slate-200 bg-slate-50 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888] p-3 outline-none" >
           </div>
 
           <div>
             <h3 class="font-bold text-slate-900 mb-3 text-sm uppercase tracking-wider">Categories</h3>
             <div class="space-y-3">
               <label class="flex items-center gap-3 cursor-pointer group">
-                <input type="radio" v-model="selectedCategory" value="all" class="w-4 h-4 text-[#002888] border-slate-300 focus:ring-[#002888]">
+                <input v-model="selectedCategory" type="radio" value="all" class="w-4 h-4 text-[#002888] border-slate-300 focus:ring-[#002888]">
                 <span class="text-slate-700 font-medium group-hover:text-[#002888]">All Products</span>
               </label>
               <label v-for="cat in categories" :key="cat.id" class="flex items-center gap-3 cursor-pointer group">
-                <input type="radio" v-model="selectedCategory" :value="cat.id" class="w-4 h-4 text-[#002888] border-slate-300 focus:ring-[#002888]">
+                <input v-model="selectedCategory" type="radio" :value="cat.id" class="w-4 h-4 text-[#002888] border-slate-300 focus:ring-[#002888]">
                 <span class="text-slate-700 font-medium group-hover:text-[#002888]">{{ cat.name }}</span>
               </label>
             </div>
@@ -31,10 +31,10 @@
             <h3 class="font-bold text-slate-900 mb-3 text-sm uppercase tracking-wider flex justify-between">
               Max Price <span class="text-[#002888]">&#8358;{{ Number(maxPrice).toLocaleString() }}</span>
             </h3>
-            <input v-model="maxPrice" type="range" min="0" max="2000000" step="50000" class="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-[#002888]" />
+            <input v-model="maxPrice" type="range" min="0" max="2000000" step="50000" class="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-[#002888]" >
           </div>
 
-          <button v-if="isFilterActive" @click="clearFilters" class="w-full py-3 bg-red-50 text-red-600 font-bold rounded-xl hover:bg-red-100 transition-colors">
+          <button v-if="isFilterActive" class="w-full py-3 bg-red-50 text-red-600 font-bold rounded-xl hover:bg-red-100 transition-colors" @click="clearFilters">
             Clear Filters
           </button>
         </div>
@@ -52,7 +52,7 @@
               <template v-if="getProductsForCategory(category.id).length > 0">
                 <div class="flex items-center justify-between mb-4 bg-[#002888] p-4 rounded-2xl shadow-sm border border-[#002888]">
                   <h2 class="text-lg font-bold text-white">{{ category.name }}</h2>
-                  <button @click="selectCategoryAndScroll(category.id)" class="text-sm font-bold text-white flex items-center gap-1 hover:underline">
+                  <button class="text-sm font-bold text-white flex items-center gap-1 hover:underline" @click="selectCategoryAndScroll(category.id)">
                     See All <span class="material-symbols-outlined text-sm">arrow_forward</span>
                   </button>
                 </div>
@@ -82,7 +82,7 @@
             </div>
             
             <div v-if="matchingProducts.length > displayedProducts.length" class="mt-8 flex justify-center">
-              <button @click="displayLimit += 50" class="px-8 py-3 bg-white border-2 border-[#002888] text-[#002888] font-bold rounded-xl hover:bg-slate-50 transition-colors">
+              <button class="px-8 py-3 bg-white border-2 border-[#002888] text-[#002888] font-bold rounded-xl hover:bg-slate-50 transition-colors" @click="displayLimit += 50">
                 Load More Products
               </button>
             </div>
@@ -108,7 +108,10 @@ const categories = [
   { id: 'accessories', name: 'Accessories', SECTION_ID: null }
 ]
 
-const { data: apiProducts, pending } = useFetch('/api/inventory')
+const user = useSupabaseUser()
+const { data: apiProducts, pending } = useFetch('/api/inventory', {
+  key: `inventory-${user.value?.id || 'guest'}`
+})
 
 const getProductsArray = () => {
   if (!apiProducts.value) return []

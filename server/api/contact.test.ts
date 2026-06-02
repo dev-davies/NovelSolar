@@ -130,13 +130,13 @@ describe('/api/contact logic', () => {
 
   it('rejects invalid email format', () => {
     const body = { name: 'John', email: 'not-an-email', message: 'Hello' }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+    const emailRegex = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]{2,}$/
     expect(emailRegex.test(body.email.trim())).toBe(false)
   })
 
   it('rejects email without domain', () => {
     const body = { name: 'John', email: 'user@', message: 'Hello' }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+    const emailRegex = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]{2,}$/
     expect(emailRegex.test(body.email.trim())).toBe(false)
   })
 

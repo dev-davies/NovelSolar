@@ -139,7 +139,7 @@ describe('/api/book-service', () => {
       phone: '1234567890',
       serviceType: 'Installation'
     }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+    const emailRegex = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]{2,}$/
     expect(emailRegex.test(body.email.trim())).toBe(false)
   })
 

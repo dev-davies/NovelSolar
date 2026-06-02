@@ -10,18 +10,18 @@
       </nav>
 
       <div v-if="pending" class="flex justify-center py-32 text-center">
-        <div class="w-12 h-12 border-4 border-[#002888]/20 border-t-[#002888] rounded-full animate-spin"></div>
+        <div class="w-12 h-12 border-4 border-[#002888]/20 border-t-[#002888] rounded-full animate-spin"/>
       </div>
 
       <div v-else-if="service" class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden mt-8">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-0">
           <div class="p-12 lg:p-16 flex items-center justify-center bg-gray-50 border-r border-gray-100 relative overflow-hidden group">
              <!-- Decorative background vector -->
-             <div class="absolute inset-0 bg-blue-50 opacity-0 group-hover:opacity-50 transition-opacity duration-500 pointer-events-none"></div>
+             <div class="absolute inset-0 bg-blue-50 opacity-0 group-hover:opacity-50 transition-opacity duration-500 pointer-events-none"/>
 
              <div class="w-full max-w-sm aspect-square bg-white rounded-[40px] shadow-lg flex items-center justify-center p-8 relative z-10 transition-transform duration-500 group-hover:scale-105">
                 <!-- Fallback Icon if no specific image is provided for the service -->
-                <img loading="lazy" v-if="localServiceImage" :src="localServiceImage" :alt="service.NAME" class="w-full h-full object-contain drop-shadow-xl" />
+                <img v-if="localServiceImage" loading="lazy" :src="localServiceImage" :alt="service.NAME" class="w-full h-full object-contain drop-shadow-xl" >
                 <span v-else class="material-symbols-outlined text-[100px] text-[#002888]/20 group-hover:text-[#002888] transition-colors duration-500">
                   home_repair_service
                 </span>
@@ -52,8 +52,8 @@
             
             <div class="flex flex-col sm:flex-row gap-4">
               <button 
-                @click="currentServiceName = service?.NAME || `${formattedSlug} Service`; isModalOpen = true" 
-                class="bg-[#002888] text-white px-8 py-4 rounded-xl font-bold uppercase tracking-wider hover:bg-blue-900 transition-colors shadow-lg active:scale-95 flex items-center justify-center gap-3 w-full sm:w-auto"
+                class="bg-[#002888] text-white px-8 py-4 rounded-xl font-bold uppercase tracking-wider hover:bg-blue-900 transition-colors shadow-lg active:scale-95 flex items-center justify-center gap-3 w-full sm:w-auto" 
+                @click="currentServiceName = service?.NAME || `${formattedSlug} Service`; isModalOpen = true"
               >
                  Book Service
                  <span class="material-symbols-outlined text-xl">calendar_month</span>
@@ -83,8 +83,8 @@
     
     <!-- Service Booking Modal -->
     <LazyBookingModal 
-      :isOpen="isModalOpen" 
-      :serviceName="currentServiceName" 
+      :is-open="isModalOpen" 
+      :service-name="currentServiceName" 
       @close="isModalOpen = false" 
     />
   </div>

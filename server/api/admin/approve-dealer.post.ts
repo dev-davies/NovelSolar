@@ -34,7 +34,7 @@ export default defineEventHandler(async (event) => {
     // 2. Update status to 'approved'
     const { error: updateError } = await supabase
       .from('dealer_applications')
-      .update({ status: 'approved' } as any)
+      .update({ status: 'approved' } as never)
       .eq('id', applicationId)
 
     if (updateError) throw updateError
@@ -45,6 +45,7 @@ export default defineEventHandler(async (event) => {
     const { data: newUser, error: authError } = await supabase.auth.admin.createUser({
       email: appData.email,
       email_confirm: true,
+      user_metadata: { role: 'dealer' },
     })
 
     if (authError) {
@@ -56,6 +57,7 @@ export default defineEventHandler(async (event) => {
         })
         if (linkError || !linkData?.user?.id) throw authError
         userId = linkData.user.id
+        await supabase.auth.admin.updateUserById(userId, { user_metadata: { role: 'dealer' } })
       } else {
         throw authError
       }
@@ -72,7 +74,7 @@ export default defineEventHandler(async (event) => {
       user_id: userId,
       role: 'dealer',
       dealer_status: 'approved',
-    } as any)
+    } as never)
 
     if (profileError) throw profileError
 

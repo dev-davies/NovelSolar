@@ -1,3 +1,5 @@
+const webhook = process.env.NUXT_BITRIX_WEBHOOK_URL || '';
+
 async function run() {
   const productId = '212';
   const fileId = '1364'; // Property_44 file

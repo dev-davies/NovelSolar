@@ -97,7 +97,7 @@ useHead({
     <div class="max-w-md w-full relative z-10">
       <div class="text-center mb-8">
         <NuxtLink to="/">
-          <img src="/images/logo.png" alt="NovelSolar" class="h-10 mx-auto drop-shadow-sm" />
+          <img src="/images/logo.png" alt="NovelSolar" class="h-10 mx-auto drop-shadow-sm" >
         </NuxtLink>
       </div>
 
@@ -146,7 +146,7 @@ useHead({
                 required
                 class="w-full px-4 py-3.5 rounded-xl border-2 border-slate-100 focus:border-[#002888] outline-none transition-all font-medium text-slate-700"
                 placeholder="••••••••"
-              />
+              >
             </div>
 
             <div class="space-y-2">
@@ -157,7 +157,7 @@ useHead({
                 required
                 class="w-full px-4 py-3.5 rounded-xl border-2 border-slate-100 focus:border-[#002888] outline-none transition-all font-medium text-slate-700"
                 placeholder="••••••••"
-              />
+              >
             </div>
 
             <div v-if="formError" class="p-4 bg-red-50 rounded-xl border border-red-100">

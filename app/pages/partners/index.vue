@@ -23,12 +23,13 @@
         >
           <div class="w-full aspect-[3/2] bg-slate-50 rounded-2xl mb-8 flex items-center justify-center border-2 border-slate-100 group-hover:bg-blue-50/50 group-hover:border-[#002888]/20 transition-all overflow-hidden p-6 relative">
             <template v-if="partner.logo">
-              <img loading="lazy" 
+              <img
+loading="lazy" 
                 :src="partner.logo" 
                 :alt="partner.name + ' Logo'" 
                 class="w-full h-full object-contain filter group-hover:scale-105 transition-transform duration-500 ease-out z-10 relative"
-              />
-              <div class="absolute inset-0 bg-gradient-to-t from-slate-100/50 block z-0"></div>
+              >
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-100/50 block z-0"/>
             </template>
             <template v-else>
               <div class="text-[#002888] font-black text-2xl opacity-20 group-hover:opacity-40 tracking-widest uppercase">
@@ -56,8 +57,8 @@
     <section class="bg-[#002888] py-24 relative overflow-hidden">
       <!-- Decorative background pattern -->
       <div class="absolute inset-0 opacity-10 pointer-events-none">
-        <div class="absolute top-0 left-0 w-64 h-64 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl"></div>
-        <div class="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2 blur-3xl"></div>
+        <div class="absolute top-0 left-0 w-64 h-64 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl"/>
+        <div class="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2 blur-3xl"/>
       </div>
 
       <div class="max-w-4xl mx-auto px-4 text-center relative z-10">

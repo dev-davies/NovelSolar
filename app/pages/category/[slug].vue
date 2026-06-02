@@ -18,7 +18,6 @@
         <button 
           v-for="filter in filterOptions" 
           :key="filter"
-          @click="categorySlug !== 'lighting' || filter === 'All' ? activeFilter = filter : null"
           :disabled="categorySlug === 'lighting' && filter !== 'All'"
           :class="[
             'px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all border-2',
@@ -27,13 +26,14 @@
               : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300 hover:text-[#002888] hover:scale-105',
             categorySlug === 'lighting' && filter !== 'All' ? 'opacity-40 cursor-not-allowed border-dashed grayscale' : ''
           ]"
+          @click="categorySlug !== 'lighting' || filter === 'All' ? activeFilter = filter : null"
         >
           {{ filter }}
         </button>
       </div>
 
       <div v-if="pending" class="flex justify-center py-20 text-center">
-        <div class="w-10 h-10 border-4 border-[#002888]/10 border-t-[#002888] rounded-full animate-spin"></div>
+        <div class="w-10 h-10 border-4 border-[#002888]/10 border-t-[#002888] rounded-full animate-spin"/>
       </div>
       
       <div v-else-if="filteredProducts && filteredProducts.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -47,7 +47,7 @@
           </svg>
         </div>
         <p class="text-gray-400 font-bold uppercase text-sm">No {{ activeFilter !== 'All' ? activeFilter : 'matching' }} units found in this category.</p>
-        <button @click="activeFilter = 'All'" v-if="activeFilter !== 'All'" class="mt-6 text-[#002888] font-bold text-sm hover:underline">
+        <button v-if="activeFilter !== 'All'" class="mt-6 text-[#002888] font-bold text-sm hover:underline" @click="activeFilter = 'All'">
           Clear Filters &rarr;
         </button>
       </div>
@@ -94,7 +94,7 @@ const filteredProducts = computed(() => {
   
   // Base category logic
   const slug = categorySlug.value.toLowerCase()
-  let categoryItems = products.value.filter(p => {
+  const categoryItems = products.value.filter(p => {
     const title = (p.NAME || '').toLowerCase()
     
     const isService = title.includes('audit') || title.includes('installation') || title.includes('repair') || title.includes('maintenance')

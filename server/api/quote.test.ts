@@ -144,7 +144,7 @@ describe('/api/quote', () => {
       phone: '9876543210',
       projectType: 'Solar Installation'
     }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+    const emailRegex = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]{2,}$/
     expect(emailRegex.test(body.email.trim())).toBe(false)
   })
 

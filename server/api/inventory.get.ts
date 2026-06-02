@@ -1,25 +1,47 @@
 import { logger } from '../utils/logger'
 
-export default defineCachedEventHandler(
-  async (event) => {
-    interface BitrixInventoryProduct {
-      ID?: string | number
-      NAME?: string
-      PRICE?: string | number
-      QUANTITY?: string | number
-      CURRENCY_ID?: string
-      SECTION_ID?: string | number
-      ACTIVE?: string
-      PROPERTY_102?: unknown
-      PROPERTY_104?: unknown
-      PROPERTY_112?: unknown
-      DETAIL_PICTURE?: unknown
-      PREVIEW_PICTURE?: unknown
-      PROPERTY_44?: unknown
-      [key: string]: unknown
-    }
+import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
+import { normalizeProperty } from '../utils/normalizeProperty'
 
-    const allProducts: BitrixInventoryProduct[] = []
+export default defineEventHandler(async (event) => {
+  interface BitrixInventoryProduct {
+    ID?: string | number
+    NAME?: string
+    PRICE?: string | number
+    PROPERTY_116?: unknown
+    QUANTITY?: string | number
+    CURRENCY_ID?: string
+    SECTION_ID?: string | number
+    ACTIVE?: string
+    PROPERTY_102?: unknown
+    PROPERTY_104?: unknown
+    PROPERTY_112?: unknown
+    DETAIL_PICTURE?: unknown
+    PREVIEW_PICTURE?: unknown
+    PROPERTY_44?: unknown
+    [key: string]: unknown
+  }
+
+  let isDealer = false
+  try {
+    const user = await serverSupabaseUser(event)
+    if (user) {
+      const supabase = await serverSupabaseServiceRole(event)
+      const { data: profile } = (await supabase
+        .from('profiles')
+        .select('role, dealer_status')
+        .eq('user_id', user.id)
+        .single()) as { data: { role: string; dealer_status: string } | null }
+
+      if (profile && profile.role === 'dealer' && profile.dealer_status === 'approved') {
+        isDealer = true
+      }
+    }
+  } catch (err) {
+    // Ignore unauthenticated
+  }
+
+  const allProducts: BitrixInventoryProduct[] = []
 
     // ─── PHASE 1: Paginate through crm.product.list to get all product metadata ───
     try {
@@ -48,6 +70,7 @@ export default defineCachedEventHandler(
                 'PROPERTY_102',
                 'PROPERTY_104',
                 'PROPERTY_112',
+                'PROPERTY_116',
                 'DETAIL_PICTURE',
                 'PREVIEW_PICTURE',
                 'PROPERTY_44',
@@ -71,10 +94,10 @@ export default defineCachedEventHandler(
       return allProducts
     }
 
-    // ─── Normalize properties and return ───
-    // PROPERTY_102 contains Cloudinary image URLs directly from crm.product.list,
-    // so no secondary batch fetch is needed.
-    return allProducts.map((product) => ({
+  // PROPERTY_102 contains Cloudinary image URLs directly from crm.product.list,
+  // so no secondary batch fetch is needed.
+  return allProducts.map((product) => {
+    const productObj: any = {
       ...product,
       ACTIVE: product.ACTIVE,
       DETAIL_PICTURE: product.DETAIL_PICTURE || null,
@@ -83,16 +106,14 @@ export default defineCachedEventHandler(
       PROPERTY_102: normalizeProperty(product.PROPERTY_102),
       PROPERTY_104: normalizeProperty(product.PROPERTY_104),
       PROPERTY_112: normalizeProperty(product.PROPERTY_112),
-    }))
-  },
-  {
-    maxAge: 60 * 5, // Cache for 5 minutes
-    swr: true, // Enable Stale-While-Revalidate for instant background fetching
-    name: 'bitrix-inventory',
-    getKey: (event) => {
-      // Include the bitrix session in the cache key so different workspaces/users have isolated caches
-      const session = getCookie(event, 'bitrix_session')
-      return session ? `catalog-${session}` : 'global-catalog'
-    },
-  },
-)
+    }
+
+    const rawDealerPrice = normalizeProperty(product.PROPERTY_116)
+    if (isDealer && rawDealerPrice !== undefined && rawDealerPrice !== null) {
+      productObj.dealerPrice = Number(rawDealerPrice)
+    }
+
+    delete productObj.PROPERTY_116
+    return productObj
+  })
+})

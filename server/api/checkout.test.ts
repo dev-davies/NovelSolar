@@ -150,7 +150,7 @@ describe('/api/checkout logic', () => {
       cart: [{ name: 'Panel', price: 1000, quantity: 1 }],
       total: 1000
     }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+    const emailRegex = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]{2,}$/
     expect(emailRegex.test((body.customer.email || '').trim())).toBe(false)
   })
 

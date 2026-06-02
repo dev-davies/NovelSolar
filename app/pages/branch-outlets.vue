@@ -41,7 +41,7 @@
                 type="text" 
                 placeholder="Search by city or branch name..."
                 class="w-full pl-12 pr-4 py-4 rounded-2xl border border-gray-200 bg-white focus:ring-4 focus:ring-[#002888]/10 focus:border-[#002888] outline-none transition-all text-sm font-medium shadow-sm"
-              />
+              >
             </div>
           </div>
 
@@ -49,11 +49,11 @@
             <button 
               v-for="branch in filteredBranches" 
               :key="branch.name"
-              @click="selectBranch(branch)"
               class="group p-5 border-2 rounded-2xl transition-all duration-300 flex items-center gap-4 text-left"
               :class="selectedBranch.name === branch.name 
                 ? 'border-[#002888] bg-[#002888]/5 shadow-xl shadow-[#002888]/10 ring-1 ring-[#002888]' 
                 : 'border-gray-100 bg-white hover:bg-white hover:border-gray-200 hover:shadow-md'"
+              @click="selectBranch(branch)"
             >
               <div 
                 class="w-12 h-12 rounded-xl flex items-center justify-center transition-colors duration-300 shadow-sm"
@@ -81,11 +81,11 @@
               
               <!-- Card Header / Mini-hero -->
               <div class="h-48 relative bg-gray-900 overflow-hidden">
-                <img loading="lazy" src="https://images.unsplash.com/photo-1542332213-9b5a5a3fad35?auto=format&fit=crop&q=80&w=800" alt="Solar Branch" class="w-full h-full object-cover opacity-60 mix-blend-overlay scale-110 group-hover:scale-100 transition-transform duration-1000" />
-                <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+                <img loading="lazy" src="https://images.unsplash.com/photo-1542332213-9b5a5a3fad35?auto=format&fit=crop&q=80&w=800" alt="Solar Branch" class="w-full h-full object-cover opacity-60 mix-blend-overlay scale-110 group-hover:scale-100 transition-transform duration-1000" >
+                <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"/>
                 <div class="absolute bottom-6 left-8">
                   <div class="flex items-center gap-2 mb-2">
-                    <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                    <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"/>
                     <span class="text-white text-[10px] font-black uppercase tracking-widest opacity-80">Outlet Live</span>
                   </div>
                   <h4 class="text-white text-2xl font-black uppercase tracking-tighter leading-tight">{{ selectedBranch.name }}</h4>

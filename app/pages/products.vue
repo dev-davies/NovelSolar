@@ -12,7 +12,7 @@
       </div>
 
       <div v-if="isFetching" class="flex justify-center py-24">
-        <div class="w-12 h-12 border-4 border-[#002888]/20 border-t-[#002888] rounded-full animate-spin"></div>
+        <div class="w-12 h-12 border-4 border-[#002888]/20 border-t-[#002888] rounded-full animate-spin"/>
       </div>
 
       <div v-else-if="products.length > 0">
@@ -22,11 +22,11 @@
 
         <div v-if="nextOffset !== null" class="mt-16 flex justify-center">
           <button 
-            @click="() => fetchProducts(true)" 
-            :disabled="isLoadingMore"
+            :disabled="isLoadingMore" 
             class="bg-white border-2 border-slate-200 text-[#002888] px-10 py-4 rounded-xl font-black hover:border-[#002888] hover:bg-blue-50 transition-all shadow-sm flex items-center gap-3 disabled:opacity-50"
+            @click="() => fetchProducts(true)"
           >
-            <span v-if="isLoadingMore" class="animate-spin border-2 border-[#002888]/30 border-t-[#002888] w-5 h-5 rounded-full"></span>
+            <span v-if="isLoadingMore" class="animate-spin border-2 border-[#002888]/30 border-t-[#002888] w-5 h-5 rounded-full"/>
             {{ isLoadingMore ? 'Loading Inventory...' : 'Load Next 50 Items' }}
           </button>
         </div>

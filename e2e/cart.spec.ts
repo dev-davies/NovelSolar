@@ -19,7 +19,7 @@ test.describe('Shopping Cart', () => {
       const cartCount = page.locator('.cart-count, .cart-badge').first()
       if (await cartCount.count() > 0) {
         const countText = await cartCount.textContent()
-        expect(parseInt(countText || '0')).toBeGreaterThan(0)
+        expect(Number.parseInt(countText || '0')).toBeGreaterThan(0)
       }
     }
   })

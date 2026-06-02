@@ -69,7 +69,7 @@ export default defineEventHandler(async (event) => {
     
     // Calculate expiration if provided (usually in seconds from now)
     const expiresAt = new Date()
-    const authExpires = parseInt(body.AUTH_EXPIRES || '3600', 10)
+    const authExpires = Number.parseInt(body.AUTH_EXPIRES || '3600', 10)
     expiresAt.setSeconds(expiresAt.getSeconds() + authExpires)
 
     // 2. Store credentials in Supabase auth_sessions.

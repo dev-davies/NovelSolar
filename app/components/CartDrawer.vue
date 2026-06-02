@@ -15,9 +15,9 @@ const { cart, isCartOpen, toggleCart, removeFromCart, updateQuantity, cartTotalA
     >
       <div 
         v-if="isCartOpen" 
-        @click="toggleCart" 
-        class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100]"
-      ></div>
+        class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100]" 
+        @click="toggleCart"
+      />
     </transition>
 
     <!-- Drawer Panel -->
@@ -37,7 +37,7 @@ const { cart, isCartOpen, toggleCart, removeFromCart, updateQuantity, cartTotalA
             {{ cart.length }}
           </span>
         </div>
-        <button @click="toggleCart" aria-label="Close Cart" class="p-2 hover:bg-gray-100 rounded-full text-gray-500 hover:text-gray-700 transition-colors focus-visible:ring-2 focus-visible:ring-[#002888]">
+        <button aria-label="Close Cart" class="p-2 hover:bg-gray-100 rounded-full text-gray-500 hover:text-gray-700 transition-colors focus-visible:ring-2 focus-visible:ring-[#002888]" @click="toggleCart">
           <span class="material-symbols-outlined">close</span>
         </button>
       </div>
@@ -50,7 +50,7 @@ const { cart, isCartOpen, toggleCart, removeFromCart, updateQuantity, cartTotalA
           </div>
           <h3 class="text-lg font-bold text-slate-900 mb-1">Your cart is empty</h3>
           <p class="text-sm text-gray-500 max-w-[200px] mx-auto mb-8">Looks like you haven't added any solar equipment yet.</p>
-          <button @click="toggleCart" class="text-[#002888] font-bold text-sm hover:underline">
+          <button class="text-[#002888] font-bold text-sm hover:underline" @click="toggleCart">
             Continue Shopping &rarr;
           </button>
         </div>
@@ -66,7 +66,7 @@ const { cart, isCartOpen, toggleCart, removeFromCart, updateQuantity, cartTotalA
           <div class="flex-1 flex flex-col justify-between">
             <div class="flex justify-between items-start gap-2">
               <h3 class="text-sm font-bold text-slate-900 line-clamp-2 leading-snug">{{ item.name }}</h3>
-              <button @click="removeFromCart(item.id)" :aria-label="'Remove ' + item.name + ' from cart'" class="text-gray-400 hover:text-red-500 transition-colors p-1 focus-visible:ring-2 focus-visible:ring-red-500 rounded">
+              <button :aria-label="'Remove ' + item.name + ' from cart'" class="text-gray-400 hover:text-red-500 transition-colors p-1 focus-visible:ring-2 focus-visible:ring-red-500 rounded" @click="removeFromCart(item.id)">
                 <span class="material-symbols-outlined text-xl">delete</span>
               </button>
             </div>
@@ -79,17 +79,17 @@ const { cart, isCartOpen, toggleCart, removeFromCart, updateQuantity, cartTotalA
               <!-- Quantity Controls -->
               <div class="flex items-center bg-white border border-gray-200 rounded-lg shadow-sm">
                 <button 
-                  @click="updateQuantity(item.id, -1)" 
-                  aria-label="Decrease quantity"
+                  aria-label="Decrease quantity" 
                   class="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-50 rounded-l-lg transition-colors focus-visible:ring-2 focus-visible:ring-[#002888]"
+                  @click="updateQuantity(item.id, -1)"
                 >
                   <span class="material-symbols-outlined text-lg">remove</span>
                 </button>
                 <span class="w-8 text-center text-xs font-bold text-slate-900" aria-label="Current quantity">{{ item.quantity }}</span>
                 <button 
+                  aria-label="Increase quantity"
+                  class="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-50 rounded-r-lg transition-colors focus-visible:ring-2 focus-visible:ring-[#002888]" 
                   @click="updateQuantity(item.id, 1)"
-                  aria-label="Increase quantity" 
-                  class="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-50 rounded-r-lg transition-colors focus-visible:ring-2 focus-visible:ring-[#002888]"
                 >
                   <span class="material-symbols-outlined text-lg">add</span>
                 </button>
@@ -113,8 +113,8 @@ const { cart, isCartOpen, toggleCart, removeFromCart, updateQuantity, cartTotalA
         
         <NuxtLink 
           to="/checkout" 
-          @click="toggleCart" 
-          class="w-full flex items-center justify-center gap-3 bg-[#002888] text-white py-4 rounded-xl font-bold text-lg hover:bg-blue-900 transition-all shadow-lg active:scale-[0.98] outline-none focus-visible:ring-4 focus-visible:ring-blue-300"
+          class="w-full flex items-center justify-center gap-3 bg-[#002888] text-white py-4 rounded-xl font-bold text-lg hover:bg-blue-900 transition-all shadow-lg active:scale-[0.98] outline-none focus-visible:ring-4 focus-visible:ring-blue-300" 
+          @click="toggleCart"
         >
           Checkout Now
           <span class="material-symbols-outlined">arrow_forward</span>

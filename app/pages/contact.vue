@@ -12,7 +12,7 @@
         <div
           class="bg-white rounded-3xl shadow-xl border border-slate-100 p-8 md:p-12 relative overflow-hidden"
         >
-          <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#D4AF37] via-[#00AEEF] to-[#002888]"></div>
+          <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#D4AF37] via-[#00AEEF] to-[#002888]"/>
 
           <div v-if="isSuccess" class="text-center py-8 md:py-12">
             <div class="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -64,7 +64,7 @@
                   :disabled="isSubmitting"
                   placeholder="Your full name"
                   class="w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:ring-4 focus:ring-blue-500/10 focus:border-[#002888] outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                />
+                >
               </div>
 
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -77,7 +77,7 @@
                     :disabled="isSubmitting"
                     placeholder="you@example.com"
                     class="w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:ring-4 focus:ring-blue-500/10 focus:border-[#002888] outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  />
+                  >
                 </div>
 
                 <div>
@@ -88,7 +88,7 @@
                     :disabled="isSubmitting"
                     placeholder="+234..."
                     class="w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:ring-4 focus:ring-blue-500/10 focus:border-[#002888] outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  />
+                  >
                 </div>
               </div>
 
@@ -101,7 +101,7 @@
                   :disabled="isSubmitting"
                   placeholder="How can we help?"
                   class="w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:ring-4 focus:ring-blue-500/10 focus:border-[#002888] outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                />
+                >
               </div>
 
               <div>
@@ -113,7 +113,7 @@
                   :disabled="isSubmitting"
                   placeholder="Share the details of your request, question, or project."
                   class="w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:ring-4 focus:ring-blue-500/10 focus:border-[#002888] outline-none transition-all resize-none disabled:opacity-50 disabled:cursor-not-allowed"
-                ></textarea>
+                />
               </div>
 
               <button
@@ -121,7 +121,7 @@
                 :disabled="isSubmitting"
                 class="w-full bg-[#002888] text-white py-5 rounded-2xl font-black text-lg uppercase tracking-widest hover:bg-blue-900 transition-all shadow-xl active:scale-95 disabled:opacity-70 disabled:active:scale-100 disabled:hover:bg-[#002888] flex items-center justify-center gap-3"
               >
-                <svg v-if="isSubmitting" class="animate-spin border-2 border-white/30 border-t-white w-5 h-5 rounded-full" viewBox="0 0 24 24"></svg>
+                <svg v-if="isSubmitting" class="animate-spin border-2 border-white/30 border-t-white w-5 h-5 rounded-full" viewBox="0 0 24 24"/>
                 {{ isSubmitting ? 'Sending Message...' : 'Send Message' }}
               </button>
             </form>
@@ -172,8 +172,8 @@
           </div>
 
           <div class="bg-[#002888] text-white rounded-3xl shadow-xl p-8 overflow-hidden relative">
-            <div class="absolute -right-16 -top-16 w-40 h-40 rounded-full bg-white/10"></div>
-            <div class="absolute -left-12 -bottom-16 w-32 h-32 rounded-full bg-[#D4AF37]/20"></div>
+            <div class="absolute -right-16 -top-16 w-40 h-40 rounded-full bg-white/10"/>
+            <div class="absolute -left-12 -bottom-16 w-32 h-32 rounded-full bg-[#D4AF37]/20"/>
             <div class="relative">
               <p class="text-xs font-black uppercase tracking-[0.3em] text-white/70 mb-3">Fast Response</p>
               <h3 class="text-2xl font-black mb-3">Need product guidance?</h3>

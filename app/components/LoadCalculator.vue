@@ -72,7 +72,7 @@
                           type="number"
                           min="0"
                           class="w-12 text-center text-sm font-bold bg-transparent border-none focus:ring-0 p-0"
-                        />
+                        >
                         <button
                           class="w-6 h-6 rounded-md border border-gray-200 flex items-center justify-center hover:bg-white hover:shadow-sm active:scale-90 transition-all text-gray-400 hover:text-green-500"
                           @click="updateQty(item, 1)"
@@ -86,7 +86,7 @@
                         v-model.number="item.load"
                         type="number"
                         class="w-16 text-center text-sm text-gray-500 bg-transparent border-none focus:ring-0 p-0"
-                      />
+                      >
                     </td>
                     <td class="px-6 py-4 text-right">
                       <span class="text-sm font-bold" :class="item.quantity > 0 ? 'text-[#002888]' : 'text-gray-300'">

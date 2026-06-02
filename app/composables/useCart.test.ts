@@ -1,5 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
+// Import after mocks
+import { useCart } from './useCart'
+import { ref } from 'vue'
+
 // Mock localStorage
 const localStorageMock = {
   getItem: vi.fn(),
@@ -17,10 +21,6 @@ vi.mock('@vueuse/core', () => ({
 vi.mock('#app', () => ({
   useState: vi.fn(() => ref(false))
 }))
-
-// Import after mocks
-import { useCart } from './useCart'
-import { ref } from 'vue'
 
 describe('useCart', () => {
   beforeEach(() => {

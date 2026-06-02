@@ -1,5 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
+import {
+  adminToCommitAuthor,
+  commitMessageFor,
+  deleteRemoteFile,
+  getRemoteFile,
+  putRemoteFile,
+} from './blogGithub'
+
 const mockFetch = vi.fn()
 vi.stubGlobal('$fetch', mockFetch)
 
@@ -8,14 +16,6 @@ vi.stubGlobal('createError', (opts: { statusCode: number, statusMessage: string 
   err.statusCode = opts.statusCode
   return err
 })
-
-import {
-  adminToCommitAuthor,
-  commitMessageFor,
-  deleteRemoteFile,
-  getRemoteFile,
-  putRemoteFile,
-} from './blogGithub'
 
 beforeEach(() => {
   mockFetch.mockReset()

@@ -1,5 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
+import { verifyBitrixApplicationToken } from '../utils/bitrixWebhookVerify'
+import { logger } from '../utils/logger'
+
 // Mock logger to avoid side effects and allow assertion
 vi.mock('../utils/logger', () => ({
   logger: {
@@ -9,9 +12,6 @@ vi.mock('../utils/logger', () => ({
     debug: vi.fn(),
   }
 }))
-
-import { verifyBitrixApplicationToken } from '../utils/bitrixWebhookVerify'
-import { logger } from '../utils/logger'
 
 describe('verifyBitrixApplicationToken', () => {
   beforeEach(() => {

@@ -1,5 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
+// Import after mocks are in place
+import { enforceAuthRateLimit } from './authRateLimit'
+
 // In-memory store to simulate Nitro's useStorage
 const store = new Map<string, any>()
 
@@ -14,9 +17,6 @@ vi.stubGlobal('createError', (opts: { statusCode: number; statusMessage: string 
   err.statusCode = opts.statusCode
   return err
 })
-
-// Import after mocks are in place
-import { enforceAuthRateLimit } from './authRateLimit'
 
 function makeEvent(ip = '127.0.0.1', path = '/api/admin/auth/login') {
   return {

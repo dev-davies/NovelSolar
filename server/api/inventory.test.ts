@@ -57,7 +57,7 @@ describe('/api/inventory', () => {
 
     // Simulate pagination
     let start = 0
-    let allProducts = []
+    const allProducts = []
     
     const firstReq = await global.$fetch('https://test.bitrix.com/rest/crm.product.list', {
       method: 'POST',
@@ -132,7 +132,7 @@ describe('/api/inventory', () => {
     global.$fetch.mockRejectedValueOnce(new Error('Network error'))
 
     // Simulate error handling - returns empty array on error
-    let allProducts = []
+    const allProducts = []
     try {
       await global.$fetch('https://test.bitrix.com/rest/crm.product.list', {
         method: 'POST',

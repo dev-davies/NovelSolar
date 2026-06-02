@@ -1,6 +1,6 @@
 <template>
   <div>
-    <component v-if="activeComponent" :is="activeComponent" />
+    <component :is="activeComponent" v-if="activeComponent" />
     
     <!-- Fallback / Coming Soon state for unmapped partners -->
     <div v-else class="min-h-[70vh] flex flex-col items-center justify-center bg-gray-50 p-8 text-center pt-32 pb-32">

@@ -518,7 +518,7 @@ const handleLogout = async () => {
                     placeholder="e.g. 5KVA Hybrid Inverter"
                     class="w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all font-bold text-slate-700 bg-slate-50/30"
                     :disabled="isUploading"
-                  />
+                  >
                 </div>
                 <div class="col-span-2 sm:col-span-1">
                   <label
@@ -533,7 +533,7 @@ const handleLogout = async () => {
                       placeholder="0"
                       class="w-full pl-9 pr-5 py-4 rounded-2xl border-2 border-slate-100 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all font-black text-slate-700 bg-slate-50/30"
                       :disabled="isUploading"
-                    />
+                    >
                   </div>
                 </div>
                 <div class="col-span-2 sm:col-span-1">
@@ -549,7 +549,7 @@ const handleLogout = async () => {
                       placeholder="Optional"
                       class="w-full pl-9 pr-5 py-4 rounded-2xl border-2 border-slate-100 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all font-black text-slate-700 bg-slate-50/30"
                       :disabled="isUploading"
-                    />
+                    >
                   </div>
                 </div>
                 <div class="col-span-2 sm:col-span-1">
@@ -591,7 +591,7 @@ const handleLogout = async () => {
                     placeholder="Enter brand name"
                     class="w-full mt-2 px-5 py-4 rounded-2xl border-2 border-blue-200 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all font-bold text-slate-700 bg-blue-50/30"
                     :disabled="isUploading"
-                  />
+                  >
                 </div>
               </div>
 
@@ -634,7 +634,7 @@ const handleLogout = async () => {
                       placeholder="e.g. Capacity"
                       class="flex-1 px-4 py-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none font-bold placeholder:font-normal"
                       :disabled="isUploading"
-                    />
+                    >
                     <div class="flex-[1.5] relative">
                       <input
                         v-model="spec.value"
@@ -642,7 +642,7 @@ const handleLogout = async () => {
                         placeholder="Value"
                         class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none font-medium"
                         :disabled="isUploading"
-                      />
+                      >
                     </div>
                     <button
                       v-if="product.specs.length > 1"
@@ -679,7 +679,7 @@ const handleLogout = async () => {
                     @drop.prevent="handleFileDrop(product.id, $event, 'main')"
                   >
                     <template v-if="product.image">
-                      <img loading="lazy" :src="getPreviewUrl(product.image)" class="w-full h-full object-cover" />
+                      <img loading="lazy" :src="getPreviewUrl(product.image)" class="w-full h-full object-cover" >
                       <div
                         class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-2"
                       >
@@ -700,7 +700,7 @@ const handleLogout = async () => {
                         class="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer"
                         :disabled="isUploading"
                         @change="handleFileChange(product.id, $event)"
-                      />
+                      >
                       <div class="absolute inset-0 flex flex-col items-center justify-center gap-3 text-slate-400">
                         <div
                           class="w-12 h-12 rounded-2xl bg-white shadow-sm border border-slate-100 flex items-center justify-center group-hover:-translate-y-1 transition-transform"
@@ -749,7 +749,7 @@ const handleLogout = async () => {
                         :key="idx"
                         class="relative aspect-square rounded-xl overflow-hidden group/item border border-slate-200 shadow-sm"
                       >
-                        <img loading="lazy" :src="getPreviewUrl(file)" class="w-full h-full object-cover" />
+                        <img loading="lazy" :src="getPreviewUrl(file)" class="w-full h-full object-cover" >
                         <button
                           type="button"
                           class="absolute top-1 right-1 w-6 h-6 bg-black/60 text-white rounded-lg flex items-center justify-center opacity-0 group-hover/item:opacity-100 scale-75 group-hover/item:scale-100 transition-all hover:bg-red-500"
@@ -768,7 +768,7 @@ const handleLogout = async () => {
                           accept="image/*"
                           class="absolute inset-0 opacity-0 cursor-pointer"
                           @change="handleGalleryUpload(product.id, $event)"
-                        />
+                        >
                         <span class="material-symbols-outlined text-slate-300">add_circle</span>
                       </div>
                     </div>
@@ -781,7 +781,7 @@ const handleLogout = async () => {
                         class="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer"
                         :disabled="isUploading"
                         @change="handleGalleryUpload(product.id, $event)"
-                      />
+                      >
                       <div class="absolute inset-0 flex flex-col items-center justify-center gap-2 text-slate-400">
                         <span
                           class="material-symbols-outlined text-xl text-slate-300 group-hover:scale-110 transition-transform"

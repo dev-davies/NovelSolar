@@ -25,7 +25,7 @@
               placeholder="admin@example.com"
               class="w-full px-4 py-3 rounded-2xl border-2 border-slate-100 bg-white outline-none focus:border-red-500 focus:ring-4 focus:ring-red-100"
               :disabled="isCreatingAdmin"
-            />
+            >
           </div>
 
           <div>
@@ -36,7 +36,7 @@
               placeholder="john_admin"
               class="w-full px-4 py-3 rounded-2xl border-2 border-slate-100 bg-white outline-none focus:border-red-500 focus:ring-4 focus:ring-red-100"
               :disabled="isCreatingAdmin"
-            />
+            >
           </div>
 
           <div v-if="createAdminError" class="bg-red-50 border border-red-200 rounded-2xl p-4 text-sm text-red-700">
@@ -49,11 +49,11 @@
 
           <button
             type="button"
-            @click="createNewAdmin"
             :disabled="isCreatingAdmin || !newAdminForm.email || !newAdminForm.username"
             class="w-full bg-red-600 text-white py-3 rounded-2xl font-black hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            @click="createNewAdmin"
           >
-            <span v-if="isCreatingAdmin" class="animate-spin border-2 border-white/30 border-t-white w-4 h-4 rounded-full"></span>
+            <span v-if="isCreatingAdmin" class="animate-spin border-2 border-white/30 border-t-white w-4 h-4 rounded-full"/>
             {{ isCreatingAdmin ? 'Creating Admin...' : 'Create Admin' }}
           </button>
         </div>
@@ -73,9 +73,9 @@
           <h3 class="text-lg font-black text-slate-900">Current Admin Accounts</h3>
           <button
             type="button"
-            @click="loadAdmins"
             :disabled="isLoadingAdmins"
             class="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl font-bold hover:bg-slate-200 transition-all disabled:opacity-50"
+            @click="loadAdmins"
           >
             {{ isLoadingAdmins ? 'Refreshing...' : 'Refresh' }}
           </button>
@@ -83,7 +83,7 @@
 
         <div v-if="deleteError" class="bg-red-50 border border-red-200 rounded-2xl p-4 text-sm text-red-700 flex items-center justify-between gap-3">
           <span>{{ deleteError }}</span>
-          <button type="button" @click="deleteError = ''" class="text-red-400 hover:text-red-600 font-black text-xs">✕ Dismiss</button>
+          <button type="button" class="text-red-400 hover:text-red-600 font-black text-xs" @click="deleteError = ''">✕ Dismiss</button>
         </div>
 
         <div v-if="isLoadingAdmins" class="text-center py-8 text-slate-500">
@@ -117,18 +117,18 @@
                   <span class="text-red-600 font-black text-xs">Remove this admin?</span>
                   <button
                     type="button"
-                    @click="deleteAdmin(admin.user_id)"
                     :disabled="deletingId === admin.user_id"
                     class="px-3 py-1.5 bg-red-600 text-white rounded-xl font-black hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center gap-1"
+                    @click="deleteAdmin(admin.user_id)"
                   >
-                    <span v-if="deletingId === admin.user_id" class="animate-spin border-2 border-white/30 border-t-white w-3 h-3 rounded-full"></span>
+                    <span v-if="deletingId === admin.user_id" class="animate-spin border-2 border-white/30 border-t-white w-3 h-3 rounded-full"/>
                     {{ deletingId === admin.user_id ? 'Removing…' : 'Yes, Remove' }}
                   </button>
                   <button
                     type="button"
-                    @click="confirmDeleteId = null"
                     :disabled="deletingId === admin.user_id"
                     class="px-3 py-1.5 bg-slate-200 text-slate-700 rounded-xl font-black hover:bg-slate-300 transition-colors disabled:opacity-50"
+                    @click="confirmDeleteId = null"
                   >
                     Cancel
                   </button>
@@ -138,8 +138,8 @@
                 <button
                   v-else
                   type="button"
-                  @click="confirmDeleteId = admin.user_id"
                   class="px-3 py-1.5 bg-white border border-red-200 text-red-600 rounded-xl font-black hover:bg-red-50 transition-colors flex items-center gap-1"
+                  @click="confirmDeleteId = admin.user_id"
                 >
                   <span class="material-symbols-outlined text-sm" style="font-size:14px">person_remove</span>
                   Remove

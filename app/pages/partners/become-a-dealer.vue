@@ -172,7 +172,7 @@ useHead({
                     ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100'
                     : 'border-slate-100 focus:border-[#002888] focus:ring-4 focus:ring-blue-100',
                 ]"
-              />
+              >
               <p v-if="errors.businessName" class="text-red-500 text-xs font-bold mt-1">{{ errors.businessName }}</p>
             </div>
 
@@ -190,7 +190,7 @@ useHead({
                     ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100'
                     : 'border-slate-100 focus:border-[#002888] focus:ring-4 focus:ring-blue-100',
                 ]"
-              />
+              >
               <p v-if="errors.contactPerson" class="text-red-500 text-xs font-bold mt-1">{{ errors.contactPerson }}</p>
             </div>
 
@@ -208,7 +208,7 @@ useHead({
                     ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100'
                     : 'border-slate-100 focus:border-[#002888] focus:ring-4 focus:ring-blue-100',
                 ]"
-              />
+              >
               <p v-if="errors.email" class="text-red-500 text-xs font-bold mt-1">{{ errors.email }}</p>
             </div>
 
@@ -226,7 +226,7 @@ useHead({
                     ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100'
                     : 'border-slate-100 focus:border-[#002888] focus:ring-4 focus:ring-blue-100',
                 ]"
-              />
+              >
               <p v-if="errors.phone" class="text-red-500 text-xs font-bold mt-1">{{ errors.phone }}</p>
             </div>
 
@@ -260,7 +260,7 @@ useHead({
                 class="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-[#002888] outline-none transition-all bg-white"
                 required
                 @change="handlePreviousWorkFiles"
-              />
+              >
             </div>
 
             <!-- Former Purchase -->
@@ -273,7 +273,7 @@ useHead({
                 accept="image/*,.pdf"
                 class="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-[#002888] outline-none transition-all bg-white"
                 @change="handleFormerPurchaseFile"
-              />
+              >
             </div>
 
             <div class="md:col-span-2 pt-4">

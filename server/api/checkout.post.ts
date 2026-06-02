@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer'
 import { z } from 'zod'
 import { generateOrderReceiptHtml } from '../utils/emailTemplate'
 import { fetchWithBitrixContext } from '../utils/bitrixAuth'
-import { serverSupabaseUser, serverSupabaseClient } from '#supabase/server'
+import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
 import { normalizeProperty } from '../utils/normalizeProperty'
 import type { BitrixLeadResponse } from '../types/bitrix'
 import { logger } from '../utils/logger'
@@ -81,7 +81,7 @@ async function resolveTrustedCart(event: H3Event, submittedCart: SubmittedCartIt
   try {
     const user = await serverSupabaseUser(event)
     if (user) {
-      const supabase = await serverSupabaseClient(event)
+      const supabase = await serverSupabaseServiceRole(event)
       const { data: profile } = (await supabase
         .from('profiles')
         .select('role, dealer_status')

@@ -21,7 +21,7 @@
             :src="brandBanner"
             :alt="brand.toUpperCase() + ' Logo'"
             class="h-8 w-auto object-contain"
-          />
+          >
           <div class="h-8 w-px bg-gray-200" />
           <span class="text-xs font-black text-gray-400 uppercase tracking-widest"
             >{{ brand.toUpperCase() }} Official Store</span
@@ -80,8 +80,10 @@ const brand = computed(() => (route.params.brand as string) || 'itel')
 
 // We still use itel-products as the base, but we filter or adapt if needed
 // For now, it stays pointed to itel-products unless we make the API generic
+const user = useSupabaseUser()
 const { data: partnerProducts, pending } = await useFetch('/api/itel-products', {
   query: { brand: brand.value },
+  key: `brand-shop-${brand.value}-${user.value?.id || 'guest'}`
 })
 
 // Dynamic banner logo based on landing page assets

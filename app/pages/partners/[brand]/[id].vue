@@ -13,13 +13,13 @@ useHead({
     <!-- Loading State -->
     <div v-if="pending" class="max-w-7xl mx-auto flex justify-center items-center h-64">
       <div class="animate-pulse bg-white p-8 rounded-2xl shadow-sm w-full grid md:grid-cols-2 gap-12">
-        <div class="aspect-square bg-gray-200 rounded-xl"></div>
+        <div class="aspect-square bg-gray-200 rounded-xl"/>
         <div class="space-y-6">
-          <div class="h-4 bg-gray-200 rounded w-1/4"></div>
-          <div class="h-10 bg-gray-200 rounded w-3/4"></div>
-          <div class="h-8 bg-gray-200 rounded w-1/2"></div>
-          <div class="h-24 bg-gray-200 rounded w-full"></div>
-          <div class="h-12 bg-gray-200 rounded w-full"></div>
+          <div class="h-4 bg-gray-200 rounded w-1/4"/>
+          <div class="h-10 bg-gray-200 rounded w-3/4"/>
+          <div class="h-8 bg-gray-200 rounded w-1/2"/>
+          <div class="h-24 bg-gray-200 rounded w-full"/>
+          <div class="h-12 bg-gray-200 rounded w-full"/>
         </div>
       </div>
     </div>
