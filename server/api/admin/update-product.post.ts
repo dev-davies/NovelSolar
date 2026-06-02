@@ -1,4 +1,10 @@
-import { configureCloudinary, uploadBufferToCloudinary, validateGalleryFiles, validateImageFile, type UploadedImageFile } from '../../utils/productMedia'
+import {
+  configureCloudinary,
+  uploadBufferToCloudinary,
+  validateGalleryFiles,
+  validateImageFile,
+  type UploadedImageFile,
+} from '../../utils/productMedia'
 import type { BitrixResponse } from '../../types/bitrix'
 import { logger } from '../../utils/logger'
 
@@ -10,6 +16,7 @@ export default defineEventHandler(async (event) => {
   let productId: string | null = null
   let productName: string | null = null
   let productPrice: string | number | null = null
+  let productDealerPrice: string | number | null = null
   let productDescription: string | null = null
   let productSpecs: unknown = null
   let productDisabled = false
@@ -30,14 +37,15 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    const getField = (name: string) => {
+    const getField = (name: string): string | null => {
       const field = formData.find((entry) => entry.name === name)
-      return field ? sanitizePayload(field.data.toString()) : null
+      return field ? (sanitizePayload(field.data.toString()) as string) : null
     }
 
     productId = getField('productId')
     productName = getField('productName')
     productPrice = getField('productPrice')
+    productDealerPrice = getField('productDealerPrice')
     productDescription = getField('productDescription')
     productDisabled = getField('productDisabled') === 'true'
     mainImageUrl = getField('mainImageUrl')
@@ -72,16 +80,15 @@ export default defineEventHandler(async (event) => {
     validateGalleryFiles(newGalleryFiles)
 
     if (newGalleryFiles.length > 0) {
-      const uploadedGallery = await Promise.all(
-        newGalleryFiles.map((file) => uploadBufferToCloudinary(file.data))
-      )
+      const uploadedGallery = await Promise.all(newGalleryFiles.map((file) => uploadBufferToCloudinary(file.data)))
       galleryUrls = [...galleryUrls, ...uploadedGallery.map((item) => item.secure_url)]
     }
   } else {
-    const body = sanitizePayload(await readBody(event))
+    const body = sanitizePayload(await readBody(event)) as Record<string, string | number | boolean | null | undefined>
     productId = body.productId
     productName = body.productName
     productPrice = body.productPrice
+    productDealerPrice = body.productDealerPrice
     productDescription = body.productDescription
     productSpecs = body.productSpecs
     productDisabled = !!body.productDisabled
@@ -93,7 +100,7 @@ export default defineEventHandler(async (event) => {
     throw createError({
       statusCode: 400,
       statusMessage: 'Missing required fields: ID, Name, Price',
-    });
+    })
   }
 
   try {
@@ -107,6 +114,7 @@ export default defineEventHandler(async (event) => {
     const fields: Record<string, unknown> = {
       NAME: productName,
       PRICE: productPrice,
+      PURCHASE_PRICE: productDealerPrice || '',
       DESCRIPTION: productDescription || '',
       DESCRIPTION_TYPE: 'html',
       ACTIVE: productDisabled ? 'N' : 'Y',
@@ -129,23 +137,23 @@ export default defineEventHandler(async (event) => {
           id: productId,
           fields,
         },
-      }
+      },
     )
 
     if (!updateResponse.result) {
-      throw new Error('Update failed in Bitrix');
+      throw new Error('Update failed in Bitrix')
     }
 
     return {
       success: true,
       message: `Product "${productName}" updated successfully`,
       productId: updateResponse.result,
-    };
+    }
   } catch (error) {
-    logger.error('UPDATE', 'Error updating product', { error });
+    logger.error('UPDATE', 'Error updating product', { error })
     throw createError({
       statusCode: 500,
       statusMessage: error instanceof Error ? error.message : 'Failed to update product',
-    });
+    })
   }
-});
+})
