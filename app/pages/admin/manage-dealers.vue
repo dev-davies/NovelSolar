@@ -53,6 +53,28 @@ const renewInvite = async (applicationId: string) => {
   }
 }
 
+const approveDealer = async (applicationId: string) => {
+  isActionLoading.value[applicationId] = true
+  try {
+    await useNuxtApp().$apiFetch('/api/admin/approve-dealer', {
+      method: 'POST',
+      body: { applicationId }
+    })
+    addToast('Success', 'Dealer approved and invitation sent!', 'success')
+    await fetchDealers()
+  } catch (err: unknown) {
+    const error = err as { statusMessage?: string }
+    addToast('Error', error.statusMessage || 'Failed to approve dealer', 'error')
+  } finally {
+    isActionLoading.value[applicationId] = false
+  }
+}
+
+const rejectDealer = async (applicationId: string) => {
+  // Not fully implemented on backend in this request
+  addToast('Info', 'Reject functionality coming soon.', 'info')
+}
+
 const isExpired = (invitation: Record<string, unknown> | null | undefined) => {
   if (!invitation) return false
   if (invitation.used) return false
@@ -154,8 +176,29 @@ const isExpired = (invitation: Record<string, unknown> | null | undefined) => {
                   </div>
                 </td>
                 <td class="p-4 text-right">
+                  <div v-if="dealer.status === 'pending'" class="flex items-center justify-end">
+                    <button
+                      class="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1.5 rounded transition-colors mr-2 disabled:opacity-50 inline-flex items-center gap-1.5 shadow-sm font-bold tracking-wider uppercase"
+                      :disabled="isActionLoading[dealer.id as string]"
+                      @click="approveDealer(dealer.id as string)"
+                    >
+                      <span
+                        v-if="isActionLoading[dealer.id as string]"
+                        class="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin"
+                      />
+                      Approve
+                    </button>
+                    <button
+                      class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1.5 rounded transition-colors disabled:opacity-50 shadow-sm font-bold tracking-wider uppercase"
+                      :disabled="isActionLoading[dealer.id as string]"
+                      @click="rejectDealer(dealer.id as string)"
+                    >
+                      Reject
+                    </button>
+                  </div>
+
                   <div
-                    v-if="
+                    v-else-if="
                       dealer.status === 'approved' &&
                       dealer.invitation &&
                       !dealer.invitation.used &&
