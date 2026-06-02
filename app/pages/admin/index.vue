@@ -139,6 +139,17 @@ const cards = computed(() => [
     disabled: false,
   },
   {
+    to: '/admin/manage-dealers',
+    title: 'Dealer Applications',
+    subtitle: 'Review incoming dealer applications, manage wholesale pricing access, and track setup invitations.',
+    icon: 'handshake',
+    iconBg: 'bg-indigo-100',
+    iconColor: 'text-indigo-600',
+    decorClass: 'text-indigo-500',
+    linkColor: 'text-indigo-600',
+    disabled: false,
+  },
+  {
     to: isMasterAdmin.value ? '/admin/manage-admins' : undefined,
     title: 'Access Control',
     subtitle: isMasterAdmin.value
