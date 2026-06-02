@@ -166,9 +166,10 @@ const saveChanges = async () => {
     formData.append('productId', editForm.value.id)
     formData.append('productName', editForm.value.name)
     formData.append('productPrice', String(editForm.value.price))
-    if (editForm.value.dealerPrice !== null && editForm.value.dealerPrice !== '') {
-      formData.append('productDealerPrice', String(editForm.value.dealerPrice))
-    }
+    formData.append(
+      'productDealerPrice',
+      editForm.value.dealerPrice != null && editForm.value.dealerPrice !== '' ? String(editForm.value.dealerPrice) : '',
+    )
     formData.append('productDescription', editForm.value.description || '')
     formData.append('productSpecs', JSON.stringify(editForm.value.specs))
     formData.append('productDisabled', String(editForm.value.isDisabled))

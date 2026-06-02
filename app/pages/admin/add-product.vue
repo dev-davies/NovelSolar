@@ -260,9 +260,10 @@ const submitBatch = async () => {
       const formData = new FormData()
       formData.append('productName', product.name)
       formData.append('productPrice', product.price)
-      if (product.dealerPrice !== null && product.dealerPrice !== '') {
-        formData.append('productDealerPrice', String(product.dealerPrice))
-      }
+      formData.append(
+        'productDealerPrice',
+        product.dealerPrice != null && product.dealerPrice !== '' ? String(product.dealerPrice) : '',
+      )
       formData.append('productType', product.type)
       formData.append('productBrand', product.brand === '__custom' ? product.customBrand.trim() : product.brand)
       formData.append('productDescription', product.description)

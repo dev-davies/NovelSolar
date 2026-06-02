@@ -128,6 +128,8 @@ export default defineEventHandler(async (event) => {
       fields.PROPERTY_112 = JSON.stringify(galleryUrls)
     }
 
+    console.log('Bitrix Update Payload:', JSON.stringify({ id: productId, fields }, null, 2))
+
     // Update product in Bitrix
     const updateResponse = await $fetch<BitrixResponse<number | string | boolean>>(
       `${formattedBitrixUrl}crm.product.update`,
@@ -140,8 +142,19 @@ export default defineEventHandler(async (event) => {
       },
     )
 
+    if ((updateResponse as any).error) {
+      const bitrixError = (updateResponse as any).error_description || (updateResponse as any).error
+      throw createError({
+        statusCode: 400,
+        statusMessage: `Bitrix Error: ${bitrixError}`,
+      })
+    }
+
     if (!updateResponse.result) {
-      throw new Error('Update failed in Bitrix')
+      throw createError({
+        statusCode: 400,
+        statusMessage: 'Update failed in Bitrix: No result returned',
+      })
     }
 
     return {
@@ -149,11 +162,11 @@ export default defineEventHandler(async (event) => {
       message: `Product "${productName}" updated successfully`,
       productId: updateResponse.result,
     }
-  } catch (error) {
+  } catch (error: any) {
     logger.error('UPDATE', 'Error updating product', { error })
     throw createError({
-      statusCode: 500,
-      statusMessage: error instanceof Error ? error.message : 'Failed to update product',
+      statusCode: error.statusCode || 500,
+      statusMessage: error.statusMessage || error.message || 'Failed to update product',
     })
   }
 })
