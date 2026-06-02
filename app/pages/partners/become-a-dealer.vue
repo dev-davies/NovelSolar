@@ -69,7 +69,7 @@ const handleSubmit = async () => {
       formData.append('formerPurchase', formerPurchaseFile.value)
     }
 
-    await $fetch('/api/dealer/apply', {
+    await useNuxtApp().$apiFetch('/api/dealer/apply', {
       method: 'POST',
       body: formData,
     })

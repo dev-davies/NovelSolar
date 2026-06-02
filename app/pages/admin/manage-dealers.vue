@@ -14,7 +14,7 @@ const isActionLoading = ref<Record<string, boolean>>({})
 const fetchDealers = async () => {
   isLoading.value = true
   try {
-    const response = await $fetch<{ dealers: Record<string, unknown>[] }>('/api/admin/dealers')
+    const response = await useNuxtApp().$apiFetch<{ dealers: Record<string, unknown>[] }>('/api/admin/dealers')
     dealers.value = response.dealers as Record<string, unknown>[]
   } catch (error: unknown) {
     addToast('Error', 'Failed to fetch dealers', 'error')
@@ -39,7 +39,7 @@ const handleLogout = async () => {
 const renewInvite = async (applicationId: string) => {
   isActionLoading.value[applicationId] = true
   try {
-    await $fetch('/api/admin/renew-invite', {
+    await useNuxtApp().$apiFetch('/api/admin/renew-invite', {
       method: 'POST',
       body: { applicationId },
     })

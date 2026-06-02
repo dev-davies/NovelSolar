@@ -23,7 +23,7 @@ onMounted(async () => {
   }
 
   try {
-    const response = await $fetch('/api/dealer/verify-token', {
+    const response = await useNuxtApp().$apiFetch<{ valid: boolean; email: string }>('/api/dealer/verify-token', {
       method: 'POST',
       body: { token },
     })
@@ -54,7 +54,7 @@ const handleSetup = async () => {
   isSubmitting.value = true
   try {
     // 1. Backend cleanly provisions account and burns the token
-    const response = await $fetch('/api/dealer/create-account', {
+    const response = await useNuxtApp().$apiFetch<{ email: string }>('/api/dealer/create-account', {
       method: 'POST',
       body: { token, password: password.value },
     })
