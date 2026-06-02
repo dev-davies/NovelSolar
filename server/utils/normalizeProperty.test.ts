@@ -17,7 +17,14 @@ describe('normalizeProperty', () => {
   it('returns value directly if not an array', () => {
     expect(normalizeProperty('simple string')).toBe('simple string')
     expect(normalizeProperty(123)).toBe(123)
+  })
+
+  it('returns original object if it has no value property', () => {
     expect(normalizeProperty({ key: 'value' })).toEqual({ key: 'value' })
+  })
+
+  it('unpacks plain object with value property', () => {
+    expect(normalizeProperty({ valueId: '1048', value: '5555' })).toBe('5555')
   })
 
   it('extracts value from Bitrix array format with value property', () => {
