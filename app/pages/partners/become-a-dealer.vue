@@ -5,12 +5,10 @@ const dealerSchema = z.object({
   businessName: z.string().min(2, 'Business name is required'),
   contactPerson: z.string().min(2, 'Contact person is required'),
   email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
   phone: z.string().min(5, 'Valid phone number is required'),
   address: z.string().min(5, 'Business address is required'),
 })
 
-const supabase = useSupabaseClient()
 const { addToast } = useToast()
 
 const isLoading = ref(false)
@@ -18,10 +16,26 @@ const form = reactive({
   businessName: '',
   contactPerson: '',
   email: '',
-  password: '',
   phone: '',
   address: '',
 })
+
+const previousWorkFiles = ref<File[]>([])
+const formerPurchaseFile = ref<File | null>(null)
+
+const handlePreviousWorkFiles = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  if (target.files) {
+    previousWorkFiles.value = Array.from(target.files)
+  }
+}
+
+const handleFormerPurchaseFile = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files.length > 0) {
+    formerPurchaseFile.value = target.files[0]
+  }
+}
 
 const errors = ref<Record<string, string>>({})
 
@@ -34,34 +48,31 @@ const handleSubmit = async () => {
   try {
     const validatedData = dealerSchema.parse(form)
 
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email: validatedData.email,
-      password: validatedData.password,
-      options: {
-        data: {
-          business_name: validatedData.businessName,
-          contact_person: validatedData.contactPerson,
-          phone: validatedData.phone,
-          address: validatedData.address,
-        },
-      },
+    if (previousWorkFiles.value.length === 0) {
+      addToast('Validation Error', 'Please upload at least one picture of your previous work.', 'error')
+      isLoading.value = false
+      return
+    }
+
+    const formData = new FormData()
+    formData.append('businessName', validatedData.businessName)
+    formData.append('contactPerson', validatedData.contactPerson)
+    formData.append('email', validatedData.email)
+    formData.append('phone', validatedData.phone)
+    formData.append('address', validatedData.address)
+
+    previousWorkFiles.value.forEach((file) => {
+      formData.append('previousWork', file)
     })
 
-    if (authError) throw authError
-
-    if (authData.user) {
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update({
-          role: 'dealer',
-          dealer_status: 'pending',
-        })
-        .eq('user_id', authData.user.id)
-
-      if (profileError) {
-        console.error('Profile update error:', profileError)
-      }
+    if (formerPurchaseFile.value) {
+      formData.append('formerPurchase', formerPurchaseFile.value)
     }
+
+    await $fetch('/api/dealer/apply', {
+      method: 'POST',
+      body: formData,
+    })
 
     addToast('Registration Successful', 'Your dealer application has been submitted and is pending review.', 'success')
 
@@ -70,19 +81,21 @@ const handleSubmit = async () => {
       businessName: '',
       contactPerson: '',
       email: '',
-      password: '',
       phone: '',
       address: '',
     })
-  } catch (err: any) {
-    if (err instanceof z.ZodError) {
-      err.errors.forEach((e) => {
+    previousWorkFiles.value = []
+    formerPurchaseFile.value = null
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
+      error.errors.forEach((e) => {
         if (e.path[0]) {
           errors.value[e.path[0].toString()] = e.message
         }
       })
       addToast('Validation Error', 'Please check the form for errors.', 'error')
     } else {
+      const err = error as { message?: string }
       addToast('Registration Failed', err.message || 'An unexpected error occurred.', 'error')
     }
   } finally {
@@ -199,24 +212,6 @@ useHead({
               <p v-if="errors.email" class="text-red-500 text-xs font-bold mt-1">{{ errors.email }}</p>
             </div>
 
-            <!-- Password -->
-            <div class="space-y-2">
-              <label class="text-xs font-black text-slate-400 uppercase tracking-widest"
-                >Password <span class="text-red-500">*</span></label
-              >
-              <input
-                v-model="form.password"
-                type="password"
-                :class="[
-                  'w-full px-4 py-3 rounded-xl border-2 outline-none transition-all',
-                  errors.password
-                    ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100'
-                    : 'border-slate-100 focus:border-[#002888] focus:ring-4 focus:ring-blue-100',
-                ]"
-              />
-              <p v-if="errors.password" class="text-red-500 text-xs font-bold mt-1">{{ errors.password }}</p>
-            </div>
-
             <!-- Phone Number -->
             <div class="space-y-2">
               <label class="text-xs font-black text-slate-400 uppercase tracking-widest"
@@ -251,6 +246,34 @@ useHead({
                 ]"
               />
               <p v-if="errors.address" class="text-red-500 text-xs font-bold mt-1">{{ errors.address }}</p>
+            </div>
+
+            <!-- Previous Work -->
+            <div class="space-y-2 md:col-span-2">
+              <label class="text-xs font-black text-slate-400 uppercase tracking-widest">
+                Pictures of Previous Work <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                class="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-[#002888] outline-none transition-all bg-white"
+                required
+                @change="handlePreviousWorkFiles"
+              />
+            </div>
+
+            <!-- Former Purchase -->
+            <div class="space-y-2 md:col-span-2">
+              <label class="text-xs font-black text-slate-400 uppercase tracking-widest">
+                Evidence of Former Purchase with NovelSolar (Optional)
+              </label>
+              <input
+                type="file"
+                accept="image/*,.pdf"
+                class="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-[#002888] outline-none transition-all bg-white"
+                @change="handleFormerPurchaseFile"
+              />
             </div>
 
             <div class="md:col-span-2 pt-4">
