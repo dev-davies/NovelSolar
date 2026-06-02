@@ -58,7 +58,7 @@ const approveDealer = async (applicationId: string) => {
   try {
     await useNuxtApp().$apiFetch('/api/admin/approve-dealer', {
       method: 'POST',
-      body: { applicationId }
+      body: { applicationId },
     })
     addToast('Success', 'Dealer approved and invitation sent!', 'success')
     await fetchDealers()
