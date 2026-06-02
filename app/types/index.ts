@@ -104,3 +104,15 @@ export interface PriceTier {
   minPrice: number
   maxPrice: number
 }
+
+/** User profile combining CRM and DB fields */
+export interface UserProfile {
+  firstName: string
+  lastName: string
+  email: string
+  phone: string
+  address: string
+  role?: string
+  dealer_status?: 'none' | 'pending' | 'approved' | 'rejected'
+  isTemporary?: boolean
+}
