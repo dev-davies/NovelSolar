@@ -14,6 +14,7 @@ export interface BitrixProduct {
   PREVIEW_PICTURE?: string | { showUrl?: string; downloadUrl?: string }
   DETAIL_PICTURE?: string | { showUrl?: string; downloadUrl?: string }
   image?: string
+  dealerPrice?: number
   [key: string]: unknown
 }
 
@@ -26,6 +27,7 @@ export interface FilterProduct {
   efficiency: number
   price: number
   originalPrice?: number
+  dealerPrice?: number
   image: string
 }
 

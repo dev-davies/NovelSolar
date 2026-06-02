@@ -1,4 +1,5 @@
 import { logger } from '../utils/logger'
+import { serverSupabaseUser, serverSupabaseClient } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
@@ -7,6 +8,25 @@ export default defineEventHandler(async (event) => {
   const parsedStart = Number.parseInt((query.start as string) || '0', 10)
   const startFrom = Number.isFinite(parsedStart) && parsedStart > 0 ? parsedStart : 0
   const PAGE_SIZE = 50
+
+  let isDealer = false
+  try {
+    const user = await serverSupabaseUser(event)
+    if (user) {
+      const supabase = await serverSupabaseClient(event)
+      const { data: profile } = (await supabase
+        .from('profiles')
+        .select('role, dealer_status')
+        .eq('user_id', user.id)
+        .single()) as { data: { role: string; dealer_status: string } | null }
+
+      if (profile && profile.role === 'dealer' && profile.dealer_status === 'approved') {
+        isDealer = true
+      }
+    }
+  } catch (err) {
+    // Ignore errors for unauthenticated users
+  }
 
   try {
     // Build filter: brand + search (if provided) or all products
@@ -24,6 +44,7 @@ export default defineEventHandler(async (event) => {
       ID?: string | number
       NAME?: string
       PRICE?: string | number
+      PURCHASE_PRICE?: string | number
       CURRENCY_ID?: string
       DESCRIPTION?: unknown
       QUANTITY?: string | number
@@ -51,6 +72,7 @@ export default defineEventHandler(async (event) => {
           'ID',
           'NAME',
           'PRICE',
+          'PURCHASE_PRICE',
           'CURRENCY_ID',
           'DESCRIPTION',
           'QUANTITY',
@@ -106,7 +128,7 @@ export default defineEventHandler(async (event) => {
         }
       }
 
-      return {
+      const productObj: any = {
         ID: product.ID,
         NAME: product.NAME,
         PRICE: product.PRICE,
@@ -119,6 +141,12 @@ export default defineEventHandler(async (event) => {
         PROPERTY_104: normalizeProperty(product.PROPERTY_104), // Specs
         PROPERTY_112: normalizeProperty(product.PROPERTY_112), // Gallery
       }
+
+      if (isDealer && product.PURCHASE_PRICE !== undefined) {
+        productObj.dealerPrice = Number(product.PURCHASE_PRICE)
+      }
+
+      return productObj
     })
 
     const nextStart =

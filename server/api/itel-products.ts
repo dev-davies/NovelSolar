@@ -1,13 +1,34 @@
 import { logger } from '../utils/logger'
+import { serverSupabaseUser, serverSupabaseClient } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
   const brand = ((query.brand as string) || 'itel').toLowerCase()
 
+  let isDealer = false
+  try {
+    const user = await serverSupabaseUser(event)
+    if (user) {
+      const supabase = await serverSupabaseClient(event)
+      const { data: profile } = (await supabase
+        .from('profiles')
+        .select('role, dealer_status')
+        .eq('user_id', user.id)
+        .single()) as { data: { role: string; dealer_status: string } | null }
+
+      if (profile && profile.role === 'dealer' && profile.dealer_status === 'approved') {
+        isDealer = true
+      }
+    }
+  } catch (err) {
+    // Ignore errors for unauthenticated users
+  }
+
   interface BitrixItelProduct {
     ID?: string | number
     NAME?: string
     PRICE?: string | number
+    PURCHASE_PRICE?: string | number
     QUANTITY?: string | number
     CURRENCY_ID?: string
     SECTION_ID?: string | number
@@ -33,6 +54,7 @@ export default defineEventHandler(async (event) => {
           'ID',
           'NAME',
           'PRICE',
+          'PURCHASE_PRICE',
           'QUANTITY',
           'CURRENCY_ID',
           'SECTION_ID',
@@ -58,14 +80,23 @@ export default defineEventHandler(async (event) => {
   // ─── Normalize properties and return ───
   // PROPERTY_102 contains Cloudinary image URLs directly from crm.product.list,
   // so no secondary batch fetch is needed.
-  return itelProducts.map((product) => ({
-    ...product,
-    ACTIVE: product.ACTIVE,
-    DETAIL_PICTURE: product.DETAIL_PICTURE || null,
-    PREVIEW_PICTURE: product.PREVIEW_PICTURE || null,
-    PROPERTY_44: normalizeProperty(product.PROPERTY_44),
-    PROPERTY_102: normalizeProperty(product.PROPERTY_102),
-    PROPERTY_104: normalizeProperty(product.PROPERTY_104),
-    PROPERTY_112: normalizeProperty(product.PROPERTY_112),
-  }))
+  return itelProducts.map((product) => {
+    const productObj: any = {
+      ...product,
+      ACTIVE: product.ACTIVE,
+      DETAIL_PICTURE: product.DETAIL_PICTURE || null,
+      PREVIEW_PICTURE: product.PREVIEW_PICTURE || null,
+      PROPERTY_44: normalizeProperty(product.PROPERTY_44),
+      PROPERTY_102: normalizeProperty(product.PROPERTY_102),
+      PROPERTY_104: normalizeProperty(product.PROPERTY_104),
+      PROPERTY_112: normalizeProperty(product.PROPERTY_112),
+    }
+
+    if (isDealer && product.PURCHASE_PRICE !== undefined) {
+      productObj.dealerPrice = Number(product.PURCHASE_PRICE)
+    }
+
+    delete productObj.PURCHASE_PRICE
+    return productObj
+  })
 })
