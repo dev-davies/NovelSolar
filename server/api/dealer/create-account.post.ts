@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'Password must be at least 8 characters' })
   }
 
-  const supabase = serverSupabaseServiceRole(event)
+  const supabase = await serverSupabaseServiceRole(event)
 
   try {
     // 1. Re-validate the token securely
@@ -24,18 +24,23 @@ export default defineEventHandler(async (event) => {
       .eq('token', token)
       .single()
 
-    if (inviteError || !invitation || invitation.used || new Date(invitation.expires_at) < new Date()) {
+    if (
+      inviteError ||
+      !invitation ||
+      (invitation as any).used ||
+      new Date((invitation as any).expires_at) < new Date()
+    ) {
       throw createError({ statusCode: 400, statusMessage: 'Link Expired or Invalid' })
     }
 
     // 2. Provision the authentication account smoothly without email verification
-    const { data: userData, error: createError } = await supabase.auth.admin.createUser({
-      email: invitation.email,
+    const { data: userData, error: authError } = await supabase.auth.admin.createUser({
+      email: (invitation as any).email,
       password: password,
       email_confirm: true, // Verified via secure token automatically
     })
 
-    if (createError) throw createError
+    if (authError) throw authError
 
     const userId = userData.user.id
 
@@ -44,22 +49,25 @@ export default defineEventHandler(async (event) => {
       user_id: userId,
       role: 'dealer',
       dealer_status: 'approved',
-    })
+    } as any)
 
     if (profileError) throw profileError
 
     // 4. Burn the token cleanly to prevent reuse
-    const { error: updateError } = await supabase.from('dealer_invitations').update({ used: true }).eq('token', token)
+    const { error: updateError } = await supabase
+      .from('dealer_invitations')
+      .update({ used: true } as any)
+      .eq('token', token)
 
     if (updateError) throw updateError
 
-    return { success: true, email: invitation.email }
+    return { success: true, email: (invitation as any).email }
   } catch (err: unknown) {
     const error = err as { statusCode?: number; statusMessage?: string; message?: string }
     logger.error('Dealer Create API', 'Account creation failed', { error })
     throw createError({
-      statusCode: error.statusCode || 500,
-      statusMessage: error.statusMessage || error.message || 'Internal server error',
+      statusCode: 400,
+      statusMessage: error.message || error.statusMessage || 'Internal server error',
     })
   }
 })
