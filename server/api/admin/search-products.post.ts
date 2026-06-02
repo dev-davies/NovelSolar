@@ -86,7 +86,7 @@ export default defineEventHandler(async (event) => {
         id: p.ID,
         name: p.NAME,
         price: p.PRICE,
-        dealerPrice: p.PROPERTY_116 ? Number(p.PROPERTY_116) : null,
+        dealerPrice: normalizeProperty(p.PROPERTY_116) ? Number(normalizeProperty(p.PROPERTY_116)) : null,
         currency: p.CURRENCY_ID || 'NGN',
         description: p.DESCRIPTION,
         descriptionType: p.DESCRIPTION_TYPE,

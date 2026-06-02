@@ -45,8 +45,9 @@ export default defineEventHandler(async (event) => {
       product.PROPERTY_104 = normalizeProperty(product.PROPERTY_104)
       product.PROPERTY_112 = normalizeProperty(product.PROPERTY_112)
 
-      if (isDealer && product.PROPERTY_116 !== undefined) {
-        product.dealerPrice = Number(product.PROPERTY_116)
+      const rawDealerPrice = normalizeProperty(product.PROPERTY_116)
+      if (isDealer && rawDealerPrice !== undefined && rawDealerPrice !== null) {
+        product.dealerPrice = Number(rawDealerPrice)
       }
 
       // Always strip the raw PROPERTY_116 so it doesn't leak

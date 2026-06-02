@@ -142,8 +142,9 @@ export default defineEventHandler(async (event) => {
         PROPERTY_112: normalizeProperty(product.PROPERTY_112), // Gallery
       }
 
-      if (isDealer && product.PROPERTY_116 !== undefined) {
-        productObj.dealerPrice = Number(product.PROPERTY_116)
+      const rawDealerPrice = normalizeProperty(product.PROPERTY_116)
+      if (isDealer && rawDealerPrice !== undefined && rawDealerPrice !== null) {
+        productObj.dealerPrice = Number(rawDealerPrice)
       }
 
       return productObj

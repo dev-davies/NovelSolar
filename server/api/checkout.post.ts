@@ -137,8 +137,9 @@ async function resolveTrustedCart(event: H3Event, submittedCart: SubmittedCartIt
     }
 
     let price = Number(product.PRICE)
-    if (isDealer && product.PROPERTY_116 !== undefined) {
-      price = Number(product.PROPERTY_116)
+    const rawDealerPrice = normalizeProperty(product.PROPERTY_116)
+    if (isDealer && rawDealerPrice !== undefined && rawDealerPrice !== null) {
+      price = Number(rawDealerPrice)
     }
 
     if (!Number.isFinite(price) || price < 0) {

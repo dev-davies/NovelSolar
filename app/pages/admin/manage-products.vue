@@ -193,7 +193,7 @@ const saveChanges = async () => {
     alert('Product updated successfully!')
     isEditing.value = false
     selectedProduct.value = null
-    resetSearch()
+    performSearch()
   } catch (error) {
     console.error('Update failed:', error)
     alert(error.data?.statusMessage || 'Update failed')
