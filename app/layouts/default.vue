@@ -682,6 +682,13 @@
                   >Contact</NuxtLink
                 >
               </li>
+              <li class="pt-2">
+                <NuxtLink
+                  to="/partners/become-a-dealer"
+                  class="text-sm font-bold text-[#002888] hover:text-blue-900 transition-colors inline-block"
+                  >Become a Dealer &rarr;</NuxtLink
+                >
+              </li>
             </ul>
           </div>
 
