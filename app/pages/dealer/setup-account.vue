@@ -68,7 +68,30 @@ const handleSetup = async () => {
     if (signInError) throw signInError
 
     addToast('Account Created', 'Welcome to the NovelSolar Dealer Network!', 'success')
-    router.push('/') // Direct them to storefront immediately
+
+    // Wait for the Nuxt Supabase session to sync to cookies before navigating
+    const user = useSupabaseUser()
+    if (!user.value) {
+      await new Promise<void>((resolve) => {
+        const unwatch = watch(
+          user,
+          (newUser) => {
+            if (newUser) {
+              unwatch()
+              resolve()
+            }
+          },
+          { immediate: true },
+        )
+        // Fallback timeout in case the watcher doesn't fire
+        setTimeout(() => {
+          unwatch()
+          resolve()
+        }, 1500)
+      })
+    }
+
+    router.push('/') // Direct them to storefront
   } catch (error: unknown) {
     const err = error as { statusMessage?: string; message?: string }
     formError.value = err.statusMessage || err.message || 'An error occurred during account creation.'
@@ -97,7 +120,7 @@ useHead({
     <div class="max-w-md w-full relative z-10">
       <div class="text-center mb-8">
         <NuxtLink to="/">
-          <img src="/images/logo.png" alt="NovelSolar" class="h-10 mx-auto drop-shadow-sm" >
+          <img src="/images/logo.png" alt="NovelSolar" class="h-10 mx-auto drop-shadow-sm" />
         </NuxtLink>
       </div>
 
@@ -146,7 +169,7 @@ useHead({
                 required
                 class="w-full px-4 py-3.5 rounded-xl border-2 border-slate-100 focus:border-[#002888] outline-none transition-all font-medium text-slate-700"
                 placeholder="••••••••"
-              >
+              />
             </div>
 
             <div class="space-y-2">
@@ -157,7 +180,7 @@ useHead({
                 required
                 class="w-full px-4 py-3.5 rounded-xl border-2 border-slate-100 focus:border-[#002888] outline-none transition-all font-medium text-slate-700"
                 placeholder="••••••••"
-              >
+              />
             </div>
 
             <div v-if="formError" class="p-4 bg-red-50 rounded-xl border border-red-100">
