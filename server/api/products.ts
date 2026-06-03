@@ -1,5 +1,8 @@
 import { logger } from '../utils/logger'
+import { getSupabaseAdminClient } from '../utils/supabaseAdmin'
 import { resolveIsDealerFromEvent } from '../utils/dealerCheck'
+import { fetchWithBitrixContext } from '../utils/bitrixAuth'
+import { normalizeProperty } from '../utils/normalizeProperty'
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
@@ -11,8 +14,130 @@ export default defineEventHandler(async (event) => {
 
   const isDealer = await resolveIsDealerFromEvent(event)
 
+  interface MappedProduct {
+    ID?: string | number
+    NAME?: string
+    PRICE?: string | number
+    CURRENCY_ID?: string
+    DESCRIPTION: string
+    QUANTITY?: string | number
+    ACTIVE?: string
+    imageUrl: string
+    PROPERTY_102: string | null
+    PROPERTY_104: string | null
+    PROPERTY_112: string | null
+    dealerPrice?: number
+  }
+
+  const mapProduct = (p: any, fromDb = true): MappedProduct => {
+    let raw: any
+    let id, name, price, active, dealer_price, quantity, description, currency
+
+    if (fromDb) {
+      raw = p.raw || {}
+      id = p.id
+      name = p.name
+      price = p.price
+      active = p.active ? 'Y' : 'N'
+      dealer_price = p.dealer_price
+      quantity = p.quantity
+      description = p.description
+      currency = raw.CURRENCY_ID
+    } else {
+      raw = p
+      id = p.ID
+      name = p.NAME
+      price = p.PRICE
+      active = p.ACTIVE
+      quantity = p.QUANTITY
+      description = normalizeProperty(p.DESCRIPTION)
+      currency = p.CURRENCY_ID
+      const rawDealerPrice = normalizeProperty(p.PROPERTY_116)
+      dealer_price = rawDealerPrice !== undefined && rawDealerPrice !== null ? Number(rawDealerPrice) : null
+    }
+
+    let imageUrl = null
+    const cloudinaryUrl = normalizeProperty(raw.PROPERTY_102)
+    if (cloudinaryUrl) {
+      imageUrl = cloudinaryUrl as string
+    } else {
+      const bitrixImage =
+        normalizeProperty(raw.PROPERTY_44) ||
+        normalizeProperty(raw.PREVIEW_PICTURE) ||
+        normalizeProperty(raw.DETAIL_PICTURE)
+      if (bitrixImage) {
+        imageUrl = `/api/bitrix-image?url=${encodeURIComponent(bitrixImage as string)}`
+      }
+    }
+
+    const productObj: MappedProduct = {
+      ID: id as string | number,
+      NAME: name,
+      PRICE: price,
+      CURRENCY_ID: currency,
+      DESCRIPTION: String(description || ''),
+      QUANTITY: quantity,
+      ACTIVE: active,
+      imageUrl: imageUrl || '/images/placeholder.png',
+      PROPERTY_102: normalizeProperty(raw.PROPERTY_102), // Cloudinary URL
+      PROPERTY_104: normalizeProperty(raw.PROPERTY_104), // Specs
+      PROPERTY_112: normalizeProperty(raw.PROPERTY_112), // Gallery
+    }
+
+    if (isDealer && dealer_price != null) {
+      productObj.dealerPrice = Number(dealer_price)
+    }
+
+    return productObj
+  }
+
+  const supabase = getSupabaseAdminClient()
+
+  let dbProducts: any[] | null = null
+  let totalCount = 0
+
   try {
-    // Build filter: brand + search (if provided) or all products
+    let dbQuery = supabase
+      .from('products')
+      .select('*', { count: 'exact' })
+      .eq('active', true)
+      .order('id', { ascending: false })
+
+    if (brandFilter && searchTerm) {
+      dbQuery = dbQuery.ilike('name', `%${brandFilter} ${searchTerm}%`)
+    } else if (brandFilter) {
+      dbQuery = dbQuery.ilike('name', `%${brandFilter}%`)
+    } else if (searchTerm) {
+      dbQuery = dbQuery.ilike('name', `%${searchTerm}%`)
+    }
+
+    dbQuery = dbQuery.range(startFrom, startFrom + PAGE_SIZE - 1)
+
+    const { data, count, error } = await dbQuery
+
+    if (error) {
+      throw error
+    }
+    dbProducts = data
+    totalCount = count || 0
+  } catch (error) {
+    logger.warn('Products', 'Supabase unavailable, falling back to Bitrix', { error })
+  }
+
+  if (dbProducts) {
+    const products = dbProducts.map((p) => mapProduct(p, true))
+    const nextStart = startFrom + PAGE_SIZE < totalCount ? startFrom + PAGE_SIZE : null
+
+    return {
+      products,
+      next: nextStart,
+      total: totalCount,
+      count: products.length,
+    }
+  }
+
+  // FALLBACK TO BITRIX
+  try {
     const filters: Record<string, string> = {}
     filters.ACTIVE = 'Y'
     if (brandFilter && searchTerm) {
@@ -23,26 +148,8 @@ export default defineEventHandler(async (event) => {
       filters['?NAME'] = searchTerm
     }
 
-    interface BitrixProduct {
-      ID?: string | number
-      NAME?: string
-      PRICE?: string | number
-      PROPERTY_116?: unknown
-      CURRENCY_ID?: string
-      DESCRIPTION?: unknown
-      QUANTITY?: string | number
-      ACTIVE?: string
-      PROPERTY_102?: unknown
-      PROPERTY_104?: unknown
-      PROPERTY_112?: unknown
-      PROPERTY_44?: unknown
-      PREVIEW_PICTURE?: unknown
-      DETAIL_PICTURE?: unknown
-      [key: string]: unknown
-    }
-
     const response = await fetchWithBitrixContext<{
-      result?: BitrixProduct[] | { products?: BitrixProduct[] }
+      result?: any[] | { products?: any[] }
       total?: number
       next?: number
       error?: string
@@ -93,61 +200,7 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    const products = bitrixProducts.map((product: BitrixProduct) => {
-      let imageUrl = null
-
-      // Image fallback chain: Cloudinary -> Bitrix legacy -> proxy -> placeholder
-      const cloudinaryUrl = normalizeProperty(product.PROPERTY_102)
-      if (cloudinaryUrl) {
-        imageUrl = cloudinaryUrl
-      } else {
-        const bitrixImage =
-          normalizeProperty(product.PROPERTY_44) ||
-          normalizeProperty(product.PREVIEW_PICTURE) ||
-          normalizeProperty(product.DETAIL_PICTURE)
-
-        if (bitrixImage) {
-          imageUrl = `/api/bitrix-image?url=${encodeURIComponent(bitrixImage)}`
-        }
-      }
-
-      interface MappedProduct {
-        ID?: string | number
-        NAME?: string
-        PRICE?: string | number
-        CURRENCY_ID?: string
-        DESCRIPTION: string
-        QUANTITY?: string | number
-        ACTIVE?: string
-        imageUrl: string
-        PROPERTY_102: string | null
-        PROPERTY_104: string | null
-        PROPERTY_112: string | null
-        dealerPrice?: number
-      }
-
-      const productObj: MappedProduct = {
-        ID: product.ID,
-        NAME: product.NAME,
-        PRICE: product.PRICE,
-        CURRENCY_ID: product.CURRENCY_ID,
-        DESCRIPTION: String(normalizeProperty(product.DESCRIPTION) || ''),
-        QUANTITY: product.QUANTITY,
-        ACTIVE: product.ACTIVE,
-        imageUrl: imageUrl || '/images/placeholder.png',
-        PROPERTY_102: normalizeProperty(product.PROPERTY_102), // Cloudinary URL
-        PROPERTY_104: normalizeProperty(product.PROPERTY_104), // Specs
-        PROPERTY_112: normalizeProperty(product.PROPERTY_112), // Gallery
-      }
-
-      const rawDealerPrice = normalizeProperty(product.PROPERTY_116)
-      if (isDealer && rawDealerPrice !== undefined && rawDealerPrice !== null) {
-        productObj.dealerPrice = Number(rawDealerPrice)
-      }
-
-      return productObj
-    })
-
+    const products = bitrixProducts.map((p) => mapProduct(p, false))
     const nextStart =
       typeof response?.next === 'number'
         ? response.next
