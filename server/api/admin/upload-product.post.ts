@@ -40,10 +40,11 @@ export default defineEventHandler(async (event) => {
   }
 
   // Validate main image
-  validateImageFile(imageFile, 'Main image')
+  await validateImageFile(imageFile, 'Main image')
 
-  // Validate gallery images
-  validateGalleryFiles(galleryImages)
+  if (galleryImages.length > 0) {
+    await validateGalleryFiles(galleryImages)
+  }
 
   // 3.5. Brand Integrity: Ensure the brand name is in the product title for shop filtering
   if (productBrand && productBrand !== 'general') {

@@ -1,4 +1,5 @@
 import { v2 as cloudinary, type UploadApiResponse } from 'cloudinary'
+import { fileTypeFromBuffer } from 'file-type'
 import { logger } from './logger'
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif']
@@ -11,11 +12,14 @@ export interface UploadedImageFile {
   data: Buffer
 }
 
-export function validateImageFile(file: UploadedImageFile, label: string) {
-  if (!file.type || !ALLOWED_MIME_TYPES.includes(file.type)) {
+export async function validateImageFile(file: UploadedImageFile, label: string) {
+  const detected = await fileTypeFromBuffer(file.data)
+  const mime = detected?.mime ?? ''
+
+  if (!ALLOWED_MIME_TYPES.includes(mime)) {
     throw createError({
       statusCode: 400,
-      statusMessage: `${label}: Invalid file type "${file.type || 'unknown'}". Allowed: JPEG, PNG, WebP, GIF, AVIF.`,
+      statusMessage: `${label}: Invalid file type "${mime || 'unknown'}". Allowed: JPEG, PNG, WebP, GIF, AVIF.`,
     })
   }
 
@@ -28,7 +32,7 @@ export function validateImageFile(file: UploadedImageFile, label: string) {
   }
 }
 
-export function validateGalleryFiles(files: UploadedImageFile[]) {
+export async function validateGalleryFiles(files: UploadedImageFile[]) {
   if (files.length > MAX_GALLERY_FILES) {
     throw createError({
       statusCode: 400,
@@ -36,7 +40,9 @@ export function validateGalleryFiles(files: UploadedImageFile[]) {
     })
   }
 
-  files.forEach((file, index) => validateImageFile(file, `Gallery image ${index + 1}`))
+  for (let i = 0; i < files.length; i++) {
+    await validateImageFile(files[i], `Gallery image ${i + 1}`)
+  }
 }
 
 export function configureCloudinary() {
@@ -47,20 +53,20 @@ export function configureCloudinary() {
   })
 }
 
-export async function uploadBufferToCloudinary(buffer: Buffer, folder = 'novel_solar_products'): Promise<UploadApiResponse> {
+export async function uploadBufferToCloudinary(
+  buffer: Buffer,
+  folder = 'novel_solar_products',
+): Promise<UploadApiResponse> {
   return new Promise<UploadApiResponse>((resolve, reject) => {
-    const uploadStream = cloudinary.uploader.upload_stream(
-      { folder },
-      (error, result) => {
-        if (error || !result) {
-          logger.error('Cloudinary', 'Upload error', { error })
-          reject(error ?? new Error('Cloudinary returned no result'))
-          return
-        }
-
-        resolve(result)
+    const uploadStream = cloudinary.uploader.upload_stream({ folder }, (error, result) => {
+      if (error || !result) {
+        logger.error('Cloudinary', 'Upload error', { error })
+        reject(error ?? new Error('Cloudinary returned no result'))
+        return
       }
-    )
+
+      resolve(result)
+    })
 
     uploadStream.end(buffer)
   })

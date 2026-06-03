@@ -70,14 +70,16 @@ export default defineEventHandler(async (event) => {
     }
 
     if (mainImageFile) {
-      validateImageFile(mainImageFile, 'Main image')
+      await validateImageFile(mainImageFile, 'Main image')
       const uploadedMainImage = await uploadBufferToCloudinary(mainImageFile.data)
       mainImageUrl = uploadedMainImage.secure_url
     } else if (removeMainImage) {
       mainImageUrl = ''
     }
 
-    validateGalleryFiles(newGalleryFiles)
+    if (newGalleryFiles.length > 0) {
+      await validateGalleryFiles(newGalleryFiles)
+    }
 
     if (newGalleryFiles.length > 0) {
       const uploadedGallery = await Promise.all(newGalleryFiles.map((file) => uploadBufferToCloudinary(file.data)))
@@ -128,7 +130,7 @@ export default defineEventHandler(async (event) => {
       fields.PROPERTY_112 = JSON.stringify(galleryUrls)
     }
 
-    console.log('Bitrix Update Payload:', JSON.stringify({ id: productId, fields }, null, 2))
+    logger.debug('UPDATE', 'Bitrix update payload', { id: productId, fields })
 
     // Update product in Bitrix
     const updateResponse = await $fetch<BitrixResponse<number | string | boolean>>(

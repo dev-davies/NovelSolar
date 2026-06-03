@@ -1,5 +1,5 @@
 import { logger } from '../utils/logger'
-import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
+import { resolveIsDealerFromEvent } from '../utils/dealerCheck'
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
@@ -9,24 +9,7 @@ export default defineEventHandler(async (event) => {
   const startFrom = Number.isFinite(parsedStart) && parsedStart > 0 ? parsedStart : 0
   const PAGE_SIZE = 50
 
-  let isDealer = false
-  try {
-    const user = await serverSupabaseUser(event)
-    if (user) {
-      const supabase = await serverSupabaseServiceRole(event)
-      const { data: profile } = (await supabase
-        .from('profiles')
-        .select('role, dealer_status')
-        .eq('user_id', user.id)
-        .single()) as { data: { role: string; dealer_status: string } | null }
-
-      if (profile && profile.role === 'dealer' && profile.dealer_status === 'approved') {
-        isDealer = true
-      }
-    }
-  } catch (err) {
-    // Ignore errors for unauthenticated users
-  }
+  const isDealer = await resolveIsDealerFromEvent(event)
 
   try {
     // Build filter: brand + search (if provided) or all products
@@ -128,12 +111,27 @@ export default defineEventHandler(async (event) => {
         }
       }
 
-      const productObj: any = {
+      interface MappedProduct {
+        ID?: string | number
+        NAME?: string
+        PRICE?: string | number
+        CURRENCY_ID?: string
+        DESCRIPTION: string
+        QUANTITY?: string | number
+        ACTIVE?: string
+        imageUrl: string
+        PROPERTY_102: string | null
+        PROPERTY_104: string | null
+        PROPERTY_112: string | null
+        dealerPrice?: number
+      }
+
+      const productObj: MappedProduct = {
         ID: product.ID,
         NAME: product.NAME,
         PRICE: product.PRICE,
         CURRENCY_ID: product.CURRENCY_ID,
-        DESCRIPTION: normalizeProperty(product.DESCRIPTION) || '',
+        DESCRIPTION: String(normalizeProperty(product.DESCRIPTION) || ''),
         QUANTITY: product.QUANTITY,
         ACTIVE: product.ACTIVE,
         imageUrl: imageUrl || '/images/placeholder.png',

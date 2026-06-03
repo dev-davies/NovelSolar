@@ -1,6 +1,9 @@
 import { serverSupabaseServiceRole } from '#supabase/server'
+import { getMailTransporter } from '../../utils/mailer'
 import nodemailer from 'nodemailer'
 import { logger } from '../../utils/logger'
+import { z } from 'zod'
+import { fileTypeFromBuffer } from 'file-type'
 
 export default defineEventHandler(async (event) => {
   const formData = await readMultipartFormData(event)
@@ -10,18 +13,33 @@ export default defineEventHandler(async (event) => {
 
   const getField = (name: string) => {
     const field = formData.find((f) => f.name === name)
-    return field ? field.data.toString() : null
+    return field ? field.data.toString() : ''
   }
 
-  const businessName = getField('businessName')
-  const contactPerson = getField('contactPerson')
-  const email = getField('email')
-  const phone = getField('phone')
-  const address = getField('address')
+  const dealerSchema = z.object({
+    businessName: z.string().trim().min(2).max(200),
+    contactPerson: z.string().trim().min(2).max(100),
+    email: z.string().trim().email().max(254),
+    phone: z.string().trim().min(7).max(30),
+    address: z.string().trim().min(5).max(500),
+  })
 
-  if (!businessName || !contactPerson || !email || !phone || !address) {
-    throw createError({ statusCode: 400, statusMessage: 'Missing required fields' })
+  const parseResult = dealerSchema.safeParse({
+    businessName: getField('businessName'),
+    contactPerson: getField('contactPerson'),
+    email: getField('email'),
+    phone: getField('phone'),
+    address: getField('address'),
+  })
+
+  if (!parseResult.success) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Invalid form inputs: ' + parseResult.error.errors.map((e) => e.message).join(', '),
+    })
   }
+
+  const { businessName, contactPerson, email, phone, address } = parseResult.data
 
   const previousWorkFiles = formData.filter((f) => f.name === 'previousWork' && f.filename)
   const formerPurchaseFile = formData.find((f) => f.name === 'formerPurchase' && f.filename)
@@ -33,13 +51,30 @@ export default defineEventHandler(async (event) => {
   // Use service role to bypass RLS for inserting and accessing storage
   const supabase = serverSupabaseServiceRole(event)
 
+  const ALLOWED_DEALER_TYPES = ['image/jpeg', 'image/png', 'application/pdf']
+  const MAX_SIZE = 5 * 1024 * 1024 // 5 MB
+
   const uploadFile = async (file: { filename?: string; data: Buffer; type?: string }, folder: string) => {
+    if (file.data.length > MAX_SIZE) {
+      throw createError({ statusCode: 400, statusMessage: `File ${file.filename} is too large. Maximum size is 5 MB.` })
+    }
+
+    const detected = await fileTypeFromBuffer(file.data)
+    const mime = detected?.mime ?? ''
+
+    if (!ALLOWED_DEALER_TYPES.includes(mime)) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: `Invalid file type for ${file.filename}. Only JPEG, PNG, and PDF are accepted.`,
+      })
+    }
+
     const timestamp = Date.now()
     const safeName = file.filename?.replace(/[^\w.-]/g, '') || `file-${timestamp}`
     const path = `${folder}/${timestamp}-${safeName}`
 
     const { error } = await supabase.storage.from('dealer-attachments').upload(path, file.data, {
-      contentType: file.type || 'application/octet-stream',
+      contentType: mime,
     })
 
     if (error) throw error
@@ -71,19 +106,9 @@ export default defineEventHandler(async (event) => {
     if (dbError) throw dbError
 
     // Send Email
-    const config = useRuntimeConfig()
-    if (config.smtpUser && config.smtpPass) {
-      const transporter = nodemailer.createTransport({
-        pool: true,
-        host: config.smtpHost,
-        port: Number(config.smtpPort) || 587,
-        secure: false,
-        auth: {
-          user: config.smtpUser,
-          pass: config.smtpPass,
-        },
-        tls: { rejectUnauthorized: false },
-      })
+    const transporter = getMailTransporter()
+    if (transporter) {
+      const config = useRuntimeConfig()
 
       const emailHtml = `
         <div style="font-family: sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; color: #333;">
@@ -102,7 +127,7 @@ export default defineEventHandler(async (event) => {
           subject: 'Your NovelSolar Dealer Application',
           html: emailHtml,
         })
-        .catch((e) => logger.error('Dealer API', 'Email send failed', { error: e }))
+        .catch((e: unknown) => logger.error('Dealer API', 'Email send failed', { error: e }))
     }
 
     return { success: true, message: 'Application submitted successfully' }

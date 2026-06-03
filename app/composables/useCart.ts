@@ -1,6 +1,7 @@
 import { useState } from '#app'
 import { computed } from 'vue'
 import { useLocalStorage } from '@vueuse/core'
+import type { BitrixProduct } from '~/types'
 
 export interface CartItem {
   id: string | number
@@ -30,14 +31,15 @@ export const useCart = () => {
     isCartOpen.value = !isCartOpen.value
   }
 
-  const addToCart = (product: any, qty = 1) => {
+  const addToCart = (product: BitrixProduct, qty = 1) => {
     const productId = product.ID || product.id
     const existingItem = cart.value.find((item: CartItem) => item.id === productId)
 
     if (existingItem) {
       existingItem.quantity += qty
     } else {
-      let finalImage = product.PROPERTY_102 || product.PREVIEW_PICTURE || product.image || '/images/placeholder.png'
+      let finalImage: any =
+        product.PROPERTY_102 || product.PREVIEW_PICTURE || product.image || '/images/placeholder.png'
       if (Array.isArray(finalImage) && finalImage.length > 0 && finalImage[0].value) {
         finalImage = finalImage[0].value
       } else if (typeof finalImage === 'object' && finalImage !== null && finalImage.value) {
@@ -45,10 +47,10 @@ export const useCart = () => {
       }
 
       cart.value.push({
-        id: productId,
-        name: product.NAME || product.name || product.title,
+        id: productId as string | number,
+        name: (product.NAME || product.name || product.title || `Product ${productId}`) as string,
         price: Number(product.dealerPrice || product.PRICE || product.price || 0),
-        image: finalImage,
+        image: typeof finalImage === 'string' ? finalImage : '/images/placeholder.png',
         quantity: qty,
       })
     }

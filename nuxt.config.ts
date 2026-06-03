@@ -6,6 +6,16 @@
 const BITRIX_FRAME_ANCESTOR = process.env.BITRIX_FRAME_ANCESTOR || 'https://*.bitrix24.com'
 const FRAME_ANCESTORS = `'self' ${BITRIX_FRAME_ANCESTOR}`
 
+const SUPABASE_URL = process.env.NUXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || ''
+const SUPABASE_KEY =
+  process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY ||
+  process.env.NUXT_PUBLIC_SUPABASE_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+  process.env.SUPABASE_ANON_KEY ||
+  process.env.SUPABASE_PUBLISHABLE_KEY ||
+  ''
+
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   srcDir: 'app',
@@ -76,26 +86,13 @@ export default defineNuxtConfig({
       whatsappNumber: process.env.NUXT_PUBLIC_WHATSAPP_NUMBER || '2348022119908',
       whatsappNumberFormatted: process.env.NUXT_PUBLIC_WHATSAPP_NUMBER_FORMATTED || '+234 802 211 9908',
       baseUrl: process.env.NUXT_PUBLIC_BASE_URL || 'https://novel-solar.vercel.app',
-      supabaseUrl: process.env.NUXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '',
-      supabaseAnonKey:
-        process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY ||
-        process.env.NUXT_PUBLIC_SUPABASE_KEY ||
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-        process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
-        process.env.SUPABASE_ANON_KEY ||
-        process.env.SUPABASE_PUBLISHABLE_KEY ||
-        '',
+      supabaseUrl: SUPABASE_URL,
+      supabaseAnonKey: SUPABASE_KEY,
     },
   },
   supabase: {
-    url: process.env.NUXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL,
-    key:
-      process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY ||
-      process.env.NUXT_PUBLIC_SUPABASE_KEY ||
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
-      process.env.SUPABASE_ANON_KEY ||
-      process.env.SUPABASE_PUBLISHABLE_KEY,
+    url: SUPABASE_URL,
+    key: SUPABASE_KEY,
     // Disable the module's global redirect so unauthenticated users can
     // freely browse the shop and checkout. Auth is only enforced on
     // /admin pages via the custom admin middleware.
@@ -110,7 +107,6 @@ export default defineNuxtConfig({
   routeRules: {
     '/**': {
       headers: {
-        'X-Frame-Options': `ALLOW-FROM ${BITRIX_FRAME_ANCESTOR}`,
         'Content-Security-Policy': `frame-ancestors ${FRAME_ANCESTORS}`,
       },
     },

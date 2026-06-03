@@ -1,9 +1,11 @@
-import nodemailer from 'nodemailer'
 import { z } from 'zod'
+import { randomUUID } from 'node:crypto'
+import { getMailTransporter } from '../utils/mailer'
 import { generateOrderReceiptHtml } from '../utils/emailTemplate'
 import { fetchWithBitrixContext } from '../utils/bitrixAuth'
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
 import { normalizeProperty } from '../utils/normalizeProperty'
+import { resolveIsDealerFromEvent } from '../utils/dealerCheck'
 import type { BitrixLeadResponse } from '../types/bitrix'
 import { logger } from '../utils/logger'
 
@@ -77,24 +79,7 @@ type BitrixProductResult = {
 }
 
 async function resolveTrustedCart(event: H3Event, submittedCart: SubmittedCartItem[]) {
-  let isDealer = false
-  try {
-    const user = await serverSupabaseUser(event)
-    if (user) {
-      const supabase = await serverSupabaseServiceRole(event)
-      const { data: profile } = (await supabase
-        .from('profiles')
-        .select('role, dealer_status')
-        .eq('user_id', user.id)
-        .single()) as { data: { role: string; dealer_status: string } | null }
-
-      if (profile && profile.role === 'dealer' && profile.dealer_status === 'approved') {
-        isDealer = true
-      }
-    }
-  } catch (err) {
-    // Ignore errors
-  }
+  const isDealer = await resolveIsDealerFromEvent(event)
 
   if (!Array.isArray(submittedCart) || submittedCart.length === 0) {
     throw createError({
@@ -173,7 +158,7 @@ async function resolveTrustedCart(event: H3Event, submittedCart: SubmittedCartIt
 }
 
 export default defineEventHandler(async (event) => {
-  const rawBody = sanitizePayload(await readBody(event))
+  const rawBody = await readBody(event)
   const parsedBody = checkoutSchema.safeParse(rawBody)
 
   if (!parsedBody.success) {
@@ -201,7 +186,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Generate a unique order ID
-  const orderId = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`
+  const orderId = `ORD-${Date.now()}-${randomUUID().slice(0, 8)}`
 
   // Prepare the order payload for CRM or fallback storage
   const orderPayload = {
@@ -302,20 +287,9 @@ export default defineEventHandler(async (event) => {
   const premiumHtmlEmail = generateOrderReceiptHtml(orderData)
 
   // 4. SEND CONFIRMATION EMAIL VIA BREVO
-  if (config.smtpUser && config.smtpPass) {
+  const transporter = getMailTransporter()
+  if (transporter) {
     try {
-      const transporter = nodemailer.createTransport({
-        pool: true,
-        host: config.smtpHost,
-        port: Number(config.smtpPort) || 587,
-        secure: false,
-        auth: {
-          user: config.smtpUser,
-          pass: config.smtpPass,
-        },
-        tls: { rejectUnauthorized: false },
-      })
-
       await transporter.sendMail({
         from: config.smtpFrom,
         to: customer.email,

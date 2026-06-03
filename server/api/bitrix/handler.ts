@@ -45,7 +45,7 @@ export default defineEventHandler(async (event) => {
   if (!tokenCheck.valid) {
     throw createError({ statusCode: 403, statusMessage: 'Forbidden: invalid Bitrix application token' })
   }
-  
+
   const member_id = body?.member_id
   const AUTH_ID = body?.AUTH_ID
   const REFRESH_ID = body?.REFRESH_ID
@@ -58,15 +58,15 @@ export default defineEventHandler(async (event) => {
   try {
     // 1. Fetch user profile to get bitrix_user_id and check admin status
     const userResponse = await $fetch<BitrixUserCurrentResponse>(`https://${DOMAIN}/rest/user.current?auth=${AUTH_ID}`)
-    
+
     if (!userResponse || !userResponse.result) {
       throw new Error('Failed to retrieve user profile from Bitrix24')
     }
-    
+
     const bitrixUserId = userResponse.result.ID?.toString()
     // Bitrix24 returns ADMIN as a boolean or string depending on context, usually boolean true/false in REST
     const isAdmin = userResponse.result.ADMIN === true || userResponse.result.ADMIN === 'Y'
-    
+
     // Calculate expiration if provided (usually in seconds from now)
     const expiresAt = new Date()
     const authExpires = Number.parseInt(body.AUTH_EXPIRES || '3600', 10)
@@ -93,7 +93,7 @@ export default defineEventHandler(async (event) => {
         auth_id: AUTH_ID,
         refresh_id: REFRESH_ID,
         expires_at: expiresAt.toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       }
       const { data, error } = await supabase
         .from('auth_sessions')
@@ -113,7 +113,7 @@ export default defineEventHandler(async (event) => {
         domain: DOMAIN,
         auth_id: AUTH_ID,
         refresh_id: REFRESH_ID,
-        expires_at: expiresAt.toISOString()
+        expires_at: expiresAt.toISOString(),
       }
       const { data, error } = await supabase
         .from('auth_sessions')
@@ -131,19 +131,17 @@ export default defineEventHandler(async (event) => {
       httpOnly: true,
       secure: true,
       sameSite: 'none',
-      maxAge: authExpires
+      maxAge: authExpires,
     })
 
     // 4. Redirect based on permissions
     const redirectUrl = isAdmin ? '/admin' : '/'
     return sendRedirect(event, redirectUrl)
-    
   } catch (error) {
     logger.error('Bitrix Auth', 'Handler error', { error })
     throw createError({
       statusCode: 500,
       statusMessage: 'Authentication failed',
-      data: error instanceof Error ? error.message : String(error)
     })
   }
 })

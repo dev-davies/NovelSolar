@@ -9,12 +9,12 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'Invalid form data' })
   }
 
-  const imageFile = formData.find(f => f.name === 'image')
+  const imageFile = formData.find((f) => f.name === 'image')
   if (!imageFile) {
     throw createError({ statusCode: 400, statusMessage: 'Missing image file (field name: image).' })
   }
 
-  validateImageFile(imageFile, 'Cover image')
+  await validateImageFile(imageFile, 'Cover image')
 
   try {
     const result = await uploadBufferToCloudinary(imageFile.data, 'novel_solar_blog')
