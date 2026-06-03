@@ -105,9 +105,9 @@ export default defineEventHandler(async (event) => {
         .maybeSingle()
 
       const lastSynced = syncMeta?.value ? new Date(syncMeta.value) : null
-      const sevenHoursAgo = new Date(Date.now() - 7 * 60 * 60 * 1000)
+      const twentyFiveHoursAgo = new Date(Date.now() - 25 * 60 * 60 * 1000)
 
-      if (!lastSynced || lastSynced < sevenHoursAgo) {
+      if (!lastSynced || lastSynced < twentyFiveHoursAgo) {
         const config = useRuntimeConfig()
         const cronSecret = config.cronSecret
         $fetch('/api/admin/trigger-sync', {
