@@ -1,29 +1,15 @@
 import { logger } from '../utils/logger'
-
-import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
-import { normalizeProperty } from '../utils/normalizeProperty'
+import { getSupabaseAdminClient } from '../utils/supabaseAdmin'
 import { resolveIsDealerFromEvent } from '../utils/dealerCheck'
+import { fetchAllBitrixProducts } from '../utils/fetchAllBitrixProducts'
+import { normalizeProperty } from '../utils/normalizeProperty'
 
 export default defineEventHandler(async (event) => {
-  interface BitrixInventoryProduct {
-    ID?: string | number
-    NAME?: string
-    PRICE?: string | number
-    PROPERTY_116?: unknown
-    QUANTITY?: string | number
-    CURRENCY_ID?: string
-    SECTION_ID?: string | number
-    ACTIVE?: string
-    PROPERTY_102?: unknown
-    PROPERTY_104?: unknown
-    PROPERTY_112?: unknown
-    DETAIL_PICTURE?: unknown
-    PREVIEW_PICTURE?: unknown
-    PROPERTY_44?: unknown
-    [key: string]: unknown
-  }
-
   const isDealer = await resolveIsDealerFromEvent(event)
+  const queryParams = getQuery(event)
+  const q = ((queryParams.q as string) || '').trim()
+  const brand = ((queryParams.brand as string) || '').trim()
+  const start = Number.parseInt((queryParams.start as string) || '0', 10) || 0
 
   interface MappedProduct {
     ID: string | number
@@ -37,105 +23,128 @@ export default defineEventHandler(async (event) => {
     [key: string]: unknown
   }
 
-  let allProducts: BitrixInventoryProduct[] = []
+  const mapProduct = (p: any, fromDb = true): MappedProduct => {
+    let raw: any
+    let id, name, price, active, dealer_price
 
-  const storage = useStorage('cache')
-  const cacheKey = 'inventory-bitrix-products'
-  const cachedData = await storage.getItem<{ data: BitrixInventoryProduct[]; expiresAt: number }>(cacheKey)
-
-  if (cachedData && cachedData.expiresAt > Date.now()) {
-    allProducts = cachedData.data
-  } else {
-    // ─── PHASE 1: Paginate through crm.product.list to get all product metadata ───
-    try {
-      let start = 0
-      let hasMore = true
-
-      // Timeout for the entire fetch loop to prevent indefinite hanging
-      const abortController = new AbortController()
-      const timeoutId = setTimeout(() => abortController.abort(), 15000) // 15 seconds
-
-      while (hasMore) {
-        const endpoint = `crm.product.list${start > 0 ? `?start=${start}` : ''}`
-
-        const response = await fetchWithBitrixContext<{ result: BitrixInventoryProduct[]; next?: number }>(
-          event,
-          endpoint,
-          {
-            method: 'POST',
-            body: {
-              limit: 50,
-              filter: { ACTIVE: 'Y' },
-              select: [
-                'ID',
-                'NAME',
-                'PRICE',
-                'QUANTITY',
-                'CURRENCY_ID',
-                'SECTION_ID',
-                'ACTIVE',
-                'PROPERTY_102',
-                'PROPERTY_104',
-                'PROPERTY_112',
-                'PROPERTY_116',
-                'DETAIL_PICTURE',
-                'PREVIEW_PICTURE',
-                'PROPERTY_44',
-              ],
-            },
-            signal: abortController.signal,
-          },
-        )
-
-        if (response.result && Array.isArray(response.result)) {
-          allProducts.push(...response.result)
-        }
-
-        if (response.next) {
-          start = response.next
-        } else {
-          hasMore = false
-        }
-      }
-      clearTimeout(timeoutId)
-
-      // Store in cache for 5 minutes
-      await storage.setItem(cacheKey, { data: allProducts, expiresAt: Date.now() + 300 * 1000 })
-    } catch (error) {
-      logger.error('Inventory', 'Error fetching list or timeout reached', { error })
-      // Fallback to expired cache if available and fetch failed
-      if (cachedData) {
-        allProducts = cachedData.data
-      } else {
-        return []
-      }
+    if (fromDb) {
+      raw = p.raw || {}
+      id = p.id
+      name = p.name
+      price = p.price
+      active = p.active ? 'Y' : 'N'
+      dealer_price = p.dealer_price
+    } else {
+      raw = p
+      id = p.ID
+      name = p.NAME
+      price = p.PRICE
+      active = p.ACTIVE
+      const rawDealerPrice = normalizeProperty(p.PROPERTY_116)
+      dealer_price = rawDealerPrice !== undefined && rawDealerPrice !== null ? Number(rawDealerPrice) : null
     }
-  }
 
-  // PROPERTY_102 contains Cloudinary image URLs directly from crm.product.list,
-  // so no secondary batch fetch is needed.
-  return allProducts.map((product) => {
     const productObj: MappedProduct = {
-      ...product,
-      ID: product.ID as string | number,
-      NAME: product.NAME,
-      PRICE: product.PRICE,
-      ACTIVE: product.ACTIVE,
-      DETAIL_PICTURE: product.DETAIL_PICTURE || null,
-      PREVIEW_PICTURE: product.PREVIEW_PICTURE || null,
-      imageUrl: null, // Will be overridden by client usually or set here if desired
-      PROPERTY_44: normalizeProperty(product.PROPERTY_44),
-      PROPERTY_102: normalizeProperty(product.PROPERTY_102),
-      PROPERTY_104: normalizeProperty(product.PROPERTY_104),
-      PROPERTY_112: normalizeProperty(product.PROPERTY_112),
+      ...raw,
+      ID: id as string | number,
+      NAME: name,
+      PRICE: price,
+      ACTIVE: active,
+      DETAIL_PICTURE: raw.DETAIL_PICTURE || null,
+      PREVIEW_PICTURE: raw.PREVIEW_PICTURE || null,
+      imageUrl: null, // As previously hardcoded
+      PROPERTY_44: normalizeProperty(raw.PROPERTY_44),
+      PROPERTY_102: normalizeProperty(raw.PROPERTY_102),
+      PROPERTY_104: normalizeProperty(raw.PROPERTY_104),
+      PROPERTY_112: normalizeProperty(raw.PROPERTY_112),
     }
 
-    const rawDealerPrice = normalizeProperty(product.PROPERTY_116)
-    if (isDealer && rawDealerPrice !== undefined && rawDealerPrice !== null) {
-      productObj.dealerPrice = Number(rawDealerPrice)
+    if (isDealer && dealer_price != null) {
+      productObj.dealerPrice = Number(dealer_price)
     }
 
     delete productObj.PROPERTY_116
     return productObj
-  })
+  }
+
+  const supabase = getSupabaseAdminClient()
+
+  let dbProducts: any[] | null = null
+
+  try {
+    let query = supabase.from('products').select('*').eq('active', true).order('id', { ascending: false })
+
+    if (brand && q) {
+      query = query.ilike('name', `%${brand} ${q}%`)
+    } else if (brand) {
+      query = query.ilike('name', `%${brand}%`)
+    } else if (q) {
+      query = query.ilike('name', `%${q}%`)
+    }
+
+    // start (for pagination, range of 50)
+    query = query.range(start, start + 49)
+
+    const { data, error } = await query
+
+    if (error) {
+      throw error
+    }
+    dbProducts = data
+  } catch (error) {
+    logger.warn('Inventory', 'Supabase unavailable, falling back to Bitrix', { error })
+  }
+
+  if (dbProducts) {
+    // Fire background sync check
+    try {
+      const { data: syncMeta } = await supabase
+        .from('sync_meta')
+        .select('value')
+        .eq('key', 'products_last_synced')
+        .maybeSingle()
+
+      const lastSynced = syncMeta?.value ? new Date(syncMeta.value) : null
+      const sevenHoursAgo = new Date(Date.now() - 7 * 60 * 60 * 1000)
+
+      if (!lastSynced || lastSynced < sevenHoursAgo) {
+        const config = useRuntimeConfig()
+        const cronSecret = config.cronSecret
+        $fetch('/api/admin/trigger-sync', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${cronSecret}` },
+        }).catch((e) => logger.error('Inventory', 'Background sync failed to start', { error: e }))
+      }
+    } catch (metaError) {
+      logger.error('Inventory', 'Failed to check sync metadata', { error: metaError })
+    }
+
+    return dbProducts.map((p) => mapProduct(p, true))
+  }
+
+  // FALLBACK
+  try {
+    const allBitrixProducts = await fetchAllBitrixProducts(event)
+
+    let filtered = allBitrixProducts.filter((p) => p.ACTIVE === 'Y')
+
+    if (brand && q) {
+      filtered = filtered.filter(
+        (p) => p.NAME && String(p.NAME).toLowerCase().includes(`${brand.toLowerCase()} ${q.toLowerCase()}`),
+      )
+    } else if (brand) {
+      filtered = filtered.filter((p) => p.NAME && String(p.NAME).toLowerCase().includes(brand.toLowerCase()))
+    } else if (q) {
+      filtered = filtered.filter((p) => p.NAME && String(p.NAME).toLowerCase().includes(q.toLowerCase()))
+    }
+
+    // ordered by id descending
+    filtered.sort((a, b) => Number(b.ID) - Number(a.ID))
+
+    const paginated = filtered.slice(start, start + 50)
+    return paginated.map((p) => mapProduct(p, false))
+  } catch (fallbackError) {
+    logger.error('Inventory', 'Bitrix fallback failed', { error: fallbackError })
+    throw createError({ statusCode: 500, statusMessage: 'Unable to fetch inventory' })
+  }
 })
