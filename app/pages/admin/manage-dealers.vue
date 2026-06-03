@@ -62,6 +62,11 @@ const initiateRejectDealer = (applicationId: string) => {
   showConfirmModal.value = true
 }
 
+const cancelRemoval = () => {
+  showConfirmModal.value = false
+  dealerToRemove.value = null
+}
+
 const confirmRejectDealer = async () => {
   const applicationId = dealerToRemove.value
   if (!applicationId) return
@@ -235,10 +240,7 @@ const isExpired = (invitation: Record<string, unknown> | null | undefined) => {
           <button
             class="px-5 py-2.5 rounded-xl font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors disabled:opacity-50"
             :disabled="dealerToRemove ? isActionLoading[dealerToRemove] : false"
-            @click="
-              showConfirmModal = false
-              dealerToRemove = null
-            "
+            @click="cancelRemoval"
           >
             Cancel
           </button>
