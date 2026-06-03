@@ -67,6 +67,7 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
+    cronSecret: process.env.CRON_SECRET,
     bitrixWebhookUrl: process.env.BITRIX_WEBHOOK_URL,
     otpSecret: process.env.OTP_SECRET,
     authSessionSecret: process.env.AUTH_SESSION_SECRET,
