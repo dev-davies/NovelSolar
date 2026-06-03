@@ -176,7 +176,28 @@ const isExpired = (invitation: Record<string, unknown> | null | undefined) => {
                       Reject
                     </button>
                   </div>
-                  <div v-else class="text-xs text-slate-400 font-medium italic">Account Active</div>
+                  <div v-else class="flex items-center justify-end gap-3">
+                    <span v-if="dealer.status === 'approved'" class="text-xs text-slate-400 font-medium italic mt-1"
+                      >Account Active</span
+                    >
+                    <button
+                      v-if="dealer.status === 'approved'"
+                      class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-xs px-3 py-1.5 rounded transition-colors disabled:opacity-50 shadow-sm font-bold tracking-wider uppercase inline-flex items-center gap-1.5"
+                      :disabled="isActionLoading[dealer.id as string]"
+                      @click="rejectDealer(dealer.id as string)"
+                    >
+                      <span
+                        v-if="isActionLoading[dealer.id as string]"
+                        class="w-3 h-3 border-2 border-red-600/30 border-t-red-600 rounded-full animate-spin"
+                      />
+                      Remove
+                    </button>
+                    <span
+                      v-else-if="dealer.status === 'rejected'"
+                      class="text-xs text-slate-400 font-medium italic mt-1"
+                      >Application Rejected</span
+                    >
+                  </div>
                 </td>
               </tr>
             </tbody>
