@@ -55,8 +55,28 @@ const approveDealer = async (applicationId: string) => {
 }
 
 const rejectDealer = async (applicationId: string) => {
-  // Not fully implemented on backend in this request
-  addToast('Info', 'Reject functionality coming soon.', 'info')
+  if (
+    !confirm(
+      'Are you sure you want to reject or remove this dealer? This action will send them an email notification and immediately revoke their wholesale access if they were active.',
+    )
+  ) {
+    return
+  }
+
+  isActionLoading.value[applicationId] = true
+  try {
+    await useNuxtApp().$apiFetch('/api/admin/reject-dealer', {
+      method: 'POST',
+      body: { applicationId },
+    })
+    addToast('Success', 'Dealer rejected/removed successfully.', 'success')
+    await fetchDealers()
+  } catch (err: unknown) {
+    const error = err as { statusMessage?: string }
+    addToast('Error', error.statusMessage || 'Failed to reject dealer', 'error')
+  } finally {
+    isActionLoading.value[applicationId] = false
+  }
 }
 
 const isExpired = (invitation: Record<string, unknown> | null | undefined) => {
