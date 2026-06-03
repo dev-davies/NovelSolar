@@ -1,4 +1,4 @@
-import { defineTask } from 'nitropack'
+import { defineTask } from 'nitropack/runtime'
 import { logger } from '../utils/logger'
 import { getSupabaseAdminClient } from '../utils/supabaseAdmin'
 import { normalizeBitrixProduct, type BitrixProduct } from '../utils/normalizeBitrixProduct'

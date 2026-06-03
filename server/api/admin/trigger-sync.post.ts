@@ -5,7 +5,7 @@ export default defineEventHandler((event) => {
   const nitroApp = useNitroApp()
 
   // Fire and forget the task in the background
-  runTask('sync:products').catch((error) => {
+  runTask('sync-products').catch((error) => {
     logger.error('ProductSync', 'Task failed from trigger', { error })
   })
 
