@@ -113,6 +113,10 @@ export default defineNuxtConfig({
     },
   },
   nitro: {
+    experimental: { tasks: true },
+    scheduledTasks: {
+      '0 */6 * * *': ['sync:products'],
+    },
     storage: {
       // Rate limiting uses memory in dev, Vercel KV in production if available
       rateLimit: {
