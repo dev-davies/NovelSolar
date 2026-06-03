@@ -46,6 +46,21 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 403, statusMessage: 'Forbidden: invalid Bitrix application token' })
   }
 
+  // Handle product sync webhooks
+  const eventName = body?.event
+  if (eventName === 'ONCRMPRODUCTUPDATE' || eventName === 'ONCRMPRODUCTADD' || eventName === 'ONCRMPRODUCTDELETE') {
+    const config = useRuntimeConfig()
+    const productId = eventName === 'ONCRMPRODUCTADD' ? body?.data?.FIELDS_AFTER?.ID : body?.data?.FIELDS?.ID
+
+    if (productId) {
+      import('../../utils/syncSingleProduct')
+        .then(({ syncSingleProduct }) => syncSingleProduct(String(productId), config))
+        .catch((error) => logger.error('ProductSync', 'Failed to invoke single product sync', { error }))
+    }
+
+    return { success: true, message: 'Event accepted' }
+  }
+
   const member_id = body?.member_id
   const AUTH_ID = body?.AUTH_ID
   const REFRESH_ID = body?.REFRESH_ID
