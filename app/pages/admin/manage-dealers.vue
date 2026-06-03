@@ -54,14 +54,17 @@ const approveDealer = async (applicationId: string) => {
   }
 }
 
-const rejectDealer = async (applicationId: string) => {
-  if (
-    !confirm(
-      'Are you sure you want to reject or remove this dealer? This action will send them an email notification and immediately revoke their wholesale access if they were active.',
-    )
-  ) {
-    return
-  }
+const showConfirmModal = ref(false)
+const dealerToRemove = ref<string | null>(null)
+
+const initiateRejectDealer = (applicationId: string) => {
+  dealerToRemove.value = applicationId
+  showConfirmModal.value = true
+}
+
+const confirmRejectDealer = async () => {
+  const applicationId = dealerToRemove.value
+  if (!applicationId) return
 
   isActionLoading.value[applicationId] = true
   try {
@@ -70,6 +73,8 @@ const rejectDealer = async (applicationId: string) => {
       body: { applicationId },
     })
     addToast('Success', 'Dealer rejected/removed successfully.', 'success')
+    showConfirmModal.value = false
+    dealerToRemove.value = null
     await fetchDealers()
   } catch (err: unknown) {
     const error = err as { statusMessage?: string }
@@ -170,8 +175,7 @@ const isExpired = (invitation: Record<string, unknown> | null | undefined) => {
                     </button>
                     <button
                       class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1.5 rounded transition-colors disabled:opacity-50 shadow-sm font-bold tracking-wider uppercase"
-                      :disabled="isActionLoading[dealer.id as string]"
-                      @click="rejectDealer(dealer.id as string)"
+                      @click="initiateRejectDealer(dealer.id as string)"
                     >
                       Reject
                     </button>
@@ -184,7 +188,7 @@ const isExpired = (invitation: Record<string, unknown> | null | undefined) => {
                       v-if="dealer.status === 'approved'"
                       class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-xs px-3 py-1.5 rounded transition-colors disabled:opacity-50 shadow-sm font-bold tracking-wider uppercase inline-flex items-center gap-1.5"
                       :disabled="isActionLoading[dealer.id as string]"
-                      @click="rejectDealer(dealer.id as string)"
+                      @click="initiateRejectDealer(dealer.id as string)"
                     >
                       <span
                         v-if="isActionLoading[dealer.id as string]"
@@ -202,6 +206,53 @@ const isExpired = (invitation: Record<string, unknown> | null | undefined) => {
               </tr>
             </tbody>
           </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div
+      v-if="showConfirmModal"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
+    >
+      <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 animate-in zoom-in-95 duration-200">
+        <div class="flex items-center justify-center w-12 h-12 rounded-full bg-red-100 mb-4 mx-auto">
+          <svg class="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-center text-slate-900 mb-2">Remove Dealer?</h3>
+        <p class="text-center text-slate-500 mb-6">
+          Are you sure you want to reject or remove this dealer? This action will send them an email notification and
+          immediately revoke their wholesale access if they were active.
+        </p>
+        <div class="flex gap-3 justify-center">
+          <button
+            class="px-5 py-2.5 rounded-xl font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors disabled:opacity-50"
+            :disabled="dealerToRemove ? isActionLoading[dealerToRemove] : false"
+            @click="
+              showConfirmModal = false
+              dealerToRemove = null
+            "
+          >
+            Cancel
+          </button>
+          <button
+            class="px-5 py-2.5 rounded-xl font-bold text-white bg-red-600 hover:bg-red-700 transition-colors inline-flex items-center gap-2 disabled:opacity-50"
+            :disabled="dealerToRemove ? isActionLoading[dealerToRemove] : false"
+            @click="confirmRejectDealer"
+          >
+            <span
+              v-if="dealerToRemove && isActionLoading[dealerToRemove]"
+              class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"
+            />
+            Confirm Removal
+          </button>
         </div>
       </div>
     </div>
