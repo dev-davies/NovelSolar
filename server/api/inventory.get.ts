@@ -5,6 +5,8 @@ import { fetchAllBitrixProducts } from '../utils/fetchAllBitrixProducts'
 import { normalizeProperty } from '../utils/normalizeProperty'
 
 export default defineEventHandler(async (event) => {
+  setResponseHeader(event, 'Cache-Control', 'private, no-store')
+
   const isDealer = await resolveIsDealerFromEvent(event)
   const queryParams = getQuery(event)
   const q = ((queryParams.q as string) || '').trim()

@@ -5,6 +5,8 @@ import { fetchWithBitrixContext } from '../utils/bitrixAuth'
 import { normalizeProperty } from '../utils/normalizeProperty'
 
 export default defineEventHandler(async (event) => {
+  setResponseHeader(event, 'Cache-Control', 'private, no-store')
+
   const query = getQuery(event)
   const searchTerm = ((query.q as string) || '').trim().toLowerCase()
   const brandFilter = ((query.brand as string) || '').trim()
