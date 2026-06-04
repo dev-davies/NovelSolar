@@ -31,25 +31,27 @@
         </div>
       </header>
 
-      <div class="aspect-video bg-slate-50 rounded-3xl overflow-hidden shadow-xl border border-slate-100 mb-14">
-        <NuxtImg
+      <div
+        class="aspect-video relative bg-slate-50 rounded-3xl overflow-hidden shadow-xl border border-slate-100 mb-14"
+      >
+        <FadeImage
           v-if="post.image"
+          use-nuxt-img
           :src="post.image"
           width="1200"
           height="675"
-          loading="lazy"
-          format="webp"
-          class="w-full h-full object-cover"
+          class="w-full h-full absolute inset-0"
+          image-class="object-cover"
           :alt="post.title"
         />
-        <NuxtImg
+        <FadeImage
           v-else
+          use-nuxt-img
           src="/images/fallback-post.png"
           width="1200"
           height="675"
-          loading="lazy"
-          format="webp"
-          class="w-full h-full object-cover"
+          class="w-full h-full absolute inset-0"
+          image-class="object-cover"
           :alt="post.title"
         />
       </div>

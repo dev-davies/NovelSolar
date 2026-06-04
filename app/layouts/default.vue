@@ -7,7 +7,13 @@
       <!-- Left Section: Logo & Links -->
       <div class="flex items-center gap-8">
         <NuxtLink to="/" class="flex items-center">
-          <NuxtImg src="/images/logo.png" alt="NovelSolar" class="h-8 w-auto" />
+          <FadeImage
+            use-nuxt-img
+            src="/images/logo.png"
+            alt="NovelSolar"
+            class="h-8 w-32 rounded"
+            image-class="object-contain"
+          />
         </NuxtLink>
         <nav class="hidden lg:flex items-center gap-2">
           <!-- Desktop Product Dropdown -->
@@ -621,7 +627,13 @@
           <!-- Column 1: Brand Info -->
           <div>
             <div class="mb-4">
-              <NuxtImg src="/images/logo.png" alt="NovelSolar" class="h-8 w-auto" />
+              <FadeImage
+                use-nuxt-img
+                src="/images/logo.png"
+                alt="NovelSolar"
+                class="h-8 w-32 rounded"
+                image-class="object-contain"
+              />
             </div>
             <p class="text-sm text-gray-500 mb-4">
               Providing top-tier solar solutions for a sustainable future. Empowering communities with clean energy.

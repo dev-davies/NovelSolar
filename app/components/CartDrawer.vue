@@ -67,7 +67,14 @@ const { cart, isCartOpen, toggleCart, removeFromCart, updateQuantity, cartTotalA
         >
           <!-- Item Preview -->
           <div class="w-20 h-20 bg-gray-100 rounded-xl flex items-center justify-center shrink-0 overflow-hidden">
-            <NuxtImg v-if="item.image" :src="item.image" :alt="item.name" class="w-full h-full object-cover" />
+            <FadeImage
+              v-if="item.image"
+              use-nuxt-img
+              :src="item.image"
+              :alt="item.name"
+              class="w-full h-full"
+              image-class="object-cover"
+            />
             <span v-else class="material-symbols-outlined text-gray-300 text-3xl">image</span>
           </div>
 

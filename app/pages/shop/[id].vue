@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { BitrixProduct } from '~/types'
 const route = useRoute()
 const { addToCart } = useCart()
 const { getProductImage } = useProductImage()
@@ -7,21 +8,22 @@ const {
 } = useRuntimeConfig()
 const whatsappUrl = computed(() => `https://wa.me/${whatsappNumber}`)
 const user = useSupabaseUser()
+
 const {
   data: product,
   pending,
   error,
-} = await useFetch(`/api/product/${route.params.id}`, {
+} = await useFetch<BitrixProduct>(`/api/product/${route.params.id}`, {
   key: `product-${route.params.id}-${user.value?.id || 'guest'}`,
 })
 const quantity = ref(1)
 const activeTab = ref('description')
-const selectedImage = ref(null)
+const selectedImage = ref<string | null>(null)
 
 const parsedSpecs = computed(() => {
   try {
     // 1. Extract the raw string from different possible Bitrix structures
-    const rawData = product.value?.PROPERTY_104
+    const rawData = product.value?.PROPERTY_104 as any
     let rawString = ''
 
     if (!rawData) return []
@@ -51,7 +53,7 @@ const parsedSpecs = computed(() => {
 
 const galleryImages = computed(() => {
   try {
-    const rawData = product.value?.PROPERTY_112
+    const rawData = product.value?.PROPERTY_112 as any
     let rawString = ''
 
     if (!rawData) return []
@@ -135,11 +137,11 @@ useHead({
           <div
             class="aspect-square bg-white rounded-2xl overflow-hidden border border-slate-200 flex items-center justify-center shadow-sm relative group"
           >
-            <img
+            <FadeImage
               :src="selectedImage || getProductImage(product)"
               :alt="product.NAME"
-              class="w-full h-full object-contain p-4 transition-all duration-500 animate-fadeIn"
-              loading="lazy"
+              class="w-full h-full absolute inset-0"
+              image-class="object-contain p-4 transition-all duration-500 animate-fadeIn"
             />
             <div class="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-2 rounded-full shadow-sm text-[#002888]">
               <span class="material-symbols-outlined">zoom_in</span>
@@ -157,7 +159,11 @@ useHead({
               "
               @click="selectedImage = getProductImage(product)"
             >
-              <img loading="lazy" :src="getProductImage(product)" class="w-full h-full object-cover" />
+              <FadeImage
+                :src="getProductImage(product)"
+                class="w-full h-full absolute inset-0"
+                image-class="object-cover"
+              />
             </div>
 
             <!-- Loop through extra gallery images -->
@@ -170,7 +176,7 @@ useHead({
               "
               @click="selectedImage = img"
             >
-              <img loading="lazy" :src="img" class="w-full h-full object-cover" />
+              <FadeImage :src="img" class="w-full h-full absolute inset-0" image-class="object-cover" />
             </div>
           </div>
         </div>

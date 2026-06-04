@@ -12,13 +12,15 @@
           :class="index === activeHeroSlide ? 'opacity-100' : 'opacity-0 pointer-events-none'"
         >
           <NuxtLink to="/shop" class="absolute inset-0 z-10" :aria-label="`Shop products from ${slide.title}`" />
-          <NuxtImg
+          <FadeImage
+            use-nuxt-img
             :src="slide.image"
             :alt="slide.title"
             :preload="index === 0"
             :fetchpriority="index === 0 ? 'high' : 'auto'"
             :loading="index === 0 ? 'eager' : 'lazy'"
-            class="absolute inset-0 h-full w-full object-cover"
+            class="absolute inset-0 h-full w-full"
+            image-class="object-cover"
           />
         </div>
 
@@ -72,10 +74,12 @@
           class="group relative block overflow-hidden rounded-xl bg-[#2C75D8] p-8 text-white shadow-md transition-transform hover:-translate-y-1 min-h-[280px] flex flex-col justify-end shrink-0 h-full w-full snap-center"
         >
           <!-- Background Image -->
-          <NuxtImg
+          <FadeImage
+            use-nuxt-img
             src="/images/Website BannersNovel Academy.jpg.jpeg"
             alt="Novel Academy"
-            class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            class="absolute inset-0 w-full h-full"
+            image-class="object-cover transition-transform duration-500 group-hover:scale-110"
           />
 
           <!-- Content -->
@@ -106,10 +110,12 @@
           class="group relative block overflow-hidden rounded-xl bg-white border border-gray-200 p-8 shadow-md transition-transform hover:-translate-y-1 min-h-[280px] flex flex-col justify-end shrink-0 h-full w-full snap-center"
         >
           <!-- Background Image -->
-          <NuxtImg
+          <FadeImage
+            use-nuxt-img
             src="/images/Website BannersTokunbo shop.jpg.jpeg"
             alt="Solar Product Exchange"
-            class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            class="absolute inset-0 w-full h-full"
+            image-class="object-cover transition-transform duration-500 group-hover:scale-110"
           />
 
           <!-- Content -->
@@ -198,11 +204,12 @@
             class="group bg-white rounded-3xl border border-slate-200 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col"
           >
             <div class="aspect-[4/3] bg-slate-100 overflow-hidden relative">
-              <NuxtImg
+              <FadeImage
+                use-nuxt-img
                 :src="service.image"
                 :alt="service.title"
-                loading="lazy"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                class="absolute inset-0 w-full h-full"
+                image-class="object-cover group-hover:scale-105 transition-transform duration-700"
               />
               <div
                 class="absolute top-4 left-4 w-11 h-11 rounded-2xl flex items-center justify-center bg-white/90 backdrop-blur-md shadow-sm"
@@ -246,17 +253,21 @@
             class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group"
           >
             <div class="aspect-video relative overflow-hidden">
-              <NuxtImg
+              <FadeImage
                 v-if="post.image"
+                use-nuxt-img
                 :src="post.image"
                 :alt="post.title"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                class="absolute inset-0 w-full h-full"
+                image-class="object-cover group-hover:scale-105 transition-transform duration-700"
               />
-              <NuxtImg
+              <FadeImage
                 v-else
+                use-nuxt-img
                 src="/images/fallback-post.png"
                 :alt="post.title"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                class="absolute inset-0 w-full h-full"
+                image-class="object-cover group-hover:scale-105 transition-transform duration-700"
               />
             </div>
             <div class="p-8">

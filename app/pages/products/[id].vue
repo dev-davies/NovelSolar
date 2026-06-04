@@ -27,11 +27,13 @@
           class="aspect-square bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100 flex items-center justify-center p-8"
         >
           <div v-if="pending" class="w-full h-full bg-gray-50 animate-pulse rounded-2xl" />
-          <NuxtImg
+          <FadeImage
             v-else
+            use-nuxt-img
             :src="getProductImage(product)"
             :alt="product?.NAME"
-            class="w-full h-full object-cover rounded-lg shadow-sm transition-all duration-500 transform hover:scale-105"
+            class="w-full h-full absolute inset-0"
+            image-class="object-cover rounded-lg shadow-sm transition-all duration-500 transform hover:scale-105"
           />
         </div>
         <div class="grid grid-cols-4 gap-4">
@@ -40,10 +42,12 @@
             :key="i"
             class="aspect-square rounded-xl overflow-hidden border-2 transition-all p-2 bg-white border-gray-100 hover:border-blue-200 cursor-pointer"
           >
-            <NuxtImg
+            <FadeImage
               v-if="i === 1 && product?.PREVIEW_PICTURE?.showUrl"
+              use-nuxt-img
               :src="product.PREVIEW_PICTURE.showUrl"
-              class="w-full h-full object-contain"
+              class="w-full h-full absolute inset-0"
+              image-class="object-contain"
             />
             <div v-else class="w-full h-full bg-gray-50 flex items-center justify-center">
               <svg class="w-6 h-6 text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -4,7 +4,6 @@ import type { BitrixProduct } from '~/types'
 const props = defineProps<{
   product: BitrixProduct
 }>()
-
 const { getProductImage } = useProductImage()
 </script>
 
@@ -20,18 +19,14 @@ const { getProductImage } = useProductImage()
         >IN STOCK</span
       >
 
-      <div
-        class="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-500 overflow-hidden"
-      >
-        <NuxtImg
-          :src="getProductImage(product)"
-          loading="lazy"
-          placeholder
-          format="webp"
-          :alt="product.NAME"
-          class="w-full h-full object-contain p-4"
-        />
-      </div>
+      <FadeImage
+        use-nuxt-img
+        :src="getProductImage(product)"
+        :alt="product.NAME"
+        class="w-32 h-32 rounded-full flex items-center justify-center group-hover:scale-110 transition-all duration-500"
+        loaded-class="bg-gray-100"
+        image-class="object-contain p-4"
+      />
     </div>
 
     <div class="p-6 flex-1 flex flex-col justify-center">

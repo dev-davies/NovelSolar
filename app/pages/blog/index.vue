@@ -29,18 +29,20 @@
             <div
               class="aspect-video bg-slate-100 overflow-hidden relative group-hover:scale-105 transition-transform duration-700"
             >
-              <NuxtImg
+              <FadeImage
                 v-if="post.image"
+                use-nuxt-img
                 :src="post.image"
-                loading="lazy"
-                class="w-full h-full object-cover"
+                class="w-full h-full absolute inset-0"
+                image-class="object-cover"
                 :alt="post.title"
               />
               <div v-else class="w-full h-full relative overflow-hidden bg-slate-900 flex items-center justify-center">
-                <img
-                  loading="lazy"
+                <FadeImage
+                  use-nuxt-img
                   src="/images/fallback-post.png"
-                  class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay"
+                  class="absolute inset-0 w-full h-full"
+                  image-class="object-cover opacity-40 mix-blend-overlay"
                 />
                 <div class="relative z-10 text-center px-4">
                   <div class="text-[#3c59b0] font-black text-[10px] uppercase tracking-[0.2em] mb-1">Novel Solar</div>
