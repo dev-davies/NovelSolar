@@ -39,6 +39,11 @@ const handleLogin = async () => {
   }
 }
 
+const resetLogin = () => {
+  isSuccess.value = false
+  email.value = ''
+}
+
 useHead({
   title: 'Sign In | Novel Solar',
   meta: [
@@ -151,10 +156,7 @@ useHead({
             </div>
             <button
               class="text-sm font-bold text-[#3c59b0] hover:underline uppercase tracking-widest"
-              @click="
-                isSuccess = false
-                email = ''
-              "
+              @click="resetLogin"
             >
               Back to Login
             </button>
