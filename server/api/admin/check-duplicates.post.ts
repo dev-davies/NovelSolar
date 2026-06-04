@@ -1,27 +1,27 @@
 import { logger } from '../../utils/logger'
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody(event);
-  const { productNames } = body;
-  const config = useRuntimeConfig();
+  const body = await readBody(event)
+  const { productNames } = body
+  const config = useRuntimeConfig()
 
   // Security check handled by admin-auth server middleware
 
   if (!productNames || productNames.length === 0) {
-    return { duplicates: [] };
+    return { duplicates: [] }
   }
 
   try {
-    const bitrixUrl = config.bitrixWebhookUrl;
+    const bitrixUrl = config.bitrixWebhookUrl
     if (!bitrixUrl) {
-      logger.warn('DUPLICATE CHECK', 'Bitrix URL not configured');
-      return { duplicates: [] };
+      logger.warn('DUPLICATE CHECK', 'Bitrix URL not configured')
+      return { duplicates: [] }
     }
 
-    const formattedBitrixUrl = (bitrixUrl as string).endsWith('/') ? bitrixUrl : `${bitrixUrl}/`;
+    const formattedBitrixUrl = (bitrixUrl as string).endsWith('/') ? bitrixUrl : `${bitrixUrl}/`
 
     // Query Bitrix CRM for products matching any of the provided names
-    const duplicates: string[] = [];
+    const duplicates: string[] = []
 
     for (const name of productNames) {
       try {
@@ -34,14 +34,14 @@ export default defineEventHandler(async (event) => {
               select: ['ID', 'NAME'],
               limit: 1,
             },
-          }
-        );
+          },
+        )
 
         if (response.result && response.result.length > 0) {
-          duplicates.push(name);
+          duplicates.push(name)
         }
       } catch (error) {
-        logger.error('DUPLICATE CHECK', 'Error checking product', { name, error });
+        logger.error('DUPLICATE CHECK', 'Error checking product', { name, error })
         // Continue checking other products even if one fails
       }
     }
@@ -53,12 +53,12 @@ export default defineEventHandler(async (event) => {
         duplicates.length > 0
           ? `Found ${duplicates.length} duplicate(s): ${duplicates.join(', ')}`
           : 'No duplicates found',
-    };
+    }
   } catch (error) {
-    logger.error('DUPLICATE CHECK', 'Error', { error });
+    logger.error('DUPLICATE CHECK', 'Error', { error })
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to check for duplicates',
-    });
+    })
   }
-});
+})

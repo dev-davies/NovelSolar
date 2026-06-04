@@ -1,17 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-import {
-  adminToCommitAuthor,
-  commitMessageFor,
-  deleteRemoteFile,
-  getRemoteFile,
-  putRemoteFile,
-} from './blogGithub'
+import { adminToCommitAuthor, commitMessageFor, deleteRemoteFile, getRemoteFile, putRemoteFile } from './blogGithub'
 
 const mockFetch = vi.fn()
 vi.stubGlobal('$fetch', mockFetch)
 
-vi.stubGlobal('createError', (opts: { statusCode: number, statusMessage: string }) => {
+vi.stubGlobal('createError', (opts: { statusCode: number; statusMessage: string }) => {
   const err = new Error(opts.statusMessage) as any
   err.statusCode = opts.statusCode
   return err

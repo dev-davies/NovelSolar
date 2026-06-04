@@ -1,9 +1,9 @@
 import { logger } from '../../utils/logger'
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody(event);
-  const { productId, productName } = body;
-  const config = useRuntimeConfig();
+  const body = await readBody(event)
+  const { productId, productName } = body
+  const config = useRuntimeConfig()
 
   // Security check handled by admin-auth server middleware
 
@@ -11,44 +11,41 @@ export default defineEventHandler(async (event) => {
     throw createError({
       statusCode: 400,
       statusMessage: 'Product ID is required',
-    });
+    })
   }
 
   try {
-    const bitrixUrl = config.bitrixWebhookUrl;
+    const bitrixUrl = config.bitrixWebhookUrl
     if (!bitrixUrl) {
-      throw createError({ statusCode: 500, statusMessage: 'Bitrix not configured' });
+      throw createError({ statusCode: 500, statusMessage: 'Bitrix not configured' })
     }
 
-    const formattedBitrixUrl = (bitrixUrl as string).endsWith('/') ? bitrixUrl : `${bitrixUrl}/`;
+    const formattedBitrixUrl = (bitrixUrl as string).endsWith('/') ? bitrixUrl : `${bitrixUrl}/`
 
     // Delete product from Bitrix
-    const deleteResponse = await $fetch<{ result: boolean }>(
-      `${formattedBitrixUrl}crm.product.delete`,
-      {
-        method: 'POST',
-        body: {
-          id: productId,
-        },
-      }
-    );
+    const deleteResponse = await $fetch<{ result: boolean }>(`${formattedBitrixUrl}crm.product.delete`, {
+      method: 'POST',
+      body: {
+        id: productId,
+      },
+    })
 
     if (!deleteResponse.result) {
-      throw new Error('Delete failed in Bitrix');
+      throw new Error('Delete failed in Bitrix')
     }
 
-    logger.info('DELETE', 'Product deleted successfully', { productId, productName });
+    logger.info('DELETE', 'Product deleted successfully', { productId, productName })
 
     return {
       success: true,
       message: `Product "${productName}" has been permanently deleted`,
       productId,
-    };
+    }
   } catch (error) {
-    logger.error('DELETE', 'Error deleting product', { error });
+    logger.error('DELETE', 'Error deleting product', { error })
     throw createError({
       statusCode: 500,
       statusMessage: error instanceof Error ? error.message : 'Failed to delete product',
-    });
+    })
   }
-});
+})

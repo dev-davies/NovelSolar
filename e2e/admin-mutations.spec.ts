@@ -41,7 +41,7 @@ test.describe('Admin mutation endpoints', () => {
     await page.locator('input[placeholder="john_admin"]').fill(createdUsername)
 
     const createResponse = page.waitForResponse(
-      (r) => r.url().endsWith('/api/admin/create-admin') && r.request().method() === 'POST'
+      (r) => r.url().endsWith('/api/admin/create-admin') && r.request().method() === 'POST',
     )
     await page.getByRole('button', { name: /create admin/i }).click()
     const response = await createResponse
@@ -66,7 +66,7 @@ test.describe('Admin mutation endpoints', () => {
     await page.locator('input[placeholder="john_admin"]').fill(createdUsername)
 
     const dupResponse = page.waitForResponse(
-      (r) => r.url().endsWith('/api/admin/create-admin') && r.request().method() === 'POST'
+      (r) => r.url().endsWith('/api/admin/create-admin') && r.request().method() === 'POST',
     )
     await page.getByRole('button', { name: /create admin/i }).click()
     const response = await dupResponse
@@ -83,7 +83,7 @@ test.describe('Admin mutation endpoints', () => {
     await row.getByRole('button', { name: /^Remove$/i }).click()
 
     const deleteResponse = page.waitForResponse(
-      (r) => r.url().endsWith('/api/admin/delete-admin') && r.request().method() === 'POST'
+      (r) => r.url().endsWith('/api/admin/delete-admin') && r.request().method() === 'POST',
     )
     await page.getByRole('button', { name: /yes, remove/i }).click()
     const response = await deleteResponse
@@ -104,7 +104,7 @@ test.describe('Admin mutation endpoints', () => {
     expect(selfId).toBeTruthy()
 
     const res = await page.request.post('/api/admin/delete-admin', {
-      data: { target_user_id: selfId }
+      data: { target_user_id: selfId },
     })
     expect(res.status()).toBe(400)
   })
@@ -118,7 +118,7 @@ test.describe('Admin mutation endpoints', () => {
     await page.locator('input[autocomplete="new-password"]').nth(1).fill('NewStrongPass123!')
 
     const response = page.waitForResponse(
-      (r) => r.url().endsWith('/api/admin/change-password') && r.request().method() === 'POST'
+      (r) => r.url().endsWith('/api/admin/change-password') && r.request().method() === 'POST',
     )
     await page.getByRole('button', { name: /update password|change password/i }).click()
     const res = await response
@@ -129,7 +129,7 @@ test.describe('Admin mutation endpoints', () => {
     await loginAsMaster(page)
     // Bypass the UI's client-side min-length check by calling the API directly
     const res = await page.request.post('/api/admin/change-password', {
-      data: { current_password: masterPassword, new_password: 'short' }
+      data: { current_password: masterPassword, new_password: 'short' },
     })
     expect(res.status()).toBe(400)
   })
@@ -139,13 +139,13 @@ test.describe('Admin mutation endpoints', () => {
     await loginAsMaster(page)
 
     const forwardRes = await page.request.post('/api/admin/change-password', {
-      data: { current_password: masterPassword, new_password: rotated }
+      data: { current_password: masterPassword, new_password: rotated },
     })
     expect(forwardRes.status()).toBe(200)
 
     // Roll back so the suite is idempotent
     const rollbackRes = await page.request.post('/api/admin/change-password', {
-      data: { current_password: rotated, new_password: masterPassword }
+      data: { current_password: rotated, new_password: masterPassword },
     })
     expect(rollbackRes.status()).toBe(200)
   })
@@ -154,21 +154,21 @@ test.describe('Admin mutation endpoints', () => {
 test.describe('Admin mutation endpoints — unauthenticated', () => {
   test('create-admin without session returns 401/403', async ({ request }) => {
     const res = await request.post('/api/admin/create-admin', {
-      data: { admin_email: 'x@y.co', admin_username: 'x' }
+      data: { admin_email: 'x@y.co', admin_username: 'x' },
     })
     expect([401, 403]).toContain(res.status())
   })
 
   test('delete-admin without session returns 401/403', async ({ request }) => {
     const res = await request.post('/api/admin/delete-admin', {
-      data: { target_user_id: '00000000-0000-0000-0000-000000000000' }
+      data: { target_user_id: '00000000-0000-0000-0000-000000000000' },
     })
     expect([401, 403]).toContain(res.status())
   })
 
   test('change-password without session returns 401/403', async ({ request }) => {
     const res = await request.post('/api/admin/change-password', {
-      data: { current_password: 'a', new_password: 'longenoughpassword' }
+      data: { current_password: 'a', new_password: 'longenoughpassword' },
     })
     expect([401, 403]).toContain(res.status())
   })

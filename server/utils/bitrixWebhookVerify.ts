@@ -14,12 +14,12 @@ import { logger } from './logger'
  */
 export function verifyBitrixApplicationToken(
   body: Record<string, unknown>,
-  expectedToken: string | undefined
+  expectedToken: string | undefined,
 ): { valid: boolean; reason?: string } {
   if (!expectedToken) {
     logger.warn(
       'Bitrix Webhook',
-      'BITRIX_APPLICATION_TOKEN not configured — skipping verification. Set it to enable defence-in-depth.'
+      'BITRIX_APPLICATION_TOKEN not configured — skipping verification. Set it to enable defence-in-depth.',
     )
     return { valid: true, reason: 'unconfigured' }
   }
@@ -27,9 +27,7 @@ export function verifyBitrixApplicationToken(
   // Bitrix may nest the token inside an `auth` object or send it flat
   const auth = body.auth as Record<string, unknown> | undefined
   const received =
-    (auth?.application_token as string | undefined) ??
-    (body.application_token as string | undefined) ??
-    ''
+    (auth?.application_token as string | undefined) ?? (body.application_token as string | undefined) ?? ''
 
   if (!received) {
     logger.warn('Bitrix Webhook', 'Request missing application_token')

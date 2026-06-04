@@ -1,11 +1,6 @@
 import { logger } from '../../../utils/logger'
 import { assertValidSlug, relativeFilePathForSlug } from '../../../utils/blogContent'
-import {
-  adminToCommitAuthor,
-  commitMessageFor,
-  deleteRemoteFile,
-  getRemoteFile,
-} from '../../../utils/blogGithub'
+import { adminToCommitAuthor, commitMessageFor, deleteRemoteFile, getRemoteFile } from '../../../utils/blogGithub'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody<{ slug?: string }>(event)
@@ -30,7 +25,7 @@ export default defineEventHandler(async (event) => {
   const deployHookUrl = process.env.VERCEL_DEPLOY_HOOK_URL
   if (deployHookUrl) {
     // Fire and forget - don't await so we don't block the UI
-    $fetch(deployHookUrl, { method: 'POST' }).catch(err => {
+    $fetch(deployHookUrl, { method: 'POST' }).catch((err) => {
       logger.error('Blog Delete', 'Failed to trigger Vercel deploy hook', { error: err })
     })
   }

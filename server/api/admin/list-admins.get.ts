@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
   if (!currentUserId) {
     throw createError({
       statusCode: 401,
-      statusMessage: 'Unauthorized.'
+      statusMessage: 'Unauthorized.',
     })
   }
 
@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
   if (currentAdminError || !currentAdmin?.is_master) {
     throw createError({
       statusCode: 403,
-      statusMessage: 'Only master admins can view admin accounts.'
+      statusMessage: 'Only master admins can view admin accounts.',
     })
   }
 
@@ -33,7 +33,7 @@ export default defineEventHandler(async (event) => {
   if (adminsError) {
     throw createError({
       statusCode: 500,
-      statusMessage: 'Failed to fetch admin list.'
+      statusMessage: 'Failed to fetch admin list.',
     })
   }
 
@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
   if (usersError) {
     throw createError({
       statusCode: 500,
-      statusMessage: 'Failed to fetch admin emails.'
+      statusMessage: 'Failed to fetch admin emails.',
     })
   }
 
@@ -50,7 +50,7 @@ export default defineEventHandler(async (event) => {
     const authUser = usersData.users.find((user) => user.id === admin.user_id)
     return {
       ...admin,
-      email: authUser?.email || 'unknown'
+      email: authUser?.email || 'unknown',
     }
   })
 
@@ -58,6 +58,6 @@ export default defineEventHandler(async (event) => {
     success: true,
     isMasterAdmin: true,
     currentUserId,
-    admins: adminsWithEmail
+    admins: adminsWithEmail,
   }
 })

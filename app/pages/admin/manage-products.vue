@@ -356,7 +356,7 @@ onUnmounted(() => {
                 class="w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:ring-4 focus:ring-purple-500/10 focus:border-purple-500 outline-none transition-all"
                 :disabled="isSearching"
                 @keyup.enter="() => performSearch(false)"
-              >
+              />
             </div>
             <button
               :disabled="isSearching"
@@ -390,7 +390,7 @@ onUnmounted(() => {
             >
               <div class="flex gap-4">
                 <div v-if="product.imageUrl" class="w-20 h-20 rounded-xl bg-slate-100 flex-shrink-0 overflow-hidden">
-                  <img loading="lazy" :src="product.imageUrl" :alt="product.name" class="w-full h-full object-cover" >
+                  <img loading="lazy" :src="product.imageUrl" :alt="product.name" class="w-full h-full object-cover" />
                 </div>
                 <div class="flex-1 min-w-0">
                   <h3 class="font-black text-slate-900 truncate hover:text-purple-600">{{ product.name }}</h3>
@@ -493,7 +493,7 @@ onUnmounted(() => {
                     type="text"
                     class="w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:ring-4 focus:ring-purple-500/10 focus:border-purple-500 outline-none transition-all"
                     :disabled="isSaving"
-                  >
+                  />
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
@@ -506,7 +506,7 @@ onUnmounted(() => {
                       type="number"
                       class="w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:ring-4 focus:ring-purple-500/10 focus:border-purple-500 outline-none transition-all"
                       :disabled="isSaving"
-                    >
+                    />
                   </div>
                   <div>
                     <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2"
@@ -518,7 +518,7 @@ onUnmounted(() => {
                       placeholder="Optional"
                       class="w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:ring-4 focus:ring-purple-500/10 focus:border-purple-500 outline-none transition-all"
                       :disabled="isSaving"
-                    >
+                    />
                   </div>
                 </div>
 
@@ -580,7 +580,7 @@ onUnmounted(() => {
                     class="hidden"
                     :disabled="isSaving"
                     @change="handleMainImageChange"
-                  >
+                  />
                 </label>
               </div>
 
@@ -596,7 +596,7 @@ onUnmounted(() => {
                         :src="currentMainImagePreview"
                         :alt="selectedProduct.name"
                         class="w-full h-full object-cover"
-                      >
+                      />
                     </div>
                     <div
                       v-else
@@ -616,7 +616,7 @@ onUnmounted(() => {
                           class="hidden"
                           :disabled="isSaving"
                           @change="handleMainImageChange"
-                        >
+                        />
                       </label>
                       <button
                         type="button"
@@ -646,7 +646,7 @@ onUnmounted(() => {
                         class="hidden"
                         :disabled="isSaving"
                         @change="handleGalleryUpload"
-                      >
+                      />
                     </label>
                   </div>
 
@@ -661,7 +661,7 @@ onUnmounted(() => {
                           :src="image.url"
                           :alt="`${selectedProduct.name} gallery image ${index + 1}`"
                           class="w-full h-full object-cover"
-                        >
+                        />
                         <button
                           type="button"
                           class="absolute top-2 right-2 h-8 w-8 rounded-full bg-black/65 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500"
@@ -712,14 +712,14 @@ onUnmounted(() => {
                     placeholder="Label"
                     class="w-1/3 px-4 py-3 rounded-xl border-2 border-slate-100 focus:ring-2 focus:ring-purple-500/20 outline-none text-sm"
                     :disabled="isSaving"
-                  >
+                  />
                   <input
                     v-model="spec.value"
                     type="text"
                     placeholder="Value"
                     class="flex-1 px-4 py-3 rounded-xl border-2 border-slate-100 focus:ring-2 focus:ring-purple-500/20 outline-none text-sm"
                     :disabled="isSaving"
-                  >
+                  />
                   <button
                     v-if="editForm.specs.length > 1"
                     type="button"
@@ -747,7 +747,7 @@ onUnmounted(() => {
                   :src="currentMainImagePreview"
                   :alt="selectedProduct.name"
                   class="w-full h-full object-cover"
-                >
+                />
               </div>
 
               <div class="space-y-4">

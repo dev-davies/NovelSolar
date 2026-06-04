@@ -7,8 +7,8 @@ describe('ErrorBoundary', () => {
   it('should render slot content when no error', () => {
     const wrapper = mount(ErrorBoundary, {
       slots: {
-        default: '<div>Content</div>'
-      }
+        default: '<div>Content</div>',
+      },
     })
 
     expect(wrapper.text()).toContain('Content')
@@ -20,13 +20,13 @@ describe('ErrorBoundary', () => {
       setup() {
         throw new Error('Boom')
       },
-      template: '<div />'
+      template: '<div />',
     }
 
     const wrapper = mount(ErrorBoundary, {
       slots: {
-        default: Thrower as never
-      }
+        default: Thrower as never,
+      },
     })
 
     await nextTick()
@@ -41,7 +41,7 @@ describe('ErrorBoundary', () => {
       setup() {
         throw new Error('Custom failure')
       },
-      template: '<div />'
+      template: '<div />',
     }
 
     const wrapper = mount(ErrorBoundary, {
@@ -49,8 +49,8 @@ describe('ErrorBoundary', () => {
         default: Thrower as never,
         fallback: `<template #fallback="{ error, clearError }">
           <div class="custom-fallback">{{ error.message }}</div>
-        </template>`
-      }
+        </template>`,
+      },
     })
 
     await nextTick()
@@ -64,13 +64,13 @@ describe('ErrorBoundary', () => {
       setup() {
         throw new Error('Test error')
       },
-      template: '<div />'
+      template: '<div />',
     }
 
     const wrapper = mount(ErrorBoundary, {
       slots: {
-        default: Thrower as never
-      }
+        default: Thrower as never,
+      },
     })
 
     await nextTick()

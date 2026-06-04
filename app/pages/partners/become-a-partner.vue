@@ -2,8 +2,10 @@
   <div class="min-h-screen bg-slate-50">
     <section class="bg-[#002888] py-16 md:py-24 relative overflow-hidden">
       <div class="absolute inset-0 opacity-10 pointer-events-none">
-        <div class="absolute top-0 left-0 w-72 h-72 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl"/>
-        <div class="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2 blur-3xl"/>
+        <div class="absolute top-0 left-0 w-72 h-72 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
+        <div
+          class="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2 blur-3xl"
+        />
       </div>
 
       <div class="max-w-7xl mx-auto px-4 relative z-10">
@@ -20,7 +22,8 @@
             Build the Next Energy Network With Us
           </h1>
           <p class="text-lg md:text-xl text-blue-100 font-medium leading-relaxed max-w-2xl">
-            Apply to join the Novel Solar partner ecosystem and unlock regional distribution, project collaboration, and go-to-market support.
+            Apply to join the Novel Solar partner ecosystem and unlock regional distribution, project collaboration, and
+            go-to-market support.
           </p>
         </div>
       </div>
@@ -41,9 +44,7 @@
       <div class="bg-white border border-slate-100 rounded-3xl shadow-xl shadow-slate-200/40 overflow-hidden">
         <div class="p-8 md:p-10 border-b border-slate-100">
           <h2 class="text-3xl font-black text-slate-900 tracking-tight mb-2">Partner Application</h2>
-          <p class="text-slate-500 font-medium">
-            Share your company profile and our partnerships team will reach out.
-          </p>
+          <p class="text-slate-500 font-medium">Share your company profile and our partnerships team will reach out.</p>
         </div>
 
         <div class="p-8 md:p-10">
@@ -54,7 +55,10 @@
             </p>
           </div>
 
-          <div v-if="errorMessage" class="bg-red-50 border border-red-100 rounded-2xl p-4 mb-8 text-red-700 font-semibold">
+          <div
+            v-if="errorMessage"
+            class="bg-red-50 border border-red-100 rounded-2xl p-4 mb-8 text-red-700 font-semibold"
+          >
             {{ errorMessage }}
           </div>
 
@@ -66,7 +70,7 @@
                 type="text"
                 required
                 class="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-[#002888] focus:ring-4 focus:ring-blue-100 outline-none transition-all"
-              >
+              />
             </div>
 
             <div class="space-y-2">
@@ -76,7 +80,7 @@
                 type="text"
                 required
                 class="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-[#002888] focus:ring-4 focus:ring-blue-100 outline-none transition-all"
-              >
+              />
             </div>
 
             <div class="space-y-2">
@@ -86,7 +90,7 @@
                 type="email"
                 required
                 class="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-[#002888] focus:ring-4 focus:ring-blue-100 outline-none transition-all"
-              >
+              />
             </div>
 
             <div class="space-y-2">
@@ -96,7 +100,7 @@
                 type="tel"
                 required
                 class="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-[#002888] focus:ring-4 focus:ring-blue-100 outline-none transition-all"
-              >
+              />
             </div>
 
             <div class="space-y-2 md:col-span-2">
@@ -114,13 +118,15 @@
             </div>
 
             <div class="space-y-2 md:col-span-2">
-              <label class="text-xs font-black text-slate-400 uppercase tracking-widest">Company Website (Optional)</label>
+              <label class="text-xs font-black text-slate-400 uppercase tracking-widest"
+                >Company Website (Optional)</label
+              >
               <input
                 v-model="form.website"
                 type="url"
                 placeholder="https://"
                 class="w-full px-4 py-3 rounded-xl border-2 border-slate-100 focus:border-[#002888] focus:ring-4 focus:ring-blue-100 outline-none transition-all"
-              >
+              />
             </div>
 
             <div class="space-y-2 md:col-span-2">

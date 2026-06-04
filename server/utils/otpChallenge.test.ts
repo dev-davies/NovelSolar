@@ -3,7 +3,7 @@ import { createOtpChallengeToken, createOtpCodeHash, parseOtpChallengeToken } fr
 
 describe('otpChallenge', () => {
   const secret = 'test-secret-key'
-  
+
   describe('createOtpCodeHash', () => {
     it('generates consistent hash for same input', () => {
       const hash1 = createOtpCodeHash('test@example.com', '123456', secret)
@@ -29,7 +29,7 @@ describe('otpChallenge', () => {
       const payload = {
         email: 'test@example.com',
         codeHash: 'hash123',
-        expiresAt: Date.now() + 3600000
+        expiresAt: Date.now() + 3600000,
       }
       const token = createOtpChallengeToken(payload, secret)
       expect(token).toContain('.')
@@ -42,11 +42,11 @@ describe('otpChallenge', () => {
       const payload = {
         email: 'test@example.com',
         codeHash: 'hash123',
-        expiresAt: Date.now() + 3600000
+        expiresAt: Date.now() + 3600000,
       }
       const token = createOtpChallengeToken(payload, secret)
       const parsed = parseOtpChallengeToken(token, secret)
-      
+
       expect(parsed).not.toBeNull()
       expect(parsed?.email).toBe('test@example.com')
       expect(parsed?.codeHash).toBe('hash123')
@@ -66,7 +66,7 @@ describe('otpChallenge', () => {
       const payload = {
         email: 'test@example.com',
         codeHash: 'hash123',
-        expiresAt: Date.now() + 3600000
+        expiresAt: Date.now() + 3600000,
       }
       const token = createOtpChallengeToken(payload, secret)
       const parsed = parseOtpChallengeToken(token, 'wrong-secret')

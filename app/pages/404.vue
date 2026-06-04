@@ -18,7 +18,7 @@ const quickLinks = [
   { label: 'Shop Products', to: '/products' },
   { label: 'Solar Calculator', to: '/calculator' },
   { label: 'Get a Quote', to: '/quote' },
-  { label: 'About Us', to: '/about' }
+  { label: 'About Us', to: '/about' },
 ]
 
 const goBack = () => {
@@ -35,8 +35,10 @@ const handleSearch = (query: string) => {
 
 useSeoMeta({
   title: 'Page Not Found - 404',
-  description: 'The page you are looking for does not exist. Browse our solar products or use our calculator to find what you need.',
+  description:
+    'The page you are looking for does not exist. Browse our solar products or use our calculator to find what you need.',
   ogTitle: 'Page Not Found - 404 | Novel Solar',
-  ogDescription: 'The page you are looking for does not exist. Browse our solar products or use our calculator to find what you need.'
+  ogDescription:
+    'The page you are looking for does not exist. Browse our solar products or use our calculator to find what you need.',
 })
 </script>

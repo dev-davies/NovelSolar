@@ -7,12 +7,12 @@ const error = ref('')
 const syncSession = async () => {
   if (isSyncing.value) return
   isSyncing.value = true
-  
+
   try {
     const response = await useNuxtApp().$apiFetch('/api/auth/session', {
-      method: 'POST'
+      method: 'POST',
     })
-    
+
     if (response.success) {
       return navigateTo('/account')
     }
@@ -27,11 +27,15 @@ const syncSession = async () => {
 }
 
 // Watch for the Supabase module to finish the token exchange and populate the user
-watch(user, () => {
-  if (user.value) {
-    syncSession()
-  }
-}, { immediate: true })
+watch(
+  user,
+  () => {
+    if (user.value) {
+      syncSession()
+    }
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
@@ -41,12 +45,15 @@ watch(user, () => {
       <h1 class="text-xl font-bold text-slate-900 mb-2">Verifying Secure Login...</h1>
       <p class="text-slate-500 text-center max-w-sm">Please wait a moment while we synchronize your CRM profile.</p>
     </div>
-    
+
     <div v-else class="text-center animate-in fade-in duration-500">
       <span class="material-symbols-outlined text-4xl text-[#a9001d] mb-4">error</span>
       <h1 class="text-xl font-bold text-slate-900 mb-2">Sync Notice</h1>
       <p class="text-slate-500 text-center max-w-sm mb-6">{{ error }}</p>
-      <NuxtLink to="/account" class="inline-flex items-center gap-2 bg-[#3c59b0] text-white px-6 py-3 rounded-xl font-bold uppercase tracking-wider text-xs">
+      <NuxtLink
+        to="/account"
+        class="inline-flex items-center gap-2 bg-[#3c59b0] text-white px-6 py-3 rounded-xl font-bold uppercase tracking-wider text-xs"
+      >
         Go to dashboard
       </NuxtLink>
     </div>
@@ -55,6 +62,10 @@ watch(user, () => {
 
 <style scoped>
 .material-symbols-outlined {
-  font-variation-settings: 'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 24;
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 600,
+    'GRAD' 0,
+    'opsz' 24;
 }
 </style>

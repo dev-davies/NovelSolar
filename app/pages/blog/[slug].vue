@@ -2,7 +2,9 @@
   <div class="min-h-screen bg-white font-sans selection:bg-[#002888]/10">
     <div class="max-w-7xl mx-auto px-4 py-8">
       <NuxtLink to="/blog" class="inline-flex items-center text-[#002888] font-bold text-sm hover:underline group">
-        <span class="material-symbols-outlined text-sm mr-2 transform group-hover:-translate-x-1 transition-all">arrow_back</span>
+        <span class="material-symbols-outlined text-sm mr-2 transform group-hover:-translate-x-1 transition-all"
+          >arrow_back</span
+        >
         Back to Blog Hub
       </NuxtLink>
     </div>
@@ -10,7 +12,11 @@
     <article v-if="post" class="max-w-4xl mx-auto px-4 pb-24">
       <header class="text-center mb-14">
         <div class="flex items-center justify-center gap-3 mb-5">
-          <span v-if="post.category" class="bg-blue-50 text-[#002888] text-xs font-black px-3 py-1 rounded-md uppercase tracking-widest">{{ post.category }}</span>
+          <span
+            v-if="post.category"
+            class="bg-blue-50 text-[#002888] text-xs font-black px-3 py-1 rounded-md uppercase tracking-widest"
+            >{{ post.category }}</span
+          >
           <span class="text-slate-300">•</span>
           <p class="text-sm text-slate-500 font-medium">{{ formatDate(post.date) }}</p>
         </div>
@@ -48,7 +54,9 @@
         />
       </div>
 
-      <div class="prose prose-slate lg:prose-xl max-w-none prose-headings:font-black prose-a:text-[#002888] prose-a:font-bold">
+      <div
+        class="prose prose-slate lg:prose-xl max-w-none prose-headings:font-black prose-a:text-[#002888] prose-a:font-bold"
+      >
         <ContentRenderer :value="post" />
       </div>
     </article>
@@ -56,7 +64,10 @@
     <div v-else class="min-h-[60vh] flex flex-col items-center justify-center p-8 text-center">
       <h1 class="text-4xl md:text-5xl font-black text-slate-900 mb-4">Insight Not Found</h1>
       <p class="text-slate-500 mb-8">The article you are looking for does not exist.</p>
-      <NuxtLink to="/blog" class="inline-flex items-center gap-2 bg-[#002888] text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-900 transition-all">
+      <NuxtLink
+        to="/blog"
+        class="inline-flex items-center gap-2 bg-[#002888] text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-900 transition-all"
+      >
         Back to Blog
       </NuxtLink>
     </div>
@@ -88,7 +99,7 @@ const { data: post } = await useAsyncData(
       .findOne()
     return doc || null
   },
-  { watch: [slug] }
+  { watch: [slug] },
 )
 
 const toAbsoluteImage = (path) => {
@@ -102,17 +113,17 @@ const formatDate = (dateString) => {
   return new Intl.DateTimeFormat('en-US', {
     month: 'long',
     day: 'numeric',
-    year: 'numeric'
+    year: 'numeric',
   }).format(new Date(dateString))
 }
 
 useSeoMeta({
-  title: () => post.value?.title ? `${post.value.title} | Novel Solar Insights` : 'Novel Solar Insights',
+  title: () => (post.value?.title ? `${post.value.title} | Novel Solar Insights` : 'Novel Solar Insights'),
   description: () => post.value?.description || defaultDescription,
   ogTitle: () => post.value?.title || 'Novel Solar Insights',
   ogDescription: () => post.value?.description || defaultDescription,
   ogImage: () => toAbsoluteImage(post.value?.image),
   ogUrl: () => `${siteBaseUrl}${route.path}`,
-  twitterCard: 'summary_large_image'
+  twitterCard: 'summary_large_image',
 })
 </script>

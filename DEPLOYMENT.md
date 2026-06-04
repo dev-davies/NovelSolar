@@ -7,6 +7,7 @@ This guide details the steps required to deploy the NovelSolar application (a Nu
 ## 1. Prerequisites
 
 Before scaling to production, you will need active accounts and API access configuration for:
+
 1. **Bitrix24 CRM**: For leads, quotes, and product inventory integration.
 2. **Supabase**: For PostgreSQL database and administrative Authentication mapping.
 3. **Cloudinary**: For high-performance asset uploading from the admin dashboard.
@@ -29,7 +30,7 @@ Because NovelSolar leans heavily into Nuxt Native Nitro Engine capabilities (suc
    - **Build Command:** `npm run build`
    - **Install Command:** `npm install`
 3. **Environment Generation:**
-   Inside the project settings -> Environment Variables tab, meticulously transpose every variable listed in your local project's `.env.example` file. 
+   Inside the project settings -> Environment Variables tab, meticulously transpose every variable listed in your local project's `.env.example` file.
 4. **Link Vercel KV:**
    - From the Vercel Dashboard, go to your project's **Storage** tab.
    - Create a new **Vercel KV** database.
@@ -43,15 +44,18 @@ Because NovelSolar leans heavily into Nuxt Native Nitro Engine capabilities (suc
 If deploying to a self-managed server (e.g. Ubuntu VPS via Digital Ocean), you must run the server manually.
 
 ### Build Step
+
 ```bash
 npm install
 npm run build
 ```
 
-This commands Nuxt to emit a native lightweight `.output/server/index.mjs` entry point. 
+This commands Nuxt to emit a native lightweight `.output/server/index.mjs` entry point.
 
 ### Server Execution
+
 We highly advise using `pm2` to persistently map the entry point.
+
 ```bash
 # Export env variables explicitly, or pass an env file
 export NUXT_PORT=3000
@@ -66,5 +70,5 @@ pm2 start .output/server/index.mjs --name "NovelSolar-App"
 ## 4. Post-Deployment Optimization Cheatsheet
 
 1. **Verify Cloudinary Whitelist**: Make sure your Cloudinary environment accepts CORS uploads originating from your new Production Domain perfectly.
-2. **Setup Bitrix Outbound Access**: Verify your Bitrix domain hasn't changed IP filtering policies and can effectively receive Webhook calls from the production Vercel Edge. 
+2. **Setup Bitrix Outbound Access**: Verify your Bitrix domain hasn't changed IP filtering policies and can effectively receive Webhook calls from the production Vercel Edge.
 3. **Service Worker (SW)**: Due to our robust client-side Offline Service worker `sw.js`, anytime you deploy updates, recommend users to force refresh (`CTRL/CMD + SHIFT + R`) to purge the cache-first images if designs suddenly fragment.

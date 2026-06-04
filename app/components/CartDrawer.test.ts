@@ -9,8 +9,8 @@ vi.mock('~/composables/useCart', () => ({
     toggleCart: vi.fn(),
     removeFromCart: vi.fn(),
     updateQuantity: vi.fn(),
-    cartTotalAmount: vi.fn()
-  })
+    cartTotalAmount: vi.fn(),
+  }),
 }))
 
 // Simplified CartDrawer for testing
@@ -59,38 +59,38 @@ const TestCartDrawer = {
       isCartOpen: true,
       cart: [
         { id: '1', name: 'Solar Panel 300W', price: 50000, quantity: 2 },
-        { id: '2', name: 'Inverter 5KVA', price: 150000, quantity: 1 }
-      ]
+        { id: '2', name: 'Inverter 5KVA', price: 150000, quantity: 1 },
+      ],
     }
   },
   computed: {
     cartTotalAmount() {
-      return this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-    }
+      return this.cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
+    },
   },
   methods: {
     toggleCart() {
       this.isCartOpen = !this.isCartOpen
     },
     removeFromCart(id) {
-      this.cart = this.cart.filter(item => item.id !== id)
+      this.cart = this.cart.filter((item) => item.id !== id)
     },
     updateQuantity(id, delta) {
-      const item = this.cart.find(i => i.id === id)
+      const item = this.cart.find((i) => i.id === id)
       if (item) {
         const newQty = item.quantity + delta
         if (newQty > 0) {
           item.quantity = newQty
         }
       }
-    }
-  }
+    },
+  },
 }
 
 describe('CartDrawer', () => {
   it('displays cart items', () => {
     const wrapper = mount(TestCartDrawer)
-    
+
     expect(wrapper.text()).toContain('Solar Panel 300W')
     expect(wrapper.text()).toContain('Inverter 5KVA')
   })
@@ -99,51 +99,51 @@ describe('CartDrawer', () => {
     const wrapper = mount(TestCartDrawer, {
       data() {
         return {
-          cart: []
+          cart: [],
         }
-      }
+      },
     })
-    
+
     expect(wrapper.text()).toContain('Your cart is empty')
   })
 
   it('displays cart item count badge', () => {
     const wrapper = mount(TestCartDrawer)
-    
+
     expect(wrapper.text()).toContain('2')
   })
 
   it('calculates cart total correctly', () => {
     const wrapper = mount(TestCartDrawer)
-    
+
     // 2 * 50000 + 1 * 150000 = 100000 + 150000 = 250000
     expect(wrapper.vm.cartTotalAmount).toBe(250000)
   })
 
   it('removes item from cart', () => {
     const wrapper = mount(TestCartDrawer)
-    
+
     wrapper.vm.removeFromCart('1')
-    
+
     expect(wrapper.vm.cart.length).toBe(1)
     expect(wrapper.vm.cart[0].name).toBe('Inverter 5KVA')
   })
 
   it('increases item quantity', () => {
     const wrapper = mount(TestCartDrawer)
-    
+
     wrapper.vm.updateQuantity('1', 1)
-    
-    const item = wrapper.vm.cart.find(i => i.id === '1')
+
+    const item = wrapper.vm.cart.find((i) => i.id === '1')
     expect(item.quantity).toBe(3)
   })
 
   it('decreases item quantity', () => {
     const wrapper = mount(TestCartDrawer)
-    
+
     wrapper.vm.updateQuantity('1', -1)
-    
-    const item = wrapper.vm.cart.find(i => i.id === '1')
+
+    const item = wrapper.vm.cart.find((i) => i.id === '1')
     expect(item.quantity).toBe(1)
   })
 
@@ -151,41 +151,39 @@ describe('CartDrawer', () => {
     const wrapper = mount(TestCartDrawer, {
       data() {
         return {
-          cart: [
-            { id: '1', name: 'Solar Panel 300W', price: 50000, quantity: 1 }
-          ]
+          cart: [{ id: '1', name: 'Solar Panel 300W', price: 50000, quantity: 1 }],
         }
-      }
+      },
     })
-    
+
     wrapper.vm.updateQuantity('1', -1)
-    
-    const item = wrapper.vm.cart.find(i => i.id === '1')
+
+    const item = wrapper.vm.cart.find((i) => i.id === '1')
     expect(item.quantity).toBe(1)
   })
 
   it('updates total when quantity changes', () => {
     const wrapper = mount(TestCartDrawer)
-    
+
     wrapper.vm.updateQuantity('1', 1)
-    
+
     // 3 * 50000 + 1 * 150000 = 150000 + 150000 = 300000
     expect(wrapper.vm.cartTotalAmount).toBe(300000)
   })
 
   it('toggles cart open/close', () => {
     const wrapper = mount(TestCartDrawer)
-    
+
     expect(wrapper.vm.isCartOpen).toBe(true)
-    
+
     wrapper.vm.toggleCart()
-    
+
     expect(wrapper.vm.isCartOpen).toBe(false)
   })
 
   it('displays formatted price', () => {
     const wrapper = mount(TestCartDrawer)
-    
+
     expect(wrapper.text()).toContain('50,000')
     expect(wrapper.text()).toContain('150,000')
   })

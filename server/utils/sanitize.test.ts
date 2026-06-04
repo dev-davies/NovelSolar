@@ -52,9 +52,7 @@ describe('isValidEmail', () => {
 
 describe('sanitizePayload', () => {
   it('escapes HTML in strings', () => {
-    expect(sanitizePayload('<script>alert("xss")</script>')).toBe(
-      '&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;'
-    )
+    expect(sanitizePayload('<script>alert("xss")</script>')).toBe('&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;')
   })
 
   it('recursively sanitizes objects', () => {

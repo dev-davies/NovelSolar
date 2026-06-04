@@ -58,66 +58,88 @@ const isActive = (name: string, attrs?: Record<string, unknown>) => {
 </script>
 
 <template>
-  <div class="border-2 border-slate-100 rounded-2xl bg-white overflow-hidden focus-within:border-purple-500 focus-within:ring-4 focus-within:ring-purple-500/10 transition-all">
+  <div
+    class="border-2 border-slate-100 rounded-2xl bg-white overflow-hidden focus-within:border-purple-500 focus-within:ring-4 focus-within:ring-purple-500/10 transition-all"
+  >
     <div class="flex flex-wrap gap-1 border-b border-slate-100 bg-slate-50/60 px-3 py-2 text-xs font-semibold">
       <button
         type="button"
         class="px-2 py-1 rounded hover:bg-white transition"
         :class="isActive('heading', { level: 2 }) ? 'bg-white text-purple-700' : 'text-slate-600'"
-        @click="exec(c => c.toggleHeading({ level: 2 }))"
-      >H2</button>
+        @click="exec((c) => c.toggleHeading({ level: 2 }))"
+      >
+        H2
+      </button>
       <button
         type="button"
         class="px-2 py-1 rounded hover:bg-white transition"
         :class="isActive('heading', { level: 3 }) ? 'bg-white text-purple-700' : 'text-slate-600'"
-        @click="exec(c => c.toggleHeading({ level: 3 }))"
-      >H3</button>
+        @click="exec((c) => c.toggleHeading({ level: 3 }))"
+      >
+        H3
+      </button>
       <button
         type="button"
         class="px-2 py-1 rounded hover:bg-white transition"
         :class="isActive('bold') ? 'bg-white text-purple-700' : 'text-slate-600'"
-        @click="exec(c => c.toggleBold())"
-      >Bold</button>
+        @click="exec((c) => c.toggleBold())"
+      >
+        Bold
+      </button>
       <button
         type="button"
         class="px-2 py-1 rounded hover:bg-white transition"
         :class="isActive('italic') ? 'bg-white text-purple-700' : 'text-slate-600'"
-        @click="exec(c => c.toggleItalic())"
-      >Italic</button>
+        @click="exec((c) => c.toggleItalic())"
+      >
+        Italic
+      </button>
       <button
         type="button"
         class="px-2 py-1 rounded hover:bg-white transition"
         :class="isActive('bulletList') ? 'bg-white text-purple-700' : 'text-slate-600'"
-        @click="exec(c => c.toggleBulletList())"
-      >• List</button>
+        @click="exec((c) => c.toggleBulletList())"
+      >
+        • List
+      </button>
       <button
         type="button"
         class="px-2 py-1 rounded hover:bg-white transition"
         :class="isActive('orderedList') ? 'bg-white text-purple-700' : 'text-slate-600'"
-        @click="exec(c => c.toggleOrderedList())"
-      >1. List</button>
+        @click="exec((c) => c.toggleOrderedList())"
+      >
+        1. List
+      </button>
       <button
         type="button"
         class="px-2 py-1 rounded hover:bg-white transition"
         :class="isActive('blockquote') ? 'bg-white text-purple-700' : 'text-slate-600'"
-        @click="exec(c => c.toggleBlockquote())"
-      >Quote</button>
+        @click="exec((c) => c.toggleBlockquote())"
+      >
+        Quote
+      </button>
       <button
         type="button"
         class="px-2 py-1 rounded hover:bg-white transition"
         :class="isActive('codeBlock') ? 'bg-white text-purple-700' : 'text-slate-600'"
-        @click="exec(c => c.toggleCodeBlock())"
-      >Code</button>
+        @click="exec((c) => c.toggleCodeBlock())"
+      >
+        Code
+      </button>
       <button
         type="button"
         class="px-2 py-1 rounded hover:bg-white transition text-slate-600"
-        @click="exec(c => c.undo())"
-      >Undo</button>
+        @click="exec((c) => c.undo())"
+      >
+        Undo
+      </button>
       <button
         type="button"
         class="px-2 py-1 rounded hover:bg-white transition text-slate-600"
-        @click="exec(c => c.redo())"
-      >Redo</button>
+        @click="exec((c) => c.redo())"
+      >
+        Redo
+      </button>
     </div>
     <EditorContent :editor="editor" />
   </div>

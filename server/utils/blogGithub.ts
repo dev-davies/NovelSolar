@@ -63,7 +63,7 @@ async function ghFetch<T = any>(url: string, init: any, cfg: GithubConfig): Prom
   }
 }
 
-export async function getRemoteFile(filePath: string): Promise<{ sha: string, content: string } | null> {
+export async function getRemoteFile(filePath: string): Promise<{ sha: string; content: string } | null> {
   const cfg = getBlogGithubConfig()
   try {
     const data = await ghFetch<ContentsApiResponse>(
@@ -72,9 +72,8 @@ export async function getRemoteFile(filePath: string): Promise<{ sha: string, co
       cfg,
     )
     if (!data?.sha) return null
-    const decoded = data.content && data.encoding === 'base64'
-      ? Buffer.from(data.content, 'base64').toString('utf8')
-      : ''
+    const decoded =
+      data.content && data.encoding === 'base64' ? Buffer.from(data.content, 'base64').toString('utf8') : ''
     return { sha: data.sha, content: decoded }
   } catch (err: any) {
     if (err?.statusCode === 404) return null
@@ -88,7 +87,7 @@ export async function putRemoteFile(params: {
   message: string
   author: CommitAuthor
   sha?: string
-}): Promise<{ sha: string, commitSha: string }> {
+}): Promise<{ sha: string; commitSha: string }> {
   const cfg = getBlogGithubConfig()
   const body: Record<string, unknown> = {
     message: params.message,
@@ -99,7 +98,7 @@ export async function putRemoteFile(params: {
   }
   if (params.sha) body.sha = params.sha
 
-  const result = await ghFetch<{ content: { sha: string }, commit: { sha: string } }>(
+  const result = await ghFetch<{ content: { sha: string }; commit: { sha: string } }>(
     contentsUrl(cfg, params.filePath),
     { method: 'PUT', body },
     cfg,
@@ -135,7 +134,7 @@ export function commitMessageFor(action: 'publish' | 'update' | 'delete', slug: 
   return `blog: ${action} ${slug}`
 }
 
-export function adminToCommitAuthor(admin: { email?: string, user_id?: string } | undefined): CommitAuthor {
+export function adminToCommitAuthor(admin: { email?: string; user_id?: string } | undefined): CommitAuthor {
   const email = admin?.email?.trim() || 'blog@novelsolar.com'
   const name = admin?.email?.split('@')[0] || admin?.user_id || 'NovelSolar Admin'
   return { name, email }

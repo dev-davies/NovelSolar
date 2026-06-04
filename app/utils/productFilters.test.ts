@@ -80,7 +80,7 @@ describe('productFilters', () => {
         { NAME: 'Solar Panel 300W' },
         { name: 'Installation Service' },
         { NAME: 'Inverter 5KVA' },
-        { name: 'Repair Service' }
+        { name: 'Repair Service' },
       ]
       const result = excludeServiceProducts(products)
       expect(result).toHaveLength(2)
@@ -89,21 +89,13 @@ describe('productFilters', () => {
     })
 
     it('keeps all products when none are services', () => {
-      const products = [
-        { NAME: 'Solar Panel 300W' },
-        { name: 'Inverter 5KVA' },
-        { NAME: 'Battery 200Ah' }
-      ]
+      const products = [{ NAME: 'Solar Panel 300W' }, { name: 'Inverter 5KVA' }, { NAME: 'Battery 200Ah' }]
       const result = excludeServiceProducts(products)
       expect(result).toHaveLength(3)
     })
 
     it('removes all service products', () => {
-      const products = [
-        { name: 'Installation' },
-        { NAME: 'Maintenance' },
-        { name: 'Audit' }
-      ]
+      const products = [{ name: 'Installation' }, { NAME: 'Maintenance' }, { name: 'Audit' }]
       const result = excludeServiceProducts(products)
       expect(result).toHaveLength(0)
     })
@@ -114,7 +106,7 @@ describe('productFilters', () => {
         { name: 'Installation' },
         { NAME: 'Inverter' },
         { name: 'Repair' },
-        { NAME: 'Battery' }
+        { NAME: 'Battery' },
       ]
       const result = excludeServiceProducts(products)
       expect(result[0].NAME).toBe('Panel')

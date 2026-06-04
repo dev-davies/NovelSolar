@@ -1,12 +1,8 @@
 import { describe, it, expect, vi } from 'vitest'
 
-import {
-  isValidSlug,
-  parseMarkdownFile,
-  serializePost,
-} from './blogContent'
+import { isValidSlug, parseMarkdownFile, serializePost } from './blogContent'
 
-vi.stubGlobal('createError', (opts: { statusCode: number, statusMessage: string }) => {
+vi.stubGlobal('createError', (opts: { statusCode: number; statusMessage: string }) => {
   const err = new Error(opts.statusMessage) as any
   err.statusCode = opts.statusCode
   return err

@@ -101,7 +101,7 @@ const editPost = async (slug: string) => {
   isLoading.value = true
   previewMode.value = false
   try {
-    const res = await $fetch<{ post: { slug: string, frontmatter: any, body: string } }>(`/api/admin/blog/${slug}`)
+    const res = await $fetch<{ post: { slug: string; frontmatter: any; body: string } }>(`/api/admin/blog/${slug}`)
     const fm = res.post.frontmatter
     form.value = {
       slug: res.post.slug,
@@ -164,7 +164,7 @@ const savePost = async () => {
 
   isSaving.value = true
   try {
-    const res = await $fetch<{ slug: string, action: string, message: string }>('/api/admin/blog/save', {
+    const res = await $fetch<{ slug: string; action: string; message: string }>('/api/admin/blog/save', {
       method: 'POST',
       body: {
         slug: form.value.slug,
@@ -181,12 +181,7 @@ const savePost = async () => {
       },
     })
     originalSlug.value = res.slug
-    addToast(
-      res.action === 'publish' ? 'Post published' : 'Post updated',
-      res.message,
-      'success',
-      8000,
-    )
+    addToast(res.action === 'publish' ? 'Post published' : 'Post updated', res.message, 'success', 8000)
     await loadPosts()
   } catch (err: any) {
     addToast('Save failed', err?.statusMessage || err?.message || 'Could not save post.', 'error')
@@ -202,8 +197,12 @@ const togglePublish = async () => {
   }
 }
 
-const requestDelete = () => { showDeleteConfirm.value = true }
-const cancelDelete = () => { showDeleteConfirm.value = false }
+const requestDelete = () => {
+  showDeleteConfirm.value = true
+}
+const cancelDelete = () => {
+  showDeleteConfirm.value = false
+}
 
 const confirmDelete = async () => {
   if (!originalSlug.value) return
@@ -244,14 +243,22 @@ await loadPosts()
       <div class="max-w-7xl mx-auto px-6 py-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 class="text-2xl font-black text-slate-900 tracking-tight">Blog Manager</h1>
-          <p class="text-sm text-slate-500 mt-1">Create, edit, and publish posts. Changes are committed to GitHub and become live after the next deployment.</p>
+          <p class="text-sm text-slate-500 mt-1">
+            Create, edit, and publish posts. Changes are committed to GitHub and become live after the next deployment.
+          </p>
         </div>
         <div class="flex items-center gap-2">
-          <NuxtLink to="/admin/manage-products" class="px-4 py-2 bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all shadow-sm">
+          <NuxtLink
+            to="/admin/manage-products"
+            class="px-4 py-2 bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all shadow-sm"
+          >
             <span class="material-symbols-outlined text-sm">inventory_2</span>
             Manage Products
           </NuxtLink>
-          <NuxtLink to="/admin/add-product" class="px-4 py-2 bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all shadow-sm">
+          <NuxtLink
+            to="/admin/add-product"
+            class="px-4 py-2 bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all shadow-sm"
+          >
             <span class="material-symbols-outlined text-sm">add_box</span>
             Add Product
           </NuxtLink>
@@ -280,7 +287,9 @@ await loadPosts()
             <button
               type="button"
               class="w-full text-left px-3 py-3 rounded-xl border transition-all"
-              :class="originalSlug === p.slug ? 'border-purple-300 bg-purple-50/60' : 'border-slate-100 hover:bg-slate-50'"
+              :class="
+                originalSlug === p.slug ? 'border-purple-300 bg-purple-50/60' : 'border-slate-100 hover:bg-slate-50'
+              "
               @click="editPost(p.slug)"
             >
               <div class="flex items-center justify-between gap-2">
@@ -288,9 +297,12 @@ await loadPosts()
                 <span
                   v-if="p.draft"
                   class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded bg-amber-100 text-amber-700"
-                >Draft</span>
+                  >Draft</span
+                >
               </div>
-              <div class="text-xs text-slate-500 mt-1">{{ formatDate(p.date) }}{{ p.category ? ' • ' + p.category : '' }}</div>
+              <div class="text-xs text-slate-500 mt-1">
+                {{ formatDate(p.date) }}{{ p.category ? ' • ' + p.category : '' }}
+              </div>
             </button>
           </li>
         </ul>
@@ -301,13 +313,19 @@ await loadPosts()
           <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
             <div>
               <h2 class="text-lg font-black text-slate-900">{{ isEditing ? 'Edit Post' : 'New Post' }}</h2>
-              <p v-if="isEditing" class="text-xs text-slate-500 mt-1">Editing <code class="text-slate-700">{{ originalSlug }}</code></p>
+              <p v-if="isEditing" class="text-xs text-slate-500 mt-1">
+                Editing <code class="text-slate-700">{{ originalSlug }}</code>
+              </p>
             </div>
             <div class="flex items-center gap-2">
               <button
                 type="button"
                 class="px-3 py-2 rounded-xl text-xs font-bold border transition-all"
-                :class="previewMode ? 'border-purple-300 bg-purple-50 text-purple-800' : 'border-slate-200 text-slate-600 hover:bg-slate-50'"
+                :class="
+                  previewMode
+                    ? 'border-purple-300 bg-purple-50 text-purple-800'
+                    : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                "
                 @click="previewMode = !previewMode"
               >
                 <span class="material-symbols-outlined text-sm align-middle">visibility</span>
@@ -326,7 +344,11 @@ await loadPosts()
               <button
                 type="button"
                 class="px-4 py-2 rounded-xl text-xs font-bold border transition-all"
-                :class="form.draft ? 'border-amber-200 bg-amber-50 text-amber-800 hover:bg-amber-100' : 'border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100'"
+                :class="
+                  form.draft
+                    ? 'border-amber-200 bg-amber-50 text-amber-800 hover:bg-amber-100'
+                    : 'border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
+                "
                 :disabled="isSaving"
                 @click="togglePublish"
               >
@@ -339,7 +361,7 @@ await loadPosts()
                 @click="savePost"
               >
                 <span class="material-symbols-outlined text-sm align-middle">save</span>
-                {{ isSaving ? 'Saving…' : (isEditing ? 'Save changes' : 'Publish') }}
+                {{ isSaving ? 'Saving…' : isEditing ? 'Save changes' : 'Publish' }}
               </button>
             </div>
           </div>
@@ -348,12 +370,18 @@ await loadPosts()
 
           <div v-else-if="previewMode" class="space-y-6">
             <div class="aspect-video bg-slate-100 rounded-2xl overflow-hidden">
-              <img v-if="form.image" :src="form.image" :alt="form.title" class="w-full h-full object-cover" >
+              <img v-if="form.image" :src="form.image" :alt="form.title" class="w-full h-full object-cover" />
             </div>
             <div>
-              <span v-if="form.category" class="bg-blue-50 text-[#002888] text-xs font-black px-3 py-1 rounded-md uppercase tracking-widest">{{ form.category }}</span>
+              <span
+                v-if="form.category"
+                class="bg-blue-50 text-[#002888] text-xs font-black px-3 py-1 rounded-md uppercase tracking-widest"
+                >{{ form.category }}</span
+              >
               <h1 class="text-3xl font-black text-slate-900 mt-3">{{ form.title || 'Untitled post' }}</h1>
-              <p class="text-sm text-slate-500 mt-1">{{ formatDate(form.date) }}{{ form.author ? ' • ' + form.author : '' }}</p>
+              <p class="text-sm text-slate-500 mt-1">
+                {{ formatDate(form.date) }}{{ form.author ? ' • ' + form.author : '' }}
+              </p>
             </div>
             <div class="prose prose-slate max-w-none" v-html="previewHtml" />
           </div>
@@ -361,7 +389,12 @@ await loadPosts()
           <form v-else class="grid grid-cols-1 md:grid-cols-2 gap-5" @submit.prevent="savePost">
             <label class="block md:col-span-2">
               <span class="text-xs font-black uppercase tracking-widest text-slate-500">Title</span>
-              <input v-model="form.title" type="text" class="mt-2 w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all bg-slate-50/30" placeholder="A compelling headline" >
+              <input
+                v-model="form.title"
+                type="text"
+                class="mt-2 w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all bg-slate-50/30"
+                placeholder="A compelling headline"
+              />
             </label>
 
             <label class="block">
@@ -370,48 +403,83 @@ await loadPosts()
                 :value="form.slug"
                 type="text"
                 class="mt-2 w-full px-5 py-4 rounded-2xl border-2 focus:ring-4 outline-none transition-all bg-slate-50/30 font-mono text-sm"
-                :class="slugIsValid ? 'border-slate-100 focus:border-purple-500 focus:ring-purple-500/10' : 'border-red-200 focus:border-red-400 focus:ring-red-500/10'"
+                :class="
+                  slugIsValid
+                    ? 'border-slate-100 focus:border-purple-500 focus:ring-purple-500/10'
+                    : 'border-red-200 focus:border-red-400 focus:ring-red-500/10'
+                "
                 placeholder="lowercase-with-dashes"
                 @input="onSlugInput"
+              />
+              <span v-if="!slugIsValid" class="text-xs text-red-600 mt-1 block"
+                >Lowercase letters, numbers, dashes only.</span
               >
-              <span v-if="!slugIsValid" class="text-xs text-red-600 mt-1 block">Lowercase letters, numbers, dashes only.</span>
               <span v-else class="text-xs text-slate-400 mt-1 block">Public URL: /blog/{{ form.slug || '…' }}</span>
             </label>
 
             <label class="block">
               <span class="text-xs font-black uppercase tracking-widest text-slate-500">Date</span>
-              <input v-model="form.date" type="date" class="mt-2 w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all bg-slate-50/30" >
+              <input
+                v-model="form.date"
+                type="date"
+                class="mt-2 w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all bg-slate-50/30"
+              />
             </label>
 
             <label class="block">
               <span class="text-xs font-black uppercase tracking-widest text-slate-500">Category</span>
-              <input v-model="form.category" type="text" class="mt-2 w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all bg-slate-50/30" placeholder="e.g. Inverter" >
+              <input
+                v-model="form.category"
+                type="text"
+                class="mt-2 w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all bg-slate-50/30"
+                placeholder="e.g. Inverter"
+              />
             </label>
 
             <label class="block">
               <span class="text-xs font-black uppercase tracking-widest text-slate-500">Author</span>
-              <input v-model="form.author" type="text" class="mt-2 w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all bg-slate-50/30" placeholder="Novel Solar Editorial" >
+              <input
+                v-model="form.author"
+                type="text"
+                class="mt-2 w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all bg-slate-50/30"
+                placeholder="Novel Solar Editorial"
+              />
             </label>
 
             <label class="block md:col-span-2">
               <span class="text-xs font-black uppercase tracking-widest text-slate-500">Excerpt</span>
-              <textarea v-model="form.excerpt" rows="2" class="mt-2 w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all bg-slate-50/30" placeholder="One-line teaser shown on the blog hub" />
+              <textarea
+                v-model="form.excerpt"
+                rows="2"
+                class="mt-2 w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all bg-slate-50/30"
+                placeholder="One-line teaser shown on the blog hub"
+              />
             </label>
 
             <label class="block md:col-span-2">
               <span class="text-xs font-black uppercase tracking-widest text-slate-500">Description (SEO)</span>
-              <textarea v-model="form.description" rows="2" class="mt-2 w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all bg-slate-50/30" placeholder="Used for meta description and OG description" />
+              <textarea
+                v-model="form.description"
+                rows="2"
+                class="mt-2 w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all bg-slate-50/30"
+                placeholder="Used for meta description and OG description"
+              />
             </label>
 
             <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-[200px_1fr] gap-4 items-start">
               <div class="aspect-video w-full rounded-2xl bg-slate-100 overflow-hidden border border-slate-200">
-                <img v-if="form.image" :src="form.image" :alt="form.title" class="w-full h-full object-cover" >
+                <img v-if="form.image" :src="form.image" :alt="form.title" class="w-full h-full object-cover" />
                 <div v-else class="w-full h-full flex items-center justify-center text-slate-400 text-xs">No cover</div>
               </div>
               <div class="space-y-3">
                 <label class="block">
                   <span class="text-xs font-black uppercase tracking-widest text-slate-500">Cover image URL</span>
-                  <input v-model="form.image" type="text" class="mt-2 w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all bg-slate-50/30 font-mono text-sm" placeholder="/images/foo.jpg or https://res.cloudinary.com/..." >
+                  <input
+                    v-model="form.image"
+                    type="text"
+                    class="mt-2 w-full px-5 py-4 rounded-2xl border-2 border-slate-100 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all bg-slate-50/30 font-mono text-sm"
+                    placeholder="/images/foo.jpg or https://res.cloudinary.com/..."
+                  />
                 </label>
                 <label class="block">
                   <span class="text-xs font-black uppercase tracking-widest text-slate-500">Or upload a new cover</span>
@@ -421,7 +489,7 @@ await loadPosts()
                     class="mt-2 block w-full text-sm text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
                     :disabled="isUploading"
                     @change="onCoverFileChange"
-                  >
+                  />
                   <span v-if="isUploading" class="text-xs text-slate-500 mt-1 block">Uploading…</span>
                 </label>
               </div>
@@ -438,11 +506,26 @@ await loadPosts()
           <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
             <h3 class="text-lg font-black text-slate-900 mb-2">Delete this post?</h3>
             <p class="text-sm text-slate-600 mb-6">
-              This will commit a deletion of <code class="font-mono text-slate-800">{{ originalSlug }}</code> to GitHub. The post will go offline after the next deployment. This cannot be undone from this UI.
+              This will commit a deletion of <code class="font-mono text-slate-800">{{ originalSlug }}</code> to GitHub.
+              The post will go offline after the next deployment. This cannot be undone from this UI.
             </p>
             <div class="flex justify-end gap-2">
-              <button type="button" class="px-4 py-2 rounded-xl text-xs font-bold border border-slate-200 text-slate-600 hover:bg-slate-50" :disabled="isDeleting" @click="cancelDelete">Cancel</button>
-              <button type="button" class="px-4 py-2 rounded-xl text-xs font-black bg-red-600 text-white hover:bg-red-700 disabled:opacity-50" :disabled="isDeleting" @click="confirmDelete">{{ isDeleting ? 'Deleting…' : 'Delete' }}</button>
+              <button
+                type="button"
+                class="px-4 py-2 rounded-xl text-xs font-bold border border-slate-200 text-slate-600 hover:bg-slate-50"
+                :disabled="isDeleting"
+                @click="cancelDelete"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="px-4 py-2 rounded-xl text-xs font-black bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+                :disabled="isDeleting"
+                @click="confirmDelete"
+              >
+                {{ isDeleting ? 'Deleting…' : 'Delete' }}
+              </button>
             </div>
           </div>
         </div>

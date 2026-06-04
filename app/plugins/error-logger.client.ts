@@ -16,7 +16,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   nuxtApp.hook('app:error', (error) => {
     void trackNuxtError(error, {
-      phase: 'app:error'
+      phase: 'app:error',
     })
   })
 

@@ -1,59 +1,69 @@
 <script setup lang="ts">
-import { z } from 'zod';
-const { cart, cartTotalAmount } = useCart();
-const { addToast } = useToast();
+import { z } from 'zod'
+const { cart, cartTotalAmount } = useCart()
+const { addToast } = useToast()
 
-const selectedFulfillment = ref('delivery'); // 'delivery' or 'pickup'
-const selectedState = ref('');
-const selectedBranch = ref(null);
+const selectedFulfillment = ref('delivery') // 'delivery' or 'pickup'
+const selectedState = ref('')
+const selectedBranch = ref(null)
 
 const suggestedBranches = computed(() => {
-  if (!selectedState.value) return [];
-  
+  if (!selectedState.value) return []
+
   // 1. If we have exact matches, return them immediately
   if (exactMatches.value.length > 0) {
-    return exactMatches.value;
+    return exactMatches.value
   }
-  
+
   // 2. Otherwise, find the closest branches via coordinates
-  const stateData = nigerianStates.find(s => s.name === selectedState.value);
-  if (!stateData) return [];
-  
+  const stateData = nigerianStates.find((s) => s.name === selectedState.value)
+  if (!stateData) return []
+
   const sorted = [...branches].sort((a, b) => {
-    const distA = getDistance(stateData.coords[0], stateData.coords[1], a.coordinates[0], a.coordinates[1]);
-    const distB = getDistance(stateData.coords[0], stateData.coords[1], b.coordinates[0], b.coordinates[1]);
-    return distA - distB;
-  });
-  
-  return sorted.slice(0, 3);
-});
+    const distA = getDistance(stateData.coords[0], stateData.coords[1], a.coordinates[0], a.coordinates[1])
+    const distB = getDistance(stateData.coords[0], stateData.coords[1], b.coordinates[0], b.coordinates[1])
+    return distA - distB
+  })
+
+  return sorted.slice(0, 3)
+})
 
 const exactMatches = computed(() => {
-  if (!selectedState.value) return [];
-  
+  if (!selectedState.value) return []
+
   // Handle the FCT edge case where the state dropdown says 'FCT - Abuja' but the branch state is 'FCT'
   if (selectedState.value === 'FCT - Abuja') {
-    return branches.filter(b => b.state === 'FCT' || (b.address && b.address.toLowerCase().includes('abuja')));
+    return branches.filter((b) => b.state === 'FCT' || (b.address && b.address.toLowerCase().includes('abuja')))
   }
-  
-  const searchState = selectedState.value.toLowerCase();
-  
-  return branches.filter(b => 
-    (b.state && b.state.toLowerCase() === searchState) || 
-    (b.address && b.address.toLowerCase().includes(searchState))
-  );
-});
+
+  const searchState = selectedState.value.toLowerCase()
+
+  return branches.filter(
+    (b) =>
+      (b.state && b.state.toLowerCase() === searchState) ||
+      (b.address && b.address.toLowerCase().includes(searchState)),
+  )
+})
 
 // Form state
-const isSubmitting = ref(false);
+const isSubmitting = ref(false)
 const form = reactive({
-  firstName: '', lastName: '', email: '', phone: '', address: '', note: ''
-});
-const paymentMethod = ref('Cash on Delivery');
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: '',
+  address: '',
+  note: '',
+})
+const paymentMethod = ref('Cash on Delivery')
 
 const formErrors = reactive({
-  firstName: '', lastName: '', email: '', phone: '', address: ''
-});
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: '',
+  address: '',
+})
 
 const checkoutSchema = z.object({
   firstName: z.string().min(2, 'First name must be at least 2 characters'),
@@ -61,31 +71,31 @@ const checkoutSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
   phone: z.string().regex(/^(\+234|0)[789][01]\d{8}$/, 'Must be a valid 11-digit Nigerian phone number'),
   address: z.string().min(5, 'Please provide a full delivery address'),
-  note: z.string().optional()
-});
+  note: z.string().optional(),
+})
 
 const submitOrder = async () => {
   if (cart.value.length === 0) {
-    addToast('Empty Cart', 'Please add some solar equipment to your cart.', 'error');
-    return;
+    addToast('Empty Cart', 'Please add some solar equipment to your cart.', 'error')
+    return
   }
 
   // Clear previous errors
-  Object.keys(formErrors).forEach(key => formErrors[key] = '');
+  Object.keys(formErrors).forEach((key) => (formErrors[key] = ''))
 
   // Validate form payload
-  const result = checkoutSchema.safeParse(form);
+  const result = checkoutSchema.safeParse(form)
   if (!result.success) {
-    result.error.issues.forEach(issue => {
+    result.error.issues.forEach((issue) => {
       if (issue.path[0]) {
-        formErrors[issue.path[0]] = issue.message;
+        formErrors[issue.path[0]] = issue.message
       }
-    });
-    addToast('Validation Error', 'Please correct the highlighted fields.', 'error');
-    return;
+    })
+    addToast('Validation Error', 'Please correct the highlighted fields.', 'error')
+    return
   }
 
-  isSubmitting.value = true;
+  isSubmitting.value = true
   try {
     await useNuxtApp().$apiFetch('/api/checkout', {
       method: 'POST',
@@ -93,41 +103,40 @@ const submitOrder = async () => {
         customer: form,
         cart: cart.value.map((item) => ({
           id: item.id,
-          quantity: item.quantity
+          quantity: item.quantity,
         })),
         branch: selectedBranch.value,
-        paymentMethod: paymentMethod.value
-      }
-    });
-    
+        paymentMethod: paymentMethod.value,
+      },
+    })
+
     // Clear cart and redirect
-    cart.value = [];
-    addToast('Order Placed', 'Your order was successfully sent to NovelSolar!', 'success');
-    navigateTo('/thank-you'); // Assuming you'll make a quick thank-you page next!
-    
+    cart.value = []
+    addToast('Order Placed', 'Your order was successfully sent to NovelSolar!', 'success')
+    navigateTo('/thank-you') // Assuming you'll make a quick thank-you page next!
   } catch (error) {
-    addToast('Order Error', 'There was an issue processing your order. Please try again.', 'error');
+    addToast('Order Error', 'There was an issue processing your order. Please try again.', 'error')
   } finally {
-    isSubmitting.value = false;
+    isSubmitting.value = false
   }
-};
+}
 
 onMounted(async () => {
   try {
-    const profile = await useNuxtApp().$apiFetch('/api/user/profile');
+    const profile = await useNuxtApp().$apiFetch('/api/user/profile')
     if (profile) {
       // Auto-fill form fields if data exists
-      if (profile.firstName) form.firstName = profile.firstName;
-      if (profile.lastName) form.lastName = profile.lastName;
-      if (profile.email) form.email = profile.email;
-      if (profile.phone) form.phone = profile.phone;
-      if (profile.address) form.address = profile.address;
+      if (profile.firstName) form.firstName = profile.firstName
+      if (profile.lastName) form.lastName = profile.lastName
+      if (profile.email) form.email = profile.email
+      if (profile.phone) form.phone = profile.phone
+      if (profile.address) form.address = profile.address
     }
   } catch (error) {
     // Silent fail for guest checkout
-    console.log('Guest checkout initiated - profile fetch skipped');
+    console.log('Guest checkout initiated - profile fetch skipped')
   }
-});
+})
 </script>
 
 <template>
@@ -138,7 +147,10 @@ onMounted(async () => {
       </div>
       <h2 class="text-2xl font-bold text-slate-900 mb-2">Your cart is empty</h2>
       <p class="text-gray-500 mb-8">Add some solar equipment to your cart before checking out.</p>
-      <NuxtLink to="/products" class="bg-[#002888] text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-900 transition-all shadow-lg inline-block">
+      <NuxtLink
+        to="/products"
+        class="bg-[#002888] text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-900 transition-all shadow-lg inline-block"
+      >
         Return to Shop
       </NuxtLink>
     </div>
@@ -149,18 +161,28 @@ onMounted(async () => {
         <!-- Contact Information -->
         <section class="space-y-4">
           <div class="flex items-center gap-2 mb-2">
-            <span class="w-8 h-8 rounded-full bg-[#002888] text-white flex items-center justify-center text-sm font-bold">1</span>
+            <span
+              class="w-8 h-8 rounded-full bg-[#002888] text-white flex items-center justify-center text-sm font-bold"
+              >1</span
+            >
             <h2 class="text-xl font-bold text-slate-900">Contact Information</h2>
           </div>
           <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
             <div>
-              <label class="block text-sm font-semibold text-slate-700 mb-1.5">Email Address <span class="text-red-500">*</span></label>
-              <input 
-                v-model="form.email"
-                type="email" 
-                placeholder="you@example.com"
-                :class="['rounded-lg bg-slate-50 p-3 w-full transition-all outline-none', formErrors.email ? 'border-2 border-red-500 focus:ring-2 focus:ring-red-500/20 bg-red-50/50' : 'border border-slate-200 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888]']"
+              <label class="block text-sm font-semibold text-slate-700 mb-1.5"
+                >Email Address <span class="text-red-500">*</span></label
               >
+              <input
+                v-model="form.email"
+                type="email"
+                placeholder="you@example.com"
+                :class="[
+                  'rounded-lg bg-slate-50 p-3 w-full transition-all outline-none',
+                  formErrors.email
+                    ? 'border-2 border-red-500 focus:ring-2 focus:ring-red-500/20 bg-red-50/50'
+                    : 'border border-slate-200 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888]',
+                ]"
+              />
               <p v-if="formErrors.email" class="text-red-500 text-xs mt-1.5 font-bold">{{ formErrors.email }}</p>
             </div>
           </div>
@@ -169,50 +191,85 @@ onMounted(async () => {
         <!-- Shipping Address -->
         <section class="space-y-4">
           <div class="flex items-center gap-2 mb-2">
-            <span class="w-8 h-8 rounded-full bg-[#002888] text-white flex items-center justify-center text-sm font-bold">2</span>
+            <span
+              class="w-8 h-8 rounded-full bg-[#002888] text-white flex items-center justify-center text-sm font-bold"
+              >2</span
+            >
             <h2 class="text-xl font-bold text-slate-900">Shipping Address</h2>
           </div>
           <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-1.5">First Name <span class="text-red-500">*</span></label>
-                <input 
-                  v-model="form.firstName"
-                  type="text" 
-                  placeholder="John"
-                  :class="['rounded-lg bg-slate-50 p-3 w-full transition-all outline-none', formErrors.firstName ? 'border-2 border-red-500 focus:ring-2 focus:ring-red-500/20 bg-red-50/50' : 'border border-slate-200 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888]']"
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5"
+                  >First Name <span class="text-red-500">*</span></label
                 >
-                <p v-if="formErrors.firstName" class="text-red-500 text-xs mt-1.5 font-bold">{{ formErrors.firstName }}</p>
+                <input
+                  v-model="form.firstName"
+                  type="text"
+                  placeholder="John"
+                  :class="[
+                    'rounded-lg bg-slate-50 p-3 w-full transition-all outline-none',
+                    formErrors.firstName
+                      ? 'border-2 border-red-500 focus:ring-2 focus:ring-red-500/20 bg-red-50/50'
+                      : 'border border-slate-200 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888]',
+                  ]"
+                />
+                <p v-if="formErrors.firstName" class="text-red-500 text-xs mt-1.5 font-bold">
+                  {{ formErrors.firstName }}
+                </p>
               </div>
               <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-1.5">Last Name <span class="text-red-500">*</span></label>
-                <input 
-                  v-model="form.lastName"
-                  type="text" 
-                  placeholder="Doe"
-                  :class="['rounded-lg bg-slate-50 p-3 w-full transition-all outline-none', formErrors.lastName ? 'border-2 border-red-500 focus:ring-2 focus:ring-red-500/20 bg-red-50/50' : 'border border-slate-200 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888]']"
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5"
+                  >Last Name <span class="text-red-500">*</span></label
                 >
-                <p v-if="formErrors.lastName" class="text-red-500 text-xs mt-1.5 font-bold">{{ formErrors.lastName }}</p>
+                <input
+                  v-model="form.lastName"
+                  type="text"
+                  placeholder="Doe"
+                  :class="[
+                    'rounded-lg bg-slate-50 p-3 w-full transition-all outline-none',
+                    formErrors.lastName
+                      ? 'border-2 border-red-500 focus:ring-2 focus:ring-red-500/20 bg-red-50/50'
+                      : 'border border-slate-200 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888]',
+                  ]"
+                />
+                <p v-if="formErrors.lastName" class="text-red-500 text-xs mt-1.5 font-bold">
+                  {{ formErrors.lastName }}
+                </p>
               </div>
             </div>
             <div class="mb-4">
-              <label class="block text-sm font-semibold text-slate-700 mb-1.5">Street Address <span class="text-red-500">*</span></label>
-              <input 
-                v-model="form.address"
-                type="text" 
-                placeholder="123 Solar Street, Phase 1"
-                :class="['rounded-lg bg-slate-50 p-3 w-full transition-all outline-none', formErrors.address ? 'border-2 border-red-500 focus:ring-2 focus:ring-red-500/20 bg-red-50/50' : 'border border-slate-200 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888]']"
+              <label class="block text-sm font-semibold text-slate-700 mb-1.5"
+                >Street Address <span class="text-red-500">*</span></label
               >
+              <input
+                v-model="form.address"
+                type="text"
+                placeholder="123 Solar Street, Phase 1"
+                :class="[
+                  'rounded-lg bg-slate-50 p-3 w-full transition-all outline-none',
+                  formErrors.address
+                    ? 'border-2 border-red-500 focus:ring-2 focus:ring-red-500/20 bg-red-50/50'
+                    : 'border border-slate-200 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888]',
+                ]"
+              />
               <p v-if="formErrors.address" class="text-red-500 text-xs mt-1.5 font-bold">{{ formErrors.address }}</p>
             </div>
             <div>
-              <label class="block text-sm font-semibold text-slate-700 mb-1.5">Phone Number <span class="text-red-500">*</span></label>
-              <input 
-                v-model="form.phone"
-                type="tel" 
-                placeholder="080..."
-                :class="['rounded-lg bg-slate-50 p-3 w-full transition-all outline-none', formErrors.phone ? 'border-2 border-red-500 focus:ring-2 focus:ring-red-500/20 bg-red-50/50' : 'border border-slate-200 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888]']"
+              <label class="block text-sm font-semibold text-slate-700 mb-1.5"
+                >Phone Number <span class="text-red-500">*</span></label
               >
+              <input
+                v-model="form.phone"
+                type="tel"
+                placeholder="080..."
+                :class="[
+                  'rounded-lg bg-slate-50 p-3 w-full transition-all outline-none',
+                  formErrors.phone
+                    ? 'border-2 border-red-500 focus:ring-2 focus:ring-red-500/20 bg-red-50/50'
+                    : 'border border-slate-200 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888]',
+                ]"
+              />
               <p v-if="formErrors.phone" class="text-red-500 text-xs mt-1.5 font-bold">{{ formErrors.phone }}</p>
             </div>
           </div>
@@ -221,15 +278,22 @@ onMounted(async () => {
         <!-- Fulfillment Setup (Smart Router) -->
         <section class="space-y-6">
           <div class="flex items-center gap-2 mb-2">
-            <span class="w-8 h-8 rounded-full bg-[#002888] text-white flex items-center justify-center text-sm font-bold">3</span>
+            <span
+              class="w-8 h-8 rounded-full bg-[#002888] text-white flex items-center justify-center text-sm font-bold"
+              >3</span
+            >
             <h2 class="text-xl font-bold text-slate-900">Fulfillment Options</h2>
           </div>
 
           <!-- Fulfillment Toggle -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <button 
+            <button
               class="p-6 rounded-2xl border-2 transition-all flex items-center gap-4 text-left"
-              :class="selectedFulfillment === 'delivery' ? 'border-[#002888] bg-blue-50/30' : 'border-gray-100 bg-white hover:border-gray-200'"
+              :class="
+                selectedFulfillment === 'delivery'
+                  ? 'border-[#002888] bg-blue-50/30'
+                  : 'border-gray-100 bg-white hover:border-gray-200'
+              "
               @click="selectedFulfillment = 'delivery'"
             >
               <div class="w-12 h-12 rounded-xl bg-[#002888] text-white flex items-center justify-center">
@@ -240,9 +304,13 @@ onMounted(async () => {
                 <p class="text-xs text-slate-500">Doorstep delivery within Nigeria</p>
               </div>
             </button>
-            <button 
+            <button
               class="p-6 rounded-2xl border-2 transition-all flex items-center gap-4 text-left"
-              :class="selectedFulfillment === 'pickup' ? 'border-[#002888] bg-blue-50/30' : 'border-gray-100 bg-white hover:border-gray-200'"
+              :class="
+                selectedFulfillment === 'pickup'
+                  ? 'border-[#002888] bg-blue-50/30'
+                  : 'border-gray-100 bg-white hover:border-gray-200'
+              "
               @click="selectedFulfillment = 'pickup'"
             >
               <div class="w-12 h-12 rounded-xl bg-orange-500 text-white flex items-center justify-center">
@@ -259,7 +327,7 @@ onMounted(async () => {
           <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
             <div>
               <label class="block text-sm font-semibold text-slate-700 mb-2">Select your shipping state:</label>
-              <select 
+              <select
                 v-model="selectedState"
                 class="rounded-lg border-slate-200 bg-slate-50 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888] p-3 w-full transition-all outline-none"
               >
@@ -272,26 +340,46 @@ onMounted(async () => {
           </div>
 
           <!-- Branch Suggestions Section -->
-          <div v-if="suggestedBranches.length > 0" class="space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
+          <div
+            v-if="suggestedBranches.length > 0"
+            class="space-y-4 animate-in fade-in slide-in-from-top-4 duration-500"
+          >
             <div class="flex items-center gap-2 px-1">
               <span class="material-symbols-outlined text-[#002888] text-lg">hub</span>
               <h4 class="font-bold text-slate-800 text-sm">
-                {{ exactMatches.length > 0 ? 'Expert branches available in your state:' : 'No branches in your state. Here are the closest options:' }}
+                {{
+                  exactMatches.length > 0
+                    ? 'Expert branches available in your state:'
+                    : 'No branches in your state. Here are the closest options:'
+                }}
               </h4>
             </div>
-            
+
             <div class="grid gap-3">
-              <label 
-                v-for="branch in suggestedBranches" 
+              <label
+                v-for="branch in suggestedBranches"
                 :key="branch.name"
                 class="flex items-center gap-4 p-5 rounded-xl border cursor-pointer transition-all hover:shadow-md"
-                :class="selectedBranch?.name === branch.name ? 'border-[#002888] bg-blue-50/30 ring-1 ring-[#002888]' : 'border-gray-100 bg-white'"
+                :class="
+                  selectedBranch?.name === branch.name
+                    ? 'border-[#002888] bg-blue-50/30 ring-1 ring-[#002888]'
+                    : 'border-gray-100 bg-white'
+                "
               >
-                <input v-model="selectedBranch" type="radio" :value="branch" class="w-5 h-5 text-[#002888] border-gray-300 focus:ring-[#002888]">
+                <input
+                  v-model="selectedBranch"
+                  type="radio"
+                  :value="branch"
+                  class="w-5 h-5 text-[#002888] border-gray-300 focus:ring-[#002888]"
+                />
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center gap-2 mb-0.5">
                     <p class="font-bold text-slate-900 truncate uppercase text-sm">{{ branch.name }}</p>
-                    <span v-if="exactMatches.some(e => e.name === branch.name)" class="bg-green-100 text-green-700 text-[8px] font-black px-1.5 py-0.5 rounded uppercase">In State</span>
+                    <span
+                      v-if="exactMatches.some((e) => e.name === branch.name)"
+                      class="bg-green-100 text-green-700 text-[8px] font-black px-1.5 py-0.5 rounded uppercase"
+                      >In State</span
+                    >
                   </div>
                   <p class="text-xs text-slate-500 line-clamp-1 italic">{{ branch.address }}</p>
                 </div>
@@ -308,12 +396,22 @@ onMounted(async () => {
         <!-- Payment Options -->
         <section class="space-y-4">
           <div class="flex items-center gap-2 mb-2">
-            <span class="w-8 h-8 rounded-full bg-[#002888] text-white flex items-center justify-center text-sm font-bold">4</span>
+            <span
+              class="w-8 h-8 rounded-full bg-[#002888] text-white flex items-center justify-center text-sm font-bold"
+              >4</span
+            >
             <h2 class="text-xl font-bold text-slate-900">Payment Options</h2>
           </div>
           <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-            <label class="flex items-center gap-4 p-6 cursor-pointer hover:bg-gray-50 transition-colors border-b border-gray-100">
-              <input v-model="paymentMethod" type="radio" value="Cash on Delivery" class="w-5 h-5 text-[#002888] border-gray-300 focus:ring-[#002888]">
+            <label
+              class="flex items-center gap-4 p-6 cursor-pointer hover:bg-gray-50 transition-colors border-b border-gray-100"
+            >
+              <input
+                v-model="paymentMethod"
+                type="radio"
+                value="Cash on Delivery"
+                class="w-5 h-5 text-[#002888] border-gray-300 focus:ring-[#002888]"
+              />
               <div class="flex-1">
                 <p class="font-bold text-slate-900 uppercase text-sm tracking-wide">Cash on Delivery</p>
                 <p class="text-xs text-slate-500">Pay when your items arrive</p>
@@ -321,7 +419,12 @@ onMounted(async () => {
               <span class="material-symbols-outlined text-gray-400">payments</span>
             </label>
             <label class="flex items-center gap-4 p-6 cursor-pointer hover:bg-gray-50 transition-colors">
-              <input v-model="paymentMethod" type="radio" value="Financing / Installment" class="w-5 h-5 text-[#002888] border-gray-300 focus:ring-[#002888]">
+              <input
+                v-model="paymentMethod"
+                type="radio"
+                value="Financing / Installment"
+                class="w-5 h-5 text-[#002888] border-gray-300 focus:ring-[#002888]"
+              />
               <div class="flex-1">
                 <p class="font-bold text-slate-900 uppercase text-sm tracking-wide">Financing / Installment</p>
                 <p class="text-xs text-slate-500">Flexible payment plans available</p>
@@ -334,13 +437,16 @@ onMounted(async () => {
         <!-- Order Note -->
         <section class="space-y-4">
           <div class="flex items-center gap-2 mb-2">
-            <span class="w-8 h-8 rounded-full bg-[#002888] text-white flex items-center justify-center text-sm font-bold">5</span>
+            <span
+              class="w-8 h-8 rounded-full bg-[#002888] text-white flex items-center justify-center text-sm font-bold"
+              >5</span
+            >
             <h2 class="text-xl font-bold text-slate-900">Special Instructions</h2>
           </div>
           <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-            <textarea 
+            <textarea
               v-model="form.note"
-              rows="3" 
+              rows="3"
               placeholder="Any additional notes for delivery..."
               class="rounded-lg border-slate-200 bg-slate-50 focus:ring-2 focus:ring-[#002888]/20 focus:border-[#002888] p-3 w-full transition-all outline-none resize-none"
             />
@@ -348,12 +454,12 @@ onMounted(async () => {
         </section>
 
         <!-- Submit Button -->
-        <button 
+        <button
           :disabled="isSubmitting"
           class="w-full bg-[#002888] text-white font-bold py-5 rounded-2xl shadow-xl hover:bg-blue-900 transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-[0.98]"
           @click="submitOrder"
         >
-          <span v-if="isSubmitting" class="animate-spin border-2 border-white/30 border-t-white w-5 h-5 rounded-full"/>
+          <span v-if="isSubmitting" class="animate-spin border-2 border-white/30 border-t-white w-5 h-5 rounded-full" />
           {{ isSubmitting ? 'Processing Order...' : 'Complete Order' }}
           <span v-if="!isSubmitting" class="material-symbols-outlined">arrow_forward</span>
           <span v-else class="material-symbols-outlined animate-spin">sync</span>
@@ -373,24 +479,32 @@ onMounted(async () => {
             <div class="space-y-6 mb-8 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
               <div v-for="item in cart" :key="item.id" class="flex gap-4">
                 <div class="relative w-16 h-16 shrink-0 mt-2 mr-2">
-                  <div class="w-full h-full bg-slate-50 rounded-xl flex items-center justify-center border border-slate-100 overflow-hidden">
+                  <div
+                    class="w-full h-full bg-slate-50 rounded-xl flex items-center justify-center border border-slate-100 overflow-hidden"
+                  >
                     <img
-loading="lazy" 
-                      :src="item.PROPERTY_102 || item.image || item.PREVIEW_PICTURE || '/images/placeholder.png'" 
+                      loading="lazy"
+                      :src="item.PROPERTY_102 || item.image || item.PREVIEW_PICTURE || '/images/placeholder.png'"
                       :alt="item.name"
                       class="w-full h-full object-cover"
-                    >
+                    />
                   </div>
-                  <span class="absolute -top-1 -right-1 bg-[#002888] text-white text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full border-2 border-white z-10">
+                  <span
+                    class="absolute -top-1 -right-1 bg-[#002888] text-white text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full border-2 border-white z-10"
+                  >
                     {{ item.quantity }}
                   </span>
                 </div>
                 <div class="flex-1 flex flex-col justify-center min-w-0">
-                  <h3 class="text-sm font-bold text-slate-900 line-clamp-1 uppercase tracking-tight">{{ item.name }}</h3>
+                  <h3 class="text-sm font-bold text-slate-900 line-clamp-1 uppercase tracking-tight">
+                    {{ item.name }}
+                  </h3>
                   <p class="text-xs text-slate-500 font-medium">₦{{ Number(item.price).toLocaleString() }} each</p>
                 </div>
                 <div class="flex flex-col items-end justify-center">
-                  <span class="text-sm font-black text-slate-900 italic">₦{{ Number(item.price * item.quantity).toLocaleString() }}</span>
+                  <span class="text-sm font-black text-slate-900 italic"
+                    >₦{{ Number(item.price * item.quantity).toLocaleString() }}</span
+                  >
                 </div>
               </div>
             </div>
@@ -403,12 +517,16 @@ loading="lazy"
               </div>
               <div class="flex justify-between text-sm text-slate-600 font-medium">
                 <span>Shipping</span>
-                <span class="text-green-600 font-bold uppercase text-[10px] bg-green-50 px-2 py-0.5 rounded">Calculated at next step</span>
+                <span class="text-green-600 font-bold uppercase text-[10px] bg-green-50 px-2 py-0.5 rounded"
+                  >Calculated at next step</span
+                >
               </div>
               <div class="flex justify-between items-end pt-4 border-t border-gray-100">
                 <span class="text-sm font-bold text-slate-900">Total Due</span>
                 <div class="flex flex-col items-end">
-                  <span class="text-3xl font-black text-[#002888]">₦{{ Number(cartTotalAmount).toLocaleString() }}</span>
+                  <span class="text-3xl font-black text-[#002888]"
+                    >₦{{ Number(cartTotalAmount).toLocaleString() }}</span
+                  >
                   <span class="text-[10px] text-slate-400 font-bold uppercase mt-1">Inclusive of all taxes</span>
                 </div>
               </div>
@@ -436,7 +554,11 @@ loading="lazy"
 
 <style scoped>
 .material-symbols-outlined {
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
 }
 
 .custom-scrollbar::-webkit-scrollbar {

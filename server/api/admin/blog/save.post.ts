@@ -7,12 +7,7 @@ import {
   serializePost,
   type BlogFrontmatter,
 } from '../../../utils/blogContent'
-import {
-  adminToCommitAuthor,
-  commitMessageFor,
-  getRemoteFile,
-  putRemoteFile,
-} from '../../../utils/blogGithub'
+import { adminToCommitAuthor, commitMessageFor, getRemoteFile, putRemoteFile } from '../../../utils/blogGithub'
 
 interface SaveBody {
   slug: string
@@ -54,7 +49,7 @@ export default defineEventHandler(async (event) => {
   if (collision && originalSlug !== slug) {
     throw createError({
       statusCode: 409,
-      statusMessage: `A post with the slug "${slug}" already exists. Please modify the title or slug.`
+      statusMessage: `A post with the slug "${slug}" already exists. Please modify the title or slug.`,
     })
   }
 
@@ -105,7 +100,7 @@ export default defineEventHandler(async (event) => {
   const deployHookUrl = process.env.VERCEL_DEPLOY_HOOK_URL
   if (deployHookUrl) {
     // Fire and forget - don't await so we don't block the UI
-    $fetch(deployHookUrl, { method: 'POST' }).catch(err => {
+    $fetch(deployHookUrl, { method: 'POST' }).catch((err) => {
       logger.error('Blog Save', 'Failed to trigger Vercel deploy hook', { error: err })
     })
   }

@@ -6,8 +6,8 @@ global.$fetch = vi.fn()
 // Mock useRuntimeConfig
 vi.mock('#imports', () => ({
   useRuntimeConfig: vi.fn().mockReturnValue({
-    bitrixWebhookUrl: 'https://test.bitrix.com/rest/'
-  })
+    bitrixWebhookUrl: 'https://test.bitrix.com/rest/',
+  }),
 }))
 
 describe('/api/quote', () => {
@@ -17,7 +17,7 @@ describe('/api/quote', () => {
 
   it('creates a lead successfully with all required fields', async () => {
     const mockResponse = {
-      result: 'lead_67890'
+      result: 'lead_67890',
     }
     global.$fetch.mockResolvedValueOnce(mockResponse)
 
@@ -27,7 +27,7 @@ describe('/api/quote', () => {
       email: 'jane@example.com',
       phone: '9876543210',
       projectType: 'Solar Panel Installation',
-      details: 'Looking for 5kW system'
+      details: 'Looking for 5kW system',
     }
 
     const response = await global.$fetch('https://test.bitrix.com/rest/crm.lead.add', {
@@ -40,9 +40,9 @@ describe('/api/quote', () => {
           EMAIL: [{ VALUE: body.email, VALUE_TYPE: 'WORK' }],
           PHONE: [{ VALUE: body.phone, VALUE_TYPE: 'WORK' }],
           COMMENTS: expect.any(String),
-          SOURCE_ID: 'WEB'
-        }
-      }
+          SOURCE_ID: 'WEB',
+        },
+      },
     })
 
     expect(response.result).toBe('lead_67890')
@@ -74,13 +74,13 @@ describe('/api/quote', () => {
   it('handles Bitrix API error response', async () => {
     const mockResponse = {
       error: 'ERROR',
-      error_description: 'Lead creation failed'
+      error_description: 'Lead creation failed',
     }
     global.$fetch.mockResolvedValueOnce(mockResponse)
 
     const response = await global.$fetch('https://test.bitrix.com/rest/crm.lead.add', {
       method: 'POST',
-      body: { fields: {} }
+      body: { fields: {} },
     })
 
     expect(response.error).toBe('ERROR')
@@ -96,16 +96,16 @@ describe('/api/quote', () => {
       lastName: 'Smith',
       email: 'jane@example.com',
       phone: '9876543210',
-      projectType: 'Battery Backup System'
+      projectType: 'Battery Backup System',
     }
 
     const response = await global.$fetch('https://test.bitrix.com/rest/crm.lead.add', {
       method: 'POST',
       body: {
         fields: {
-          TITLE: `Website Quote Request: ${body.projectType}`
-        }
-      }
+          TITLE: `Website Quote Request: ${body.projectType}`,
+        },
+      },
     })
 
     expect(response.result).toBeDefined()
@@ -121,16 +121,16 @@ describe('/api/quote', () => {
       email: 'jane@example.com',
       phone: '9876543210',
       projectType: 'Solar Installation',
-      details: 'Need quote for residential property'
+      details: 'Need quote for residential property',
     }
 
     const response = await global.$fetch('https://test.bitrix.com/rest/crm.lead.add', {
       method: 'POST',
       body: {
         fields: {
-          COMMENTS: expect.stringContaining('Need quote for residential property')
-        }
-      }
+          COMMENTS: expect.stringContaining('Need quote for residential property'),
+        },
+      },
     })
 
     expect(response.result).toBeDefined()
@@ -142,7 +142,7 @@ describe('/api/quote', () => {
       lastName: 'Smith',
       email: 'not-valid',
       phone: '9876543210',
-      projectType: 'Solar Installation'
+      projectType: 'Solar Installation',
     }
     const emailRegex = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]{2,}$/
     expect(emailRegex.test(body.email.trim())).toBe(false)
@@ -157,7 +157,7 @@ describe('/api/quote', () => {
       lastName: 'Smith',
       email: 'jane@example.com',
       phone: '9876543210',
-      projectType: 'Solar Installation'
+      projectType: 'Solar Installation',
       // details is optional
     }
 
@@ -165,9 +165,9 @@ describe('/api/quote', () => {
       method: 'POST',
       body: {
         fields: {
-          COMMENTS: expect.stringContaining('No additional details provided')
-        }
-      }
+          COMMENTS: expect.stringContaining('No additional details provided'),
+        },
+      },
     })
 
     expect(response.result).toBeDefined()

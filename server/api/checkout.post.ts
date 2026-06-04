@@ -74,6 +74,7 @@ type BitrixProductResult = {
     PROPERTY_44?: unknown
     PREVIEW_PICTURE?: unknown
     DETAIL_PICTURE?: unknown
+    QUANTITY?: string | number
     [key: string]: unknown
   }
 }
@@ -119,6 +120,24 @@ async function resolveTrustedCart(event: H3Event, submittedCart: SubmittedCartIt
         statusCode: 400,
         statusMessage: 'Cart contains an unavailable product.',
       })
+    }
+
+    if (product.QUANTITY !== undefined && product.QUANTITY !== null && product.QUANTITY !== '') {
+      const availableQty = Number(product.QUANTITY)
+      if (!Number.isNaN(availableQty)) {
+        if (availableQty <= 0) {
+          throw createError({
+            statusCode: 400,
+            statusMessage: `Sorry, "${product.NAME || `Product ${productId}`}" is currently out of stock.`,
+          })
+        }
+        if (availableQty < quantity) {
+          throw createError({
+            statusCode: 400,
+            statusMessage: `Sorry, only ${availableQty} unit(s) of "${product.NAME || `Product ${productId}`}" are available.`,
+          })
+        }
+      }
     }
 
     let price = Number(product.PRICE)

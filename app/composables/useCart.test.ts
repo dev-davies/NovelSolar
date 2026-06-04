@@ -15,11 +15,11 @@ global.localStorage = localStorageMock
 
 // Mock dependencies
 vi.mock('@vueuse/core', () => ({
-  useLocalStorage: vi.fn(() => ref([]))
+  useLocalStorage: vi.fn(() => ref([])),
 }))
 
 vi.mock('#app', () => ({
-  useState: vi.fn(() => ref(false))
+  useState: vi.fn(() => ref(false)),
 }))
 
 describe('useCart', () => {
@@ -40,7 +40,7 @@ describe('useCart', () => {
       id: 1,
       name: 'Test Product',
       price: 100,
-      quantity: 1
+      quantity: 1,
     })
   })
 

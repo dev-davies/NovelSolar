@@ -5,8 +5,8 @@ import ToastNotification from './ToastNotification.vue'
 
 vi.mock('~/composables/useToast', () => ({
   useToast: vi.fn().mockReturnValue({
-    removeToast: vi.fn()
-  })
+    removeToast: vi.fn(),
+  }),
 }))
 
 describe('ToastNotification', () => {

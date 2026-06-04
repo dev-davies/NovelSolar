@@ -21,17 +21,11 @@ const defaults: RateLimitConfig = {
  * Uses the same 'rateLimit' storage namespace as the global middleware
  * (memory in dev, Vercel KV in production).
  */
-export async function enforceAuthRateLimit(
-  event: H3Event,
-  opts?: Partial<RateLimitConfig>
-) {
+export async function enforceAuthRateLimit(event: H3Event, opts?: Partial<RateLimitConfig>) {
   const config = { ...defaults, ...opts }
   const storage = useStorage('rateLimit')
 
-  const ip =
-    event.node.req.headers['x-forwarded-for'] ||
-    event.node.req.socket.remoteAddress ||
-    'unknown-ip'
+  const ip = event.node.req.headers['x-forwarded-for'] || event.node.req.socket.remoteAddress || 'unknown-ip'
 
   const endpoint = event.path || 'unknown'
   const window = Math.floor(Date.now() / 1000 / config.windowSeconds)

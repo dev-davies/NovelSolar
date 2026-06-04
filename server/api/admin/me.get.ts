@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
   if (!currentUserId) {
     throw createError({
       statusCode: 401,
-      statusMessage: 'Unauthorized.'
+      statusMessage: 'Unauthorized.',
     })
   }
 
@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
   if (error || !adminProfile) {
     throw createError({
       statusCode: 403,
-      statusMessage: 'User is not an admin.'
+      statusMessage: 'User is not an admin.',
     })
   }
 
@@ -29,7 +29,7 @@ export default defineEventHandler(async (event) => {
     success: true,
     admin: {
       ...adminProfile,
-      email: event.context.admin?.email || null
-    }
+      email: event.context.admin?.email || null,
+    },
   }
 })

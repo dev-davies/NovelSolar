@@ -17,7 +17,7 @@ export const useBitrixNavigation = () => {
         const pageTitle = (to.meta.title as string) || to.name?.toString().replace(/-/g, ' ') || 'NovelSolar'
         // Capitalize first letter
         const formattedTitle = pageTitle.charAt(0).toUpperCase() + pageTitle.slice(1)
-        
+
         try {
           ;(window as any).BX24.setTitle(formattedTitle)
         } catch (e) {
@@ -42,13 +42,13 @@ export const useBitrixNavigation = () => {
         // intercept it and route internally instead, keeping them in the Bitrix slider.
         if (targetAttr === '_blank' && href && href.startsWith('/')) {
           e.preventDefault()
-          
+
           if (typeof (window as any).BX24 !== 'undefined') {
-             // We can optionally use BX24.openApplication if we want a fresh slider,
-             // but keeping it within the current SPA Nuxt router is faster.
-             router.push(href)
+            // We can optionally use BX24.openApplication if we want a fresh slider,
+            // but keeping it within the current SPA Nuxt router is faster.
+            router.push(href)
           } else {
-             router.push(href)
+            router.push(href)
           }
         }
       }
@@ -62,7 +62,7 @@ export const useBitrixNavigation = () => {
     if (isBitrixContext.value && typeof (window as any).BX24 !== 'undefined') {
       // If we strictly want to reload the app with a specific path via Bitrix SDK
       // ;(window as any).BX24.openApplication({ path })
-      
+
       // Usually, using Vue Router is preferred for speed
       router.push(path)
     } else {
@@ -72,6 +72,6 @@ export const useBitrixNavigation = () => {
 
   return {
     initBitrixNavigation,
-    navigateInBitrix
+    navigateInBitrix,
   }
 }

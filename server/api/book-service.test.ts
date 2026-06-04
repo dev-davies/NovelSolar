@@ -6,8 +6,8 @@ global.$fetch = vi.fn()
 // Mock useRuntimeConfig
 vi.mock('#imports', () => ({
   useRuntimeConfig: vi.fn().mockReturnValue({
-    bitrixWebhookUrl: 'https://test.bitrix.com/rest/'
-  })
+    bitrixWebhookUrl: 'https://test.bitrix.com/rest/',
+  }),
 }))
 
 describe('/api/book-service', () => {
@@ -17,7 +17,7 @@ describe('/api/book-service', () => {
 
   it('creates a lead successfully with valid data', async () => {
     const mockResponse = {
-      result: 'lead_12345'
+      result: 'lead_12345',
     }
     global.$fetch.mockResolvedValueOnce(mockResponse)
 
@@ -30,7 +30,7 @@ describe('/api/book-service', () => {
       serviceType: 'Solar Installation',
       preferredDate: '2024-12-25',
       address: '123 Main St',
-      details: 'Need installation on roof'
+      details: 'Need installation on roof',
     }
 
     const response = await global.$fetch('https://test.bitrix.com/rest/crm.lead.add', {
@@ -43,9 +43,9 @@ describe('/api/book-service', () => {
           EMAIL: [{ VALUE: body.email, VALUE_TYPE: 'WORK' }],
           PHONE: [{ VALUE: body.phone, VALUE_TYPE: 'WORK' }],
           COMMENTS: expect.any(String),
-          SOURCE_ID: 'WEB'
-        }
-      }
+          SOURCE_ID: 'WEB',
+        },
+      },
     })
 
     expect(response.result).toBe('lead_12345')
@@ -65,13 +65,13 @@ describe('/api/book-service', () => {
   it('handles Bitrix API error response', async () => {
     const mockResponse = {
       error: 'ERROR',
-      error_description: 'Invalid request'
+      error_description: 'Invalid request',
     }
     global.$fetch.mockResolvedValueOnce(mockResponse)
 
     const response = await global.$fetch('https://test.bitrix.com/rest/crm.lead.add', {
       method: 'POST',
-      body: { fields: {} }
+      body: { fields: {} },
     })
 
     expect(response.error).toBe('ERROR')
@@ -89,16 +89,16 @@ describe('/api/book-service', () => {
       phone: '+1234567890',
       serviceType: 'Maintenance',
       preferredDate: '2024-12-25',
-      address: '123 Main St'
+      address: '123 Main St',
     }
 
     const response = await global.$fetch('https://test.bitrix.com/rest/crm.lead.add', {
       method: 'POST',
       body: {
         fields: {
-          PHONE: [{ VALUE: body.phone, VALUE_TYPE: 'WORK' }]
-        }
-      }
+          PHONE: [{ VALUE: body.phone, VALUE_TYPE: 'WORK' }],
+        },
+      },
     })
 
     expect(response.result).toBeDefined()
@@ -116,16 +116,16 @@ describe('/api/book-service', () => {
       serviceType: 'Installation',
       preferredDate: '2024-12-25',
       address: '123 Main St',
-      details: 'Please call before arriving'
+      details: 'Please call before arriving',
     }
 
     const response = await global.$fetch('https://test.bitrix.com/rest/crm.lead.add', {
       method: 'POST',
       body: {
         fields: {
-          COMMENTS: expect.stringContaining('Please call before arriving')
-        }
-      }
+          COMMENTS: expect.stringContaining('Please call before arriving'),
+        },
+      },
     })
 
     expect(response.result).toBeDefined()
@@ -137,7 +137,7 @@ describe('/api/book-service', () => {
       lastName: 'Doe',
       email: 'invalid-email',
       phone: '1234567890',
-      serviceType: 'Installation'
+      serviceType: 'Installation',
     }
     const emailRegex = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]{2,}$/
     expect(emailRegex.test(body.email.trim())).toBe(false)
@@ -154,7 +154,7 @@ describe('/api/book-service', () => {
       phone: '1234567890',
       serviceType: 'Installation',
       preferredDate: '2024-12-25',
-      address: '123 Main St'
+      address: '123 Main St',
       // details is optional and not provided
     }
 
@@ -162,9 +162,9 @@ describe('/api/book-service', () => {
       method: 'POST',
       body: {
         fields: {
-          COMMENTS: expect.stringContaining('None provided')
-        }
-      }
+          COMMENTS: expect.stringContaining('None provided'),
+        },
+      },
     })
 
     expect(response.result).toBeDefined()

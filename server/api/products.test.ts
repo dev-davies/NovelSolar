@@ -5,7 +5,7 @@ global.$fetch = vi.fn()
 
 // Mock the utility function
 vi.mock('~/utils/normalizeProperty', () => ({
-  normalizeProperty: vi.fn((value) => value)
+  normalizeProperty: vi.fn((value) => value),
 }))
 
 describe('/api/products logic', () => {
@@ -21,10 +21,10 @@ describe('/api/products logic', () => {
           NAME: 'Test Product',
           PRICE: 1000,
           DESCRIPTION: 'Test description',
-          PROPERTY_102: 'image.jpg'
-        }
+          PROPERTY_102: 'image.jpg',
+        },
       ],
-      total: 1
+      total: 1,
     }
 
     global.$fetch.mockResolvedValue(mockResponse)
@@ -54,7 +54,7 @@ describe('/api/products logic', () => {
   it('handles API errors', async () => {
     const mockResponse = {
       error: 'API_ERROR',
-      error_description: 'Bitrix API failed'
+      error_description: 'Bitrix API failed',
     }
 
     global.$fetch.mockResolvedValue(mockResponse)

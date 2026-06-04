@@ -10,20 +10,10 @@
       <p class="error-description">{{ resolvedMessage }}</p>
 
       <div class="error-actions">
-        <button
-          v-if="showRetry"
-          type="button"
-          class="error-button error-button-primary"
-          @click="$emit('retry')"
-        >
+        <button v-if="showRetry" type="button" class="error-button error-button-primary" @click="$emit('retry')">
           Try Again
         </button>
-        <button
-          v-if="showBack"
-          type="button"
-          class="error-button error-button-secondary"
-          @click="$emit('back')"
-        >
+        <button v-if="showBack" type="button" class="error-button error-button-secondary" @click="$emit('back')">
           Go Back
         </button>
         <NuxtLink
@@ -36,9 +26,7 @@
       </div>
 
       <div v-if="showSearch" class="error-search">
-        <label class="error-search-label" for="error-search-input">
-          Search products and services
-        </label>
+        <label class="error-search-label" for="error-search-input"> Search products and services </label>
         <div class="error-search-row">
           <input
             id="error-search-input"
@@ -46,22 +34,15 @@
             type="text"
             placeholder="Search solar products, batteries, inverters..."
             @keyup.enter="emitSearch"
-          >
-          <button type="button" class="error-search-button" @click="emitSearch">
-            Search
-          </button>
+          />
+          <button type="button" class="error-search-button" @click="emitSearch">Search</button>
         </div>
       </div>
 
       <div class="error-links">
         <p class="error-links-title">Popular pages</p>
         <div class="error-links-grid">
-          <NuxtLink
-            v-for="link in quickLinks"
-            :key="link.to"
-            :to="link.to"
-            class="error-link-chip"
-          >
+          <NuxtLink v-for="link in quickLinks" :key="link.to" :to="link.to" class="error-link-chip">
             {{ link.label }}
           </NuxtLink>
         </div>
@@ -95,12 +76,12 @@ const props = withDefaults(defineProps<Props>(), {
   showRetry: false,
   showBack: true,
   showSearch: false,
-  quickLinks: () => ([
+  quickLinks: () => [
     { label: 'Shop Products', to: '/products' },
     { label: 'Solar Calculator', to: '/calculator' },
     { label: 'Get a Quote', to: '/quote' },
-    { label: 'Contact Us', to: '/contact' }
-  ])
+    { label: 'Contact Us', to: '/contact' },
+  ],
 })
 
 const searchQuery = ref('')

@@ -6,8 +6,8 @@ global.$fetch = vi.fn()
 // Mock useRuntimeConfig
 vi.mock('#imports', () => ({
   useRuntimeConfig: vi.fn().mockReturnValue({
-    bitrixWebhookUrl: 'https://test.bitrix.com/rest/'
-  })
+    bitrixWebhookUrl: 'https://test.bitrix.com/rest/',
+  }),
 }))
 
 describe('/api/admin/update-product', () => {
@@ -17,7 +17,7 @@ describe('/api/admin/update-product', () => {
 
   it('updates product successfully with valid data', async () => {
     const mockResponse = {
-      result: '12345'
+      result: '12345',
     }
     global.$fetch.mockResolvedValueOnce(mockResponse)
 
@@ -26,7 +26,7 @@ describe('/api/admin/update-product', () => {
       productName: 'Solar Panel 300W',
       productPrice: 55000,
       productDescription: 'Updated description',
-      productSpecs: { wattage: '300W', type: 'Monocrystalline' }
+      productSpecs: { wattage: '300W', type: 'Monocrystalline' },
     }
 
     const response = await global.$fetch('https://test.bitrix.com/rest/crm.product.update', {
@@ -38,9 +38,9 @@ describe('/api/admin/update-product', () => {
           PRICE: body.productPrice,
           DESCRIPTION: body.productDescription,
           DESCRIPTION_TYPE: 'html',
-          PROPERTY_104: JSON.stringify(body.productSpecs)
-        }
-      }
+          PROPERTY_104: JSON.stringify(body.productSpecs),
+        },
+      },
     })
 
     expect(response.result).toBe('12345')
@@ -48,7 +48,7 @@ describe('/api/admin/update-product', () => {
 
   it('throws error for missing required fields', () => {
     const body = {
-      productId: '12345'
+      productId: '12345',
       // missing productName and productPrice
     }
 
@@ -75,15 +75,15 @@ describe('/api/admin/update-product', () => {
     const body = {
       productId: '12345',
       productName: 'Test Product',
-      productPrice: 10000
+      productPrice: 10000,
     }
 
     const response = await global.$fetch('https://test.bitrix.com/rest/crm.product.update', {
       method: 'POST',
       body: {
         id: body.productId,
-        fields: { NAME: body.productName, PRICE: body.productPrice }
-      }
+        fields: { NAME: body.productName, PRICE: body.productPrice },
+      },
     })
 
     expect(response.result).toBe(false)
@@ -97,7 +97,7 @@ describe('/api/admin/update-product', () => {
       productId: '12345',
       productName: 'Test Product',
       productPrice: 10000,
-      productDescription: ''
+      productDescription: '',
     }
 
     const response = await global.$fetch('https://test.bitrix.com/rest/crm.product.update', {
@@ -105,9 +105,9 @@ describe('/api/admin/update-product', () => {
       body: {
         id: body.productId,
         fields: {
-          DESCRIPTION: ''
-        }
-      }
+          DESCRIPTION: '',
+        },
+      },
     })
 
     expect(response.result).toBeDefined()
@@ -121,7 +121,7 @@ describe('/api/admin/update-product', () => {
       productId: '12345',
       productName: 'Test Product',
       productPrice: 10000,
-      productSpecs: { wattage: '300W', efficiency: '20%' }
+      productSpecs: { wattage: '300W', efficiency: '20%' },
     }
 
     const specsJson = JSON.stringify(body.productSpecs)
@@ -131,9 +131,9 @@ describe('/api/admin/update-product', () => {
       body: {
         id: body.productId,
         fields: {
-          PROPERTY_104: specsJson
-        }
-      }
+          PROPERTY_104: specsJson,
+        },
+      },
     })
 
     expect(specsJson).toBe('{"wattage":"300W","efficiency":"20%"}')
@@ -146,7 +146,7 @@ describe('/api/admin/update-product', () => {
     const body = {
       productId: '12345',
       productName: 'Test Product',
-      productPrice: 10000
+      productPrice: 10000,
       // productSpecs is optional
     }
 
@@ -157,9 +157,9 @@ describe('/api/admin/update-product', () => {
       body: {
         id: body.productId,
         fields: {
-          PROPERTY_104: specsDefault
-        }
-      }
+          PROPERTY_104: specsDefault,
+        },
+      },
     })
 
     expect(response.result).toBeDefined()

@@ -6,8 +6,8 @@ global.$fetch = vi.fn()
 // Mock useRuntimeConfig
 vi.mock('#imports', () => ({
   useRuntimeConfig: vi.fn().mockReturnValue({
-    bitrixWebhookUrl: 'https://test.bitrix.com/rest/'
-  })
+    bitrixWebhookUrl: 'https://test.bitrix.com/rest/',
+  }),
 }))
 
 describe('/api/admin/delete-product', () => {
@@ -17,20 +17,20 @@ describe('/api/admin/delete-product', () => {
 
   it('deletes product successfully with valid ID', async () => {
     const mockResponse = {
-      result: true
+      result: true,
     }
     global.$fetch.mockResolvedValueOnce(mockResponse)
 
     const body = {
       productId: '12345',
-      productName: 'Solar Panel 300W'
+      productName: 'Solar Panel 300W',
     }
 
     const response = await global.$fetch('https://test.bitrix.com/rest/crm.product.delete', {
       method: 'POST',
       body: {
-        id: body.productId
-      }
+        id: body.productId,
+      },
     })
 
     expect(response.result).toBe(true)
@@ -38,7 +38,7 @@ describe('/api/admin/delete-product', () => {
 
   it('throws error when product ID is missing', () => {
     const body = {
-      productName: 'Test Product'
+      productName: 'Test Product',
       // missing productId
     }
 
@@ -64,14 +64,14 @@ describe('/api/admin/delete-product', () => {
 
     const body = {
       productId: '12345',
-      productName: 'Test Product'
+      productName: 'Test Product',
     }
 
     const response = await global.$fetch('https://test.bitrix.com/rest/crm.product.delete', {
       method: 'POST',
       body: {
-        id: body.productId
-      }
+        id: body.productId,
+      },
     })
 
     expect(response.result).toBe(false)
@@ -83,14 +83,14 @@ describe('/api/admin/delete-product', () => {
 
     const body = {
       productId: '12345',
-      productName: 'Test Product'
+      productName: 'Test Product',
     }
 
     const response = await global.$fetch('https://test.bitrix.com/rest/crm.product.delete', {
       method: 'POST',
       body: {
-        id: body.productId
-      }
+        id: body.productId,
+      },
     })
 
     // The handler returns productId in the response
@@ -104,14 +104,14 @@ describe('/api/admin/delete-product', () => {
 
     const body = {
       productId: '99999',
-      productName: 'Non-existent Product'
+      productName: 'Non-existent Product',
     }
 
     const response = await global.$fetch('https://test.bitrix.com/rest/crm.product.delete', {
       method: 'POST',
       body: {
-        id: body.productId
-      }
+        id: body.productId,
+      },
     })
 
     expect(response.result).toBe(true)

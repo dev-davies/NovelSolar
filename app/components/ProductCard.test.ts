@@ -15,8 +15,8 @@ const TestProductCard = {
   methods: {
     formatPrice(price) {
       return new Intl.NumberFormat('en-US').format(price)
-    }
-  }
+    },
+  },
 }
 
 describe('ProductCard', () => {
@@ -28,10 +28,10 @@ describe('ProductCard', () => {
         stubs: {
           NuxtLink: {
             template: '<a :href="to"><slot /></a>',
-            props: ['to']
-          }
-        }
-      }
+            props: ['to'],
+          },
+        },
+      },
     })
     expect(wrapper.text()).toContain('Test Product')
   })
@@ -44,10 +44,10 @@ describe('ProductCard', () => {
         stubs: {
           NuxtLink: {
             template: '<a :href="to"><slot /></a>',
-            props: ['to']
-          }
-        }
-      }
+            props: ['to'],
+          },
+        },
+      },
     })
     expect(wrapper.text()).toContain('1,000')
   })
@@ -60,10 +60,10 @@ describe('ProductCard', () => {
         stubs: {
           NuxtLink: {
             template: '<a :href="to"><slot /></a>',
-            props: ['to']
-          }
-        }
-      }
+            props: ['to'],
+          },
+        },
+      },
     })
     const link = wrapper.find('a')
     expect(link.attributes('href')).toBe('/shop/123')

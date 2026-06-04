@@ -6,7 +6,11 @@
           <h2 class="text-2xl font-black text-slate-900">Admin Management</h2>
           <p class="text-slate-500 text-sm font-medium mt-1">Create new admin accounts and review current access.</p>
         </div>
-        <span v-if="isMasterAdmin" class="text-xs font-black text-red-600 bg-red-50 px-3 py-2 rounded-full border border-red-100">MASTER ADMIN</span>
+        <span
+          v-if="isMasterAdmin"
+          class="text-xs font-black text-red-600 bg-red-50 px-3 py-2 rounded-full border border-red-100"
+          >MASTER ADMIN</span
+        >
       </div>
 
       <div v-if="loadError" class="bg-red-50 border border-red-200 rounded-2xl p-4 text-sm text-red-700 mb-6">
@@ -25,7 +29,7 @@
               placeholder="admin@example.com"
               class="w-full px-4 py-3 rounded-2xl border-2 border-slate-100 bg-white outline-none focus:border-red-500 focus:ring-4 focus:ring-red-100"
               :disabled="isCreatingAdmin"
-            >
+            />
           </div>
 
           <div>
@@ -36,14 +40,17 @@
               placeholder="john_admin"
               class="w-full px-4 py-3 rounded-2xl border-2 border-slate-100 bg-white outline-none focus:border-red-500 focus:ring-4 focus:ring-red-100"
               :disabled="isCreatingAdmin"
-            >
+            />
           </div>
 
           <div v-if="createAdminError" class="bg-red-50 border border-red-200 rounded-2xl p-4 text-sm text-red-700">
             {{ createAdminError }}
           </div>
 
-          <div v-if="createAdminSuccess" class="bg-green-50 border border-green-200 rounded-2xl p-4 text-sm text-green-700 whitespace-pre-line">
+          <div
+            v-if="createAdminSuccess"
+            class="bg-green-50 border border-green-200 rounded-2xl p-4 text-sm text-green-700 whitespace-pre-line"
+          >
             {{ createAdminSuccess }}
           </div>
 
@@ -53,7 +60,10 @@
             class="w-full bg-red-600 text-white py-3 rounded-2xl font-black hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             @click="createNewAdmin"
           >
-            <span v-if="isCreatingAdmin" class="animate-spin border-2 border-white/30 border-t-white w-4 h-4 rounded-full"/>
+            <span
+              v-if="isCreatingAdmin"
+              class="animate-spin border-2 border-white/30 border-t-white w-4 h-4 rounded-full"
+            />
             {{ isCreatingAdmin ? 'Creating Admin...' : 'Create Admin' }}
           </button>
         </div>
@@ -81,16 +91,22 @@
           </button>
         </div>
 
-        <div v-if="deleteError" class="bg-red-50 border border-red-200 rounded-2xl p-4 text-sm text-red-700 flex items-center justify-between gap-3">
+        <div
+          v-if="deleteError"
+          class="bg-red-50 border border-red-200 rounded-2xl p-4 text-sm text-red-700 flex items-center justify-between gap-3"
+        >
           <span>{{ deleteError }}</span>
-          <button type="button" class="text-red-400 hover:text-red-600 font-black text-xs" @click="deleteError = ''">✕ Dismiss</button>
+          <button type="button" class="text-red-400 hover:text-red-600 font-black text-xs" @click="deleteError = ''">
+            ✕ Dismiss
+          </button>
         </div>
 
-        <div v-if="isLoadingAdmins" class="text-center py-8 text-slate-500">
-          Loading admin accounts...
-        </div>
+        <div v-if="isLoadingAdmins" class="text-center py-8 text-slate-500">Loading admin accounts...</div>
 
-        <div v-else-if="admins.length === 0" class="text-center py-8 text-slate-500 bg-slate-50 rounded-2xl border border-slate-200">
+        <div
+          v-else-if="admins.length === 0"
+          class="text-center py-8 text-slate-500 bg-slate-50 rounded-2xl border border-slate-200"
+        >
           No admin accounts found.
         </div>
 
@@ -107,7 +123,9 @@
             </div>
 
             <div class="flex items-center gap-3 text-xs font-bold flex-wrap justify-end">
-              <span v-if="admin.is_master" class="px-3 py-1 rounded-full bg-red-50 text-red-700 border border-red-100">MASTER</span>
+              <span v-if="admin.is_master" class="px-3 py-1 rounded-full bg-red-50 text-red-700 border border-red-100"
+                >MASTER</span
+              >
               <span class="text-slate-500">{{ formatDate(admin.created_at) }}</span>
 
               <!-- Delete action — master admin only, cannot delete self -->
@@ -121,7 +139,10 @@
                     class="px-3 py-1.5 bg-red-600 text-white rounded-xl font-black hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center gap-1"
                     @click="deleteAdmin(admin.user_id)"
                   >
-                    <span v-if="deletingId === admin.user_id" class="animate-spin border-2 border-white/30 border-t-white w-3 h-3 rounded-full"/>
+                    <span
+                      v-if="deletingId === admin.user_id"
+                      class="animate-spin border-2 border-white/30 border-t-white w-3 h-3 rounded-full"
+                    />
                     {{ deletingId === admin.user_id ? 'Removing…' : 'Yes, Remove' }}
                   </button>
                   <button
@@ -141,7 +162,7 @@
                   class="px-3 py-1.5 bg-white border border-red-200 text-red-600 rounded-xl font-black hover:bg-red-50 transition-colors flex items-center gap-1"
                   @click="confirmDeleteId = admin.user_id"
                 >
-                  <span class="material-symbols-outlined text-sm" style="font-size:14px">person_remove</span>
+                  <span class="material-symbols-outlined text-sm" style="font-size: 14px">person_remove</span>
                   Remove
                 </button>
               </template>
@@ -180,21 +201,24 @@ const deleteError = ref('')
 
 const newAdminForm = ref({
   email: '',
-  username: ''
+  username: '',
 })
 
-const formatDate = (date: string) => new Date(date).toLocaleDateString('en-US', {
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric'
-})
+const formatDate = (date: string) =>
+  new Date(date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  })
 
 const loadAdmins = async () => {
   isLoadingAdmins.value = true
   loadError.value = ''
 
   try {
-    const response = await $fetch<{ admins: Admin[], isMasterAdmin: boolean, currentUserId?: string }>('/api/admin/list-admins')
+    const response = await $fetch<{ admins: Admin[]; isMasterAdmin: boolean; currentUserId?: string }>(
+      '/api/admin/list-admins',
+    )
     admins.value = response.admins || []
     isMasterAdmin.value = !!response.isMasterAdmin
     currentUserId.value = response.currentUserId || null
@@ -213,12 +237,12 @@ const createNewAdmin = async () => {
   createAdminSuccess.value = ''
 
   try {
-    const response = await $fetch<{ message: string, temporaryPassword?: string }>('/api/admin/create-admin', {
+    const response = await $fetch<{ message: string; temporaryPassword?: string }>('/api/admin/create-admin', {
       method: 'POST',
       body: {
         admin_email: newAdminForm.value.email,
-        admin_username: newAdminForm.value.username
-      }
+        admin_username: newAdminForm.value.username,
+      },
     })
 
     createAdminSuccess.value = response.temporaryPassword
@@ -240,7 +264,7 @@ const deleteAdmin = async (targetUserId: string) => {
   try {
     await useNuxtApp().$apiFetch('/api/admin/delete-admin', {
       method: 'POST',
-      body: { target_user_id: targetUserId }
+      body: { target_user_id: targetUserId },
     })
     confirmDeleteId.value = null
     await loadAdmins()

@@ -8,8 +8,8 @@ vi.mock('#imports', () => ({
       mockStorage.set(key, value)
     }),
     getItem: vi.fn().mockImplementation((key) => mockStorage.get(key)),
-    removeItem: vi.fn().mockImplementation((key) => mockStorage.delete(key))
-  })
+    removeItem: vi.fn().mockImplementation((key) => mockStorage.delete(key)),
+  }),
 }))
 
 describe('adminSession', () => {
@@ -36,9 +36,9 @@ describe('adminSession', () => {
         userId: '123',
         email: 'admin@example.com',
         createdAt: Date.now(),
-        expiresAt: Date.now() + 86400000
+        expiresAt: Date.now() + 86400000,
       }
-      
+
       expect(record.userId).toBeDefined()
       expect(record.email).toBeDefined()
       expect(record.createdAt).toBeDefined()
@@ -47,8 +47,8 @@ describe('adminSession', () => {
 
     it('expiresAt is 24 hours after createdAt', () => {
       const createdAt = Date.now()
-      const expiresAt = createdAt + (24 * 60 * 60 * 1000)
-      
+      const expiresAt = createdAt + 24 * 60 * 60 * 1000
+
       expect(expiresAt - createdAt).toBe(86400000)
     })
   })
@@ -76,9 +76,9 @@ describe('adminSession', () => {
         userId: '123',
         email: 'admin@example.com',
         createdAt: Date.now() - 100000,
-        expiresAt: Date.now() - 1000 // expired 1 second ago
+        expiresAt: Date.now() - 1000, // expired 1 second ago
       }
-      
+
       expect(Date.now() > expiredSession.expiresAt).toBe(true)
     })
 
@@ -87,9 +87,9 @@ describe('adminSession', () => {
         userId: '123',
         email: 'admin@example.com',
         createdAt: Date.now(),
-        expiresAt: Date.now() + 86400000 // expires in 24 hours
+        expiresAt: Date.now() + 86400000, // expires in 24 hours
       }
-      
+
       expect(Date.now() > validSession.expiresAt).toBe(false)
     })
   })

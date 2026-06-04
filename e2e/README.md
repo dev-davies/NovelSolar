@@ -64,28 +64,33 @@ The Playwright configuration is in `playwright.config.ts` and includes:
 ## Test Features
 
 ### Homepage Tests
+
 - Page loading verification
 - Navigation link validation
 - Content presence checks
 
 ### Product Tests
+
 - Product page display
 - Individual product details
 - Category filtering
 - Search functionality
 
 ### Cart Tests
+
 - Add to cart functionality
 - Cart display and navigation
 - Quantity updates
 - Item removal
 
 ### Checkout Tests
+
 - Checkout process navigation
 - Form validation
 - Order completion
 
 ### Admin Tests
+
 - Login page functionality
 - Authentication validation
 - Dashboard access

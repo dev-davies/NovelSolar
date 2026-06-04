@@ -33,11 +33,11 @@ export default defineAppConfig({
 
   calculator: {
     priceTiers: [
-      { minLoad: 60,   maxLoad: 200,  minPrice: 160000,  maxPrice: 500000 },
-      { minLoad: 201,  maxLoad: 400,  minPrice: 500000,  maxPrice: 700000 },
-      { minLoad: 401,  maxLoad: 600,  minPrice: 700000,  maxPrice: 1500000 },
-      { minLoad: 601,  maxLoad: 1000, minPrice: 1500000, maxPrice: 3000000 },
-      { minLoad: 1001, maxLoad: null,  minPrice: 5000000, maxPrice: 6000000 },
+      { minLoad: 60, maxLoad: 200, minPrice: 160000, maxPrice: 500000 },
+      { minLoad: 201, maxLoad: 400, minPrice: 500000, maxPrice: 700000 },
+      { minLoad: 401, maxLoad: 600, minPrice: 700000, maxPrice: 1500000 },
+      { minLoad: 601, maxLoad: 1000, minPrice: 1500000, maxPrice: 3000000 },
+      { minLoad: 1001, maxLoad: null, minPrice: 5000000, maxPrice: 6000000 },
     ],
   },
 })

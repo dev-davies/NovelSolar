@@ -14,7 +14,7 @@ describe('locations', () => {
     })
 
     it('each branch has required fields', () => {
-      branches.forEach(branch => {
+      branches.forEach((branch) => {
         expect(branch.name).toBeDefined()
         expect(branch.city).toBeDefined()
         expect(branch.state).toBeDefined()
@@ -25,7 +25,7 @@ describe('locations', () => {
     })
 
     it('each branch has valid coordinates', () => {
-      branches.forEach(branch => {
+      branches.forEach((branch) => {
         const [lat, lon] = branch.coords
         expect(lat).toBeGreaterThanOrEqual(-90)
         expect(lat).toBeLessThanOrEqual(90)
@@ -35,7 +35,7 @@ describe('locations', () => {
     })
 
     it('contains branches from multiple states', () => {
-      const states = new Set(branches.map(b => b.state))
+      const states = new Set(branches.map((b) => b.state))
       expect(states.size).toBeGreaterThan(5)
     })
 
@@ -62,7 +62,7 @@ describe('locations', () => {
 
     it('calculates distance between two points in Nigeria', () => {
       // Ibadan to Abuja is approximately 400km
-      const distance = getDistance(7.3964, 3.8724, 9.1538, 7.3220)
+      const distance = getDistance(7.3964, 3.8724, 9.1538, 7.322)
       expect(distance).toBeGreaterThan(350)
       expect(distance).toBeLessThan(450)
     })
@@ -86,7 +86,7 @@ describe('locations', () => {
     })
 
     it('each state has name and coordinates', () => {
-      nigerianStates.forEach(state => {
+      nigerianStates.forEach((state) => {
         expect(state.name).toBeDefined()
         expect(state.coords).toBeDefined()
         expect(state.coords).toHaveLength(2)
@@ -94,7 +94,7 @@ describe('locations', () => {
     })
 
     it('contains common states like Lagos and Kano', () => {
-      const stateNames = nigerianStates.map(s => s.name)
+      const stateNames = nigerianStates.map((s) => s.name)
       expect(stateNames).toContain('Lagos')
       expect(stateNames).toContain('Kano')
       expect(stateNames).toContain('Oyo')
@@ -102,7 +102,7 @@ describe('locations', () => {
     })
 
     it('each state has valid coordinates within Nigeria', () => {
-      nigerianStates.forEach(state => {
+      nigerianStates.forEach((state) => {
         const [lat, lon] = state.coords
         // Nigeria roughly between lat 4-14, lon 2-15
         expect(lat).toBeGreaterThanOrEqual(4)

@@ -9,7 +9,7 @@ export default defineVitestConfig({
     env: {
       NUXT_PUBLIC_SUPABASE_URL: 'http://localhost:54321',
       NUXT_PUBLIC_SUPABASE_KEY: 'test-key',
-    }
+    },
   },
   define: {
     'import.meta.client': true,
@@ -26,8 +26,8 @@ export default defineVitestConfig({
   vue: {
     template: {
       compilerOptions: {
-        isCustomElement: (tag) => tag.startsWith('Nuxt')
-      }
-    }
-  }
+        isCustomElement: (tag) => tag.startsWith('Nuxt'),
+      },
+    },
+  },
 })

@@ -13,14 +13,14 @@ export const isValidEmail = (email: unknown): boolean => {
 
 // Utility to escape potentially dangerous HTML characters
 const escapeHtml = (unsafe: string): string => {
-  if (typeof unsafe !== 'string') return unsafe;
+  if (typeof unsafe !== 'string') return unsafe
   return unsafe
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-};
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
 
 /**
  * Recursively deep-sanitizes an object, array, or string.
@@ -29,20 +29,20 @@ const escapeHtml = (unsafe: string): string => {
  */
 export const sanitizePayload = (payload: unknown): unknown => {
   if (typeof payload === 'string') {
-    return escapeHtml(payload);
+    return escapeHtml(payload)
   }
 
   if (Array.isArray(payload)) {
-    return payload.map(item => sanitizePayload(item));
+    return payload.map((item) => sanitizePayload(item))
   }
 
   if (payload !== null && typeof payload === 'object') {
-    const sanitizedObj: Record<string, unknown> = {};
+    const sanitizedObj: Record<string, unknown> = {}
     for (const [key, value] of Object.entries(payload as Record<string, unknown>)) {
-      sanitizedObj[key] = sanitizePayload(value);
+      sanitizedObj[key] = sanitizePayload(value)
     }
-    return sanitizedObj;
+    return sanitizedObj
   }
 
-  return payload;
-};
+  return payload
+}

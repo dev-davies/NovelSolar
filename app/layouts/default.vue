@@ -301,7 +301,7 @@
           placeholder="Search inventory..."
           class="w-full bg-gray-50 border border-gray-300 rounded-md py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#002288] transition-all"
           @keyup.enter="handleSearch"
-        >
+        />
       </div>
 
       <!-- Right Section: Actions -->
@@ -420,7 +420,7 @@
               placeholder="Search inventory..."
               class="w-full bg-gray-50 border border-gray-300 rounded-md py-3 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#002288]"
               @keyup.enter="handleSearch"
-            >
+            />
           </div>
         </div>
 
@@ -704,7 +704,7 @@
                 required
                 class="appearance-none min-w-0 w-full bg-white border border-gray-300 rounded-l-md py-2 px-4 text-base text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm"
                 placeholder="Enter your email"
-              >
+              />
               <div class="rounded-md sm:mt-0 sm:ml-3 sm:flex-shrink-0">
                 <button
                   type="submit"

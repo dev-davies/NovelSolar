@@ -20,16 +20,19 @@ test.describe('Admin Panel', () => {
     await page.goto('/admin/login')
 
     // Find and click login button without filling fields
-    const loginButton = page.locator('button[type="submit"], button').filter({ hasText: /login|sign in/i }).first()
+    const loginButton = page
+      .locator('button[type="submit"], button')
+      .filter({ hasText: /login|sign in/i })
+      .first()
 
-    if (await loginButton.count() > 0) {
+    if ((await loginButton.count()) > 0) {
       await loginButton.click()
 
       // Should show validation errors
       await page.waitForTimeout(1000)
 
       const errorMessage = page.locator('[class*="error"], .alert-danger').first()
-      if (await errorMessage.count() > 0) {
+      if ((await errorMessage.count()) > 0) {
         await expect(errorMessage).toBeVisible()
       }
     }
@@ -42,12 +45,12 @@ test.describe('Admin Panel', () => {
     const emailField = page.locator('input[type="email"]').first()
     const passwordField = page.locator('input[type="password"]').first()
 
-    if (await emailField.count() > 0 && await passwordField.count() > 0) {
+    if ((await emailField.count()) > 0 && (await passwordField.count()) > 0) {
       await emailField.fill('admin@example.com')
       await passwordField.fill('password123')
 
       const loginButton = page.locator('button[type="submit"]').first()
-      if (await loginButton.count() > 0) {
+      if ((await loginButton.count()) > 0) {
         await loginButton.click()
 
         // Wait for navigation
@@ -73,7 +76,7 @@ test.describe('Admin Panel', () => {
     // Check for admin navigation/menu
     const adminNav = page.locator('nav[class*="admin"], aside, .sidebar').first()
 
-    if (await adminNav.count() > 0) {
+    if ((await adminNav.count()) > 0) {
       await expect(adminNav).toBeVisible()
 
       // Check for admin menu items
@@ -87,12 +90,15 @@ test.describe('Admin Panel', () => {
 
     // Check for product management elements
     const productTable = page.locator('table, [class*="product-list"]').first()
-    const addProductButton = page.locator('button').filter({ hasText: /add product|new product/i }).first()
+    const addProductButton = page
+      .locator('button')
+      .filter({ hasText: /add product|new product/i })
+      .first()
 
     // Should have either a table or add button
-    if (await productTable.count() > 0) {
+    if ((await productTable.count()) > 0) {
       await expect(productTable).toBeVisible()
-    } else if (await addProductButton.count() > 0) {
+    } else if ((await addProductButton.count()) > 0) {
       await expect(addProductButton).toBeVisible()
     }
   })
@@ -102,9 +108,12 @@ test.describe('Admin Panel', () => {
     await page.goto('/admin/login')
 
     // Look for logout button/link (might be in header)
-    const logoutButton = page.locator('a, button').filter({ hasText: /logout|sign out/i }).first()
+    const logoutButton = page
+      .locator('a, button')
+      .filter({ hasText: /logout|sign out/i })
+      .first()
 
-    if (await logoutButton.count() > 0) {
+    if ((await logoutButton.count()) > 0) {
       await logoutButton.click()
 
       // Should redirect to login or homepage

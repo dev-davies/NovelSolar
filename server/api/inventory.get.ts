@@ -67,62 +67,7 @@ export default defineEventHandler(async (event) => {
     return productObj
   }
 
-  const supabase = getSupabaseAdminClient()
-
-  let dbProducts: any[] | null = null
-
-  try {
-    let query = supabase.from('products').select('*').eq('active', true).order('id', { ascending: false })
-
-    if (brand && q) {
-      query = query.ilike('name', `%${brand} ${q}%`)
-    } else if (brand) {
-      query = query.ilike('name', `%${brand}%`)
-    } else if (q) {
-      query = query.ilike('name', `%${q}%`)
-    }
-
-    // start (for pagination, range of 50)
-    query = query.range(start, start + 49)
-
-    const { data, error } = await query
-
-    if (error) {
-      throw error
-    }
-    dbProducts = data
-  } catch (error) {
-    logger.warn('Inventory', 'Supabase unavailable, falling back to Bitrix', { error })
-  }
-
-  if (dbProducts) {
-    // Fire background sync check
-    try {
-      const { data: syncMeta } = await supabase
-        .from('sync_meta')
-        .select('value')
-        .eq('key', 'products_last_synced')
-        .maybeSingle()
-
-      const lastSynced = syncMeta?.value ? new Date(syncMeta.value) : null
-      const twentyFiveHoursAgo = new Date(Date.now() - 25 * 60 * 60 * 1000)
-
-      if (!lastSynced || lastSynced < twentyFiveHoursAgo) {
-        const config = useRuntimeConfig()
-        const cronSecret = config.cronSecret
-        $fetch('/api/admin/trigger-sync', {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${cronSecret}` },
-        }).catch((e) => logger.error('Inventory', 'Background sync failed to start', { error: e }))
-      }
-    } catch (metaError) {
-      logger.error('Inventory', 'Failed to check sync metadata', { error: metaError })
-    }
-
-    return dbProducts.map((p) => mapProduct(p, true))
-  }
-
-  // FALLBACK
+  // PRIMARY PATH: BITRIX
   try {
     const allBitrixProducts = await fetchAllBitrixProducts(event)
 
@@ -143,8 +88,36 @@ export default defineEventHandler(async (event) => {
 
     const paginated = filtered.slice(start, start + 50)
     return paginated.map((p) => mapProduct(p, false))
+  } catch (error) {
+    logger.warn('Inventory', 'Bitrix unavailable, falling back to Supabase', { error })
+  }
+
+  // FALLBACK PATH: SUPABASE
+  const supabase = getSupabaseAdminClient()
+
+  try {
+    let query = supabase.from('products').select('*').eq('active', true).order('id', { ascending: false })
+
+    if (brand && q) {
+      query = query.ilike('name', `%${brand} ${q}%`)
+    } else if (brand) {
+      query = query.ilike('name', `%${brand}%`)
+    } else if (q) {
+      query = query.ilike('name', `%${q}%`)
+    }
+
+    // start (for pagination, range of 50)
+    query = query.range(start, start + 49)
+
+    const { data, error } = await query
+
+    if (error) {
+      throw error
+    }
+
+    return (data || []).map((p) => mapProduct(p, true))
   } catch (fallbackError) {
-    logger.error('Inventory', 'Bitrix fallback failed', { error: fallbackError })
-    throw createError({ statusCode: 500, statusMessage: 'Unable to fetch inventory' })
+    logger.error('Inventory', 'Supabase fallback failed', { error: fallbackError })
+    throw createError({ statusCode: 503, statusMessage: 'Product catalog temporarily unavailable.' })
   }
 })

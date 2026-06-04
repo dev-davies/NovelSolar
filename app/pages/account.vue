@@ -157,7 +157,7 @@ useHead({
                   required
                   placeholder="e.g. John"
                   class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 px-5 text-slate-900 font-bold outline-none focus:border-[#3c59b0] focus:ring-4 focus:ring-blue-50 transition-all"
-                >
+                />
               </div>
               <div class="space-y-2">
                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Last Name</label>
@@ -166,7 +166,7 @@ useHead({
                   type="text"
                   placeholder="e.g. Doe"
                   class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 px-5 text-slate-900 font-bold outline-none focus:border-[#3c59b0] focus:ring-4 focus:ring-blue-50 transition-all"
-                >
+                />
               </div>
               <div class="space-y-2 md:col-span-2">
                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1"
@@ -178,7 +178,7 @@ useHead({
                   required
                   placeholder="+234..."
                   class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 px-5 text-slate-900 font-bold outline-none focus:border-[#3c59b0] focus:ring-4 focus:ring-blue-50 transition-all"
-                >
+                />
               </div>
               <div class="space-y-2 md:col-span-2">
                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1"
@@ -189,7 +189,7 @@ useHead({
                   type="text"
                   placeholder="123 Energy Lane, Ikeja"
                   class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 px-5 text-slate-900 font-bold outline-none focus:border-[#3c59b0] focus:ring-4 focus:ring-blue-50 transition-all"
-                >
+                />
               </div>
 
               <div class="md:col-span-2 mt-4">

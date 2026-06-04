@@ -9,7 +9,9 @@ const store = new Map<string, any>()
 // Mock Nitro auto-imports
 vi.stubGlobal('useStorage', () => ({
   getItem: vi.fn(async (key: string) => store.get(key) ?? null),
-  setItem: vi.fn(async (key: string, value: any) => { store.set(key, value) }),
+  setItem: vi.fn(async (key: string, value: any) => {
+    store.set(key, value)
+  }),
 }))
 
 vi.stubGlobal('createError', (opts: { statusCode: number; statusMessage: string }) => {

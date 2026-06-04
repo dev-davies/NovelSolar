@@ -13,9 +13,9 @@ export default defineEventHandler(async (event) => {
     }
 
     // Fetch the full data for each failed order
-    const failedOrders = (await Promise.all(
-      keys.map((key) => storage.getItem<FailedOrder>(key))
-    )).filter((order): order is FailedOrder => order !== null)
+    const failedOrders = (await Promise.all(keys.map((key) => storage.getItem<FailedOrder>(key)))).filter(
+      (order): order is FailedOrder => order !== null,
+    )
 
     // Sort by timestamp (newest first)
     failedOrders.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
     return {
       success: true,
       count: failedOrders.length,
-      orders: failedOrders
+      orders: failedOrders,
     }
   } catch (error) {
     logger.error('Failed Orders', 'Could not fetch fallback queue', { error })

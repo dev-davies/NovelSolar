@@ -12,8 +12,9 @@ draft: false
 In a world where staying connected is essential, access to reliable power can make all the difference. The Itel Solar Power Tank is designed to provide seamless backup power for your essential home devices.
 
 ## Key Features
-* **Capacity:** 1kWh Lithium-ion storage
-* **Durability:** Built for the Nigerian climate
-* **Portability:** Easy to move and install
+
+- **Capacity:** 1kWh Lithium-ion storage
+- **Durability:** Built for the Nigerian climate
+- **Portability:** Easy to move and install
 
 Whether you are running a small home office or just keeping the lights on,

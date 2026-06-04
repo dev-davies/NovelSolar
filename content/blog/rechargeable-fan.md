@@ -9,11 +9,12 @@ author: 'Novel Solar Editorial'
 draft: false
 ---
 
-In a country where power fluctuations are common, having a personal, portable cooling solution isn't a luxury—it's a necessity. 
+In a country where power fluctuations are common, having a personal, portable cooling solution isn't a luxury—it's a necessity.
 
 ## Key Features
-* **Versatile Clip Design:** Attach it to desks, beds, or shelves.
-* **Integrated LED:** Bright enough to light up a small room during outages.
-* **Long Battery Life:** Runs for hours on a single charge.
+
+- **Versatile Clip Design:** Attach it to desks, beds, or shelves.
+- **Integrated LED:** Bright enough to light up a small room during outages.
+- **Long Battery Life:** Runs for hours on a single charge.
 
 This fan is perfect for students, office workers, or simply keeping comfortable at night.

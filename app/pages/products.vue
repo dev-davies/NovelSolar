@@ -1,18 +1,15 @@
 <template>
   <div class="min-h-screen bg-slate-50 py-12 px-6 lg:px-12">
     <div class="max-w-7xl mx-auto">
-      
       <div class="mb-10">
         <h1 class="text-4xl font-black text-[#002888] tracking-tight mb-2">
           {{ activeSearch ? `Search Results for "${activeSearch}"` : 'All Products' }}
         </h1>
-        <p class="text-slate-500 font-medium">
-          Showing {{ products.length }} of {{ totalProducts }} available items.
-        </p>
+        <p class="text-slate-500 font-medium">Showing {{ products.length }} of {{ totalProducts }} available items.</p>
       </div>
 
       <div v-if="isFetching" class="flex justify-center py-24">
-        <div class="w-12 h-12 border-4 border-[#002888]/20 border-t-[#002888] rounded-full animate-spin"/>
+        <div class="w-12 h-12 border-4 border-[#002888]/20 border-t-[#002888] rounded-full animate-spin" />
       </div>
 
       <div v-else-if="products.length > 0">
@@ -21,12 +18,15 @@
         </div>
 
         <div v-if="nextOffset !== null" class="mt-16 flex justify-center">
-          <button 
-            :disabled="isLoadingMore" 
+          <button
+            :disabled="isLoadingMore"
             class="bg-white border-2 border-slate-200 text-[#002888] px-10 py-4 rounded-xl font-black hover:border-[#002888] hover:bg-blue-50 transition-all shadow-sm flex items-center gap-3 disabled:opacity-50"
             @click="() => fetchProducts(true)"
           >
-            <span v-if="isLoadingMore" class="animate-spin border-2 border-[#002888]/30 border-t-[#002888] w-5 h-5 rounded-full"/>
+            <span
+              v-if="isLoadingMore"
+              class="animate-spin border-2 border-[#002888]/30 border-t-[#002888] w-5 h-5 rounded-full"
+            />
             {{ isLoadingMore ? 'Loading Inventory...' : 'Load Next 50 Items' }}
           </button>
         </div>
@@ -37,7 +37,6 @@
         <h3 class="text-2xl font-black text-slate-900 mb-2">No products found</h3>
         <p class="text-slate-500">We couldn't find any items matching your criteria. Try adjusting your search.</p>
       </div>
-
     </div>
   </div>
 </template>
@@ -68,8 +67,8 @@ const fetchProducts = async (isLoadMore = false) => {
     const response = await useNuxtApp().$apiFetch('/api/products', {
       query: {
         q: activeSearch.value,
-        start: isLoadMore ? nextOffset.value : 0
-      }
+        start: isLoadMore ? nextOffset.value : 0,
+      },
     })
 
     if (isLoadMore) {
@@ -102,7 +101,10 @@ onMounted(() => {
 useHead({
   title: 'Products | NovelSolar',
   meta: [
-    { name: 'description', content: 'Browse our complete catalog of enterprise-grade solar panels, inverters, batteries, and accessories.' }
-  ]
+    {
+      name: 'description',
+      content: 'Browse our complete catalog of enterprise-grade solar panels, inverters, batteries, and accessories.',
+    },
+  ],
 })
 </script>

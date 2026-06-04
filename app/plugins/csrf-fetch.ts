@@ -20,12 +20,12 @@ export default defineNuxtPlugin(() => {
           options.headers = headers
         }
       }
-    }
+    },
   })
 
   return {
     provide: {
-      apiFetch
-    }
+      apiFetch,
+    },
   }
 })

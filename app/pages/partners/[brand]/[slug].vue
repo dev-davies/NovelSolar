@@ -8,7 +8,8 @@
         {{ route.params.slug.replace(/-/g, ' ') }}
       </h1>
       <p class="text-gray-500 text-lg mb-8 font-medium">
-        Information about {{ route.params.slug.replace(/-/g, ' ') }} for our {{ route.params.brand }} ecosystem is being updated.
+        Information about {{ route.params.slug.replace(/-/g, ' ') }} for our {{ route.params.brand }} ecosystem is being
+        updated.
       </p>
       <NuxtLink :to="'/partners/' + route.params.brand" class="text-[#002888] font-bold hover:underline">
         &larr; Back to {{ route.params.brand.toUpperCase() }} Overview

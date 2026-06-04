@@ -13,7 +13,7 @@ const successMessage = ref('')
 
 useHead({
   title: 'Change Password | Novel Solar Admin',
-  meta: [{ name: 'description', content: 'Change your admin account password.' }]
+  meta: [{ name: 'description', content: 'Change your admin account password.' }],
 })
 
 const changePassword = async () => {
@@ -41,8 +41,8 @@ const changePassword = async () => {
       method: 'POST',
       body: {
         current_password: currentPassword.value,
-        new_password: newPassword.value
-      }
+        new_password: newPassword.value,
+      },
     })
 
     successMessage.value = response.message
@@ -76,15 +76,24 @@ const handleLogout = async () => {
         </div>
 
         <div class="flex flex-wrap justify-center lg:justify-end items-center gap-3 lg:max-w-[50%]">
-          <NuxtLink to="/admin/add-product" class="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all shadow-sm">
+          <NuxtLink
+            to="/admin/add-product"
+            class="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all shadow-sm"
+          >
             <span class="material-symbols-outlined text-sm">add_box</span>
             Add Products
           </NuxtLink>
-          <NuxtLink to="/admin/manage-products" class="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all shadow-sm">
+          <NuxtLink
+            to="/admin/manage-products"
+            class="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all shadow-sm"
+          >
             <span class="material-symbols-outlined text-sm">inventory_2</span>
             Manage Inventory
           </NuxtLink>
-          <button class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all" @click="handleLogout">
+          <button
+            class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all"
+            @click="handleLogout"
+          >
             <span class="material-symbols-outlined text-sm">logout</span>
             Logout
           </button>
@@ -96,8 +105,18 @@ const handleLogout = async () => {
           <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Current Password</label>
           <div class="relative">
             <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400">lock</span>
-            <input v-model="currentPassword" :type="showCurrentPassword ? 'text' : 'password'" class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 pl-12 pr-12 text-slate-900 font-medium outline-none focus:border-red-500 focus:ring-4 focus:ring-red-100 transition-all" :disabled="isSubmitting" autocomplete="current-password" >
-            <button type="button" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700" @click="showCurrentPassword = !showCurrentPassword">
+            <input
+              v-model="currentPassword"
+              :type="showCurrentPassword ? 'text' : 'password'"
+              class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 pl-12 pr-12 text-slate-900 font-medium outline-none focus:border-red-500 focus:ring-4 focus:ring-red-100 transition-all"
+              :disabled="isSubmitting"
+              autocomplete="current-password"
+            />
+            <button
+              type="button"
+              class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
+              @click="showCurrentPassword = !showCurrentPassword"
+            >
               <span class="material-symbols-outlined">{{ showCurrentPassword ? 'visibility_off' : 'visibility' }}</span>
             </button>
           </div>
@@ -106,20 +125,46 @@ const handleLogout = async () => {
         <div>
           <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">New Password</label>
           <div class="relative">
-            <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400">lock_reset</span>
-            <input v-model="newPassword" :type="showNewPassword ? 'text' : 'password'" class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 pl-12 pr-12 text-slate-900 font-medium outline-none focus:border-red-500 focus:ring-4 focus:ring-red-100 transition-all" :disabled="isSubmitting" autocomplete="new-password" >
-            <button type="button" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700" @click="showNewPassword = !showNewPassword">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400"
+              >lock_reset</span
+            >
+            <input
+              v-model="newPassword"
+              :type="showNewPassword ? 'text' : 'password'"
+              class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 pl-12 pr-12 text-slate-900 font-medium outline-none focus:border-red-500 focus:ring-4 focus:ring-red-100 transition-all"
+              :disabled="isSubmitting"
+              autocomplete="new-password"
+            />
+            <button
+              type="button"
+              class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
+              @click="showNewPassword = !showNewPassword"
+            >
               <span class="material-symbols-outlined">{{ showNewPassword ? 'visibility_off' : 'visibility' }}</span>
             </button>
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Confirm New Password</label>
+          <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2"
+            >Confirm New Password</label
+          >
           <div class="relative">
-            <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400">lock_check</span>
-            <input v-model="confirmPassword" :type="showConfirmPassword ? 'text' : 'password'" class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 pl-12 pr-12 text-slate-900 font-medium outline-none focus:border-red-500 focus:ring-4 focus:ring-red-100 transition-all" :disabled="isSubmitting" autocomplete="new-password" >
-            <button type="button" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700" @click="showConfirmPassword = !showConfirmPassword">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400"
+              >lock_check</span
+            >
+            <input
+              v-model="confirmPassword"
+              :type="showConfirmPassword ? 'text' : 'password'"
+              class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 pl-12 pr-12 text-slate-900 font-medium outline-none focus:border-red-500 focus:ring-4 focus:ring-red-100 transition-all"
+              :disabled="isSubmitting"
+              autocomplete="new-password"
+            />
+            <button
+              type="button"
+              class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
+              @click="showConfirmPassword = !showConfirmPassword"
+            >
               <span class="material-symbols-outlined">{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</span>
             </button>
           </div>

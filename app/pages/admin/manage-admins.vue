@@ -3,7 +3,7 @@ definePageMeta({ middleware: 'admin' })
 
 useHead({
   title: 'Manage Admins | Novel Solar Admin',
-  meta: [{ name: 'description', content: 'Create and manage admin accounts.' }]
+  meta: [{ name: 'description', content: 'Create and manage admin accounts.' }],
 })
 
 const handleLogout = async () => {
@@ -26,19 +26,31 @@ const handleLogout = async () => {
         </div>
 
         <div class="flex flex-wrap justify-center lg:justify-end items-center gap-3 lg:max-w-[55%]">
-          <NuxtLink to="/admin/change-password" class="px-4 py-2 bg-red-50 border border-red-200 hover:bg-red-100 text-red-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all shadow-sm">
+          <NuxtLink
+            to="/admin/change-password"
+            class="px-4 py-2 bg-red-50 border border-red-200 hover:bg-red-100 text-red-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all shadow-sm"
+          >
             <span class="material-symbols-outlined text-sm">lock_reset</span>
             Change Password
           </NuxtLink>
-          <NuxtLink to="/admin/add-product" class="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all shadow-sm">
+          <NuxtLink
+            to="/admin/add-product"
+            class="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all shadow-sm"
+          >
             <span class="material-symbols-outlined text-sm">add_box</span>
             Add Products
           </NuxtLink>
-          <NuxtLink to="/admin/manage-products" class="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all shadow-sm">
+          <NuxtLink
+            to="/admin/manage-products"
+            class="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all shadow-sm"
+          >
             <span class="material-symbols-outlined text-sm">inventory_2</span>
             Manage Inventory
           </NuxtLink>
-          <button class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all" @click="handleLogout">
+          <button
+            class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all"
+            @click="handleLogout"
+          >
             <span class="material-symbols-outlined text-sm">logout</span>
             Logout
           </button>

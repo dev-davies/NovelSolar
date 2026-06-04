@@ -8,21 +8,21 @@ export default defineEventHandler(async (event) => {
   if (!currentUserId) {
     throw createError({
       statusCode: 401,
-      statusMessage: 'Unauthorized.'
+      statusMessage: 'Unauthorized.',
     })
   }
 
   if (!body?.target_user_id) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Target user ID is required.'
+      statusMessage: 'Target user ID is required.',
     })
   }
 
   if (body.target_user_id === currentUserId) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'You cannot delete your own account.'
+      statusMessage: 'You cannot delete your own account.',
     })
   }
 
@@ -38,7 +38,7 @@ export default defineEventHandler(async (event) => {
   if (currentAdminError || !currentAdmin?.is_master) {
     throw createError({
       statusCode: 403,
-      statusMessage: 'Only master admins can delete admin accounts.'
+      statusMessage: 'Only master admins can delete admin accounts.',
     })
   }
 
@@ -52,7 +52,7 @@ export default defineEventHandler(async (event) => {
   if (targetAdminError || !targetAdmin) {
     throw createError({
       statusCode: 404,
-      statusMessage: 'Admin account not found.'
+      statusMessage: 'Admin account not found.',
     })
   }
 
@@ -65,7 +65,7 @@ export default defineEventHandler(async (event) => {
   if (profileDeleteError) {
     throw createError({
       statusCode: 500,
-      statusMessage: 'Failed to remove admin profile.'
+      statusMessage: 'Failed to remove admin profile.',
     })
   }
 
@@ -77,10 +77,14 @@ export default defineEventHandler(async (event) => {
     // Profile is gone but auth user remains — still return success since access is revoked
   }
 
-  logger.info('DELETE-ADMIN', 'Admin deleted', { username: targetAdmin.admin_username, targetUserId: body.target_user_id, deletedBy: currentUserId })
+  logger.info('DELETE-ADMIN', 'Admin deleted', {
+    username: targetAdmin.admin_username,
+    targetUserId: body.target_user_id,
+    deletedBy: currentUserId,
+  })
 
   return {
     success: true,
-    message: `Admin "${targetAdmin.admin_username}" has been removed successfully.`
+    message: `Admin "${targetAdmin.admin_username}" has been removed successfully.`,
   }
 })

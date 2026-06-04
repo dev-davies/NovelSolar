@@ -15,25 +15,31 @@ const { removeToast } = useToast()
 
 const typeClasses = computed(() => {
   switch (props.toast.type) {
-    case 'success': return 'bg-green-50 text-green-800 border-green-200'
-    case 'error': return 'bg-red-50 text-red-800 border-red-200'
+    case 'success':
+      return 'bg-green-50 text-green-800 border-green-200'
+    case 'error':
+      return 'bg-red-50 text-red-800 border-red-200'
     case 'info':
-    default: return 'bg-blue-50 text-blue-800 border-blue-200'
+    default:
+      return 'bg-blue-50 text-blue-800 border-blue-200'
   }
 })
 
 const iconName = computed(() => {
   switch (props.toast.type) {
-    case 'success': return 'check_circle'
-    case 'error': return 'error'
+    case 'success':
+      return 'check_circle'
+    case 'error':
+      return 'error'
     case 'info':
-    default: return 'info'
+    default:
+      return 'info'
   }
 })
 </script>
 
 <template>
-  <div 
+  <div
     class="flex items-start p-4 mb-3 border rounded-lg shadow-sm transition-all duration-300"
     :class="typeClasses"
     role="alert"

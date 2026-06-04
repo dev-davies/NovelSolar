@@ -18,11 +18,11 @@ describe('/api/contact logic', () => {
       email: 'jane@example.com',
       phone: '+1234567890',
       subject: 'Product Inquiry',
-      message: 'I am interested in your solar panels.'
+      message: 'I am interested in your solar panels.',
     }
 
-    const normalizedUrl = config.bitrixWebhookUrl.endsWith('/') 
-      ? config.bitrixWebhookUrl 
+    const normalizedUrl = config.bitrixWebhookUrl.endsWith('/')
+      ? config.bitrixWebhookUrl
       : `${config.bitrixWebhookUrl}/`
 
     const response = await $fetch(`${normalizedUrl}crm.lead.add`, {
@@ -35,9 +35,9 @@ describe('/api/contact logic', () => {
           PHONE: [{ VALUE: body.phone, VALUE_TYPE: 'WORK' }],
           COMMENTS: `Inquiry Type: General Contact Form\nSubject: ${body.subject}\n\nMessage:\n${body.message}`,
           SOURCE_ID: 'WEB',
-          OPENED: 'Y'
-        }
-      }
+          OPENED: 'Y',
+        },
+      },
     })
 
     expect(response.result).toBe(67890)
@@ -48,7 +48,7 @@ describe('/api/contact logic', () => {
     const body = {
       name: '',
       email: '',
-      message: ''
+      message: '',
     }
 
     const isValid = !!(body.name && body.email && body.message)
@@ -83,18 +83,18 @@ describe('/api/contact logic', () => {
   it('handles Bitrix API error', async () => {
     const mockResponse = {
       error: 'ERROR',
-      error_description: 'Bitrix API failed'
+      error_description: 'Bitrix API failed',
     }
     global.$fetch.mockResolvedValue(mockResponse)
 
     const config = { bitrixWebhookUrl: 'https://test.bitrix.com/rest/' }
-    const normalizedUrl = config.bitrixWebhookUrl.endsWith('/') 
-      ? config.bitrixWebhookUrl 
+    const normalizedUrl = config.bitrixWebhookUrl.endsWith('/')
+      ? config.bitrixWebhookUrl
       : `${config.bitrixWebhookUrl}/`
 
     const response = await $fetch(`${normalizedUrl}crm.lead.add`, {
       method: 'POST',
-      body: { fields: { TITLE: 'Test' } }
+      body: { fields: { TITLE: 'Test' } },
     })
 
     expect(response.error).toBe('ERROR')
@@ -105,7 +105,7 @@ describe('/api/contact logic', () => {
       name: 'Test User',
       subject: 'Pricing Question',
       message: 'What is the price for 10 panels?',
-      phone: '+1234567890'
+      phone: '+1234567890',
     }
 
     const comments = `Inquiry Type: General Contact Form\nSubject: ${body.subject}\n\nMessage:\n${body.message}`
@@ -120,7 +120,7 @@ describe('/api/contact logic', () => {
       name: 'Test User',
       email: 'test@test.com',
       message: 'Hello',
-      phone: ''
+      phone: '',
     }
 
     // Phone is optional, so empty string should be handled
@@ -145,7 +145,7 @@ describe('/api/contact logic', () => {
       name: 'Test User',
       email: 'test@test.com',
       message: 'Hello',
-      subject: ''
+      subject: '',
     }
 
     // Subject defaults to 'No Subject' in the API

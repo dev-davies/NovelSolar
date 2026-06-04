@@ -91,52 +91,7 @@ export default defineEventHandler(async (event) => {
     return productObj
   }
 
-  const supabase = getSupabaseAdminClient()
-
-  let dbProducts: any[] | null = null
-  let totalCount = 0
-
-  try {
-    let dbQuery = supabase
-      .from('products')
-      .select('*', { count: 'exact' })
-      .eq('active', true)
-      .order('id', { ascending: false })
-
-    if (brandFilter && searchTerm) {
-      dbQuery = dbQuery.ilike('name', `%${brandFilter} ${searchTerm}%`)
-    } else if (brandFilter) {
-      dbQuery = dbQuery.ilike('name', `%${brandFilter}%`)
-    } else if (searchTerm) {
-      dbQuery = dbQuery.ilike('name', `%${searchTerm}%`)
-    }
-
-    dbQuery = dbQuery.range(startFrom, startFrom + PAGE_SIZE - 1)
-
-    const { data, count, error } = await dbQuery
-
-    if (error) {
-      throw error
-    }
-    dbProducts = data
-    totalCount = count || 0
-  } catch (error) {
-    logger.warn('Products', 'Supabase unavailable, falling back to Bitrix', { error })
-  }
-
-  if (dbProducts) {
-    const products = dbProducts.map((p) => mapProduct(p, true))
-    const nextStart = startFrom + PAGE_SIZE < totalCount ? startFrom + PAGE_SIZE : null
-
-    return {
-      products,
-      next: nextStart,
-      total: totalCount,
-      count: products.length,
-    }
-  }
-
-  // FALLBACK TO BITRIX
+  // PRIMARY PATH: BITRIX
   try {
     const filters: Record<string, string> = {}
     filters.ACTIVE = 'Y'
@@ -191,7 +146,6 @@ export default defineEventHandler(async (event) => {
         : []
 
     if (bitrixProducts.length === 0) {
-      logger.warn('Products', 'No products returned from Bitrix')
       return {
         products: [],
         next: null,
@@ -215,10 +169,50 @@ export default defineEventHandler(async (event) => {
       count: products.length,
     }
   } catch (error) {
-    logger.error('Products', 'API error', { error })
+    logger.warn('Products', 'Bitrix unavailable, falling back to Supabase', { error })
+  }
+
+  // FALLBACK PATH: SUPABASE
+  const supabase = getSupabaseAdminClient()
+
+  try {
+    let dbQuery = supabase
+      .from('products')
+      .select('*', { count: 'exact' })
+      .eq('active', true)
+      .order('id', { ascending: false })
+
+    if (brandFilter && searchTerm) {
+      dbQuery = dbQuery.ilike('name', `%${brandFilter} ${searchTerm}%`)
+    } else if (brandFilter) {
+      dbQuery = dbQuery.ilike('name', `%${brandFilter}%`)
+    } else if (searchTerm) {
+      dbQuery = dbQuery.ilike('name', `%${searchTerm}%`)
+    }
+
+    dbQuery = dbQuery.range(startFrom, startFrom + PAGE_SIZE - 1)
+
+    const { data, count, error } = await dbQuery
+
+    if (error) {
+      throw error
+    }
+
+    const products = (data || []).map((p) => mapProduct(p, true))
+    const totalCount = count || 0
+    const nextStart = startFrom + PAGE_SIZE < totalCount ? startFrom + PAGE_SIZE : null
+
+    return {
+      products,
+      next: nextStart,
+      total: totalCount,
+      count: products.length,
+    }
+  } catch (fallbackError) {
+    logger.error('Products', 'Supabase fallback failed', { error: fallbackError })
     throw createError({
-      statusCode: 500,
-      statusMessage: 'Failed to fetch products',
+      statusCode: 503,
+      statusMessage: 'Product catalog temporarily unavailable.',
     })
   }
 })

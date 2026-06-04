@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    path: '/'
+    path: '/',
   })
 
   return { success: true, message: 'Logged out successfully.' }

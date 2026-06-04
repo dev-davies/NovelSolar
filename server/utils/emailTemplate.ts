@@ -1,19 +1,21 @@
 import type { OrderDetails, ServiceBookingDetails } from '../types/database'
 
 function getEmailTemplateUrls() {
-  const config = useRuntimeConfig();
-  const siteUrl = config.public.baseUrl.replace(/\/$/, '');
+  const config = useRuntimeConfig()
+  const siteUrl = config.public.baseUrl.replace(/\/$/, '')
 
   return {
     siteUrl,
     logoUrl: `${siteUrl}/images/logo.png`,
     whatsappUrl: `https://wa.me/${config.public.whatsappNumber}`,
-  };
+  }
 }
 
 export function generateOrderReceiptHtml(orderDetails: OrderDetails) {
-  const { siteUrl, logoUrl, whatsappUrl } = getEmailTemplateUrls();
-  const productsHtml = orderDetails.products.map((item: any) => `
+  const { siteUrl, logoUrl, whatsappUrl } = getEmailTemplateUrls()
+  const productsHtml = orderDetails.products
+    .map(
+      (item: any) => `
     <tr>
       <td style="padding: 15px 0; border-bottom: 1px solid #e5e2e1; width: 90px;">
         <img src="${item.image}" alt="${item.name}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 6px; background-color: #f0edec; border: 1px solid #e5e2e1;" />
@@ -26,7 +28,9 @@ export function generateOrderReceiptHtml(orderDetails: OrderDetails) {
         <span style="font-family: 'Space Grotesk', Arial, sans-serif; font-weight: bold; font-size: 15px; color: #1c1b1b;">₦${item.price.toLocaleString()}</span>
       </td>
     </tr>
-  `).join('');
+  `,
+    )
+    .join('')
 
   return `
   <!DOCTYPE html>
@@ -148,11 +152,11 @@ export function generateOrderReceiptHtml(orderDetails: OrderDetails) {
     </table>
   </body>
   </html>
-  `;
+  `
 }
 
 export function generateServiceBookingHtml(bookingDetails: ServiceBookingDetails) {
-  const { siteUrl, logoUrl, whatsappUrl } = getEmailTemplateUrls();
+  const { siteUrl, logoUrl, whatsappUrl } = getEmailTemplateUrls()
   return `
   <!DOCTYPE html>
   <html lang="en">
@@ -235,5 +239,5 @@ export function generateServiceBookingHtml(bookingDetails: ServiceBookingDetails
     </table>
   </body>
   </html>
-  `;
+  `
 }

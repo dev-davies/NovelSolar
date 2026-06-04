@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
   if (!body?.email) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Email is required.'
+      statusMessage: 'Email is required.',
     })
   }
 
@@ -37,7 +37,7 @@ export default defineEventHandler(async (event) => {
 
       if (adminProfile) {
         await supabase.auth.resetPasswordForEmail(trimmedEmail, {
-          redirectTo: `${config.public.baseUrl || 'http://localhost:3000'}/admin/reset-password`
+          redirectTo: `${config.public.baseUrl || 'http://localhost:3000'}/admin/reset-password`,
         })
       }
     }
@@ -47,6 +47,6 @@ export default defineEventHandler(async (event) => {
 
   return {
     success: true,
-    message: 'If that admin account exists, a password reset link has been sent.'
+    message: 'If that admin account exists, a password reset link has been sent.',
   }
 })

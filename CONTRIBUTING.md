@@ -11,7 +11,7 @@ To get up and running correctly on your local machine:
 1. **Prerequisites**
    Ensure you have installed:
    - Node.js (v18.0.0 or later preferably Node v20/v22 LTS)
-   - npm (or yarn / pnpm) 
+   - npm (or yarn / pnpm)
    - Git
 
 2. **Clone and Install**
@@ -21,15 +21,14 @@ To get up and running correctly on your local machine:
    npm install
    ```
 3. **Environment Setup**
-   Do not commit bare API keys. 
+   Do not commit bare API keys.
    - Copy the `.env.example` file and rename it to `.env`
    - Fill in your local test thresholds for `SUPABASE_URL`, `BITRIX_WEBHOOK_URL`, `SMTP_HOST`, etc.
-   
 4. **Booting the Dev Server**
    ```bash
    npm run dev
    ```
-   The site will be running via Nuxt/Vite at `http://localhost:3000`. 
+   The site will be running via Nuxt/Vite at `http://localhost:3000`.
 
 ---
 
@@ -42,8 +41,10 @@ The application relies strictly on standard frameworks:
 - **Tailwind CSS:** For all internal styling requirements, prioritize utility classes directly inline in the exact layouts. Do not bloat `app/assets/css/main.css` unless defining core overriding directives or global interactions like `:focus-visible`.
 
 ### Image Optimization Rules
-Instead of using raw `<img />` tags, forcefully leverage the native Nuxt `<NuxtImg>` component built upon `@nuxt/image`. 
+
+Instead of using raw `<img />` tags, forcefully leverage the native Nuxt `<NuxtImg>` component built upon `@nuxt/image`.
 This allows our server context to dynamically execute Cloudinary resizes globally. E.g:
+
 ```vue
 <NuxtImg src="/images/hero-banner.png" alt="Overview" preload eager fetchpriority="high" />
 ```
@@ -61,13 +62,13 @@ This allows our server context to dynamically execute Cloudinary resizes globall
    - Ensure all server dependencies utilized properly conform to strict TypeScript typing checks (`npm run build` will perform implicit TS verifications and break).
 3. **Draft the PR:**
    - Summarize the exact intent and which issue ID this PR closes.
-   - Attach browser screenshots if any visual UI logic shifted. 
+   - Attach browser screenshots if any visual UI logic shifted.
    - Submit for a maintainer review.
 
 ---
 
 ## 4. Code of Conduct
 
-As a core contributor, respect your peers. We uphold an open, inclusive, and professional open-source mindset when designing components. 
+As a core contributor, respect your peers. We uphold an open, inclusive, and professional open-source mindset when designing components.
 
 If you encounter bugs, raise them concisely with exact reproduction errors in the Issue Tracker!

@@ -6,21 +6,20 @@ vi.mock('#imports', () => ({
   useRuntimeConfig: vi.fn().mockReturnValue({
     authSessionSecret: 'test-secret',
     otpSecret: 'otp-secret',
-    smtpPass: 'smtp-pass'
-  })
+    smtpPass: 'smtp-pass',
+  }),
 }))
 
 describe('userSession', () => {
-  
   describe('session record structure', () => {
     it('session record has required fields', () => {
       const record = {
         contactId: '123',
         email: 'test@example.com',
         createdAt: Date.now(),
-        expiresAt: Date.now() + 604800000 // 7 days
+        expiresAt: Date.now() + 604800000, // 7 days
       }
-      
+
       expect(record.contactId).toBeDefined()
       expect(record.email).toBeDefined()
       expect(record.createdAt).toBeLessThan(record.expiresAt)
@@ -30,7 +29,7 @@ describe('userSession', () => {
       const createdAt = Date.now()
       const maxAge = 60 * 60 * 24 * 7 * 1000 // 7 days in ms
       const expiresAt = createdAt + maxAge
-      
+
       const sevenDaysInMs = 7 * 24 * 60 * 60 * 1000
       expect(expiresAt - createdAt).toBe(sevenDaysInMs)
     })
@@ -38,18 +37,18 @@ describe('userSession', () => {
 
   describe('signValue function', () => {
     it('generates consistent signature for same input', () => {
-      const signValue = (value: string, secret: string) => 
+      const signValue = (value: string, secret: string) =>
         createHmac('sha256', secret).update(value).digest('base64url')
-      
+
       const sig1 = signValue('test-value', 'secret')
       const sig2 = signValue('test-value', 'secret')
       expect(sig1).toBe(sig2)
     })
 
     it('generates different signature for different secrets', () => {
-      const signValue = (value: string, secret: string) => 
+      const signValue = (value: string, secret: string) =>
         createHmac('sha256', secret).update(value).digest('base64url')
-      
+
       const sig1 = signValue('test-value', 'secret1')
       const sig2 = signValue('test-value', 'secret2')
       expect(sig1).not.toBe(sig2)

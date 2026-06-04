@@ -85,7 +85,7 @@ export function parseMarkdownFile(raw: string, slug: string): BlogPostFile {
   }
 }
 
-export function serializePost(input: { frontmatter: BlogFrontmatter, body: string }): string {
+export function serializePost(input: { frontmatter: BlogFrontmatter; body: string }): string {
   const { frontmatter, body } = input
   const ordered: Record<string, unknown> = {}
   for (const key of BLOG_FRONTMATTER_FIELDS) {

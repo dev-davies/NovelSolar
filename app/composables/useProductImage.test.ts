@@ -20,7 +20,7 @@ describe('useProductImage', () => {
     it('returns Cloudinary URL from PROPERTY_102 as direct string', () => {
       const product = {
         NAME: 'Test Product',
-        PROPERTY_102: 'https://res.cloudinary.com/demo/image/upload/sample.jpg'
+        PROPERTY_102: 'https://res.cloudinary.com/demo/image/upload/sample.jpg',
       }
       expect(getProductImage(product)).toBe('https://res.cloudinary.com/demo/image/upload/sample.jpg')
     })
@@ -28,9 +28,7 @@ describe('useProductImage', () => {
     it('returns Cloudinary URL from PROPERTY_102 as array of objects', () => {
       const product = {
         NAME: 'Test Product',
-        PROPERTY_102: [
-          { value: 'https://res.cloudinary.com/demo/image/upload/cloudinary1.jpg' }
-        ]
+        PROPERTY_102: [{ value: 'https://res.cloudinary.com/demo/image/upload/cloudinary1.jpg' }],
       }
       expect(getProductImage(product)).toBe('https://res.cloudinary.com/demo/image/upload/cloudinary1.jpg')
     })
@@ -38,7 +36,7 @@ describe('useProductImage', () => {
     it('returns empty string when PROPERTY_102 is empty array', () => {
       const product = {
         NAME: 'Test Product',
-        PROPERTY_102: []
+        PROPERTY_102: [],
       }
       // Falls through to legacy fields, then placeholder
       expect(getProductImage(product)).toBe('/images/placeholder.png')
@@ -48,8 +46,8 @@ describe('useProductImage', () => {
       const product = {
         NAME: 'Test Product',
         PROPERTY_44: {
-          showUrl: '/upload/iblock/123/image.jpg'
-        }
+          showUrl: '/upload/iblock/123/image.jpg',
+        },
       }
       expect(getProductImage(product)).toContain('/api/bitrix-image')
       expect(getProductImage(product)).toContain('nisl.bitrix24.com')
@@ -59,8 +57,8 @@ describe('useProductImage', () => {
       const product = {
         NAME: 'Test Product',
         PREVIEW_PICTURE: {
-          downloadUrl: '/upload/iblock/456/preview.jpg'
-        }
+          downloadUrl: '/upload/iblock/456/preview.jpg',
+        },
       }
       expect(getProductImage(product)).toContain('/api/bitrix-image')
       expect(getProductImage(product)).toContain('nisl.bitrix24.com')
@@ -70,8 +68,8 @@ describe('useProductImage', () => {
       const product = {
         NAME: 'Test Product',
         DETAIL_PICTURE: {
-          showUrl: '/upload/iblock/789/detail.jpg'
-        }
+          showUrl: '/upload/iblock/789/detail.jpg',
+        },
       }
       expect(getProductImage(product)).toContain('/api/bitrix-image')
       expect(getProductImage(product)).toContain('nisl.bitrix24.com')
@@ -80,7 +78,7 @@ describe('useProductImage', () => {
     it('returns direct URL when legacy field is a string starting with http', () => {
       const product = {
         NAME: 'Test Product',
-        PROPERTY_44: 'https://example.com/direct-image.jpg'
+        PROPERTY_44: 'https://example.com/direct-image.jpg',
       }
       expect(getProductImage(product)).toBe('https://example.com/direct-image.jpg')
     })
@@ -89,7 +87,7 @@ describe('useProductImage', () => {
       const product = {
         NAME: 'Test Product',
         PRICE: 1000,
-        DESCRIPTION: 'A test product'
+        DESCRIPTION: 'A test product',
       }
       expect(getProductImage(product)).toBe('/images/placeholder.png')
     })
@@ -99,7 +97,7 @@ describe('useProductImage', () => {
         NAME: 'Test Product',
         PROPERTY_102: 'https://cloudinary.com/preferred.jpg',
         PROPERTY_44: { showUrl: '/legacy/image.jpg' },
-        PREVIEW_PICTURE: { downloadUrl: '/legacy/preview.jpg' }
+        PREVIEW_PICTURE: { downloadUrl: '/legacy/preview.jpg' },
       }
       expect(getProductImage(product)).toBe('https://cloudinary.com/preferred.jpg')
     })
@@ -109,7 +107,7 @@ describe('useProductImage', () => {
         NAME: 'Test Product',
         PROPERTY_44: { showUrl: '/property44/image.jpg' },
         PREVIEW_PICTURE: { downloadUrl: '/preview/image.jpg' },
-        DETAIL_PICTURE: { showUrl: '/detail/image.jpg' }
+        DETAIL_PICTURE: { showUrl: '/detail/image.jpg' },
       }
       expect(getProductImage(product)).toContain('property44')
     })
@@ -118,7 +116,7 @@ describe('useProductImage', () => {
       const product = {
         NAME: 'Test Product',
         PREVIEW_PICTURE: { downloadUrl: '/preview/image.jpg' },
-        DETAIL_PICTURE: { showUrl: '/detail/image.jpg' }
+        DETAIL_PICTURE: { showUrl: '/detail/image.jpg' },
       }
       expect(getProductImage(product)).toContain('preview')
     })
@@ -132,8 +130,8 @@ describe('useProductImage', () => {
       const product = {
         NAME: 'Test Product',
         PROPERTY_44: {
-          showUrl: '/upload/image with spaces.jpg'
-        }
+          showUrl: '/upload/image with spaces.jpg',
+        },
       }
       const result = getProductImage(product)
       // The URL should be encoded (spaces become %20)
