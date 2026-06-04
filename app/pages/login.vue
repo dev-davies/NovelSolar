@@ -151,7 +151,10 @@ useHead({
             </div>
             <button
               class="text-sm font-bold text-[#3c59b0] hover:underline uppercase tracking-widest"
-              @click="isSuccess = false; email = ''"
+              @click="
+                isSuccess = false
+                email = ''
+              "
             >
               Back to Login
             </button>
