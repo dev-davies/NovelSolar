@@ -143,6 +143,41 @@
           </div>
         </div>
       </div>
+      <!-- Confirmation Modal -->
+      <div
+        v-if="showConfirmModal"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
+      >
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 animate-in zoom-in-95 duration-200">
+          <div class="flex items-center justify-center w-12 h-12 rounded-full bg-red-100 mb-4 mx-auto">
+            <span class="material-symbols-outlined text-red-600">delete</span>
+          </div>
+          <h3 class="text-xl font-bold text-center text-slate-900 mb-2">Remove Customer?</h3>
+          <p class="text-center text-slate-500 mb-6">
+            Are you sure you want to remove this customer? They will be moved to the trash.
+          </p>
+          <div class="flex gap-3 justify-center">
+            <button
+              class="px-5 py-2.5 rounded-xl font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors disabled:opacity-50"
+              :disabled="isTrashing !== null"
+              @click="cancelRemoval"
+            >
+              Cancel
+            </button>
+            <button
+              class="px-5 py-2.5 rounded-xl font-bold text-white bg-red-600 hover:bg-red-700 transition-colors inline-flex items-center gap-2 disabled:opacity-50"
+              :disabled="isTrashing !== null"
+              @click="confirmTrashCustomer"
+            >
+              <span
+                v-if="isTrashing !== null"
+                class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"
+              />
+              Confirm Removal
+            </button>
+          </div>
+        </div>
+      </div>
     </main>
   </div>
 </template>
@@ -153,26 +188,43 @@ import { ref, computed } from 'vue'
 definePageMeta({ middleware: 'admin' })
 useHead({ title: 'Manage Customers | Admin' })
 
+const { addToast } = useToast()
+
 const searchQuery = ref('')
 const roleFilter = ref('all')
 
 const { data, pending, error, refresh } = useFetch('/api/admin/customers')
 
 const isTrashing = ref<string | null>(null)
+const showConfirmModal = ref(false)
+const customerToRemove = ref<string | null>(null)
 
-const handleTrashCustomer = async (id: string) => {
-  if (!confirm('Are you sure you want to remove this customer? They will be moved to the trash.')) return
+const handleTrashCustomer = (id: string) => {
+  customerToRemove.value = id
+  showConfirmModal.value = true
+}
 
+const cancelRemoval = () => {
+  showConfirmModal.value = false
+  customerToRemove.value = null
+}
+
+const confirmTrashCustomer = async () => {
+  if (!customerToRemove.value) return
+  const id = customerToRemove.value
   isTrashing.value = id
+
   try {
     await $fetch('/api/admin/trash-customer', {
       method: 'POST',
       body: { customerId: id },
     })
+    addToast('Success', 'Customer moved to trash successfully.', 'success')
+    showConfirmModal.value = false
+    customerToRemove.value = null
     await refresh()
-  } catch (err: unknown) {
-    const error = err as { statusMessage?: string }
-    alert(error.statusMessage || 'Failed to trash customer')
+  } catch (err: any) {
+    addToast('Error', err.data?.statusMessage || err.message || 'Failed to trash customer', 'error')
   } finally {
     isTrashing.value = null
   }
