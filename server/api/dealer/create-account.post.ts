@@ -47,6 +47,7 @@ export default defineEventHandler(async (event) => {
     // 3. Upsert the specialized dealer profile explicitly bypassing defaults
     const { error: profileError } = await supabase.from('profiles').upsert({
       user_id: userId,
+      email: (invitation as any).email,
       role: 'dealer',
       dealer_status: 'approved',
     } as any)

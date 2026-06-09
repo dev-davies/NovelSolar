@@ -57,6 +57,8 @@ export default defineEventHandler(async (event) => {
           // Downgrade in profiles table
           await supabase.from('profiles').upsert({
             user_id: userId,
+            email: appData.email,
+            first_name: appData.contact_name,
             role: 'customer',
             dealer_status: 'rejected',
           } as never)

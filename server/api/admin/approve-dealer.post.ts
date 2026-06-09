@@ -72,6 +72,8 @@ export default defineEventHandler(async (event) => {
     // 4. Upsert the profile
     const { error: profileError } = await supabase.from('profiles').upsert({
       user_id: userId,
+      email: appData.email,
+      first_name: appData.contact_name,
       role: 'dealer',
       dealer_status: 'approved',
     } as never)
