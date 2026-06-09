@@ -1,10 +1,17 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { BitrixProduct } from '~/types'
 
 const props = defineProps<{
   product: BitrixProduct
 }>()
 const { getProductImage } = useProductImage()
+
+const displayPrice = computed(() => {
+  return props.product.dealerPrice
+    ? Number(props.product.dealerPrice)
+    : Number(props.product.PRICE || props.product.price || 0)
+})
 </script>
 
 <template>
@@ -38,15 +45,14 @@ const { getProductImage } = useProductImage()
 
       <div v-if="product.dealerPrice" class="mt-2 text-lg font-black flex items-center gap-2">
         <span class="text-green-600"
-          >{{ Number(product.dealerPrice).toLocaleString() }}
-          <span class="text-xs font-semibold uppercase">NGN</span></span
+          >{{ displayPrice.toLocaleString() }} <span class="text-xs font-semibold uppercase">NGN</span></span
         >
         <span class="text-xs font-semibold text-slate-400 line-through">{{
           Number(product.PRICE || product.price).toLocaleString()
         }}</span>
       </div>
-      <div v-else-if="product.PRICE || product.price" class="mt-2 text-lg font-black text-slate-900">
-        {{ Number(product.PRICE || product.price).toLocaleString() }}
+      <div v-else-if="displayPrice > 0" class="mt-2 text-lg font-black text-slate-900">
+        {{ displayPrice.toLocaleString() }}
         <span class="text-xs font-semibold text-slate-500 uppercase ml-1">NGN</span>
       </div>
     </div>
