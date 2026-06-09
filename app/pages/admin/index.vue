@@ -7,15 +7,24 @@
           <h1 class="text-3xl font-black text-slate-900 tracking-tight">Control Center</h1>
           <p class="text-slate-500 mt-1 font-medium">Welcome back to the Novel Solar admin dashboard.</p>
         </div>
-        <a
-          href="/"
-          target="_blank"
-          rel="noopener"
-          class="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold px-5 py-3 rounded-xl transition-colors self-start sm:self-auto"
-        >
-          <span class="material-symbols-outlined text-base">open_in_new</span>
-          View Live Site
-        </a>
+        <div class="flex items-center gap-3 self-start sm:self-auto">
+          <a
+            href="/"
+            target="_blank"
+            rel="noopener"
+            class="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold px-5 py-3 rounded-xl transition-colors"
+          >
+            <span class="material-symbols-outlined text-base">open_in_new</span>
+            View Live Site
+          </a>
+          <button
+            class="inline-flex items-center gap-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-bold px-5 py-3 rounded-xl transition-colors"
+            @click="handleLogout"
+          >
+            <span class="material-symbols-outlined text-base">logout</span>
+            Logout
+          </button>
+        </div>
       </div>
     </header>
 
@@ -103,6 +112,15 @@ definePageMeta({ middleware: 'admin' })
 useHead({ title: 'Dashboard | Novel Solar Admin' })
 
 const isMasterAdmin = ref(false)
+
+const handleLogout = async () => {
+  try {
+    await useNuxtApp().$apiFetch('/api/admin/auth/logout', { method: 'POST' })
+    await navigateTo('/admin/login')
+  } catch (error) {
+    console.error('Logout failed:', error)
+  }
+}
 
 const cards = computed(() => [
   {
