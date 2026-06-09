@@ -33,7 +33,7 @@ export default defineEventHandler(async (event) => {
 
   const mapProduct = (p: any, fromDb = true): MappedProduct => {
     let raw: any
-    let id, name, price, active, dealer_price, quantity, description, currency
+    let id, name, price, active, quantity, description, currency
 
     if (fromDb) {
       raw = p.raw || {}
@@ -41,7 +41,6 @@ export default defineEventHandler(async (event) => {
       name = p.name
       price = p.price
       active = p.active ? 'Y' : 'N'
-      dealer_price = p.dealer_price
       quantity = p.quantity
       description = p.description
       currency = raw.CURRENCY_ID
@@ -54,8 +53,6 @@ export default defineEventHandler(async (event) => {
       quantity = p.QUANTITY
       description = normalizeProperty(p.DESCRIPTION)
       currency = p.CURRENCY_ID
-      const rawDealerPrice = normalizeProperty(p.PROPERTY_116)
-      dealer_price = rawDealerPrice !== undefined && rawDealerPrice !== null ? Number(rawDealerPrice) : null
     }
 
     let imageUrl = null
@@ -86,8 +83,11 @@ export default defineEventHandler(async (event) => {
       PROPERTY_112: normalizeProperty(raw.PROPERTY_112), // Gallery
     }
 
-    if (isDealer && dealer_price != null) {
-      productObj.dealerPrice = Number(dealer_price)
+    if (isDealer) {
+      const rawDP = p.PROPERTY_116?.value ?? p.PROPERTY_116 ?? p.dealer_price
+      if (rawDP !== undefined && rawDP !== null && rawDP !== '') {
+        productObj.dealerPrice = Number(rawDP)
+      }
     }
 
     return productObj

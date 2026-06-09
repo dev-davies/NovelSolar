@@ -28,7 +28,7 @@ export default defineCachedEventHandler(
 
     const mapProduct = (p: any, fromDb = true): MappedProduct => {
       let raw: any
-      let id, name, price, active, dealer_price
+      let id, name, price, active
 
       if (fromDb) {
         raw = p.raw || {}
@@ -36,15 +36,12 @@ export default defineCachedEventHandler(
         name = p.name
         price = p.price
         active = p.active ? 'Y' : 'N'
-        dealer_price = p.dealer_price
       } else {
         raw = p
         id = p.ID
         name = p.NAME
         price = p.PRICE
         active = p.ACTIVE
-        const rawDealerPrice = normalizeProperty(p.PROPERTY_116)
-        dealer_price = rawDealerPrice !== undefined && rawDealerPrice !== null ? Number(rawDealerPrice) : null
       }
 
       const productObj: MappedProduct = {
@@ -62,8 +59,11 @@ export default defineCachedEventHandler(
         PROPERTY_112: normalizeProperty(raw.PROPERTY_112),
       }
 
-      if (isDealer && dealer_price != null) {
-        productObj.dealerPrice = Number(dealer_price)
+      if (isDealer) {
+        const rawDP = p.PROPERTY_116?.value ?? p.PROPERTY_116 ?? p.dealer_price
+        if (rawDP !== undefined && rawDP !== null && rawDP !== '') {
+          productObj.dealerPrice = Number(rawDP)
+        }
       }
 
       delete productObj.PROPERTY_116
