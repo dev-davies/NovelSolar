@@ -215,7 +215,7 @@ const confirmTrashCustomer = async () => {
   isTrashing.value = id
 
   try {
-    await $fetch('/api/admin/trash-customer', {
+    await useNuxtApp().$apiFetch('/api/admin/trash-customer', {
       method: 'POST',
       body: { customerId: id },
     })
