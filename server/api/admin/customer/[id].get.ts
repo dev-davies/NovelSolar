@@ -11,7 +11,11 @@ export default defineEventHandler(async (event) => {
 
   try {
     // Fetch profile
-    const { data: profile, error: profileError } = await supabase.from('profiles').select('*').eq('id', id).single()
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('user_id', id)
+      .single()
 
     if (profileError || !profile) {
       throw createError({ statusCode: 404, statusMessage: 'Customer not found' })
@@ -31,7 +35,7 @@ export default defineEventHandler(async (event) => {
 
     return {
       success: true,
-      customer: profile,
+      customer: { ...(profile as any), id: (profile as any).user_id },
       orders: orders || [],
     }
   } catch (err: unknown) {

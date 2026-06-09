@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
     const { error } = await supabase
       .from('profiles')
       .update({ role: 'deleted' } as never)
-      .eq('id', customerId)
+      .eq('user_id', customerId)
 
     if (error) throw error
 

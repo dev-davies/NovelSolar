@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
   try {
     const { data: profiles, error } = await supabase
       .from('profiles')
-      .select('id, email, first_name, last_name, role, dealer_status, created_at')
+      .select('user_id, email, first_name, last_name, role, dealer_status, created_at')
       .eq('role', 'deleted')
       .order('created_at', { ascending: false })
 
@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
       throw error
     }
 
-    return { success: true, customers: profiles || [] }
+    return { success: true, customers: (profiles as any[])?.map((p) => ({ ...p, id: p.user_id })) || [] }
   } catch (err: unknown) {
     const error = err as { message?: string }
     logger.error('Admin Customers API', 'Failed to fetch trashed customers', { error })

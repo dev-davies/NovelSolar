@@ -11,6 +11,10 @@ const dealers = ref<Record<string, unknown>[]>([])
 const isLoading = ref(true)
 const isActionLoading = ref<Record<string, boolean>>({})
 
+const activeDealers = computed(() => {
+  return dealers.value.filter((d) => d.status !== 'rejected')
+})
+
 const fetchDealers = async () => {
   isLoading.value = true
   try {
@@ -107,6 +111,13 @@ const isExpired = (invitation: Record<string, unknown> | null | undefined) => {
 
         <div class="flex flex-wrap justify-center lg:justify-end items-center gap-3">
           <NuxtLink
+            to="/admin/dealers-trash"
+            class="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl transition-all shadow-sm group"
+            title="View Trash"
+          >
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">delete</span>
+          </NuxtLink>
+          <NuxtLink
             to="/admin"
             class="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold flex items-center gap-2 text-sm transition-all shadow-sm"
           >
@@ -142,7 +153,7 @@ const isExpired = (invitation: Record<string, unknown> | null | undefined) => {
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
-              <tr v-for="dealer in dealers" :key="dealer.id" class="hover:bg-slate-50/50 transition-colors">
+              <tr v-for="dealer in activeDealers" :key="dealer.id" class="hover:bg-slate-50/50 transition-colors">
                 <td class="p-4">
                   <p class="font-bold text-slate-900">{{ dealer.business_name }}</p>
                   <p class="text-sm text-slate-500">{{ dealer.email }}</p>
