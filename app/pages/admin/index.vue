@@ -150,6 +150,17 @@ const cards = computed(() => [
     disabled: false,
   },
   {
+    to: '/admin/manage-customers',
+    title: 'Customer Directory',
+    subtitle: 'View registered customers, their profiles, and their purchase history.',
+    icon: 'group',
+    iconBg: 'bg-orange-100',
+    iconColor: 'text-orange-600',
+    decorClass: 'text-orange-500',
+    linkColor: 'text-orange-600',
+    disabled: false,
+  },
+  {
     to: isMasterAdmin.value ? '/admin/manage-admins' : undefined,
     title: 'Access Control',
     subtitle: isMasterAdmin.value
