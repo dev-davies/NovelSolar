@@ -10,6 +10,16 @@ const resetSuccess = ref(false)
 const resetLoading = ref(false)
 const resetError = ref('')
 
+const showForgotPassword = () => {
+  isForgotPassword.value = true
+  resetEmail.value = email.value
+}
+
+const hideForgotPassword = () => {
+  isForgotPassword.value = false
+  resetSuccess.value = false
+}
+
 const supabase = useSupabaseClient()
 const router = useRouter()
 
@@ -134,10 +144,7 @@ useHead({
                 <button
                   type="button"
                   class="text-xs font-bold text-[#002888] hover:underline"
-                  @click="
-                    isForgotPassword = true
-                    resetEmail = email
-                  "
+                  @click="showForgotPassword"
                 >
                   Forgot Password?
                 </button>
@@ -192,10 +199,7 @@ useHead({
           <div class="text-center mb-8">
             <button
               class="inline-flex items-center gap-2 text-slate-400 hover:text-[#002888] transition-colors group mb-4"
-              @click="
-                isForgotPassword = false
-                resetSuccess = false
-              "
+              @click="hideForgotPassword"
             >
               <span class="material-symbols-outlined text-sm transition-transform group-hover:-translate-x-1"
                 >arrow_back</span
@@ -219,10 +223,7 @@ useHead({
             </p>
             <button
               class="text-sm font-bold text-[#002888] uppercase tracking-wider hover:underline"
-              @click="
-                isForgotPassword = false
-                resetSuccess = false
-              "
+              @click="hideForgotPassword"
             >
               Return to Sign In
             </button>
