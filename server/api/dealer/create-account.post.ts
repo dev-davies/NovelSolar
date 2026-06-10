@@ -26,12 +26,7 @@ export default defineEventHandler(async (event) => {
 
     const profile = profileData as any
 
-    if (
-      fetchError ||
-      !profile ||
-      !profile.onboarding_token_expires ||
-      new Date(profile.onboarding_token_expires) < new Date()
-    ) {
+    if (fetchError || !profile || !profile.token_expires_at || new Date(profile.token_expires_at) < new Date()) {
       throw createError({ statusCode: 400, statusMessage: 'Link Expired or Invalid' })
     }
 
@@ -46,7 +41,7 @@ export default defineEventHandler(async (event) => {
     // 3. Burn the token cleanly to prevent reuse in the profiles table
     const { error: updateError } = await supabase
       .from('profiles')
-      .update({ onboarding_token: null, onboarding_token_expires: null } as never)
+      .update({ onboarding_token: null, token_expires_at: null } as never)
       .eq('user_id', profile.user_id)
 
     if (updateError) throw updateError

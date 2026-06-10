@@ -81,7 +81,7 @@ export default defineEventHandler(async (event) => {
       role: 'dealer',
       dealer_status: 'approved',
       onboarding_token: onboardingToken,
-      onboarding_token_expires: onboardingTokenExpires,
+      token_expires_at: onboardingTokenExpires,
     } as never)
 
     if (profileError) throw profileError

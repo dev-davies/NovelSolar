@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
   try {
     const { data: profileData, error } = await supabase
       .from('profiles')
-      .select('user_id, email, onboarding_token_expires')
+      .select('user_id, email, token_expires_at')
       .eq('onboarding_token', token)
       .single()
 
@@ -24,7 +24,7 @@ export default defineEventHandler(async (event) => {
       throw createError({ statusCode: 400, statusMessage: 'Link Expired or Invalid' })
     }
 
-    if (new Date(profile.onboarding_token_expires) < new Date()) {
+    if (new Date(profile.token_expires_at) < new Date()) {
       throw createError({ statusCode: 400, statusMessage: 'Link Expired or Invalid' })
     }
 
