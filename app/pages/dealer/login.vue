@@ -39,6 +39,9 @@ const handleLogin = async () => {
     })
 
     if (res && res.success) {
+      const { addToast } = useToast()
+      addToast('Login Successful', 'Welcome to the Dealer Portal!', 'success')
+
       // The backend endpoint securely set the Nuxt Supabase cookies natively.
       // We can directly navigate to the wholesale shop dashboard.
       // Using window.location.href forces a full client reload so the Nuxt Supabase
