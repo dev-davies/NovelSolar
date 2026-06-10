@@ -1,0 +1,3 @@
+ALTER TABLE public.profiles
+ADD COLUMN IF NOT EXISTS onboarding_token TEXT UNIQUE,
+ADD COLUMN IF NOT EXISTS token_expires_at TIMESTAMP WITH TIME ZONE;

@@ -39,6 +39,7 @@
     "marked": "^18.0.2",
     "nodemailer": "^8.0.3",
     "nuxt": "^4.3.1",
+    "postgres": "^3.4.9",
     "turndown": "^7.2.4",
     "unstorage": "^1.17.5",
     "vue": "^3.5.29",

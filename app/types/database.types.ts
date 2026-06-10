@@ -7,16 +7,22 @@ export interface Database {
         Row: {
           role: string
           dealer_status: 'none' | 'pending' | 'approved' | 'rejected'
+          onboarding_token?: string | null
+          token_expires_at?: string | null
           [key: string]: any
         }
         Insert: {
           role?: string
           dealer_status?: 'none' | 'pending' | 'approved' | 'rejected'
+          onboarding_token?: string | null
+          token_expires_at?: string | null
           [key: string]: any
         }
         Update: {
           role?: string
           dealer_status?: 'none' | 'pending' | 'approved' | 'rejected'
+          onboarding_token?: string | null
+          token_expires_at?: string | null
           [key: string]: any
         }
       }
