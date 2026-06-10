@@ -18,51 +18,40 @@ export default defineEventHandler(async (event) => {
 
   try {
     // 1. Re-validate the token securely
-    const { data: invitation, error: inviteError } = await supabase
-      .from('dealer_invitations')
+    const { data: profileData, error: fetchError } = await supabase
+      .from('profiles')
       .select('*')
-      .eq('token', token)
+      .eq('onboarding_token', token)
       .single()
 
+    const profile = profileData as any
+
     if (
-      inviteError ||
-      !invitation ||
-      (invitation as any).used ||
-      new Date((invitation as any).expires_at) < new Date()
+      fetchError ||
+      !profile ||
+      !profile.onboarding_token_expires ||
+      new Date(profile.onboarding_token_expires) < new Date()
     ) {
       throw createError({ statusCode: 400, statusMessage: 'Link Expired or Invalid' })
     }
 
-    // 2. Provision the authentication account smoothly without email verification
-    const { data: userData, error: authError } = await supabase.auth.admin.createUser({
-      email: (invitation as any).email,
+    // 2. Update the authentication account password securely
+    const { error: authError } = await supabase.auth.admin.updateUserById(profile.user_id, {
       password: password,
-      email_confirm: true, // Verified via secure token automatically
+      email_confirm: true,
     })
 
     if (authError) throw authError
 
-    const userId = userData.user.id
-
-    // 3. Upsert the specialized dealer profile explicitly bypassing defaults
-    const { error: profileError } = await supabase.from('profiles').upsert({
-      user_id: userId,
-      email: (invitation as any).email,
-      role: 'dealer',
-      dealer_status: 'approved',
-    } as any)
-
-    if (profileError) throw profileError
-
-    // 4. Burn the token cleanly to prevent reuse
+    // 3. Burn the token cleanly to prevent reuse in the profiles table
     const { error: updateError } = await supabase
-      .from('dealer_invitations')
-      .update({ used: true } as any)
-      .eq('token', token)
+      .from('profiles')
+      .update({ onboarding_token: null, onboarding_token_expires: null } as never)
+      .eq('user_id', profile.user_id)
 
     if (updateError) throw updateError
 
-    return { success: true, email: (invitation as any).email }
+    return { success: true, email: profile.email }
   } catch (err: unknown) {
     const error = err as { statusCode?: number; statusMessage?: string; message?: string }
     logger.error('Dealer Create API', 'Account creation failed', { error })

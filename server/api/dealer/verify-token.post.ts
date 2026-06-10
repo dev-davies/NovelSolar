@@ -12,25 +12,23 @@ export default defineEventHandler(async (event) => {
   const supabase = serverSupabaseServiceRole(event)
 
   try {
-    const { data: invitation, error } = await supabase
-      .from('dealer_invitations')
-      .select('*')
-      .eq('token', token)
+    const { data: profileData, error } = await supabase
+      .from('profiles')
+      .select('user_id, email, onboarding_token_expires')
+      .eq('onboarding_token', token)
       .single()
 
-    if (error || !invitation) {
+    const profile = profileData as any
+
+    if (error || !profile) {
       throw createError({ statusCode: 400, statusMessage: 'Link Expired or Invalid' })
     }
 
-    if (invitation.used) {
+    if (new Date(profile.onboarding_token_expires) < new Date()) {
       throw createError({ statusCode: 400, statusMessage: 'Link Expired or Invalid' })
     }
 
-    if (new Date(invitation.expires_at) < new Date()) {
-      throw createError({ statusCode: 400, statusMessage: 'Link Expired or Invalid' })
-    }
-
-    return { success: true, valid: true, email: invitation.email }
+    return { success: true, valid: true, email: profile.email }
   } catch (err: unknown) {
     const error = err as { statusCode?: number; statusMessage?: string; message?: string }
     logger.error('Dealer Verify API', 'Token verification failed', { error })
