@@ -33,23 +33,17 @@ const handleLogin = async () => {
   errorMessage.value = ''
 
   try {
-    const res = await useNuxtApp().$apiFetch<{
-      success: boolean
-      session: { access_token: string; refresh_token: string }
-    }>('/api/dealer/auth/login', {
+    const res = await useNuxtApp().$apiFetch<{ success: boolean }>('/api/dealer/auth/login', {
       method: 'POST',
       body: { email: email.value, password: password.value },
     })
 
-    if (res && res.session) {
-      const { error } = await supabase.auth.setSession({
-        access_token: res.session.access_token,
-        refresh_token: res.session.refresh_token,
-      })
-      if (error) throw error
-
-      // Navigate to the wholesale shop dashboard
-      router.push('/shop')
+    if (res && res.success) {
+      // The backend endpoint securely set the Nuxt Supabase cookies natively.
+      // We can directly navigate to the wholesale shop dashboard.
+      // Using window.location.href forces a full client reload so the Nuxt Supabase
+      // module picks up the newly minted cookies from the server immediately.
+      window.location.href = '/shop'
     }
   } catch (error: any) {
     errorMessage.value = error.statusMessage || error.message || 'Invalid email or password.'
