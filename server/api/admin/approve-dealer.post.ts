@@ -69,18 +69,24 @@ export default defineEventHandler(async (event) => {
       throw createError({ statusCode: 400, statusMessage: 'Failed to provision user ID' })
     }
 
-    // 4. Upsert the profile
+    // 4. Generate onboarding token and expiration
+    const onboardingToken = crypto.randomBytes(32).toString('hex')
+    const onboardingTokenExpires = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString()
+
+    // 5. Upsert the profile
     const { error: profileError } = await supabase.from('profiles').upsert({
       user_id: userId,
       email: appData.email,
       first_name: appData.contact_name,
       role: 'dealer',
       dealer_status: 'approved',
+      onboarding_token: onboardingToken,
+      onboarding_token_expires: onboardingTokenExpires,
     } as never)
 
     if (profileError) throw profileError
 
-    // 5. Send approval email (passwordless version)
+    // 6. Send approval email
     const config = useRuntimeConfig()
     if (config.smtpUser && config.smtpPass) {
       const transporter = nodemailer.createTransport({
@@ -96,17 +102,18 @@ export default defineEventHandler(async (event) => {
       })
 
       const domain = config.public.baseUrl ? config.public.baseUrl.replace(/\/$/, '') : 'https://novelsolar.ng'
-      const setupLink = `${domain}/login`
+      const setupLink = `${domain}/dealer/setup-account?token=${onboardingToken}`
 
       const emailHtml = `
         <div style="font-family: sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; color: #333;">
           <h2 style="color: #002888;">Congratulations! Your Application is Approved</h2>
           <p>Hello ${appData.contact_name},</p>
           <p>We are thrilled to welcome <strong>${appData.business_name}</strong> to the NovelSolar Authorized Dealer Network!</p>
-          <p>Your wholesale pricing account has been activated. You can now log into our storefront using your email address (no password required):</p>
+          <p>Your wholesale pricing account has been activated. Please complete your account setup to start ordering:</p>
           <div style="margin: 30px 0; text-align: center;">
-            <a href="${setupLink}" style="background-color: #002888; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">Log In to Your Account</a>
+            <a href="${setupLink}" style="background-color: #002888; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">Complete Account Setup</a>
           </div>
+          <p>This link will expire in 48 hours.</p>
           <p>If you have any questions, please reply to this email or contact our support team.</p>
           <p>Best regards,<br>The NovelSolar Team</p>
         </div>
