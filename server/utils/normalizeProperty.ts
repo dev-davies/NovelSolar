@@ -11,8 +11,20 @@ export function normalizeProperty(val: any): any {
     if (firstItem === null || firstItem === undefined) return null
     return firstItem.value ?? firstItem ?? null
   }
-  if (typeof val === 'object' && val !== null && 'value' in val) {
-    return val.value ?? null
+  if (typeof val === 'object' && val !== null) {
+    if ('value' in val) {
+      return val.value ?? null
+    }
+    // Handle Bitrix objects with numerical/random keys e.g., { "1234": "150000" }
+    const values = Object.values(val)
+    if (values.length > 0) {
+      const firstVal = values[0]
+      if (firstVal && typeof firstVal === 'object' && 'value' in firstVal) {
+        return firstVal.value ?? null
+      }
+      return firstVal ?? null
+    }
+    return null
   }
   return val
 }

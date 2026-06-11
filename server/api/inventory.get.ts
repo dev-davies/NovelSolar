@@ -130,7 +130,7 @@ export default defineCachedEventHandler(
   {
     getKey: async (event) => {
       const isDealer = await resolveIsDealerFromEvent(event)
-      return isDealer ? 'inventory-dealer' : 'inventory-retail'
+      return isDealer ? 'inventory-dealer-v2' : 'inventory-retail-v2'
     },
   },
 )
