@@ -860,6 +860,9 @@
 </template>
 
 <script setup lang="ts">
+const supabaseUser = useSupabaseUser()
+const supabase = useSupabaseClient()
+
 const isBitrixContext = useState('isBitrixContext', () => false)
 
 useHead({
@@ -986,10 +989,16 @@ const userInitials = computed(() => {
 
 const handleLogout = async () => {
   try {
-    await useNuxtApp().$apiFetch('/api/auth/logout', { method: 'POST' })
-    // Clear user data and redirect
-    user.value = null
-    navigateTo('/login')
+    if (supabaseUser.value) {
+      await supabase.auth.signOut()
+      user.value = null
+      navigateTo('/dealer/login')
+    } else {
+      await useNuxtApp().$apiFetch('/api/auth/logout', { method: 'POST' })
+      // Clear user data and redirect
+      user.value = null
+      navigateTo('/login')
+    }
   } catch (error) {
     console.error('Logout failed:', error)
   }

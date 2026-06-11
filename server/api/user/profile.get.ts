@@ -1,7 +1,32 @@
 import { getUserSession } from '../../utils/userSession'
 import { logger } from '../../utils/logger'
 
+import { serverSupabaseUser, serverSupabaseClient } from '#supabase/server'
+
 export default defineEventHandler(async (event) => {
+  try {
+    const supabaseUser = await serverSupabaseUser(event)
+    if (supabaseUser) {
+      const supabase = await serverSupabaseClient(event)
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('company_name, email, phone')
+        .eq('id', supabaseUser.id)
+        .single()
+
+      return {
+        firstName: profile?.company_name || 'Dealer',
+        lastName: '',
+        email: profile?.email || supabaseUser.email,
+        phone: profile?.phone || '',
+        address: '',
+        isDealer: true,
+      }
+    }
+  } catch (error) {
+    logger.warn('PROFILE', 'Supabase user check failed, falling back to Bitrix', { error })
+  }
+
   const config = useRuntimeConfig()
   const bitrixUrl = config.bitrixWebhookUrl
   const authToken = getCookie(event, 'auth_token')
